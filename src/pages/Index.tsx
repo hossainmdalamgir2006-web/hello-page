@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Send, Mail, Twitter, Linkedin, Check } from "lucide-react";
 
-const ease = [0.16, 1, 0.3, 1];
+const ease = [0.16, 1, 0.3, 1] as const;
 
 const Index = () => {
   const [email, setEmail] = useState("");
