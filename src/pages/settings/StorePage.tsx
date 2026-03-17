@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2, Database } from "lucide-react";
 import { StoreSettingsTab } from "@/components/settings/StoreSettingsTab";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { generateSchemaPDF } from "@/utils/generateSchemaPDF";
 import { toast } from "sonner";
+import { useBeforeUnload } from "react-router-dom";
 
 interface StoreSettings {
   storeName: string;
