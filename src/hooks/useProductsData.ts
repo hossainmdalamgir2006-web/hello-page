@@ -210,6 +210,7 @@ export function useProductsData() {
           is_active: product.is_active ?? true,
           is_featured: product.is_featured ?? false,
           description: product.description,
+          short_description: product.short_description || null,
           barcode: product.barcode,
           weight: product.weight,
           dimensions: product.dimensions,
