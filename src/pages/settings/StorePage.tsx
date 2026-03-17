@@ -90,6 +90,7 @@ export default function StorePage() {
 
   const updateStoreField = <K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) => {
     setStoreSettings(prev => ({ ...prev, [key]: value }));
+    if (initializedRef.current) setIsDirty(true);
   };
 
   const handleSave = async () => {
