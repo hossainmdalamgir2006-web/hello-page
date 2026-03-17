@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
   HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  Navigation, FileText, RotateCcw, Star, Bell, CreditCard, MessageCircle,
+  RotateCcw, Star, Bell, CreditCard, MessageCircle,
 } from "lucide-react";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { useNavigate, useLocation } from "react-router-dom";
