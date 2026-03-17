@@ -132,12 +132,12 @@ export default function AppearanceManager() {
 
   return (
     <>
-      <div className="space-y-6 p-4 md:p-6">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-display font-bold text-foreground">Appearance Manager</h1>
-            <p className="text-sm text-muted-foreground mt-1">সম্পূর্ণ UI/Design control করুন এখান থেকে</p>
+            <h1 className="font-display text-2xl font-bold text-foreground">Appearance Manager</h1>
+            <p className="text-sm text-muted-foreground">Customize your store's complete look and feel</p>
           </div>
           <div className="flex items-center gap-3">
             {hasChanges && (

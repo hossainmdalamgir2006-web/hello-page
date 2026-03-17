@@ -50,10 +50,7 @@ export default function AbandonedCarts() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground flex items-center gap-2">
-              <ShoppingCart className="h-7 w-7 text-primary" />
-              Abandoned Carts
-            </h1>
+            <h1 className="font-display text-2xl font-bold text-foreground">Abandoned Carts</h1>
             <p className="text-sm text-muted-foreground">
               Track and recover abandoned shopping carts
             </p>

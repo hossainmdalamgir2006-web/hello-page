@@ -117,16 +117,11 @@ export default function PageContentManager() {
 
   return (
     <>
-      <div className="p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <FileText className="h-6 w-6" />
-              Page & Content Manager
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              সব পেজ কন্টেন্ট এবং হোমপেজ সেকশন একসাথে ম্যানেজ করুন।
-            </p>
+            <h1 className="font-display text-2xl font-bold text-foreground">Page & Content Manager</h1>
+            <p className="text-sm text-muted-foreground">Manage all page content and homepage sections</p>
           </div>
           <Button variant="outline" asChild>
             <a href="/" target="_blank" rel="noopener noreferrer">

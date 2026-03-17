@@ -84,12 +84,12 @@ export default function Messages() {
 
   return (
     <>
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Messages & Support</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Manage customer inquiries and support tickets</p>
+            <h1 className="font-display text-2xl font-bold text-foreground">Messages & Support</h1>
+            <p className="text-sm text-muted-foreground">Manage customer inquiries and support tickets</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             <KnowledgeBaseSheet />
