@@ -308,16 +308,9 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="aspect-square bg-muted rounded-lg animate-pulse" />
-          <div className="space-y-4">
-            <div className="h-8 bg-muted rounded w-3/4 animate-pulse" />
-            <div className="h-6 bg-muted rounded w-1/4 animate-pulse" />
-            <div className="h-24 bg-muted rounded animate-pulse" />
-          </div>
-        </div>
-      </div>
+      <DelayedLoader>
+        <ProductDetailSkeleton />
+      </DelayedLoader>
     );
   }
 
