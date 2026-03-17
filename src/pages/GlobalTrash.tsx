@@ -17,6 +17,7 @@ import {
   Award, Tag, Ticket, Clock, User, Filter, MessageSquare, Star, Image, Zap,
 } from "lucide-react";
 import { useGlobalTrash, TrashedItem, TrashEntityType } from "@/hooks/useGlobalTrash";
+import { TrashPurgeCountdown } from "@/components/admin/TrashPurgeCountdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { usePagination } from "@/hooks/usePagination";
