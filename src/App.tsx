@@ -60,7 +60,15 @@ const Categories = lazy(() => import("./pages/Categories"));
 const Orders = lazy(() => import("./pages/Orders"));
 const Analytics = lazy(() => import("./pages/Analytics"));
 const Customers = lazy(() => import("./pages/Customers"));
-const Settings = lazy(() => import("./pages/Settings"));
+const SettingsLayout = lazy(() => import("./layouts/SettingsLayout"));
+const SettingsStore = lazy(() => import("./pages/settings/StorePage"));
+const SettingsPayments = lazy(() => import("./pages/settings/PaymentsPage"));
+const SettingsEmails = lazy(() => import("./pages/settings/EmailsPage"));
+const SettingsNotifications = lazy(() => import("./pages/settings/NotificationsPage"));
+const SettingsSecurity = lazy(() => import("./pages/settings/SecurityPage"));
+const SettingsAudit = lazy(() => import("./pages/settings/AuditPage"));
+const SettingsBackup = lazy(() => import("./pages/settings/BackupPage"));
+const SettingsIntegrations = lazy(() => import("./pages/settings/IntegrationsPage"));
 const Shipping = lazy(() => import("./pages/Shipping"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Reports = lazy(() => import("./pages/Reports"));
@@ -143,7 +151,17 @@ const App = () => (
             <Route path="/admin/orders" element={<Orders />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/customers" element={<Customers />} />
-            <Route path="/admin/settings" element={<Settings />} />
+            <Route path="/admin/settings" element={<SettingsLayout />}>
+              <Route index element={<SettingsStore />} />
+              <Route path="store" element={<SettingsStore />} />
+              <Route path="payments" element={<SettingsPayments />} />
+              <Route path="emails" element={<SettingsEmails />} />
+              <Route path="notifications" element={<SettingsNotifications />} />
+              <Route path="security" element={<SettingsSecurity />} />
+              <Route path="audit" element={<SettingsAudit />} />
+              <Route path="backup" element={<SettingsBackup />} />
+              <Route path="integrations" element={<SettingsIntegrations />} />
+            </Route>
             <Route path="/admin/shipping" element={<Shipping />} />
             <Route path="/admin/messages" element={<Messages />} />
             <Route path="/admin/reports" element={<Reports />} />

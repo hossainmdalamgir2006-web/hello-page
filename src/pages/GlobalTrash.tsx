@@ -149,10 +149,7 @@ export default function GlobalTrash() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground flex items-center gap-2">
-              <Trash2 className="h-6 w-6" />
-              Global Trash
-            </h1>
+            <h1 className="font-display text-2xl font-bold text-foreground">Global Trash</h1>
             <p className="text-sm text-muted-foreground">
               {items.length} items in trash · Auto-cleanup after 30 days
             </p>

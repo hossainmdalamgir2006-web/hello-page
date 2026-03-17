@@ -249,10 +249,10 @@ export default function HomepageManager() {
   return (
     <>
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Homepage Manager</h1>
-            <p className="text-muted-foreground">Control every section of your store homepage</p>
+            <h1 className="font-display text-2xl font-bold text-foreground">Homepage Manager</h1>
+            <p className="text-sm text-muted-foreground">Control every section of your store homepage</p>
           </div>
           <Button variant="outline" asChild>
             <a href="/" target="_blank" rel="noopener noreferrer">
