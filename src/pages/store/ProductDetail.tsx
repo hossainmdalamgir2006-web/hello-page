@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { ProductDetailSkeleton } from "@/components/skeletons";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Minus, Plus, Heart, Truck, RefreshCw, Shield, ShoppingBag, Package, AlertTriangle, Star, Copy, Bell, Clock, CreditCard, Lock, Ruler } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";

@@ -37,10 +37,11 @@ export default function Wishlist() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <Loader2 className="w-8 h-8 animate-spin mx-auto text-store-primary" />
-        <p className="mt-4 text-muted-foreground">Loading your wishlist...</p>
-      </div>
+      <DelayedLoader>
+        <div className="container mx-auto px-4 py-8">
+          <ProductGridSkeleton count={8} />
+        </div>
+      </DelayedLoader>
     );
   }
 

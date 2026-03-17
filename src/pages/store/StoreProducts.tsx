@@ -12,6 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { SEOHead } from "@/components/SEOHead";
 import { StoreProductCard } from "@/components/store/StoreProductCard";
 import { supabase } from "@/integrations/supabase/client";
+import { ProductGridSkeleton } from "@/components/skeletons";
 
 interface Product {
   id: string;
