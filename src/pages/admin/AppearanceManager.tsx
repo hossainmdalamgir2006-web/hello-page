@@ -155,6 +155,7 @@ export default function AppearanceManager() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="flex flex-wrap h-auto gap-1 bg-muted p-1">
+            <TabsTrigger value="presets" className="gap-1.5"><Wand2 className="h-3.5 w-3.5" />Presets</TabsTrigger>
             <TabsTrigger value="colors" className="gap-1.5"><Palette className="h-3.5 w-3.5" />Colors</TabsTrigger>
             <TabsTrigger value="buttons" className="gap-1.5"><Square className="h-3.5 w-3.5" />Buttons</TabsTrigger>
             <TabsTrigger value="typography" className="gap-1.5"><Type className="h-3.5 w-3.5" />Typography</TabsTrigger>
