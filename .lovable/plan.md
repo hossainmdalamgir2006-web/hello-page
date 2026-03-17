@@ -1,56 +1,64 @@
 
 
-## Plan: Convert all Bengali text to English in Messages page and related hooks
+# MyAccount Panel Professional Makeover
 
-### Files to update
+After reviewing the current implementation, here are the key areas to improve for a polished, professional customer account panel:
 
-**1. `src/components/admin/TicketEscalationDialog.tsx`** — All Bengali labels and text:
-- "টিকেট এসকেলেট করুন" → "Escalate Ticket"
-- Warning text → "Escalating will increase the ticket priority and notify the relevant manager."
-- "বর্তমান প্রায়োরিটি" → "Current Priority"
-- "নতুন প্রায়োরিটি" → "New Priority"
-- "এসকেলেট করুন (ম্যানেজার/এডমিন)" → "Escalate To (Manager/Admin)"
-- "সিলেক্ট করুন" → "Select"
-- "কাউকে নির্দিষ্ট করবেন না" → "Don't assign to anyone"
-- "এসকেলেশনের কারণ *" → "Escalation Reason *"
-- Placeholder → "Describe why you are escalating..."
-- "বাতিল" → "Cancel"
-- "এসকেলেট করুন" (button) → "Escalate"
+## Current Issues
+- Sidebar has no user profile card (just brand logo)
+- Header is basic — no page description shown
+- Dashboard stats cards lack visual hierarchy
+- No smooth page transitions between routes
+- Notification page has no page header consistency
+- Sidebar active state uses basic background — needs left accent indicator
+- No subtle border/shadow separation between sidebar and content
+- Content area padding inconsistent on different pages
 
-**2. `src/hooks/useSupportTickets.ts`** — All toast messages:
-- "টিকেট স্ট্যাটাস আপডেট হয়েছে" → "Ticket status updated"
-- "স্ট্যাটাস আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update status"
-- "প্রায়োরিটি আপডেট হয়েছে" → "Priority updated"
-- "প্রায়োরিটি আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update priority"
-- "টিকেট অ্যাসাইন হয়েছে" → "Ticket assigned"
-- "অ্যাসাইন করতে ব্যর্থ হয়েছে" → "Failed to assign ticket"
-- "টিকেট ডিলিট হয়েছে" → "Ticket deleted"
-- "ডিলিট করতে ব্যর্থ হয়েছে" → "Failed to delete"
-- "টিকেটগুলো ডিলিট হয়েছে" → "Tickets deleted"
-- "স্ট্যাটাস আপডেট হয়েছে" → "Status updated"
-- "আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update"
-- "টিকেটগুলো অ্যাসাইন হয়েছে" → "Tickets assigned"
+## Plan
 
-**3. `src/hooks/useChatNotifications.ts`** — Notification titles:
-- "নতুন চ্যাট মেসেজ" → "New Chat Message"
-- "নতুন সাপোর্ট টিকেট" → "New Support Ticket"
-- "নতুন কন্টাক্ট মেসেজ" → "New Contact Message"
+### 1. Sidebar: Add User Profile Card + Polish Active States
+**File: `src/components/account/AccountSidebar.tsx`**
+- Add a compact user avatar + name + email card below the brand logo (collapsed: show avatar only)
+- Change active nav item style: add a left-3px primary-colored border indicator + slightly stronger background
+- Add subtle `border-r border-sidebar-border` to the sidebar for cleaner separation
+- Make section labels slightly more spaced and refined
 
-**4. `src/hooks/useTabNotifications.ts`** — Tab title defaults:
-- "মেসেজ ও সাপোর্ট" → "Messages & Support"
-- "নতুন মেসেজ!" → "New Message!"
+### 2. Header: Show Page Description + Search
+**File: `src/components/account/AccountHeader.tsx`**
+- Pass and display `pageDescription` below the breadcrumb on desktop
+- Add a subtle bottom shadow instead of just border for depth
+- Improve mobile title area with description
 
-**5. `src/components/admin/SupportTicketsTab.tsx`** — Menu items and labels:
-- "এসকেলেট করুন" → "Escalate"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "টিমের জন্য ইন্টারনাল নোট..." → "Internal note for team..."
+### 3. Layout: Add Page Transitions + Better Spacing
+**File: `src/layouts/CustomerAccountLayout.tsx`**
+- Wrap `<Outlet>` content with a fade-in animation class
+- Add `max-w-6xl` container to content area for better readability on wide screens
+- Improve main padding to `p-4 sm:p-6 lg:p-8`
 
-**6. `src/components/admin/LiveChatTab.tsx`** — Menu items and labels:
-- "ট্রান্সফার" → "Transfer"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "📝 [ইন্টারনাল নোট]" → "📝 [Internal Note]"
+### 4. Dashboard: Visual Upgrade
+**File: `src/pages/store/account/AccountDashboard.tsx`**
+- Add gradient or subtle colored background to the welcome section
+- Improve stat cards with border-l colored accent indicators instead of circular icons
+- Add a "Quick Actions" row (View Orders, Track Package, Edit Profile, Contact Support)
 
-All changes are straightforward string replacements — no logic changes needed.
+### 5. Consistent Page Headers Across All Sub-pages
+**Files: Multiple account pages**
+- Remove individual `<h1>` + `<p>` headers from each page since the layout already shows the title via breadcrumb
+- OR keep them but make them consistent with a shared component
+
+### 6. CSS Polish
+**File: `src/index.css`** (minor)
+- Add an `animate-fade-in-up` keyframe for page content transitions
+
+## Files to Change
+1. `src/components/account/AccountSidebar.tsx` — user card, active indicator, border
+2. `src/components/account/AccountHeader.tsx` — description display, shadow
+3. `src/layouts/CustomerAccountLayout.tsx` — content container, animation, pass profile data
+4. `src/pages/store/account/AccountDashboard.tsx` — welcome section upgrade, quick actions
+5. `src/index.css` — add fade-in-up animation keyframe
+
+## Scope
+- No database changes needed
+- No new dependencies
+- Pure UI/UX polish across 5 files
 
