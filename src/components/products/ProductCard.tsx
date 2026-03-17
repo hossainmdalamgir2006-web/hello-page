@@ -19,7 +19,7 @@ export interface Product {
   comparePrice?: number;
   stock: number;
   category: string;
-  status: "active" | "draft" | "archived";
+  status: "active" | "draft";
   image: string;
   images?: string[];
   sizes?: string[];
