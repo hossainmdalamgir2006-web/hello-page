@@ -375,6 +375,16 @@ export default function ProductDetail() {
               )}
             </div>
 
+            {/* Short Description */}
+            {product.short_description && (
+              <div className="mb-4">
+                <div
+                  className="prose prose-sm max-w-none dark:prose-invert text-muted-foreground"
+                  dangerouslySetInnerHTML={{ __html: product.short_description }}
+                />
+              </div>
+            )}
+
             {hasFlashSale && <CountdownBanner discount={discount} />}
 
             {/* Price */}
