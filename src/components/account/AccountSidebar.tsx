@@ -152,42 +152,8 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
           )}
         </div>
 
-        {/* User Profile Card */}
-        <div className={cn(
-          "mt-5 mb-6 rounded-lg bg-sidebar-accent/60 transition-all",
-          collapsed ? "p-2 flex justify-center" : "p-3"
-        )}>
-          {collapsed ? (
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <button onClick={() => handleNav("/myaccount/settings")} className="block">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={avatarUrl || ""} />
-                    <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs font-semibold">
-                      {getInitials()}
-                    </AvatarFallback>
-                  </Avatar>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">{fullName || "Profile"}</TooltipContent>
-            </Tooltip>
-          ) : (
-            <button onClick={() => handleNav("/myaccount/settings")} className="flex items-center gap-3 w-full text-left group">
-              <Avatar className="h-9 w-9 shrink-0">
-                <AvatarImage src={avatarUrl || ""} />
-                <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs font-semibold">
-                  {getInitials()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-sidebar-foreground truncate group-hover:text-sidebar-primary transition-colors">
-                  {fullName || "Customer"}
-                </p>
-                <p className="text-[11px] text-sidebar-muted truncate">{email || ""}</p>
-              </div>
-            </button>
-          )}
-        </div>
+        {/* Spacer */}
+        <div className="mt-5 mb-6" />
 
         {/* Navigation */}
         <nav className="flex-1 space-y-5">
