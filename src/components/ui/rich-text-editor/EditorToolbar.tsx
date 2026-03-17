@@ -9,13 +9,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bold, Italic, Underline, Strikethrough, List, ListOrdered,
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Link, Unlink, Quote, Minus, Code, RemoveFormatting, Undo, Redo,
   Palette, Image, ChevronDown, Eye, Code2,
   Superscript, Subscript, Indent, Outdent, Highlighter, Maximize, Minimize,
-  Type, LineChart, Search, Pilcrow, Printer, ArrowRightLeft, Video,
+  Type, LineChart, Search, Pilcrow, Printer, ArrowRightLeft, Video, Upload,
 } from "lucide-react";
 import { ToolBtn, Divider } from "./ToolBtn";
 import { TablePicker } from "./TablePicker";
@@ -58,6 +59,8 @@ export const EditorToolbar = ({
   const [imageOpen, setImageOpen] = React.useState(false);
   const [videoUrl, setVideoUrl] = React.useState("");
   const [videoOpen, setVideoOpen] = React.useState(false);
+  const imageFileRef = React.useRef<HTMLInputElement>(null);
+  const videoFileRef = React.useRef<HTMLInputElement>(null);
 
   const isDisabled = disabled || readOnly;
   const isActive = (cmd: string) => activeFormats.has(cmd);
@@ -72,6 +75,36 @@ export const EditorToolbar = ({
   };
   const handleInsertVideo = () => {
     if (videoUrl) { onInsertVideo(videoUrl); setVideoUrl(""); setVideoOpen(false); }
+  };
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        onInsertImage(reader.result);
+        setImageOpen(false);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        // Insert a <video> tag for uploaded video files
+        const html = `<video controls style="max-width:100%;border-radius:8px;" src="${reader.result}"></video>`;
+        document.execCommand("insertHTML", false, html);
+        setVideoOpen(false);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   return (
@@ -237,29 +270,59 @@ export const EditorToolbar = ({
             </PopoverContent>
           </Popover>
 
-          {/* Image */}
+          {/* Image — with Upload tab */}
           <Popover open={imageOpen} onOpenChange={setImageOpen}>
             <PopoverTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
                 <Image className="h-3.5 w-3.5" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 p-2 space-y-2" align="start">
-              <Input placeholder="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleInsertImage()} className="h-8 text-xs" />
-              <Button size="sm" className="w-full h-7 text-xs" onClick={handleInsertImage}>Insert Image</Button>
+            <PopoverContent className="w-72 p-2" align="start">
+              <Tabs defaultValue="upload" className="w-full">
+                <TabsList className="w-full h-8 mb-2">
+                  <TabsTrigger value="upload" className="text-xs h-7 flex-1"><Upload className="h-3 w-3 mr-1" />Upload</TabsTrigger>
+                  <TabsTrigger value="url" className="text-xs h-7 flex-1"><Link className="h-3 w-3 mr-1" />URL</TabsTrigger>
+                </TabsList>
+                <TabsContent value="upload" className="mt-0 space-y-2">
+                  <input ref={imageFileRef} type="file" accept="image/*" className="hidden" onChange={handleImageFileChange} />
+                  <Button size="sm" variant="outline" className="w-full h-8 text-xs" onClick={() => imageFileRef.current?.click()}>
+                    <Upload className="h-3.5 w-3.5 mr-1.5" />Choose Image File
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground text-center">JPG, PNG, GIF, WebP</p>
+                </TabsContent>
+                <TabsContent value="url" className="mt-0 space-y-2">
+                  <Input placeholder="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleInsertImage()} className="h-8 text-xs" />
+                  <Button size="sm" className="w-full h-7 text-xs" onClick={handleInsertImage}>Insert Image</Button>
+                </TabsContent>
+              </Tabs>
             </PopoverContent>
           </Popover>
 
-          {/* Video Embed */}
+          {/* Video — with Upload tab */}
           <Popover open={videoOpen} onOpenChange={setVideoOpen}>
             <PopoverTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
                 <Video className="h-3.5 w-3.5" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-72 p-2 space-y-2" align="start">
-              <Input placeholder="YouTube or video URL" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleInsertVideo()} className="h-8 text-xs" />
-              <Button size="sm" className="w-full h-7 text-xs" onClick={handleInsertVideo}>Embed Video</Button>
+            <PopoverContent className="w-72 p-2" align="start">
+              <Tabs defaultValue="url" className="w-full">
+                <TabsList className="w-full h-8 mb-2">
+                  <TabsTrigger value="url" className="text-xs h-7 flex-1"><Video className="h-3 w-3 mr-1" />YouTube/URL</TabsTrigger>
+                  <TabsTrigger value="upload" className="text-xs h-7 flex-1"><Upload className="h-3 w-3 mr-1" />Upload</TabsTrigger>
+                </TabsList>
+                <TabsContent value="url" className="mt-0 space-y-2">
+                  <Input placeholder="YouTube or video URL" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleInsertVideo()} className="h-8 text-xs" />
+                  <Button size="sm" className="w-full h-7 text-xs" onClick={handleInsertVideo}>Embed Video</Button>
+                </TabsContent>
+                <TabsContent value="upload" className="mt-0 space-y-2">
+                  <input ref={videoFileRef} type="file" accept="video/*" className="hidden" onChange={handleVideoFileChange} />
+                  <Button size="sm" variant="outline" className="w-full h-8 text-xs" onClick={() => videoFileRef.current?.click()}>
+                    <Upload className="h-3.5 w-3.5 mr-1.5" />Choose Video File
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground text-center">MP4, WebM, OGG</p>
+                </TabsContent>
+              </Tabs>
             </PopoverContent>
           </Popover>
 

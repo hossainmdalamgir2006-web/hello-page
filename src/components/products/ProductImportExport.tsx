@@ -48,7 +48,7 @@ interface ImportResult {
 }
 
 const VALID_PRODUCT_TYPES = ["simple", "variable", "grouped", "bundle"] as const;
-const VALID_STATUSES = ["active", "draft", "archived"] as const;
+const VALID_STATUSES = ["active", "draft"] as const;
 
 const PRODUCT_TYPE_LABELS: Record<string, { label: string; icon: typeof Package }> = {
   simple: { label: "Simple", icon: Package },

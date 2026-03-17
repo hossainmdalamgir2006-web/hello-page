@@ -7,7 +7,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Package, Edit, X, DollarSign } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Package, Edit, X, Tag, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Product } from "./ProductCard";
 import { useProductVariants } from "@/hooks/useProductVariants";
@@ -20,240 +21,211 @@ interface ProductViewModalProps {
 }
 
 const colorNames: Record<string, string> = {
-  "#000000": "Black",
-  "#FFFFFF": "White",
-  "#EF4444": "Red",
-  "#3B82F6": "Blue",
-  "#22C55E": "Green",
-  "#EAB308": "Yellow",
-  "#EC4899": "Pink",
-  "#A855F7": "Purple",
-  "#F97316": "Orange",
-  "#6B7280": "Gray",
+  "#000000": "Black", "#FFFFFF": "White", "#EF4444": "Red", "#3B82F6": "Blue",
+  "#22C55E": "Green", "#EAB308": "Yellow", "#EC4899": "Pink", "#A855F7": "Purple",
+  "#F97316": "Orange", "#6B7280": "Gray",
 };
 
-export function ProductViewModal({
-  open,
-  onOpenChange,
-  product,
-  onEdit,
-}: ProductViewModalProps) {
+const getStatusColor = (status: Product["status"]) => {
+  switch (status) {
+    case "active": return "bg-success/10 text-success border-success/20";
+    case "draft": return "bg-warning/10 text-warning border-warning/20";
+    default: return "bg-muted text-muted-foreground";
+  }
+};
+
+export function ProductViewModal({ open, onOpenChange, product, onEdit }: ProductViewModalProps) {
   if (!product) return null;
 
   const { variants } = useProductVariants(open ? product.id : null);
 
-  const getStatusColor = (status: Product["status"]) => {
-    switch (status) {
-      case "active":
-        return "bg-success/10 text-success border-success/20";
-      case "draft":
-        return "bg-warning/10 text-warning border-warning/20";
-      case "archived":
-        return "bg-muted text-muted-foreground border-muted";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
+  const stockStatus = product.stock === 0
+    ? { label: "Out of Stock", color: "text-destructive" }
+    : product.stock <= 10
+      ? { label: "Low Stock", color: "text-warning" }
+      : { label: "In Stock", color: "text-success" };
 
-  const getStockStatus = (stock: number) => {
-    if (stock === 0) return { label: "Out of Stock", color: "text-destructive" };
-    if (stock <= 10) return { label: "Low Stock", color: "text-warning" };
-    return { label: "In Stock", color: "text-success" };
-  };
-
-  const stockStatus = getStockStatus(product.stock);
   const discount = product.comparePrice
     ? Math.round((1 - product.price / product.comparePrice) * 100)
     : 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto bg-card">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5 text-accent" />
-            Product Details
-          </DialogTitle>
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto bg-card p-0">
+        <DialogHeader className="px-6 pt-6 pb-0">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <Package className="h-5 w-5 text-primary" />
+              Product Details
+            </DialogTitle>
+            <div className="flex items-center gap-2">
+              {onEdit && (
+                <Button size="sm" variant="outline" onClick={() => { onOpenChange(false); onEdit(product); }}>
+                  <Edit className="mr-1.5 h-3.5 w-3.5" />Edit
+                </Button>
+              )}
+              <Button size="sm" variant="ghost" onClick={() => onOpenChange(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Product Image */}
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="h-full w-full object-contain"
-            />
-            {discount > 0 && (
-              <Badge className="absolute bottom-3 left-3 bg-accent text-accent-foreground">
-                {discount}% OFF
+        <div className="grid md:grid-cols-2 gap-6 p-6">
+          {/* Left — Image */}
+          <div className="space-y-3">
+            <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted border border-border">
+              <img src={product.image} alt={product.name} className="h-full w-full object-contain" />
+              {discount > 0 && (
+                <Badge className="absolute bottom-3 left-3 bg-accent text-accent-foreground font-semibold">
+                  {discount}% OFF
+                </Badge>
+              )}
+              <Badge variant="outline" className={cn("absolute right-3 top-3 capitalize", getStatusColor(product.status))}>
+                {product.status}
               </Badge>
-            )}
-            <Badge
-              variant="outline"
-              className={cn("absolute right-3 top-3 capitalize", getStatusColor(product.status))}
-            >
-              {product.status}
-            </Badge>
-          </div>
-
-          {/* Product Info */}
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-muted-foreground">{product.category}</p>
-              <h2 className="text-2xl font-bold text-foreground">{product.name}</h2>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-3xl font-bold text-foreground">
-                ৳{product.price.toLocaleString()}
-              </span>
+            {/* Additional images */}
+            {product.images && product.images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {product.images.slice(0, 5).map((img, i) => (
+                  <div key={i} className="h-16 w-16 rounded-lg bg-muted border border-border overflow-hidden shrink-0">
+                    <img src={img} alt="" className="h-full w-full object-cover" />
+                  </div>
+                ))}
+                {product.images.length > 5 && (
+                  <div className="h-16 w-16 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0">
+                    <span className="text-xs text-muted-foreground font-medium">+{product.images.length - 5}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Right — Info */}
+          <div className="space-y-5">
+            {/* Title & Category */}
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <p className="text-sm text-muted-foreground">{product.category}</p>
+                {product.brand && <Badge variant="outline" className="text-xs">{product.brand}</Badge>}
+                {product.product_type && product.product_type !== "simple" && (
+                  <Badge variant="secondary" className="text-xs capitalize">{product.product_type}</Badge>
+                )}
+              </div>
+              <h2 className="text-2xl font-bold text-foreground leading-tight">{product.name}</h2>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-baseline gap-3">
+              <span className="text-3xl font-bold text-foreground">৳{product.price.toLocaleString()}</span>
               {product.comparePrice && (
-                <span className="text-lg text-muted-foreground line-through">
-                  ৳{product.comparePrice.toLocaleString()}
-                </span>
+                <span className="text-lg text-muted-foreground line-through">৳{product.comparePrice.toLocaleString()}</span>
+              )}
+              {discount > 0 && (
+                <Badge variant="secondary" className="text-xs font-semibold">
+                  Save ৳{((product.comparePrice || 0) - product.price).toLocaleString()}
+                </Badge>
               )}
             </div>
 
-            <Separator />
-
-            {/* Short Description */}
-            {product.short_description && (
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Short Description</p>
-                <div
-                  className="prose prose-sm max-w-none dark:prose-invert text-foreground"
-                  dangerouslySetInnerHTML={{ __html: product.short_description }}
-                />
-              </div>
-            )}
-
-            {/* Description */}
-            {product.description && (
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Description</p>
-                <div
-                  className="prose prose-sm max-w-none dark:prose-invert text-foreground"
-                  dangerouslySetInnerHTML={{ __html: product.description }}
-                />
-              </div>
-            )}
-
-            <Separator />
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">SKU</p>
-                <p className="font-medium text-foreground">{product.sku || "N/A"}</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Category</p>
-                <p className="font-medium text-foreground">{product.category || "N/A"}</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Stock</p>
-                <p className={cn("font-medium", stockStatus.color)}>
-                  {product.stock} units ({stockStatus.label})
-                </p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Status</p>
-                <Badge variant="outline" className={cn("capitalize", getStatusColor(product.status))}>
-                  {product.status}
-                </Badge>
-              </div>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 gap-3">
+              <Card className="border-border/60">
+                <CardContent className="p-3">
+                  <p className="text-xs text-muted-foreground mb-0.5">Stock</p>
+                  <p className={cn("text-sm font-semibold", stockStatus.color)}>
+                    {product.stock} units — {stockStatus.label}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/60">
+                <CardContent className="p-3">
+                  <p className="text-xs text-muted-foreground mb-0.5">SKU</p>
+                  <p className="text-sm font-semibold text-foreground font-mono">{product.sku || "N/A"}</p>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Sizes */}
             {product.sizes && product.sizes.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">Available Sizes</p>
-                  <div className="flex flex-wrap gap-2">
-                    {product.sizes.map((size) => (
-                      <Badge key={size} variant="secondary">
-                        {size}
-                      </Badge>
-                    ))}
-                  </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Available Sizes</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {product.sizes.map((size) => (
+                    <Badge key={size} variant="outline" className="px-3 py-1 text-xs font-medium">{size}</Badge>
+                  ))}
                 </div>
-              </>
+              </div>
             )}
 
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">Available Colors</p>
-                  <div className="flex flex-wrap gap-2">
-                    {product.colors.map((color) => (
-                      <div key={color} className="flex items-center gap-2">
-                        <div
-                          className="h-6 w-6 rounded-full border-2 border-border"
-                          style={{ backgroundColor: color }}
-                        />
-                        <span className="text-sm text-foreground">
-                          {colorNames[color] || color}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Available Colors</p>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((color) => (
+                    <div key={color} className="flex items-center gap-1.5 px-2 py-1 rounded-full border border-border bg-muted/30">
+                      <div className="h-4 w-4 rounded-full border border-border/60" style={{ backgroundColor: color }} />
+                      <span className="text-xs text-foreground">{colorNames[color] || color}</span>
+                    </div>
+                  ))}
                 </div>
-              </>
+              </div>
             )}
 
             {/* Variants */}
             {variants.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground">Variants ({variants.length})</p>
-                  <div className="space-y-2">
-                    {variants.map((v) => (
-                      <div key={v.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
-                        <div>
-                          <span className="text-sm font-medium">{v.name}</span>
-                          {v.sku && <span className="text-xs text-muted-foreground ml-2">SKU: {v.sku}</span>}
-                        </div>
-                        <div className="flex items-center gap-3 text-sm">
-                          {v.price != null && (
-                            <span className="font-medium">৳{v.price.toLocaleString()}</span>
-                          )}
-                          <Badge variant="outline" className={cn(
-                            "text-xs",
-                            (v.quantity || 0) === 0 ? "text-destructive" : (v.quantity || 0) <= 5 ? "text-warning" : "text-success"
-                          )}>
-                            {v.quantity || 0} units
-                          </Badge>
-                        </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                  <Layers className="h-3.5 w-3.5" />Variants ({variants.length})
+                </p>
+                <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                  {variants.map((v) => (
+                    <div key={v.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-muted/40 border border-border/40">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{v.name}</span>
+                        {v.sku && <span className="text-xs text-muted-foreground font-mono">SKU: {v.sku}</span>}
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        {v.price != null && <span className="font-semibold text-foreground">৳{v.price.toLocaleString()}</span>}
+                        <Badge variant="outline" className={cn("text-xs", (v.quantity || 0) === 0 ? "text-destructive" : (v.quantity || 0) <= 5 ? "text-warning" : "text-success")}>
+                          {v.quantity || 0} units
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              <X className="mr-2 h-4 w-4" />
-              Close
-            </Button>
-            {onEdit && (
-              <Button
-                onClick={() => {
-                  onOpenChange(false);
-                  onEdit(product);
-                }}
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Product
-              </Button>
+              </div>
             )}
           </div>
         </div>
+
+        {/* Description sections — full width */}
+        {(product.short_description || product.description) && (
+          <div className="px-6 pb-6 space-y-4">
+            <Separator />
+            {product.short_description && (
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Short Description</p>
+                <div
+                  className="prose prose-sm max-w-none dark:prose-invert text-foreground prose-img:rounded-lg prose-table:border prose-table:border-border prose-th:bg-muted prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-border"
+                  dangerouslySetInnerHTML={{ __html: product.short_description }}
+                />
+              </div>
+            )}
+            {product.description && (
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Description</p>
+                <div
+                  className="prose prose-sm max-w-none dark:prose-invert text-foreground prose-img:rounded-lg prose-img:max-w-full prose-video:rounded-lg prose-table:border prose-table:border-border prose-th:bg-muted prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-border prose-th:border prose-th:border-border"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
