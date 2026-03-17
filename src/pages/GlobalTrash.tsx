@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Trash2, RotateCcw, Package, MoreVertical, AlertTriangle, ShoppingCart,
-  Award, Tag, Ticket, Clock, User, Filter,
+  Award, Tag, Ticket, Clock, User, Filter, MessageSquare, Star, Image, Zap,
 } from "lucide-react";
 import { useGlobalTrash, TrashedItem, TrashEntityType } from "@/hooks/useGlobalTrash";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,6 +28,11 @@ const ENTITY_ICONS: Record<TrashEntityType, React.ElementType> = {
   brand: Award,
   category: Tag,
   coupon: Ticket,
+  support_ticket: Ticket,
+  contact_message: MessageSquare,
+  review: Star,
+  carousel_slide: Image,
+  auto_discount_rule: Zap,
 };
 
 const ENTITY_COLORS: Record<TrashEntityType, string> = {
@@ -36,6 +41,11 @@ const ENTITY_COLORS: Record<TrashEntityType, string> = {
   brand: "bg-purple-500/10 text-purple-500 border-purple-500/20",
   category: "bg-green-500/10 text-green-500 border-green-500/20",
   coupon: "bg-pink-500/10 text-pink-500 border-pink-500/20",
+  support_ticket: "bg-red-500/10 text-red-500 border-red-500/20",
+  contact_message: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+  review: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+  carousel_slide: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
+  auto_discount_rule: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
 };
 
 const FILTER_OPTIONS: { value: TrashEntityType | 'all'; label: string }[] = [
@@ -45,6 +55,11 @@ const FILTER_OPTIONS: { value: TrashEntityType | 'all'; label: string }[] = [
   { value: 'brand', label: 'Brands' },
   { value: 'category', label: 'Categories' },
   { value: 'coupon', label: 'Coupons' },
+  { value: 'support_ticket', label: 'Tickets' },
+  { value: 'contact_message', label: 'Messages' },
+  { value: 'review', label: 'Reviews' },
+  { value: 'carousel_slide', label: 'Slides' },
+  { value: 'auto_discount_rule', label: 'Discount Rules' },
 ];
 
 export default function GlobalTrash() {
@@ -382,6 +397,16 @@ function EntityDetails({ item }: { item: TrashedItem }) {
       return <span>{extra.slug || '-'}</span>;
     case 'coupon':
       return <span>{extra.discount_type}: {extra.discount_value}</span>;
+    case 'support_ticket':
+      return <span>#{extra.ticket_number} · {extra.customer_name || '-'} · {extra.priority || '-'}</span>;
+    case 'contact_message':
+      return <span>{extra.first_name} {extra.last_name} · {(extra.message || '').slice(0, 50)}</span>;
+    case 'review':
+      return <span>Rating: {extra.rating || '-'} · {extra.is_approved === true ? 'Approved' : extra.is_approved === false ? 'Rejected' : 'Pending'}</span>;
+    case 'carousel_slide':
+      return <span>{extra.media_type || 'image'} · {extra.is_enabled ? 'Enabled' : 'Disabled'}</span>;
+    case 'auto_discount_rule':
+      return <span>{extra.discount_type}: {extra.discount_value} · {extra.is_active ? 'Active' : 'Inactive'}</span>;
     default:
       return null;
   }

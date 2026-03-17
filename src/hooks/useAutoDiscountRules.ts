@@ -30,6 +30,7 @@ export function useAutoDiscountRules() {
       const { data, error } = await supabase
         .from("auto_discount_rules")
         .select("*")
+        .is("deleted_at", null)
         .order("priority", { ascending: false });
 
       if (error) throw error;

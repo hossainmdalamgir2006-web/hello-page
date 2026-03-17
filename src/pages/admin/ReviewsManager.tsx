@@ -65,6 +65,7 @@ export default function ReviewsManager() {
       let query = supabase
         .from("product_reviews")
         .select("*, products(name)")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (statusFilter === "pending") query = query.is("is_approved", null);
@@ -111,16 +112,26 @@ export default function ReviewsManager() {
     mutationFn: async (ids: string[]) => {
       const { error } = await supabase
         .from("product_reviews")
-        .delete()
+        .update({ deleted_at: new Date().toISOString() } as any)
         .in("id", ids);
       if (error) throw error;
+      return ids;
     },
-    onSuccess: () => {
+    onSuccess: (_data, ids) => {
       queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
       setSelectedReviews([]);
       setDeleteId(null);
       setBulkDeleteOpen(false);
-      toast.success("Reviews deleted");
+      toast.success("Review(s) moved to trash", {
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            await supabase.from("product_reviews").update({ deleted_at: null } as any).in("id", ids);
+            queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
+          },
+        },
+        duration: 5000,
+      });
     },
   });
 

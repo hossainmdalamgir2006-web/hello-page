@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    const tables = ["products", "orders", "brands", "categories", "coupons"];
+    const tables = ["products", "orders", "brands", "categories", "coupons", "support_tickets", "contact_messages", "product_reviews", "homepage_carousel_slides", "auto_discount_rules"];
     const results: Record<string, number> = {};
 
     for (const table of tables) {

@@ -63,6 +63,7 @@ export function useSupportTickets() {
       const { data, error } = await supabase
         .from("support_tickets")
         .select("*")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -180,43 +181,63 @@ export function useSupportTickets() {
     },
   });
 
-  // Delete ticket
+  // Soft delete ticket (move to trash)
   const deleteTicket = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from("support_tickets")
-        .delete()
+        .update({ deleted_at: new Date().toISOString() } as any)
         .eq("id", id);
 
       if (error) throw error;
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
-      toast.success("Ticket deleted");
+      toast.success("Ticket moved to trash", {
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            await supabase.from("support_tickets").update({ deleted_at: null } as any).eq("id", id);
+            queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+          },
+        },
+        duration: 5000,
+      });
     },
     onError: (error) => {
-      console.error("Error deleting ticket:", error);
-      toast.error("Failed to delete");
+      console.error("Error trashing ticket:", error);
+      toast.error("Failed to move to trash");
     },
   });
 
-  // Bulk delete tickets
+  // Bulk soft delete tickets
   const bulkDeleteTickets = useMutation({
     mutationFn: async (ids: string[]) => {
       const { error } = await supabase
         .from("support_tickets")
-        .delete()
+        .update({ deleted_at: new Date().toISOString() } as any)
         .in("id", ids);
 
       if (error) throw error;
+      return ids;
     },
-    onSuccess: () => {
+    onSuccess: (_data, ids) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
-      toast.success("Tickets deleted");
+      toast.success(`${ids.length} ticket(s) moved to trash`, {
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            await supabase.from("support_tickets").update({ deleted_at: null } as any).in("id", ids);
+            queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+          },
+        },
+        duration: 5000,
+      });
     },
     onError: (error) => {
-      console.error("Error bulk deleting tickets:", error);
-      toast.error("Failed to delete");
+      console.error("Error bulk trashing tickets:", error);
+      toast.error("Failed to move to trash");
     },
   });
 

@@ -243,6 +243,7 @@ export type Database = {
         Row: {
           conditions: Json | null
           created_at: string
+          deleted_at: string | null
           description: string | null
           discount_type: string
           discount_value: number
@@ -260,6 +261,7 @@ export type Database = {
         Insert: {
           conditions?: Json | null
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           discount_type: string
           discount_value: number
@@ -277,6 +279,7 @@ export type Database = {
         Update: {
           conditions?: Json | null
           created_at?: string
+          deleted_at?: string | null
           description?: string | null
           discount_type?: string
           discount_value?: number
@@ -549,6 +552,7 @@ export type Database = {
       contact_messages: {
         Row: {
           created_at: string
+          deleted_at: string | null
           email: string
           first_name: string | null
           first_response_at: string | null
@@ -567,6 +571,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deleted_at?: string | null
           email: string
           first_name?: string | null
           first_response_at?: string | null
@@ -585,6 +590,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deleted_at?: string | null
           email?: string
           first_name?: string | null
           first_response_at?: string | null
@@ -1169,6 +1175,7 @@ export type Database = {
           created_at: string
           cta_link: string | null
           cta_text: string | null
+          deleted_at: string | null
           id: string
           image_url: string | null
           is_enabled: boolean
@@ -1188,6 +1195,7 @@ export type Database = {
           created_at?: string
           cta_link?: string | null
           cta_text?: string | null
+          deleted_at?: string | null
           id?: string
           image_url?: string | null
           is_enabled?: boolean
@@ -1207,6 +1215,7 @@ export type Database = {
           created_at?: string
           cta_link?: string | null
           cta_text?: string | null
+          deleted_at?: string | null
           id?: string
           image_url?: string | null
           is_enabled?: boolean
@@ -2173,6 +2182,7 @@ export type Database = {
           content: string | null
           created_at: string
           customer_name: string | null
+          deleted_at: string | null
           id: string
           images: string[] | null
           is_approved: boolean | null
@@ -2190,6 +2200,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           customer_name?: string | null
+          deleted_at?: string | null
           id?: string
           images?: string[] | null
           is_approved?: boolean | null
@@ -2207,6 +2218,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           customer_name?: string | null
+          deleted_at?: string | null
           id?: string
           images?: string[] | null
           is_approved?: boolean | null
@@ -2940,6 +2952,7 @@ export type Database = {
           customer_id: string | null
           customer_name: string
           customer_phone: string | null
+          deleted_at: string | null
           description: string
           escalated_at: string | null
           escalated_to: string | null
@@ -2965,6 +2978,7 @@ export type Database = {
           customer_id?: string | null
           customer_name: string
           customer_phone?: string | null
+          deleted_at?: string | null
           description: string
           escalated_at?: string | null
           escalated_to?: string | null
@@ -2990,6 +3004,7 @@ export type Database = {
           customer_id?: string | null
           customer_name?: string
           customer_phone?: string | null
+          deleted_at?: string | null
           description?: string
           escalated_at?: string | null
           escalated_to?: string | null
