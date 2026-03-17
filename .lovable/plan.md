@@ -1,56 +1,79 @@
 
 
-## Plan: Convert all Bengali text to English in Messages page and related hooks
+## Plan: Convert Hard Deletes to Soft Delete (Move to Trash)
 
-### Files to update
+### Current State
 
-**1. `src/components/admin/TicketEscalationDialog.tsx`** — All Bengali labels and text:
-- "টিকেট এসকেলেট করুন" → "Escalate Ticket"
-- Warning text → "Escalating will increase the ticket priority and notify the relevant manager."
-- "বর্তমান প্রায়োরিটি" → "Current Priority"
-- "নতুন প্রায়োরিটি" → "New Priority"
-- "এসকেলেট করুন (ম্যানেজার/এডমিন)" → "Escalate To (Manager/Admin)"
-- "সিলেক্ট করুন" → "Select"
-- "কাউকে নির্দিষ্ট করবেন না" → "Don't assign to anyone"
-- "এসকেলেশনের কারণ *" → "Escalation Reason *"
-- Placeholder → "Describe why you are escalating..."
-- "বাতিল" → "Cancel"
-- "এসকেলেট করুন" (button) → "Escalate"
+**Already using soft delete (move to trash):** Products, Brands, Categories, Coupons, Orders — these all have `deleted_at` columns and use `.update({ deleted_at: ... })`. Good.
 
-**2. `src/hooks/useSupportTickets.ts`** — All toast messages:
-- "টিকেট স্ট্যাটাস আপডেট হয়েছে" → "Ticket status updated"
-- "স্ট্যাটাস আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update status"
-- "প্রায়োরিটি আপডেট হয়েছে" → "Priority updated"
-- "প্রায়োরিটি আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update priority"
-- "টিকেট অ্যাসাইন হয়েছে" → "Ticket assigned"
-- "অ্যাসাইন করতে ব্যর্থ হয়েছে" → "Failed to assign ticket"
-- "টিকেট ডিলিট হয়েছে" → "Ticket deleted"
-- "ডিলিট করতে ব্যর্থ হয়েছে" → "Failed to delete"
-- "টিকেটগুলো ডিলিট হয়েছে" → "Tickets deleted"
-- "স্ট্যাটাস আপডেট হয়েছে" → "Status updated"
-- "আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update"
-- "টিকেটগুলো অ্যাসাইন হয়েছে" → "Tickets assigned"
+**Still doing permanent/hard deletes (need fixing):**
 
-**3. `src/hooks/useChatNotifications.ts`** — Notification titles:
-- "নতুন চ্যাট মেসেজ" → "New Chat Message"
-- "নতুন সাপোর্ট টিকেট" → "New Support Ticket"
-- "নতুন কন্টাক্ট মেসেজ" → "New Contact Message"
+| Area | Hook/File | What's deleted | Table |
+|------|-----------|---------------|-------|
+| Support Tickets | `useSupportTickets.ts` | Single + bulk delete | `support_tickets` |
+| Contact Messages | `useContactMessages.ts` | Single delete (+ replies) | `contact_messages` |
+| Reviews | `ReviewsManager.tsx` | Single + bulk delete | `product_reviews` |
+| Carousel Slides | `CarouselSlidesManager.tsx` | Single delete | `homepage_carousel_slides` |
+| Auto Discount Rules | `Coupons.tsx` | Single delete | `auto_discount_rules` |
 
-**4. `src/hooks/useTabNotifications.ts`** — Tab title defaults:
-- "মেসেজ ও সাপোর্ট" → "Messages & Support"
-- "নতুন মেসেজ!" → "New Message!"
+### Implementation
 
-**5. `src/components/admin/SupportTicketsTab.tsx`** — Menu items and labels:
-- "এসকেলেট করুন" → "Escalate"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "টিমের জন্য ইন্টারনাল নোট..." → "Internal note for team..."
+#### Step 1: Add `deleted_at` column to 5 tables
+SQL migration to add `deleted_at timestamptz` to:
+- `support_tickets`
+- `contact_messages`
+- `product_reviews`
+- `homepage_carousel_slides`
+- `auto_discount_rules`
 
-**6. `src/components/admin/LiveChatTab.tsx`** — Menu items and labels:
-- "ট্রান্সফার" → "Transfer"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "📝 [ইন্টারনাল নোট]" → "📝 [Internal Note]"
+#### Step 2: Update hooks/components to use soft delete
 
-All changes are straightforward string replacements — no logic changes needed.
+**`src/hooks/useSupportTickets.ts`**
+- Change `deleteTicket` and `bulkDeleteTickets` from `.delete()` to `.update({ deleted_at: new Date().toISOString() })`
+- Add Undo toast
+- Filter query to exclude `deleted_at IS NOT NULL`
+
+**`src/hooks/useContactMessages.ts`**
+- Change `deleteMessage` from `.delete()` to `.update({ deleted_at: new Date().toISOString() })`
+- Add Undo toast
+- Filter query to exclude soft-deleted
+
+**`src/pages/admin/ReviewsManager.tsx`**
+- Change `deleteMutation` from `.delete()` to `.update({ deleted_at: new Date().toISOString() })`
+- Add Undo toast
+- Filter query
+
+**`src/components/admin/CarouselSlidesManager.tsx`**
+- Change `deleteSlide` from `.delete()` to `.update({ deleted_at: new Date().toISOString() })`
+- Add Undo toast
+- Filter fetch query
+
+**`src/pages/Coupons.tsx`**
+- Change `deleteRuleMutation` from `.delete()` to `.update({ deleted_at: new Date().toISOString() })`
+- Add Undo toast
+- Filter rules query
+
+#### Step 3: Update Global Trash to include new entity types
+- Add `support_ticket`, `contact_message`, `review`, `carousel_slide`, `auto_discount_rule` to `ENTITY_CONFIGS` in `useGlobalTrash.ts`
+- Update the `TrashEntityType` type
+- Update filter UI in `GlobalTrash.tsx` page
+
+#### Step 4: Update `auto-clean-trash` edge function
+- Add the 5 new tables to the auto-cleanup list
+
+#### Step 5: Update UI labels
+- Change "Delete" labels to "Move to Trash" in `ContactMessagesTab.tsx`, `SupportTicketsTab.tsx`, `ReviewsManager.tsx`, `CarouselSlidesManager.tsx`
+
+### Files Changed
+- **Migration SQL** — add `deleted_at` to 5 tables
+- `src/hooks/useSupportTickets.ts`
+- `src/hooks/useContactMessages.ts`
+- `src/pages/admin/ReviewsManager.tsx`
+- `src/components/admin/CarouselSlidesManager.tsx`
+- `src/pages/Coupons.tsx`
+- `src/hooks/useGlobalTrash.ts`
+- `src/pages/GlobalTrash.tsx`
+- `supabase/functions/auto-clean-trash/index.ts`
+- `src/components/admin/ContactMessagesTab.tsx`
+- `src/components/admin/SupportTicketsTab.tsx`
 
