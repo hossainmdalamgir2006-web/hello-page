@@ -85,6 +85,7 @@ export default function Products() {
     image: (product.images && product.images.length > 0) ? product.images[0] : '/placeholder.svg',
     images: product.images || [],
     description: product.description || '',
+    short_description: product.short_description || '',
     meta_title: product.meta_title || '',
     meta_description: product.meta_description || '',
     meta_keywords: product.meta_keywords || [],
