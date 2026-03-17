@@ -213,6 +213,21 @@ export default function Analytics() {
           />
         </div>
 
+        {/* Period Comparison */}
+        {showComparison && (
+          <PeriodComparison
+            loading={loading}
+            currentPeriodLabel={period === "7d" ? "Last 7 days" : period === "30d" ? "Last 30 days" : period === "90d" ? "Last 90 days" : "Last year"}
+            previousPeriodLabel={period === "7d" ? "Prior 7 days" : period === "30d" ? "Prior 30 days" : period === "90d" ? "Prior 90 days" : "Prior year"}
+            metrics={[
+              { label: "Revenue", current: stats.totalRevenue, previous: stats.revenueChange !== 0 ? stats.totalRevenue / (1 + stats.revenueChange / 100) : 0, format: "currency" },
+              { label: "Orders", current: stats.totalOrders, previous: stats.ordersChange !== 0 ? stats.totalOrders / (1 + stats.ordersChange / 100) : 0, format: "number" },
+              { label: "Customers", current: stats.totalCustomers, previous: stats.customersChange !== 0 ? stats.totalCustomers / (1 + stats.customersChange / 100) : 0, format: "number" },
+              { label: "Avg. Order", current: stats.avgOrderValue, previous: stats.avgOrderChange !== 0 ? stats.avgOrderValue / (1 + stats.avgOrderChange / 100) : 0, format: "currency" },
+            ]}
+          />
+        )}
+
         {/* Main Charts */}
         <Tabs defaultValue="revenue" className="space-y-4">
           <TabsList>
