@@ -115,6 +115,7 @@ export function ProductModal({
         sizes: product.sizes || [],
         colors: product.colors || [],
         description: product.description || "",
+        short_description: product.short_description || "",
         meta_title: product.meta_title || "",
         meta_description: product.meta_description || "",
         meta_keywords: product.meta_keywords || [],
