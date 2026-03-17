@@ -159,6 +159,7 @@ export function useProductsData() {
           is_active: row.is_active ?? true,
           is_featured: row.is_featured ?? false,
           description: row.description,
+          short_description: row.short_description || null,
           barcode: row.barcode,
           weight: row.weight,
           dimensions: row.dimensions,
