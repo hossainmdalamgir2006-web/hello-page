@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, CreditCard, Plus, Trash2, Star } from "lucide-react";
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { GenericCardGridSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -79,7 +81,7 @@ export default function AccountPaymentMethods() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+    return <DelayedLoader><GenericCardGridSkeleton count={3} /></DelayedLoader>;
   }
 
   const getIcon = (type: string) => METHOD_TYPES.find((m) => m.value === type)?.icon || "💳";

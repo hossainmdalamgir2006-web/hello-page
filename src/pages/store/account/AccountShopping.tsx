@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { GenericCardGridSkeleton } from "@/components/skeletons";
 import { ShoppingTab } from "@/components/account/ShoppingTab";
 
 export default function AccountShopping() {
@@ -50,11 +51,7 @@ export default function AccountShopping() {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <DelayedLoader><GenericCardGridSkeleton /></DelayedLoader>;
   }
 
   return (

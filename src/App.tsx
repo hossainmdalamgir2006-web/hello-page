@@ -3,16 +3,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Providers } from "@/components/Providers";
 import { ProtectedRoute, AdminRoute, ManagerRoute, SupportRoute } from "@/components/ProtectedRoute";
 import { AutoPageTitle } from "@/components/AutoPageTitle";
+import { TopProgressBar } from "@/components/ui/TopProgressBar";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { StoreLayout } from "@/layouts/StoreLayout";
-import { Loader2 } from "lucide-react";
 
-// Lazy-loaded page fallback
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
+// Minimal fallback — TopProgressBar handles visual feedback
+const PageLoader = () => <div className="min-h-screen" />;
 
 // Store Pages (lazy)
 const StoreHome = lazy(() => import("./pages/store/StoreHome"));
@@ -92,6 +88,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const App = () => (
   <Providers>
     <BrowserRouter>
+      <TopProgressBar />
       <AutoPageTitle />
       <Suspense fallback={<PageLoader />}>
         <Routes>

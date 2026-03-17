@@ -6,6 +6,7 @@ import { LiveChatWidget } from "@/components/store/LiveChatWidget";
 import { MaintenancePage } from "@/components/store/MaintenancePage";
 import { BackToTop } from "@/components/store/BackToTop";
 import { MobileBottomNav } from "@/components/store/MobileBottomNav";
+// Loader2 removed - TopProgressBar handles route transitions
 import { StoreBreadcrumb } from "@/components/store/StoreBreadcrumb";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
@@ -14,17 +15,13 @@ import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
 import { X } from "lucide-react";
 import { useState, Suspense } from "react";
-import { Loader2 } from "lucide-react";
+
 
 interface StoreLayoutProps {
   children?: ReactNode;
 }
 
-const StoreContentLoader = () => (
-  <div className="flex items-center justify-center min-h-[200px]">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
+const StoreContentLoader = () => <div className="min-h-[200px]" />;
 
 export function StoreLayout({ children }: StoreLayoutProps) {
   usePageViewTracking();

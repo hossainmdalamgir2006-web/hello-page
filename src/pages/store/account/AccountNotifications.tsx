@@ -1,5 +1,7 @@
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
-import { Loader2, Bell, BellOff, Check, CheckCheck } from "lucide-react";
+import { Bell, BellOff, Check, CheckCheck } from "lucide-react";
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { GenericListSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +19,7 @@ export default function AccountNotifications() {
   const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useRealtimeNotifications();
 
   if (isLoading) {
-    return <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+    return <DelayedLoader><GenericListSkeleton /></DelayedLoader>;
   }
 
   return (
