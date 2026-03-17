@@ -15,7 +15,7 @@ import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
 import { X } from "lucide-react";
 import { useState, Suspense } from "react";
-import { Loader2 } from "lucide-react";
+
 
 interface StoreLayoutProps {
   children?: ReactNode;

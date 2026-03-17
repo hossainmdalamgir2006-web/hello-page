@@ -88,6 +88,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const App = () => (
   <Providers>
     <BrowserRouter>
+      <TopProgressBar />
       <AutoPageTitle />
       <Suspense fallback={<PageLoader />}>
         <Routes>
