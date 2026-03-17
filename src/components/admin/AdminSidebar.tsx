@@ -1,27 +1,9 @@
+import { useState } from "react";
 import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  BarChart3, 
-  Settings, 
-  LogOut,
-  Tag,
-  Award,
-  Truck,
-  MessageSquare,
-  FileText,
-  
-  Ticket,
-  UserCog,
-  User,
-  ShoppingBasket,
-  ChevronsLeft,
-  ChevronsRight,
-  Trash2,
-  Paintbrush,
-  Home,
-  Star,
+  LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut,
+  Tag, Award, Truck, MessageSquare, FileText, Ticket, UserCog, User,
+  ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Home, Star,
+  ChevronDown, ExternalLink,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -37,10 +19,27 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface AdminSidebarProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
+}
+
+interface MenuItem {
+  title: string;
+  url: string;
+  icon: React.ElementType;
+  roles: string[];
+}
+
+interface MenuGroup {
+  label: string;
+  items: MenuItem[];
 }
 
 export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSidebarProps) {
@@ -52,12 +51,20 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
   const { getSettingValue } = useStoreSettings();
   const storeLogo = getSettingValue('STORE_LOGO');
 
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    content: true,
+    operations: true,
+    communication: true,
+    system: true,
+  });
+
+  const toggleGroup = (key: string) => {
+    setOpenGroups(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
   const handleLogout = async () => {
     await signOut();
-    toast({
-      title: t('logout'),
-      description: 'You have been logged out successfully.',
-    });
+    toast({ title: t('logout'), description: 'You have been logged out successfully.' });
     navigate('/login');
   };
 
@@ -77,7 +84,8 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
     return 'Dashboard';
   };
 
-  const allMenuItems = [
+  // Main menu items
+  const menuItems: MenuItem[] = [
     { title: t('nav.dashboard'), url: `${basePath}/dashboard`, icon: LayoutDashboard, roles: ['admin', 'manager', 'support'] },
     { title: t('nav.products'), url: `${basePath}/products`, icon: Package, roles: ['admin', 'manager'] },
     { title: t('nav.orders'), url: `${basePath}/orders`, icon: ShoppingCart, roles: ['admin', 'manager', 'support'] },
@@ -85,32 +93,57 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
     { title: t('nav.categories'), url: "/admin/categories", icon: Tag, roles: ['admin'] },
     { title: "Brands", url: "/admin/brands", icon: Award, roles: ['admin'] },
     { title: t('nav.analytics'), url: `${basePath}/analytics`, icon: BarChart3, roles: ['admin', 'manager'] },
+  ].filter(item => role && item.roles.includes(role));
+
+  // Management sub-groups (admin only gets collapsible groups)
+  const managementGroups: MenuGroup[] = [
+    {
+      label: "Content",
+      items: [
+        { title: "Homepage", url: "/admin/homepage", icon: Home, roles: ['admin'] },
+        { title: "Page Content", url: "/admin/page-content", icon: FileText, roles: ['admin'] },
+        { title: "Appearance", url: "/admin/appearance", icon: Paintbrush, roles: ['admin'] },
+        { title: "Reviews", url: "/admin/reviews", icon: Star, roles: ['admin'] },
+      ],
+    },
+    {
+      label: "Operations",
+      items: [
+        { title: t('nav.shipping'), url: `${role === 'admin' ? '/admin' : '/manager'}/shipping`, icon: Truck, roles: ['admin', 'manager'] },
+        { title: t('nav.coupons'), url: `${role === 'admin' ? '/admin' : '/manager'}/coupons`, icon: Ticket, roles: ['admin', 'manager'] },
+        { title: "Abandoned Carts", url: "/admin/abandoned-carts", icon: ShoppingBasket, roles: ['admin'] },
+        { title: "Trash", url: `${role === 'admin' ? '/admin' : '/manager'}/trash`, icon: Trash2, roles: ['admin', 'manager'] },
+      ],
+    },
+    {
+      label: "Communication",
+      items: [
+        { title: t('nav.messages'), url: `${basePath}/messages`, icon: MessageSquare, roles: ['admin', 'manager', 'support'] },
+        { title: t('nav.reports'), url: `${role === 'manager' ? '/manager' : '/admin'}/reports`, icon: FileText, roles: ['admin', 'manager'] },
+      ],
+    },
+    {
+      label: "System",
+      items: [
+        { title: t('nav.roles'), url: "/admin/role-management", icon: UserCog, roles: ['admin'] },
+      ],
+    },
   ];
 
-  const allManagementItems = [
-    { title: t('nav.shipping'), url: `${role === 'admin' ? '/admin' : '/manager'}/shipping`, icon: Truck, roles: ['admin', 'manager'] },
-    
-    { title: t('nav.coupons'), url: `${role === 'admin' ? '/admin' : '/manager'}/coupons`, icon: Ticket, roles: ['admin', 'manager'] },
-    { title: "Abandoned Carts", url: "/admin/abandoned-carts", icon: ShoppingBasket, roles: ['admin'] },
-    { title: "Homepage", url: "/admin/homepage", icon: Home, roles: ['admin'] },
-    { title: "Trash", url: `${role === 'admin' ? '/admin' : '/manager'}/trash`, icon: Trash2, roles: ['admin', 'manager'] },
-    { title: t('nav.messages'), url: `${basePath}/messages`, icon: MessageSquare, roles: ['admin', 'manager', 'support'] },
-    { title: t('nav.reports'), url: `${role === 'manager' ? '/manager' : '/admin'}/reports`, icon: FileText, roles: ['admin', 'manager'] },
-    { title: "Page Content", url: "/admin/page-content", icon: FileText, roles: ['admin'] },
-    { title: "Appearance", url: "/admin/appearance", icon: Paintbrush, roles: ['admin'] },
-    { title: "Reviews", url: "/admin/reviews", icon: Star, roles: ['admin'] },
-    { title: t('nav.roles'), url: "/admin/roles", icon: UserCog, roles: ['admin'] },
-  ];
-
-  const menuItems = allMenuItems.filter(item => role && item.roles.includes(role));
-  const managementItems = allManagementItems.filter(item => role && item.roles.includes(role));
+  // Filter groups by role
+  const filteredGroups = managementGroups
+    .map(group => ({
+      ...group,
+      items: group.items.filter(item => role && item.roles.includes(role)),
+    }))
+    .filter(group => group.items.length > 0);
 
   const bottomMenuItems = [
     { title: t('nav.profile'), url: `${basePath}/profile`, icon: User, roles: ['admin', 'manager', 'support'] },
     { title: t('nav.settings'), url: role === 'manager' ? '/manager/settings' : role === 'support' ? '/support/settings' : '/admin/settings', icon: Settings, roles: ['admin', 'manager', 'support'] },
   ].filter(item => role && item.roles.includes(role));
 
-  const renderNavItem = (item: { title: string; url: string; icon: React.ElementType }, isEnd?: boolean) => {
+  const renderNavItem = (item: MenuItem, isEnd?: boolean) => {
     const linkContent = (
       <NavLink
         key={item.url}
@@ -131,9 +164,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
       return (
         <Tooltip key={item.url} delayDuration={0}>
           <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-          <TooltipContent side="right" className="font-medium">
-            {item.title}
-          </TooltipContent>
+          <TooltipContent side="right" className="font-medium">{item.title}</TooltipContent>
         </Tooltip>
       );
     }
@@ -165,81 +196,96 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
         </div>
 
         {/* Main Menu */}
-        <nav className="flex-1 space-y-6">
+        <nav className="flex-1 space-y-4">
           <div>
             {!collapsed && (
-              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
-                {t('nav.menu')}
-              </p>
+              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.menu')}</p>
             )}
             <div className="space-y-1">
               {menuItems.map((item) => renderNavItem(item, item.url.endsWith('/dashboard')))}
             </div>
           </div>
 
-          {managementItems.length > 0 && (
+          {/* Management Groups */}
+          {filteredGroups.length > 0 && (
             <div>
               {!collapsed && (
-                <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
-                  {t('nav.management')}
-                </p>
+                <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.management')}</p>
               )}
               {collapsed && <div className="my-3 border-t border-sidebar-border" />}
-              <div className="space-y-1">
-                {managementItems.map((item) => renderNavItem(item))}
-              </div>
+              
+              {collapsed ? (
+                <div className="space-y-1">
+                  {filteredGroups.flatMap(g => g.items).map((item) => renderNavItem(item))}
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {filteredGroups.map((group) => (
+                    <Collapsible
+                      key={group.label}
+                      open={openGroups[group.label.toLowerCase()]}
+                      onOpenChange={() => toggleGroup(group.label.toLowerCase())}
+                    >
+                      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
+                        <span>{group.label}</span>
+                        <ChevronDown className={cn(
+                          "h-3.5 w-3.5 transition-transform",
+                          openGroups[group.label.toLowerCase()] && "rotate-180"
+                        )} />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-1 pt-1">
+                        {group.items.map((item) => renderNavItem(item))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </nav>
 
         {/* Bottom Menu */}
         <div className="mt-auto space-y-1 border-t border-sidebar-border pt-4">
+          {/* Visit Store */}
+          {collapsed ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <a href="/" target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
+                  <ExternalLink className="h-5 w-5 shrink-0" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium">Visit Store</TooltipContent>
+            </Tooltip>
+          ) : (
+            <a href="/" target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
+              <ExternalLink className="h-5 w-5 shrink-0" />
+              <span>Visit Store</span>
+            </a>
+          )}
+
           {bottomMenuItems.map((item) => renderNavItem(item))}
           
           {/* Logout */}
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <button 
-                  onClick={handleLogout}
-                  className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive"
-                >
+                <button onClick={handleLogout} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
                   <LogOut className="h-5 w-5 shrink-0" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">
-                {t('nav.logout')}
-              </TooltipContent>
+              <TooltipContent side="right" className="font-medium">{t('nav.logout')}</TooltipContent>
             </Tooltip>
           ) : (
-            <button 
-              onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive"
-            >
+            <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
               <LogOut className="h-5 w-5" />
               <span>{t('nav.logout')}</span>
             </button>
           )}
 
-          {/* Collapse toggle - only visible on desktop */}
+          {/* Collapse toggle */}
           {onToggleCollapse && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggleCollapse}
-              className={cn(
-                "w-full mt-2 text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent hidden lg:flex",
-                collapsed ? "justify-center px-2" : "justify-start px-3 gap-3"
-              )}
-            >
-              {collapsed ? (
-                <ChevronsRight className="h-4 w-4" />
-              ) : (
-                <>
-                  <ChevronsLeft className="h-4 w-4" />
-                  <span className="text-xs">Collapse Sidebar</span>
-                </>
-              )}
+            <Button variant="ghost" size="sm" onClick={onToggleCollapse} className={cn("w-full mt-2 text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent hidden lg:flex", collapsed ? "justify-center px-2" : "justify-start px-3 gap-3")}>
+              {collapsed ? <ChevronsRight className="h-4 w-4" /> : <><ChevronsLeft className="h-4 w-4" /><span className="text-xs">Collapse Sidebar</span></>}
             </Button>
           )}
         </div>

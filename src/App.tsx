@@ -166,6 +166,11 @@ const App = () => (
             <Route path="/manager/orders" element={<Orders />} />
             <Route path="/manager/products" element={<Products />} />
             <Route path="/manager/customers" element={<Customers />} />
+            <Route path="/manager/analytics" element={<Analytics />} />
+            <Route path="/manager/shipping" element={<Shipping />} />
+            <Route path="/manager/coupons" element={<Coupons />} />
+            <Route path="/manager/reports" element={<Reports />} />
+            <Route path="/manager/trash" element={<GlobalTrash />} />
             <Route path="/manager/settings" element={<ManagerSettings />} />
             <Route path="/manager/messages" element={<Messages />} />
             <Route path="/manager/profile" element={<Profile />} />
@@ -175,7 +180,9 @@ const App = () => (
           <Route element={<SupportRoute><AdminLayout /></SupportRoute>}>
             <Route path="/support/dashboard" element={<RoleDashboard />} />
             <Route path="/support/orders" element={<Orders />} />
+            <Route path="/support/customers" element={<Customers />} />
             <Route path="/support/messages" element={<Messages />} />
+            <Route path="/support/settings" element={<SupportSettings />} />
             <Route path="/support/profile" element={<Profile />} />
           </Route>
 
