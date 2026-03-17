@@ -123,6 +123,7 @@ export default function Orders() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [quickStatusOrder, setQuickStatusOrder] = useState<Order | null>(null);
   const [quickStatusOpen, setQuickStatusOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
 
   const openCourierModal = (order: Order) => { setCourierOrder(order); setCourierModalOpen(true); };
   const openBulkCourierModal = () => { setBulkCourierModalOpen(true); };
