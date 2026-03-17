@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { LayoutGrid, List } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReturnRequestsTab } from "@/components/admin/ReturnRequestsTab";
