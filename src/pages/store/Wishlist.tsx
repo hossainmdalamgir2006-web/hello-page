@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingBag, Trash2, Loader2 } from 'lucide-react';
+import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { ProductGridSkeleton } from "@/components/skeletons";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
