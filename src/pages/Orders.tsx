@@ -77,7 +77,7 @@ import { DataExport } from "@/components/ui/data-export";
 import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { OrderKanbanView } from "@/components/orders/OrderKanbanView";
+
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
