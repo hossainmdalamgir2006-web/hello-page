@@ -467,6 +467,11 @@ export default function Customers() {
                           <TableCell className="text-right font-medium">
                             ৳{Number(customer.total_spent).toLocaleString()}
                           </TableCell>
+                          <TableCell className="text-right text-sm text-muted-foreground">
+                            {customer.total_orders > 0
+                              ? `৳${Math.round(Number(customer.total_spent) / customer.total_orders).toLocaleString()}`
+                              : '—'}
+                          </TableCell>
                           <TableCell>
                             <Badge variant="outline" className={cn("gap-1 capitalize", tierConfig[tier].color)}>
                               <Crown className="h-3 w-3" />
