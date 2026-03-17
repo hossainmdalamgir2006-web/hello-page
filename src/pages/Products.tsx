@@ -37,6 +37,7 @@ interface ProductCardData {
   sizes?: string[];
   colors?: string[];
   description?: string;
+  short_description?: string;
   meta_title?: string;
   meta_description?: string;
   meta_keywords?: string[];
@@ -84,6 +85,7 @@ export default function Products() {
     image: (product.images && product.images.length > 0) ? product.images[0] : '/placeholder.svg',
     images: product.images || [],
     description: product.description || '',
+    short_description: product.short_description || '',
     meta_title: product.meta_title || '',
     meta_description: product.meta_description || '',
     meta_keywords: product.meta_keywords || [],
@@ -191,6 +193,7 @@ export default function Products() {
         is_active: productData.status === 'active',
         images: productData.images || (productData.image ? [productData.image] : []),
         description: productData.description || null,
+        short_description: productData.short_description || null,
         meta_title: productData.meta_title || null,
         meta_description: productData.meta_description || null,
         meta_keywords: productData.meta_keywords || [],
@@ -213,6 +216,7 @@ export default function Products() {
         is_active: productData.status === 'active',
         images: productData.images || (productData.image ? [productData.image] : []),
         description: productData.description || null,
+        short_description: productData.short_description || null,
         meta_title: productData.meta_title || null,
         meta_description: productData.meta_description || null,
         meta_keywords: productData.meta_keywords || [],

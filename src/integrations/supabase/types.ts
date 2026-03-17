@@ -2336,6 +2336,7 @@ export type Database = {
           product_type: string
           publish_at: string | null
           quantity: number
+          short_description: string | null
           sku: string | null
           slug: string
           tags: string[] | null
@@ -2369,6 +2370,7 @@ export type Database = {
           product_type?: string
           publish_at?: string | null
           quantity?: number
+          short_description?: string | null
           sku?: string | null
           slug: string
           tags?: string[] | null
@@ -2402,6 +2404,7 @@ export type Database = {
           product_type?: string
           publish_at?: string | null
           quantity?: number
+          short_description?: string | null
           sku?: string | null
           slug?: string
           tags?: string[] | null

@@ -117,7 +117,29 @@ export function ProductViewModal({
 
             <Separator />
 
-            {/* Details Grid */}
+            {/* Short Description */}
+            {product.short_description && (
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Short Description</p>
+                <div
+                  className="prose prose-sm max-w-none dark:prose-invert text-foreground"
+                  dangerouslySetInnerHTML={{ __html: product.short_description }}
+                />
+              </div>
+            )}
+
+            {/* Description */}
+            {product.description && (
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Description</p>
+                <div
+                  className="prose prose-sm max-w-none dark:prose-invert text-foreground"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              </div>
+            )}
+
+            <Separator />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">SKU</p>

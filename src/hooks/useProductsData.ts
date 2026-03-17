@@ -19,6 +19,7 @@ export interface Product {
   is_active: boolean;
   is_featured: boolean;
   description: string | null;
+  short_description: string | null;
   barcode: string | null;
   weight: number | null;
   dimensions: any | null;
@@ -158,6 +159,7 @@ export function useProductsData() {
           is_active: row.is_active ?? true,
           is_featured: row.is_featured ?? false,
           description: row.description,
+          short_description: row.short_description || null,
           barcode: row.barcode,
           weight: row.weight,
           dimensions: row.dimensions,
@@ -208,6 +210,7 @@ export function useProductsData() {
           is_active: product.is_active ?? true,
           is_featured: product.is_featured ?? false,
           description: product.description,
+          short_description: product.short_description || null,
           barcode: product.barcode,
           weight: product.weight,
           dimensions: product.dimensions,
@@ -256,6 +259,7 @@ export function useProductsData() {
           is_active: updates.is_active,
           is_featured: updates.is_featured,
           description: updates.description,
+          short_description: updates.short_description || null,
           barcode: updates.barcode,
           weight: updates.weight,
           dimensions: updates.dimensions,

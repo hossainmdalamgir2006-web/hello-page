@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -53,6 +54,7 @@ const defaultProduct: Omit<Product, "id"> = {
   sizes: [],
   colors: [],
   description: "",
+  short_description: "",
   meta_title: "",
   meta_description: "",
   meta_keywords: [],
@@ -114,6 +116,7 @@ export function ProductModal({
         sizes: product.sizes || [],
         colors: product.colors || [],
         description: product.description || "",
+        short_description: product.short_description || "",
         meta_title: product.meta_title || "",
         meta_description: product.meta_description || "",
         meta_keywords: product.meta_keywords || [],
@@ -392,16 +395,24 @@ export function ProductModal({
               )}
             </div>
 
+            {/* Short Description */}
+            <div className="space-y-2">
+              <Label htmlFor="short_description">Short Description</Label>
+              <RichTextEditor
+                value={formData.short_description || ""}
+                onChange={(val) => updateField("short_description", val)}
+                placeholder="Brief product summary for listings..."
+                maxLength={300}
+              />
+            </div>
+
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
+              <RichTextEditor
                 value={formData.description || ""}
-                onChange={(e) => updateField("description", e.target.value)}
-                placeholder="Product description..."
-                rows={3}
-                className="resize-none"
+                onChange={(val) => updateField("description", val)}
+                placeholder="Full product description..."
               />
             </div>
 
