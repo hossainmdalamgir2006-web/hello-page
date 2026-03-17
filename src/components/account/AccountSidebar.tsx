@@ -32,8 +32,6 @@ const menuSections = [
     label: "ORDERS",
     items: [
       { title: "My Orders", url: "/myaccount/orders", icon: Package },
-      { title: "Order Tracking", url: "/myaccount/tracking", icon: Navigation },
-      { title: "Invoices", url: "/myaccount/invoices", icon: FileText },
       { title: "Returns", url: "/myaccount/returns", icon: RotateCcw },
     ],
   },
