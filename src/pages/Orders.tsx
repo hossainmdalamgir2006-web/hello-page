@@ -350,6 +350,11 @@ export default function Orders() {
               </Card>
             )}
 
+            {/* Kanban View */}
+            {viewMode === "kanban" && !isMobile && (
+              <OrderKanbanView orders={filteredOrders} onViewDetails={viewDetails} onUpdateStatus={handleUpdateStatus} />
+            )}
+
             {/* Orders Table */}
             {isMobile ? (
               <div className="space-y-3">
