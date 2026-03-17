@@ -65,6 +65,7 @@ export default function ReviewsManager() {
       let query = supabase
         .from("product_reviews")
         .select("*, products(name)")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (statusFilter === "pending") query = query.is("is_approved", null);
