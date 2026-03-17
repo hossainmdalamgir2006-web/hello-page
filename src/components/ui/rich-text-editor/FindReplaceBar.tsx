@@ -15,7 +15,7 @@ export const FindReplaceBar = ({ editorRef, onClose, syncContent }: FindReplaceB
 
   const handleFind = () => {
     if (!findText) return;
-    window.find(findText, false, false, true, false, false, false);
+    (window as any).find(findText, false, false, true, false, false, false);
   };
 
   const handleReplace = () => {
