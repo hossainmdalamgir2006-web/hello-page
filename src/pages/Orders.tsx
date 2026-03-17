@@ -356,7 +356,7 @@ export default function Orders() {
             )}
 
             {/* Orders Table */}
-            {isMobile ? (
+            {viewMode === "kanban" && !isMobile ? null : isMobile ? (
               <div className="space-y-3">
                 {paginatedOrders.length === 0 ? (
                   <Card><CardContent className="flex flex-col items-center gap-2 py-12"><ShoppingBag className="h-8 w-8 text-muted-foreground" /><p className="text-muted-foreground">No orders found</p></CardContent></Card>
