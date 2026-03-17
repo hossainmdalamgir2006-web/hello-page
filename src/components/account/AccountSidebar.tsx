@@ -82,13 +82,6 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
     onCloseMobile?.();
   };
 
-  const getInitials = () => {
-    if (fullName) {
-      return fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
-    }
-    return email?.slice(0, 2).toUpperCase() || "U";
-  };
-
   const renderNavItem = (item: { title: string; url: string; icon: React.ElementType; end?: boolean }) => {
     const active = isActive(item.url);
     const showBadge = item.url === "/myaccount/notifications" && unreadCount > 0;
