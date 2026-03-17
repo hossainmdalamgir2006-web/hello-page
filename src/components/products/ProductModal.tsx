@@ -394,16 +394,24 @@ export function ProductModal({
               )}
             </div>
 
+            {/* Short Description */}
+            <div className="space-y-2">
+              <Label htmlFor="short_description">Short Description</Label>
+              <RichTextEditor
+                value={formData.short_description || ""}
+                onChange={(val) => updateField("short_description", val)}
+                placeholder="Brief product summary for listings..."
+                maxLength={300}
+              />
+            </div>
+
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
+              <RichTextEditor
                 value={formData.description || ""}
-                onChange={(e) => updateField("description", e.target.value)}
-                placeholder="Product description..."
-                rows={3}
-                className="resize-none"
+                onChange={(val) => updateField("description", val)}
+                placeholder="Full product description..."
               />
             </div>
 
