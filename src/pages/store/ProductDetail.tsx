@@ -196,7 +196,9 @@ export default function ProductDetail() {
 
     if (!error && data) {
       const p: Product = {
-        id: data.id, name: data.name, description: data.description, price: Number(data.price),
+        id: data.id, name: data.name, description: data.description,
+        short_description: (data as any).short_description || null,
+        price: Number(data.price),
         compare_at_price: data.compare_at_price ? Number(data.compare_at_price) : null,
         images: data.images || [], category: data.category, quantity: data.quantity, sku: data.sku,
         product_type: (data as any).product_type || 'simple', slug: (data as any).slug || undefined,
