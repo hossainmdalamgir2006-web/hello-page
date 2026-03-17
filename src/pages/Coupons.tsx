@@ -217,6 +217,7 @@ export default function Coupons() {
       const { data, error } = await supabase
         .from('auto_discount_rules')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
