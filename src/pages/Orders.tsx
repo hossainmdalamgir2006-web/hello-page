@@ -309,13 +309,7 @@ export default function Orders() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center border rounded-lg overflow-hidden">
-                  <Button variant={viewMode === "table" ? "secondary" : "ghost"} size="sm" className="rounded-none h-9 px-3" onClick={() => setViewMode("table")}><List className="h-4 w-4" /></Button>
-                  <Button variant={viewMode === "kanban" ? "secondary" : "ghost"} size="sm" className="rounded-none h-9 px-3" onClick={() => setViewMode("kanban")}><LayoutGrid className="h-4 w-4" /></Button>
-                </div>
-                <DataExport data={sortedOrders} filename={`orders-${format(new Date(), 'yyyy-MM-dd')}`} columns={exportColumns} />
-              </div>
+              <DataExport data={sortedOrders} filename={`orders-${format(new Date(), 'yyyy-MM-dd')}`} columns={exportColumns} />
             </div>
 
             {/* Bulk Actions Bar */}
