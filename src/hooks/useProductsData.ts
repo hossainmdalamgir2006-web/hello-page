@@ -259,6 +259,7 @@ export function useProductsData() {
           is_active: updates.is_active,
           is_featured: updates.is_featured,
           description: updates.description,
+          short_description: updates.short_description || null,
           barcode: updates.barcode,
           weight: updates.weight,
           dimensions: updates.dimensions,
