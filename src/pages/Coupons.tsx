@@ -386,22 +386,32 @@ export default function Coupons() {
     }
   });
 
-  // Delete rule mutation
+  // Soft delete rule mutation (move to trash)
   const deleteRuleMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('auto_discount_rules')
-        .delete()
+        .update({ deleted_at: new Date().toISOString() } as any)
         .eq('id', id);
       
       if (error) throw error;
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['auto-discount-rules'] });
-      toast.success("Rule deleted successfully");
+      toast.success("Rule moved to trash", {
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            await supabase.from('auto_discount_rules').update({ deleted_at: null } as any).eq('id', id);
+            queryClient.invalidateQueries({ queryKey: ['auto-discount-rules'] });
+          },
+        },
+        duration: 5000,
+      });
     },
     onError: () => {
-      toast.error("Failed to delete rule");
+      toast.error("Failed to move to trash");
     }
   });
 

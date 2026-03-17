@@ -67,11 +67,14 @@ export function CarouselSlidesManager() {
   };
 
   const deleteSlide = async (id: string) => {
-    const { error } = await supabase.from("homepage_carousel_slides").delete().eq("id", id);
+    const { error } = await supabase
+      .from("homepage_carousel_slides")
+      .update({ deleted_at: new Date().toISOString() } as any)
+      .eq("id", id);
     if (error) {
-      toast({ title: "Error", description: "Failed to delete slide", variant: "destructive" });
+      toast({ title: "Error", description: "Failed to move to trash", variant: "destructive" });
     } else {
-      toast({ title: "Deleted", description: "Slide removed" });
+      toast({ title: "Moved to Trash", description: "Slide moved to trash" });
       if (editingId === id) setEditingId(null);
       fetchSlides();
     }

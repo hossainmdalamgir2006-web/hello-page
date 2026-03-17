@@ -386,7 +386,7 @@ export function ContactMessagesTab() {
                               className="text-destructive"
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
+                              Move to Trash
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

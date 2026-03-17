@@ -88,28 +88,30 @@ export function useContactMessages() {
 
   const deleteMessage = useMutation({
     mutationFn: async (id: string) => {
-      // Delete related replies first (FK constraint)
-      const { error: repliesError } = await supabase
-        .from("contact_message_replies")
-        .delete()
-        .eq("message_id", id);
-
-      if (repliesError) throw repliesError;
-
       const { error } = await supabase
         .from("contact_messages")
-        .delete()
+        .update({ deleted_at: new Date().toISOString() } as any)
         .eq("id", id);
 
       if (error) throw error;
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
-      toast.success("Message deleted");
+      toast.success("Message moved to trash", {
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            await supabase.from("contact_messages").update({ deleted_at: null } as any).eq("id", id);
+            queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+          },
+        },
+        duration: 5000,
+      });
     },
     onError: (error) => {
-      console.error("Error deleting message:", error);
-      toast.error("Failed to delete message");
+      console.error("Error trashing message:", error);
+      toast.error("Failed to move to trash");
     },
   });
 
