@@ -1,0 +1,166 @@
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2, CreditCard, Plus, Trash2, Star } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+
+const METHOD_TYPES = [
+  { value: "bkash", label: "bKash", icon: "📱" },
+  { value: "nagad", label: "Nagad", icon: "📱" },
+  { value: "rocket", label: "Rocket", icon: "📱" },
+  { value: "bank", label: "Bank Account", icon: "🏦" },
+  { value: "card", label: "Card", icon: "💳" },
+];
+
+export default function AccountPaymentMethods() {
+  const { user } = useAuth();
+  const [methods, setMethods] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [methodType, setMethodType] = useState("");
+  const [label, setLabel] = useState("");
+  const [lastFour, setLastFour] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetch = async () => {
+    if (!user) return;
+    setLoading(true);
+    const { data } = await supabase
+      .from("saved_payment_methods")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    setMethods(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetch(); }, [user]);
+
+  const handleAdd = async () => {
+    if (!methodType || !label) { toast.error("Fill in all fields"); return; }
+    setSubmitting(true);
+    const { error } = await supabase.from("saved_payment_methods").insert({
+      user_id: user!.id,
+      method_type: methodType,
+      label,
+      last_four: lastFour || null,
+      is_default: methods.length === 0,
+    });
+    if (error) { toast.error("Failed to add"); }
+    else {
+      toast.success("Payment method added!");
+      setOpen(false);
+      setMethodType("");
+      setLabel("");
+      setLastFour("");
+      fetch();
+    }
+    setSubmitting(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase.from("saved_payment_methods").delete().eq("id", id);
+    if (!error) { toast.success("Removed"); fetch(); }
+  };
+
+  const handleSetDefault = async (id: string) => {
+    // Unset all first
+    await supabase.from("saved_payment_methods").update({ is_default: false }).eq("user_id", user!.id);
+    await supabase.from("saved_payment_methods").update({ is_default: true }).eq("id", id);
+    toast.success("Default updated");
+    fetch();
+  };
+
+  if (loading) {
+    return <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+  }
+
+  const getIcon = (type: string) => METHOD_TYPES.find((m) => m.value === type)?.icon || "💳";
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-end">
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Add Method</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader><DialogTitle>Add Payment Method</DialogTitle></DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Type</Label>
+                <Select value={methodType} onValueChange={setMethodType}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent>
+                    {METHOD_TYPES.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>{m.icon} {m.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Label / Account Name</Label>
+                <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Personal bKash" />
+              </div>
+              <div>
+                <Label>Last 4 digits (optional)</Label>
+                <Input value={lastFour} onChange={(e) => setLastFour(e.target.value)} placeholder="1234" maxLength={4} />
+              </div>
+              <Button onClick={handleAdd} disabled={submitting} className="w-full">
+                {submitting && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
+                Save
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {methods.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center text-muted-foreground">
+            <CreditCard className="h-12 w-12 mx-auto mb-3 opacity-40" />
+            <p>No saved payment methods</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {methods.map((m) => (
+            <Card key={m.id}>
+              <CardContent className="flex items-center justify-between py-4 flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{getIcon(m.method_type)}</span>
+                  <div>
+                    <p className="font-semibold text-sm flex items-center gap-2">
+                      {m.label}
+                      {m.is_default && <Badge variant="default" className="text-[10px]">Default</Badge>}
+                    </p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {m.method_type}{m.last_four && ` · •••• ${m.last_four}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  {!m.is_default && (
+                    <Button variant="ghost" size="sm" onClick={() => handleSetDefault(m.id)}>
+                      <Star className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDelete(m.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

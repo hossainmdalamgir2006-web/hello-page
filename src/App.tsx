@@ -1,0 +1,189 @@
+import { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Providers } from "@/components/Providers";
+import { ProtectedRoute, AdminRoute, ManagerRoute, SupportRoute } from "@/components/ProtectedRoute";
+import { AutoPageTitle } from "@/components/AutoPageTitle";
+import { AdminLayout } from "@/layouts/AdminLayout";
+import { StoreLayout } from "@/layouts/StoreLayout";
+import { Loader2 } from "lucide-react";
+
+// Lazy-loaded page fallback
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
+
+// Store Pages (lazy)
+const StoreHome = lazy(() => import("./pages/store/StoreHome"));
+const StoreProducts = lazy(() => import("./pages/store/StoreProducts"));
+const ProductDetail = lazy(() => import("./pages/store/ProductDetail"));
+const Cart = lazy(() => import("./pages/store/Cart"));
+const TrackOrder = lazy(() => import("./pages/store/TrackOrder"));
+const Checkout = lazy(() => import("./pages/store/Checkout"));
+const OrderConfirmation = lazy(() => import("./pages/store/OrderConfirmation"));
+const PaymentProcessing = lazy(() => import("./pages/store/PaymentProcessing"));
+const PaymentCallback = lazy(() => import("./pages/store/PaymentCallback"));
+const OrderTracking = lazy(() => import("./pages/store/OrderTracking"));
+const Wishlist = lazy(() => import("./pages/store/Wishlist"));
+const Contact = lazy(() => import("./pages/store/Contact"));
+const FAQ = lazy(() => import("./pages/store/FAQ"));
+const ShippingInfo = lazy(() => import("./pages/store/ShippingInfo"));
+const Returns = lazy(() => import("./pages/store/Returns"));
+const SizeGuide = lazy(() => import("./pages/store/SizeGuide"));
+const Privacy = lazy(() => import("./pages/store/Privacy"));
+const Terms = lazy(() => import("./pages/store/Terms"));
+
+// Customer Account (lazy)
+const AccountDashboard = lazy(() => import("./pages/store/account/AccountDashboard"));
+const AccountOrders = lazy(() => import("./pages/store/account/AccountOrders"));
+const AccountWishlist = lazy(() => import("./pages/store/account/AccountWishlist"));
+const AccountShopping = lazy(() => import("./pages/store/account/AccountShopping"));
+const AccountRecentlyViewed = lazy(() => import("./pages/store/account/AccountRecentlyViewed"));
+const AccountAddresses = lazy(() => import("./pages/store/account/AccountAddresses"));
+const AccountSecurity = lazy(() => import("./pages/store/account/AccountSecurity"));
+const AccountSupport = lazy(() => import("./pages/store/account/AccountSupport"));
+const AccountSettings = lazy(() => import("./pages/store/account/AccountSettings"));
+const AccountOrderTracking = lazy(() => import("./pages/store/account/AccountOrderTracking"));
+const AccountInvoice = lazy(() => import("./pages/store/account/AccountInvoice"));
+const AccountReturns = lazy(() => import("./pages/store/account/AccountReturns"));
+const AccountReviews = lazy(() => import("./pages/store/account/AccountReviews"));
+const AccountNotifications = lazy(() => import("./pages/store/account/AccountNotifications"));
+const AccountPaymentMethods = lazy(() => import("./pages/store/account/AccountPaymentMethods"));
+const AccountChat = lazy(() => import("./pages/store/account/AccountChat"));
+import { CustomerAccountLayout } from "./layouts/CustomerAccountLayout";
+
+// Admin Pages (lazy)
+const Index = lazy(() => import("./pages/Index"));
+const Products = lazy(() => import("./pages/Products"));
+const Categories = lazy(() => import("./pages/Categories"));
+const Orders = lazy(() => import("./pages/Orders"));
+const Analytics = lazy(() => import("./pages/Analytics"));
+const Customers = lazy(() => import("./pages/Customers"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Shipping = lazy(() => import("./pages/Shipping"));
+const Messages = lazy(() => import("./pages/Messages"));
+const Reports = lazy(() => import("./pages/Reports"));
+const Coupons = lazy(() => import("./pages/Coupons"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Brands = lazy(() => import("./pages/Brands"));
+const Login = lazy(() => import("./pages/Login"));
+const Inventory = lazy(() => import("./pages/Inventory"));
+const AbandonedCarts = lazy(() => import("./pages/AbandonedCarts"));
+const RoleManagement = lazy(() => import("./pages/RoleManagement"));
+const RoleDashboard = lazy(() => import("./pages/RoleDashboard"));
+const ManagerSettings = lazy(() => import("./pages/ManagerSettings"));
+const GlobalTrash = lazy(() => import("./pages/GlobalTrash"));
+const HomepageManager = lazy(() => import("./pages/admin/HomepageManager"));
+const AppearanceManager = lazy(() => import("./pages/admin/AppearanceManager"));
+const PageContentManager = lazy(() => import("./pages/admin/PageContentManager"));
+const ReviewsManager = lazy(() => import("./pages/admin/ReviewsManager"));
+const SupportSettings = lazy(() => import("./pages/SupportSettings"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+const App = () => (
+  <Providers>
+    <BrowserRouter>
+      <AutoPageTitle />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* ====================== */}
+          {/* Store Frontend Routes - Nested under StoreLayout */}
+          {/* ====================== */}
+          <Route element={<StoreLayout />}>
+            <Route path="/" element={<StoreHome />} />
+            <Route path="/products" element={<StoreProducts />} />
+            <Route path="/product/:slug" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/track-order" element={<TrackOrder />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/payment-processing" element={<PaymentProcessing />} />
+            <Route path="/payment/callback" element={<PaymentCallback />} />
+            <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/shipping-info" element={<ShippingInfo />} />
+            <Route path="/returns" element={<Returns />} />
+            <Route path="/size-guide" element={<SizeGuide />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
+
+          {/* Customer Account Routes */}
+          <Route path="/myaccount" element={<ProtectedRoute><CustomerAccountLayout /></ProtectedRoute>}>
+            <Route index element={<AccountDashboard />} />
+            <Route path="orders" element={<AccountOrders />} />
+            <Route path="orders/:orderId" element={<AccountOrderTracking />} />
+            <Route path="orders/:orderId/invoice" element={<AccountInvoice />} />
+            <Route path="wishlist" element={<AccountWishlist />} />
+            <Route path="shopping" element={<AccountShopping />} />
+            <Route path="recently-viewed" element={<AccountRecentlyViewed />} />
+            <Route path="addresses" element={<AccountAddresses />} />
+            <Route path="security" element={<AccountSecurity />} />
+            <Route path="support" element={<AccountSupport />} />
+            <Route path="settings" element={<AccountSettings />} />
+            <Route path="returns" element={<AccountReturns />} />
+            <Route path="reviews" element={<AccountReviews />} />
+            <Route path="notifications" element={<AccountNotifications />} />
+            <Route path="payment-methods" element={<AccountPaymentMethods />} />
+            <Route path="chat" element={<AccountChat />} />
+          </Route>
+
+          {/* ====================== */}
+          {/* Admin Routes */}
+          {/* ====================== */}
+          <Route element={<AdminRoute><AdminLayout /></AdminRoute>}>
+            <Route path="/admin/dashboard" element={<Index />} />
+            <Route path="/admin/products" element={<Products />} />
+            <Route path="/admin/categories" element={<Categories />} />
+            <Route path="/admin/brands" element={<Brands />} />
+            <Route path="/admin/orders" element={<Orders />} />
+            <Route path="/admin/analytics" element={<Analytics />} />
+            <Route path="/admin/customers" element={<Customers />} />
+            <Route path="/admin/settings" element={<Settings />} />
+            <Route path="/admin/shipping" element={<Shipping />} />
+            <Route path="/admin/messages" element={<Messages />} />
+            <Route path="/admin/reports" element={<Reports />} />
+            <Route path="/admin/coupons" element={<Coupons />} />
+            <Route path="/admin/profile" element={<Profile />} />
+            <Route path="/admin/inventory" element={<Inventory />} />
+            <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
+            <Route path="/admin/role-management" element={<RoleManagement />} />
+            <Route path="/admin/homepage" element={<HomepageManager />} />
+            <Route path="/admin/appearance" element={<AppearanceManager />} />
+            <Route path="/admin/page-content" element={<PageContentManager />} />
+            <Route path="/admin/reviews" element={<ReviewsManager />} />
+            <Route path="/admin/trash" element={<GlobalTrash />} />
+            <Route path="/admin/support-settings" element={<SupportSettings />} />
+          </Route>
+
+          {/* Manager Routes */}
+          <Route element={<ManagerRoute><AdminLayout /></ManagerRoute>}>
+            <Route path="/manager/dashboard" element={<RoleDashboard />} />
+            <Route path="/manager/orders" element={<Orders />} />
+            <Route path="/manager/products" element={<Products />} />
+            <Route path="/manager/customers" element={<Customers />} />
+            <Route path="/manager/settings" element={<ManagerSettings />} />
+            <Route path="/manager/messages" element={<Messages />} />
+            <Route path="/manager/profile" element={<Profile />} />
+          </Route>
+
+          {/* Support Routes */}
+          <Route element={<SupportRoute><AdminLayout /></SupportRoute>}>
+            <Route path="/support/dashboard" element={<RoleDashboard />} />
+            <Route path="/support/orders" element={<Orders />} />
+            <Route path="/support/messages" element={<Messages />} />
+            <Route path="/support/profile" element={<Profile />} />
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  </Providers>
+);
+
+export default App;

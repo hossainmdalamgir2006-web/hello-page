@@ -1,0 +1,62 @@
+import { Link, useLocation } from "react-router-dom";
+import { Home, Search, Heart, ShoppingBag, User } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+
+const navItems = [
+  { path: "/", icon: Home, label: "Home" },
+  { path: "/products", icon: Search, label: "Shop" },
+  { path: "/wishlist", icon: Heart, label: "Wishlist" },
+  { path: "/cart", icon: ShoppingBag, label: "Cart" },
+  { path: "/myaccount", icon: User, label: "Account" },
+];
+
+export function MobileBottomNav() {
+  const isMobile = useIsMobile();
+  const location = useLocation();
+  const { itemCount } = useCart();
+  const { itemCount: wishlistCount } = useWishlist();
+
+  if (!isMobile) return null;
+
+  // Hide on checkout/login
+  if (["/checkout", "/login"].includes(location.pathname)) return null;
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border safe-area-bottom">
+      <div className="flex items-center justify-around h-14">
+        {navItems.map(({ path, icon: Icon, label }) => {
+          const active = location.pathname === path || 
+            (path !== "/" && location.pathname.startsWith(path));
+          return (
+            <Link
+              key={path}
+              to={path}
+              className={cn(
+                "flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] transition-colors relative",
+                active ? "text-primary font-medium" : "text-muted-foreground"
+              )}
+            >
+              <div className="relative">
+                <Icon className="h-5 w-5" />
+                {label === "Cart" && itemCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                    {itemCount > 9 ? "9+" : itemCount}
+                  </span>
+                )}
+                {label === "Wishlist" && wishlistCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                  </span>
+                )}
+              </div>
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
