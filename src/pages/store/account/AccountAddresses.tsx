@@ -25,6 +25,8 @@ import {
 import {
   MapPin, Plus, Edit, Trash2, Phone, Home, Truck, Building2, Loader2,
 } from "lucide-react";
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { AddressesSkeleton } from "@/components/skeletons";
 
 interface Address {
   id: string;
