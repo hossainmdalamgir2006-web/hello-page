@@ -112,10 +112,27 @@ export default function StorePage() {
       { key: "STORE_TWITTER_URL", value: storeSettings.twitterUrl },
       { key: "STORE_YOUTUBE_URL", value: storeSettings.youtubeUrl },
     ]);
+    setIsDirty(false);
   };
 
   return (
     <div className="space-y-6">
+      {/* Unsaved changes banner */}
+      {isDirty && (
+        <div className="flex items-center justify-between rounded-lg border border-warning/30 bg-warning/5 px-4 py-3">
+          <p className="text-sm font-medium text-warning">You have unsaved changes</p>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={() => { initializedRef.current = false; setIsDirty(false); window.location.reload(); }}>
+              Discard
+            </Button>
+            <Button size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />}
+              Save Now
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Store Settings</h2>
