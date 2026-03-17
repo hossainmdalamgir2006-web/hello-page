@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { OrdersListSkeleton } from "@/components/skeletons";
 import { OrdersTab } from "@/components/account/OrdersTab";
 
 export default function AccountOrders() {
