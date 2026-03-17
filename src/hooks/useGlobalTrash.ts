@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
-export type TrashEntityType = 'product' | 'order' | 'brand' | 'category' | 'coupon';
+export type TrashEntityType = 'product' | 'order' | 'brand' | 'category' | 'coupon' | 'support_ticket' | 'contact_message' | 'review' | 'carousel_slide' | 'auto_discount_rule';
 
 export interface TrashedItem {
   id: string;
@@ -30,6 +30,11 @@ const ENTITY_CONFIGS: Record<TrashEntityType, { table: string; nameCol: string; 
   brand: { table: 'brands', nameCol: 'name', extraCols: ['slug', 'logo_url'] },
   category: { table: 'categories', nameCol: 'name', extraCols: ['slug', 'image_url'] },
   coupon: { table: 'coupons', nameCol: 'code', extraCols: ['discount_type', 'discount_value', 'is_active'] },
+  support_ticket: { table: 'support_tickets', nameCol: 'subject', extraCols: ['ticket_number', 'status', 'priority', 'customer_name'] },
+  contact_message: { table: 'contact_messages', nameCol: 'email', extraCols: ['first_name', 'last_name', 'message'] },
+  review: { table: 'product_reviews', nameCol: 'customer_name', extraCols: ['rating', 'title', 'is_approved'] },
+  carousel_slide: { table: 'homepage_carousel_slides', nameCol: 'title', extraCols: ['media_type', 'is_enabled'] },
+  auto_discount_rule: { table: 'auto_discount_rules', nameCol: 'name', extraCols: ['discount_type', 'discount_value', 'is_active'] },
 };
 
 export function useGlobalTrash() {

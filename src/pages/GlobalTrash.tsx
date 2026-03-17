@@ -397,6 +397,16 @@ function EntityDetails({ item }: { item: TrashedItem }) {
       return <span>{extra.slug || '-'}</span>;
     case 'coupon':
       return <span>{extra.discount_type}: {extra.discount_value}</span>;
+    case 'support_ticket':
+      return <span>#{extra.ticket_number} · {extra.customer_name || '-'} · {extra.priority || '-'}</span>;
+    case 'contact_message':
+      return <span>{extra.first_name} {extra.last_name} · {(extra.message || '').slice(0, 50)}</span>;
+    case 'review':
+      return <span>Rating: {extra.rating || '-'} · {extra.is_approved === true ? 'Approved' : extra.is_approved === false ? 'Rejected' : 'Pending'}</span>;
+    case 'carousel_slide':
+      return <span>{extra.media_type || 'image'} · {extra.is_enabled ? 'Enabled' : 'Disabled'}</span>;
+    case 'auto_discount_rule':
+      return <span>{extra.discount_type}: {extra.discount_value} · {extra.is_active ? 'Active' : 'Inactive'}</span>;
     default:
       return null;
   }
