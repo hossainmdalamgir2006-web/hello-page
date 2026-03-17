@@ -53,6 +53,7 @@ const defaultProduct: Omit<Product, "id"> = {
   sizes: [],
   colors: [],
   description: "",
+  short_description: "",
   meta_title: "",
   meta_description: "",
   meta_keywords: [],
