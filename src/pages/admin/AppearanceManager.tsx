@@ -174,6 +174,21 @@ export default function AppearanceManager() {
             <TabsTrigger value="custom" className="gap-1.5"><Code className="h-3.5 w-3.5" />Custom CSS</TabsTrigger>
           </TabsList>
 
+          {/* Presets Tab */}
+          <TabsContent value="presets">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Theme Presets</CardTitle>
+                <CardDescription>Quick-apply a pre-built color scheme, then fine-tune in the Colors tab</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ThemePresets onApply={(values) => {
+                  Object.entries(values).forEach(([key, value]) => setVal(key, value));
+                }} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Colors Tab */}
           <TabsContent value="colors">
             <div className="grid gap-6 md:grid-cols-2">
