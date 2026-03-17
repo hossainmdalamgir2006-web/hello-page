@@ -40,7 +40,7 @@ const menuSections = [
     items: [
       { title: "Wishlist", url: "/myaccount/wishlist", icon: Heart },
       { title: "Shopping", url: "/myaccount/shopping", icon: ShoppingBag },
-      { title: "Recently Viewed", url: "/myaccount/recent", icon: Clock },
+      { title: "Recently Viewed", url: "/myaccount/recently-viewed", icon: Clock },
       { title: "My Reviews", url: "/myaccount/reviews", icon: Star },
     ],
   },

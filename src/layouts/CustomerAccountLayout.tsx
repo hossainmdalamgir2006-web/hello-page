@@ -12,12 +12,10 @@ const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
 const pageTitles: Record<string, { title: string; description: string }> = {
   "/myaccount": { title: "Dashboard", description: "Overview of your account activity" },
   "/myaccount/orders": { title: "My Orders", description: "View and track your orders" },
-  "/myaccount/tracking": { title: "Order Tracking", description: "Real-time order tracking timeline" },
-  "/myaccount/invoices": { title: "Invoices", description: "Download order invoices & receipts" },
   "/myaccount/returns": { title: "Returns & Refunds", description: "Submit return or refund requests" },
   "/myaccount/wishlist": { title: "Wishlist", description: "Products you've saved for later" },
   "/myaccount/shopping": { title: "Shopping", description: "Buy again, coupons & deals" },
-  "/myaccount/recent": { title: "Recently Viewed", description: "Products you've browsed" },
+  "/myaccount/recently-viewed": { title: "Recently Viewed", description: "Products you've browsed" },
   "/myaccount/reviews": { title: "My Reviews", description: "Your product reviews & ratings" },
   "/myaccount/addresses": { title: "Addresses", description: "Manage delivery addresses" },
   "/myaccount/payment-methods": { title: "Payment Methods", description: "Manage saved payment methods" },
