@@ -6,6 +6,7 @@ import { ProductModal } from "@/components/products/ProductModal";
 import { ProductViewModal } from "@/components/products/ProductViewModal";
 import { ProductTable } from "@/components/products/ProductTable";
 import { ProductImportExport } from "@/components/products/ProductImportExport";
+import { ProductStatusBar } from "@/components/admin/ProductStatusBar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
