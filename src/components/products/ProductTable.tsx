@@ -64,8 +64,6 @@ export function ProductTable({
         return "bg-success/10 text-success border-success/20";
       case "draft":
         return "bg-warning/10 text-warning border-warning/20";
-      case "archived":
-        return "bg-muted text-muted-foreground border-muted";
       default:
         return "bg-muted text-muted-foreground";
     }

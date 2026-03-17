@@ -491,7 +491,6 @@ export function ProductModal({
                 <SelectContent className="bg-popover">
                   <SelectItem value="draft">Draft</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
             </div>
