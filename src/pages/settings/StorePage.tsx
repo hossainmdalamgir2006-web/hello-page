@@ -28,12 +28,32 @@ interface StoreSettings {
 
 export default function StorePage() {
   const { settings, loading, saving, updateMultipleSettings, getSettingValue } = useStoreSettings();
+  const [isDirty, setIsDirty] = useState(false);
+  const initializedRef = useRef(false);
 
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
     storeName: "", storeEmail: "", storePhone: "", address: "", city: "", postalCode: "",
     country: "Bangladesh", currency: "BDT", timezone: "Asia/Dhaka", logo: "", favicon: "",
     description: "", facebookUrl: "", instagramUrl: "", twitterUrl: "", youtubeUrl: "",
   });
+
+  // Warn on browser close/refresh when dirty
+  useBeforeUnload(
+    useCallback((e) => {
+      if (isDirty) {
+        e.preventDefault();
+      }
+    }, [isDirty])
+  );
+
+  // Also warn via native beforeunload
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isDirty) { e.preventDefault(); }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
 
   useEffect(() => {
     if (!loading && settings.length > 0) {
