@@ -45,6 +45,7 @@ export function CarouselSlidesManager() {
     const { data, error } = await supabase
       .from("homepage_carousel_slides")
       .select("*")
+      .is("deleted_at", null)
       .order("sort_order", { ascending: true });
     if (!error && data) setSlides(data as unknown as Slide[]);
     setLoading(false);
