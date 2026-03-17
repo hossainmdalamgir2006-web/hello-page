@@ -32,6 +32,7 @@ import { StickyAddToCartBar } from "@/components/product/StickyAddToCartBar";
 // --- Types ---
 interface Product {
   id: string; name: string; slug?: string; description: string | null;
+  short_description?: string | null;
   price: number; compare_at_price: number | null; images: string[];
   category: string | null; quantity: number; sku: string | null;
   product_type: string | null; brand?: string | null;
@@ -190,12 +191,14 @@ export default function ProductDetail() {
     if (!slug) return;
     setLoading(true);
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-    const query = supabase.from("products").select("id, name, description, price, compare_at_price, images, category, quantity, sku, product_type, brand, video_url, youtube_url, slug");
+    const query = supabase.from("products").select("id, name, description, short_description, price, compare_at_price, images, category, quantity, sku, product_type, brand, video_url, youtube_url, slug");
     const { data, error } = isUUID ? await query.eq("id", slug).single() : await query.eq("slug", slug).single();
 
     if (!error && data) {
       const p: Product = {
-        id: data.id, name: data.name, description: data.description, price: Number(data.price),
+        id: data.id, name: data.name, description: data.description,
+        short_description: (data as any).short_description || null,
+        price: Number(data.price),
         compare_at_price: data.compare_at_price ? Number(data.compare_at_price) : null,
         images: data.images || [], category: data.category, quantity: data.quantity, sku: data.sku,
         product_type: (data as any).product_type || 'simple', slug: (data as any).slug || undefined,
@@ -371,6 +374,16 @@ export default function ProductDetail() {
                 </div>
               )}
             </div>
+
+            {/* Short Description */}
+            {product.short_description && (
+              <div className="mb-4">
+                <div
+                  className="prose prose-sm max-w-none dark:prose-invert text-muted-foreground"
+                  dangerouslySetInnerHTML={{ __html: product.short_description }}
+                />
+              </div>
+            )}
 
             {hasFlashSale && <CountdownBanner discount={discount} />}
 
