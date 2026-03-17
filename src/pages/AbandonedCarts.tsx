@@ -69,6 +69,9 @@ export default function AbandonedCarts() {
         {/* Stats Cards */}
         <AbandonedCartStats stats={stats} />
 
+        {/* Recovery Trend Chart */}
+        <RecoveryRateChart carts={abandonedCarts} />
+
         {/* Main Content */}
         <Card>
           <CardHeader>
