@@ -48,6 +48,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAnalyticsData } from "@/hooks/useAnalyticsData";
+import { PeriodComparison } from "@/components/admin/PeriodComparison";
 
 const StatCard = ({ 
   title, 
