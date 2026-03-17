@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { EditorToolbar } from "./EditorToolbar";
+import { FindReplaceBar } from "./FindReplaceBar";
 import type { RichTextEditorProps } from "./types";
 
 const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
@@ -12,6 +13,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
     const [showSource, setShowSource] = React.useState(false);
     const [sourceValue, setSourceValue] = React.useState("");
     const [isFullscreen, setIsFullscreen] = React.useState(false);
+    const [showFindReplace, setShowFindReplace] = React.useState(false);
 
     React.useEffect(() => {
       if (editorRef.current && !showSource) {
@@ -22,7 +24,6 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
       updateCounts();
     }, [value, showSource]);
 
-    // Escape fullscreen
     React.useEffect(() => {
       const handleEsc = (e: KeyboardEvent) => {
         if (e.key === "Escape" && isFullscreen) setIsFullscreen(false);
@@ -56,10 +57,8 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
       const formats = new Set<string>();
       const cmds = ["bold", "italic", "underline", "strikeThrough", "superscript", "subscript", "insertUnorderedList", "insertOrderedList", "justifyLeft", "justifyCenter", "justifyRight", "justifyFull"];
       cmds.forEach(cmd => { if (document.queryCommandState(cmd)) formats.add(cmd); });
-
       const block = document.queryCommandValue("formatBlock")?.toLowerCase();
       if (block) formats.add(`formatBlock:${block}`);
-
       setActiveFormats(formats);
     };
 
@@ -97,12 +96,57 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
       syncContent();
     };
 
+    const handleInsertChar = (char: string) => {
+      document.execCommand("insertText", false, char);
+      editorRef.current?.focus();
+      syncContent();
+    };
+
     const handleInsertLink = (url: string) => {
       execCommand("createLink", url);
     };
 
     const handleInsertImage = (url: string) => {
       execCommand("insertImage", url);
+    };
+
+    const handleInsertVideo = (url: string) => {
+      let embedUrl = url;
+      // YouTube URL parsing
+      const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) {
+        embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
+      }
+      const html = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:8px 0"><iframe src="${embedUrl}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div><p><br></p>`;
+      document.execCommand("insertHTML", false, html);
+      editorRef.current?.focus();
+      syncContent();
+    };
+
+    const handleSetLineHeight = (value: string) => {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+      const range = sel.getRangeAt(0);
+      const span = document.createElement("span");
+      span.style.lineHeight = value;
+      range.surroundContents(span);
+      editorRef.current?.focus();
+      syncContent();
+    };
+
+    const handleToggleDirection = () => {
+      if (!editorRef.current) return;
+      const current = editorRef.current.dir || "ltr";
+      editorRef.current.dir = current === "ltr" ? "rtl" : "ltr";
+    };
+
+    const handlePrint = () => {
+      if (!editorRef.current) return;
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) return;
+      printWindow.document.write(`<!DOCTYPE html><html><head><title>Print</title><style>body{font-family:system-ui,sans-serif;padding:20px;max-width:800px;margin:0 auto}img{max-width:100%}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:4px 8px}</style></head><body>${editorRef.current.innerHTML}</body></html>`);
+      printWindow.document.close();
+      printWindow.print();
     };
 
     return (
@@ -129,9 +173,22 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           onInsertEmoji={handleInsertEmoji}
           onInsertLink={handleInsertLink}
           onInsertImage={handleInsertImage}
+          onInsertChar={handleInsertChar}
+          onInsertVideo={handleInsertVideo}
+          onSetLineHeight={handleSetLineHeight}
+          onToggleFindReplace={() => setShowFindReplace(!showFindReplace)}
+          onToggleDirection={handleToggleDirection}
+          onPrint={handlePrint}
         />
 
-        {/* Editor area */}
+        {showFindReplace && (
+          <FindReplaceBar
+            editorRef={editorRef}
+            onClose={() => setShowFindReplace(false)}
+            syncContent={syncContent}
+          />
+        )}
+
         {showSource ? (
           <textarea
             value={sourceValue}
@@ -163,7 +220,6 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           />
         )}
 
-        {/* Footer */}
         <div className="flex justify-between px-3 py-1 border-t border-input bg-muted/20">
           <span className="text-xs text-muted-foreground">
             {wordCount} word{wordCount !== 1 ? "s" : ""}
