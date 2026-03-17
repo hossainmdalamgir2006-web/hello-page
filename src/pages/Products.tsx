@@ -361,6 +361,8 @@ export default function Products() {
             </Button>
           </div>
         </div>
+        {/* Status Summary */}
+        <ProductStatusBar products={uiProducts} />
 
         {/* Filters */}
         <ProductFilters

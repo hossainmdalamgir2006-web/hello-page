@@ -250,6 +250,9 @@ export default function ReviewsManager() {
           </div>
         </div>
 
+        {/* Average Rating Summary */}
+        <ReviewRatingSummary reviews={reviews} />
+
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-3">
           <Card>
