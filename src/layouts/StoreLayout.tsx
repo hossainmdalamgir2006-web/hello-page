@@ -6,6 +6,7 @@ import { LiveChatWidget } from "@/components/store/LiveChatWidget";
 import { MaintenancePage } from "@/components/store/MaintenancePage";
 import { BackToTop } from "@/components/store/BackToTop";
 import { MobileBottomNav } from "@/components/store/MobileBottomNav";
+// Loader2 removed - TopProgressBar handles route transitions
 import { StoreBreadcrumb } from "@/components/store/StoreBreadcrumb";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
