@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Palette, Type, Square, PanelLeft, LayoutDashboard, ShoppingBag, FormInput, Tag, Navigation, Layers, Bell, BarChart3, Grid3X3, Code, Image, Save, RotateCcw } from "lucide-react";
+import { Palette, Type, Square, PanelLeft, LayoutDashboard, ShoppingBag, FormInput, Tag, Navigation, Layers, Bell, BarChart3, Grid3X3, Code, Image, Save, RotateCcw, Wand2 } from "lucide-react";
+import { ThemePresets } from "@/components/admin/ThemePresets";
 
 const GOOGLE_FONTS = [
   "Inter", "Poppins", "Roboto", "Open Sans", "Lato", "Montserrat", "Raleway",
