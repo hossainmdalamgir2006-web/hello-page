@@ -32,6 +32,7 @@ import { StickyAddToCartBar } from "@/components/product/StickyAddToCartBar";
 // --- Types ---
 interface Product {
   id: string; name: string; slug?: string; description: string | null;
+  short_description?: string | null;
   price: number; compare_at_price: number | null; images: string[];
   category: string | null; quantity: number; sku: string | null;
   product_type: string | null; brand?: string | null;
