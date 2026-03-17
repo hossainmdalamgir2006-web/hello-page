@@ -460,7 +460,8 @@ export default function Orders() {
                   {totalItems > 0 && <TablePagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} totalItems={totalItems} onPageChange={goToPage} onPageSizeChange={changePageSize} />}
                 </CardContent>
               </Card>
-            )}
+            )
+            }
           </TabsContent>
         </Tabs>
 
