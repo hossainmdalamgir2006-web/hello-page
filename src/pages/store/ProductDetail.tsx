@@ -191,7 +191,7 @@ export default function ProductDetail() {
     if (!slug) return;
     setLoading(true);
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-    const query = supabase.from("products").select("id, name, description, price, compare_at_price, images, category, quantity, sku, product_type, brand, video_url, youtube_url, slug");
+    const query = supabase.from("products").select("id, name, description, short_description, price, compare_at_price, images, category, quantity, sku, product_type, brand, video_url, youtube_url, slug");
     const { data, error } = isUUID ? await query.eq("id", slug).single() : await query.eq("slug", slug).single();
 
     if (!error && data) {
