@@ -68,7 +68,7 @@ const Coupons = lazy(() => import("./pages/Coupons"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Brands = lazy(() => import("./pages/Brands"));
 const Login = lazy(() => import("./pages/Login"));
-const Inventory = lazy(() => import("./pages/Inventory"));
+
 const AbandonedCarts = lazy(() => import("./pages/AbandonedCarts"));
 const RoleManagement = lazy(() => import("./pages/RoleManagement"));
 const RoleDashboard = lazy(() => import("./pages/RoleDashboard"));
@@ -149,7 +149,7 @@ const App = () => (
             <Route path="/admin/reports" element={<Reports />} />
             <Route path="/admin/coupons" element={<Coupons />} />
             <Route path="/admin/profile" element={<Profile />} />
-            <Route path="/admin/inventory" element={<Inventory />} />
+            
             <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
             <Route path="/admin/role-management" element={<RoleManagement />} />
             <Route path="/admin/homepage" element={<HomepageManager />} />

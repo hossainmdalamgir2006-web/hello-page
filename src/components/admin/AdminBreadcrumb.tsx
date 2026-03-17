@@ -11,7 +11,7 @@ const routeLabels: Record<string, string> = {
   categories: "Categories",
   analytics: "Analytics",
   shipping: "Shipping",
-  inventory: "Inventory",
+  
   coupons: "Coupons",
   messages: "Messages",
   reports: "Reports",

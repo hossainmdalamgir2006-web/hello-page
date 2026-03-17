@@ -11,7 +11,7 @@ import {
   Truck,
   MessageSquare,
   FileText,
-  Boxes,
+  
   Ticket,
   UserCog,
   User,
@@ -89,7 +89,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
 
   const allManagementItems = [
     { title: t('nav.shipping'), url: `${role === 'admin' ? '/admin' : '/manager'}/shipping`, icon: Truck, roles: ['admin', 'manager'] },
-    { title: t('nav.inventory'), url: `${role === 'manager' ? '/manager' : '/admin'}/inventory`, icon: Boxes, roles: ['admin', 'manager'] },
+    
     { title: t('nav.coupons'), url: `${role === 'admin' ? '/admin' : '/manager'}/coupons`, icon: Ticket, roles: ['admin', 'manager'] },
     { title: "Abandoned Carts", url: "/admin/abandoned-carts", icon: ShoppingBasket, roles: ['admin'] },
     { title: "Homepage", url: "/admin/homepage", icon: Home, roles: ['admin'] },
@@ -237,7 +237,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
               ) : (
                 <>
                   <ChevronsLeft className="h-4 w-4" />
-                  <span className="text-xs">সাইডবার গুটিয়ে রাখুন</span>
+                  <span className="text-xs">Collapse Sidebar</span>
                 </>
               )}
             </Button>

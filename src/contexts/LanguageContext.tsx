@@ -20,7 +20,7 @@ export const translations: Translations = {
   'nav.analytics': { en: 'Analytics', bn: 'অ্যানালিটিক্স' },
   'nav.messages': { en: 'Messages', bn: 'মেসেজ' },
   'nav.reports': { en: 'Reports', bn: 'রিপোর্ট' },
-  'nav.inventory': { en: 'Inventory', bn: 'ইনভেন্টরি' },
+  
   'nav.coupons': { en: 'Coupons', bn: 'কুপন' },
   'nav.settings': { en: 'Settings', bn: 'সেটিংস' },
   'nav.logout': { en: 'Logout', bn: 'লগআউট' },
