@@ -140,7 +140,15 @@ export default function Analytics() {
               Detailed insights and performance metrics
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={showComparison ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowComparison(!showComparison)}
+            >
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Compare
+            </Button>
             <Button 
               variant="outline" 
               size="sm" 
