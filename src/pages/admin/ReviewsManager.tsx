@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { usePagination } from "@/hooks/usePagination";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { ReviewRatingSummary } from "@/components/admin/ReviewRatingSummary";
 
 type ReviewRow = {
   id: string;
@@ -248,6 +249,9 @@ export default function ReviewsManager() {
             </Select>
           </div>
         </div>
+
+        {/* Average Rating Summary */}
+        <ReviewRatingSummary reviews={reviews} />
 
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-3">

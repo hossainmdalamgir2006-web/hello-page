@@ -406,6 +406,7 @@ export default function Customers() {
                     >
                       Total Spent
                     </SortableTableHead>
+                    <TableHead className="text-right">Avg Order</TableHead>
                     <TableHead>Tier</TableHead>
                     <TableHead>Tags</TableHead>
                     <TableHead>Status</TableHead>
@@ -415,7 +416,7 @@ export default function Customers() {
                 <TableBody>
                   {paginatedCustomers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="h-32 text-center">
+                      <TableCell colSpan={9} className="h-32 text-center">
                         <div className="flex flex-col items-center gap-2">
                           <Users className="h-8 w-8 text-muted-foreground" />
                           <p className="text-muted-foreground">No customers found</p>
@@ -465,6 +466,11 @@ export default function Customers() {
                           </TableCell>
                           <TableCell className="text-right font-medium">
                             ৳{Number(customer.total_spent).toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-right text-sm text-muted-foreground">
+                            {customer.total_orders > 0
+                              ? `৳${Math.round(Number(customer.total_spent) / customer.total_orders).toLocaleString()}`
+                              : '—'}
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className={cn("gap-1 capitalize", tierConfig[tier].color)}>
