@@ -193,6 +193,7 @@ export default function Products() {
         is_active: productData.status === 'active',
         images: productData.images || (productData.image ? [productData.image] : []),
         description: productData.description || null,
+        short_description: productData.short_description || null,
         meta_title: productData.meta_title || null,
         meta_description: productData.meta_description || null,
         meta_keywords: productData.meta_keywords || [],
