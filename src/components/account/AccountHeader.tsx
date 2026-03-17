@@ -20,7 +20,7 @@ interface AccountHeaderProps {
   pageDescription?: string;
 }
 
-export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: AccountHeaderProps) {
+export function AccountHeader({ onMenuClick, pageTitle = "My Account", pageDescription }: AccountHeaderProps) {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -54,7 +54,8 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 sm:h-16 items-center justify-between border-b border-border bg-card px-3 sm:px-6">
+    <header className="sticky top-0 z-30 border-b border-border bg-card/80 backdrop-blur-sm shadow-sm">
+      <div className="flex h-14 sm:h-16 items-center justify-between px-3 sm:px-6">
         {/* Left: Menu + Breadcrumb */}
         <div className="flex items-center gap-3">
           <Button
@@ -66,36 +67,45 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
             <Menu className="h-5 w-5" />
           </Button>
 
-          {/* Breadcrumb */}
-          <nav className="hidden sm:flex items-center gap-1.5 text-sm">
-            <button
-              onClick={() => navigate("/")}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Home className="h-4 w-4" />
-            </button>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
-            <button
-              onClick={() => navigate("/myaccount")}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              My Account
-            </button>
-            {pageTitle !== "Dashboard" && (
-              <>
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
-                <span className="font-medium text-foreground">{pageTitle}</span>
-              </>
+          {/* Breadcrumb + Description */}
+          <div className="hidden sm:block">
+            <nav className="flex items-center gap-1.5 text-sm">
+              <button
+                onClick={() => navigate("/")}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Home className="h-3.5 w-3.5" />
+              </button>
+              <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
+              <button
+                onClick={() => navigate("/myaccount")}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                My Account
+              </button>
+              {pageTitle !== "Dashboard" && (
+                <>
+                  <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
+                  <span className="font-semibold text-foreground">{pageTitle}</span>
+                </>
+              )}
+            </nav>
+            {pageDescription && (
+              <p className="text-[11px] text-muted-foreground mt-0.5">{pageDescription}</p>
             )}
-          </nav>
+          </div>
 
           {/* Mobile title */}
-          <h2 className="sm:hidden text-base font-semibold text-foreground">{pageTitle}</h2>
+          <div className="sm:hidden">
+            <h2 className="text-base font-semibold text-foreground leading-tight">{pageTitle}</h2>
+            {pageDescription && (
+              <p className="text-[10px] text-muted-foreground">{pageDescription}</p>
+            )}
+          </div>
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-2">
-          {/* Back to Store */}
+        <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"
             size="sm"
@@ -106,7 +116,6 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
             <span className="text-sm">Store</span>
           </Button>
 
-          {/* Notifications */}
           <Button
             variant="ghost"
             size="icon"
@@ -121,16 +130,14 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
             )}
           </Button>
 
-          {/* Global theme toggle */}
           <ThemeToggle />
 
-          {/* Profile dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 px-2 h-9">
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-7 w-7">
                   <AvatarImage src={avatarUrl || ""} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-[10px] font-semibold">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
@@ -160,6 +167,7 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      </div>
     </header>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Package, TrendingUp, CheckCircle, Truck, Clock, ArrowRight } from "lucide-react";
+import { Loader2, Package, TrendingUp, CheckCircle, Truck, Clock, ArrowRight, ShoppingBag, User, HelpCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,13 @@ const statusConfig: Record<string, { label: string; className: string; icon: any
   shipped: { label: "Shipped", className: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400", icon: Truck },
   delivered: { label: "Delivered", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400", icon: CheckCircle },
 };
+
+const quickActions = [
+  { label: "My Orders", icon: Package, url: "/myaccount/orders", color: "text-blue-600 dark:text-blue-400" },
+  { label: "Shop Now", icon: ShoppingBag, url: "/store/products", color: "text-accent" },
+  { label: "Edit Profile", icon: User, url: "/myaccount/settings", color: "text-emerald-600 dark:text-emerald-400" },
+  { label: "Get Support", icon: HelpCircle, url: "/myaccount/support", color: "text-purple-600 dark:text-purple-400" },
+];
 
 export default function AccountDashboard() {
   const { user } = useAuth();
@@ -103,17 +110,17 @@ export default function AccountDashboard() {
   const recentOrders = orders.slice(0, 5);
 
   const statCards = [
-    { label: "Total Orders", value: orders.length, icon: Package, color: "text-blue-600 bg-blue-100 dark:bg-blue-900/30" },
-    { label: "Total Spent", value: `৳${totalSpent.toLocaleString()}`, icon: TrendingUp, color: "text-green-600 bg-green-100 dark:bg-green-900/30" },
-    { label: "Delivered", value: deliveredCount, icon: CheckCircle, color: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30" },
-    { label: "In Transit", value: shippedCount, icon: Truck, color: "text-purple-600 bg-purple-100 dark:bg-purple-900/30" },
-    { label: "Pending", value: pendingCount, icon: Clock, color: "text-amber-600 bg-amber-100 dark:bg-amber-900/30" },
+    { label: "Total Orders", value: orders.length, borderColor: "border-l-blue-500", textColor: "text-blue-600 dark:text-blue-400" },
+    { label: "Total Spent", value: `৳${totalSpent.toLocaleString()}`, borderColor: "border-l-green-500", textColor: "text-green-600 dark:text-green-400" },
+    { label: "Delivered", value: deliveredCount, borderColor: "border-l-emerald-500", textColor: "text-emerald-600 dark:text-emerald-400" },
+    { label: "In Transit", value: shippedCount, borderColor: "border-l-purple-500", textColor: "text-purple-600 dark:text-purple-400" },
+    { label: "Pending", value: pendingCount, borderColor: "border-l-amber-500", textColor: "text-amber-600 dark:text-amber-400" },
   ];
 
   return (
     <div className="space-y-6">
       {/* Welcome */}
-      <div>
+      <div className="rounded-xl bg-gradient-to-r from-primary/5 via-accent/5 to-transparent p-5 sm:p-6 border border-border">
         <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
           Welcome back, {profile?.full_name || "Customer"}! 👋
         </h1>
@@ -130,20 +137,29 @@ export default function AccountDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {statCards.map((stat) => {
-          const Icon = stat.icon;
+        {statCards.map((stat) => (
+          <Card key={stat.label} className={`border-l-4 ${stat.borderColor} shadow-sm`}>
+            <CardContent className="p-4">
+              <p className={`text-2xl font-bold ${stat.textColor}`}>{stat.value}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{stat.label}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {quickActions.map((action) => {
+          const Icon = action.icon;
           return (
-            <Card key={stat.label} className="border-none shadow-sm">
-              <CardContent className="p-4 flex flex-col items-center text-center gap-2">
-                <div className={`p-2 rounded-full ${stat.color}`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <button
+              key={action.label}
+              onClick={() => navigate(action.url)}
+              className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-4 text-center transition-all hover:shadow-md hover:border-primary/20 hover:-translate-y-0.5 group"
+            >
+              <Icon className={`h-5 w-5 ${action.color} transition-transform group-hover:scale-110`} />
+              <span className="text-xs font-medium text-foreground">{action.label}</span>
+            </button>
           );
         })}
       </div>
@@ -166,7 +182,7 @@ export default function AccountDashboard() {
               </Button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {recentOrders.map((order) => {
                 const status = statusConfig[order.status] || statusConfig.pending;
                 const StatusIcon = status.icon;

@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 
 const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
 
-// Page title mapping
 const pageTitles: Record<string, { title: string; description: string }> = {
   "/myaccount": { title: "Dashboard", description: "Overview of your account activity" },
   "/myaccount/orders": { title: "My Orders", description: "View and track your orders" },
@@ -102,7 +101,11 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
           pageTitle={pageInfo.title}
           pageDescription={pageInfo.description}
         />
-        <main className="p-3 sm:p-4 md:p-6">{children || <Outlet />}</main>
+        <main className="p-4 sm:p-6 lg:p-8">
+          <div key={location.pathname} className="mx-auto max-w-6xl animate-fade-in">
+            {children || <Outlet />}
+          </div>
+        </main>
       </div>
     </div>
   );
