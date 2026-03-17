@@ -9,14 +9,3 @@ export interface RichTextEditorProps {
   readOnly?: boolean;
   toolbar?: "full" | "minimal";
 }
-
-export interface ToolBtnProps {
-  icon: React.ElementType;
-  command?: string;
-  value?: string;
-  label: string;
-  active?: boolean;
-  disabled?: boolean;
-  onClick?: () => void;
-  onMouseDown?: (e: React.MouseEvent) => void;
-}
