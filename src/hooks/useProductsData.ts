@@ -19,6 +19,7 @@ export interface Product {
   is_active: boolean;
   is_featured: boolean;
   description: string | null;
+  short_description: string | null;
   barcode: string | null;
   weight: number | null;
   dimensions: any | null;
