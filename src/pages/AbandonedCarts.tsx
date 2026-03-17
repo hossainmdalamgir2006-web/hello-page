@@ -14,6 +14,7 @@ import {
 import { RefreshCw, Search, ShoppingCart, Filter } from "lucide-react";
 import { AbandonedCartStats } from "@/components/admin/AbandonedCartStats";
 import { AbandonedCartTable } from "@/components/admin/AbandonedCartTable";
+import { RecoveryRateChart } from "@/components/admin/RecoveryRateChart";
 import { useAbandonedCartsData, type AbandonedCart } from "@/hooks/useAbandonedCartsData";
 
 type FilterStatus = "all" | "abandoned" | "recovered" | "pending";
@@ -67,6 +68,9 @@ export default function AbandonedCarts() {
 
         {/* Stats Cards */}
         <AbandonedCartStats stats={stats} />
+
+        {/* Recovery Trend Chart */}
+        <RecoveryRateChart carts={abandonedCarts} />
 
         {/* Main Content */}
         <Card>

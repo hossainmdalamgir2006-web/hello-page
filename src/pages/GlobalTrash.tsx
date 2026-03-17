@@ -17,6 +17,7 @@ import {
   Award, Tag, Ticket, Clock, User, Filter, MessageSquare, Star, Image, Zap,
 } from "lucide-react";
 import { useGlobalTrash, TrashedItem, TrashEntityType } from "@/hooks/useGlobalTrash";
+import { TrashPurgeCountdown } from "@/components/admin/TrashPurgeCountdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { usePagination } from "@/hooks/usePagination";
@@ -257,9 +258,12 @@ export default function GlobalTrash() {
                             <EntityDetails item={item} />
                           </TableCell>
                           <TableCell>
-                            <span className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(new Date(item.deleted_at), { addSuffix: true })}
-                            </span>
+                            <div className="flex flex-col gap-1">
+                              <span className="text-xs text-muted-foreground">
+                                {formatDistanceToNow(new Date(item.deleted_at), { addSuffix: true })}
+                              </span>
+                              <TrashPurgeCountdown deletedAt={item.deleted_at} />
+                            </div>
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>

@@ -48,6 +48,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAnalyticsData } from "@/hooks/useAnalyticsData";
+import { PeriodComparison } from "@/components/admin/PeriodComparison";
 
 const StatCard = ({ 
   title, 
@@ -108,6 +109,7 @@ const StatCard = ({
 
 export default function Analytics() {
   const [period, setPeriod] = useState("30d");
+  const [showComparison, setShowComparison] = useState(false);
   const { 
     stats, 
     revenueData, 
@@ -138,7 +140,15 @@ export default function Analytics() {
               Detailed insights and performance metrics
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={showComparison ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowComparison(!showComparison)}
+            >
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Compare
+            </Button>
             <Button 
               variant="outline" 
               size="sm" 
@@ -202,6 +212,21 @@ export default function Analytics() {
             loading={loading}
           />
         </div>
+
+        {/* Period Comparison */}
+        {showComparison && (
+          <PeriodComparison
+            loading={loading}
+            currentPeriodLabel={period === "7d" ? "Last 7 days" : period === "30d" ? "Last 30 days" : period === "90d" ? "Last 90 days" : "Last year"}
+            previousPeriodLabel={period === "7d" ? "Prior 7 days" : period === "30d" ? "Prior 30 days" : period === "90d" ? "Prior 90 days" : "Prior year"}
+            metrics={[
+              { label: "Revenue", current: stats.totalRevenue, previous: stats.revenueChange !== 0 ? stats.totalRevenue / (1 + stats.revenueChange / 100) : 0, format: "currency" },
+              { label: "Orders", current: stats.totalOrders, previous: stats.ordersChange !== 0 ? stats.totalOrders / (1 + stats.ordersChange / 100) : 0, format: "number" },
+              { label: "Customers", current: stats.totalCustomers, previous: stats.customersChange !== 0 ? stats.totalCustomers / (1 + stats.customersChange / 100) : 0, format: "number" },
+              { label: "Avg. Order", current: stats.avgOrderValue, previous: stats.avgOrderChange !== 0 ? stats.avgOrderValue / (1 + stats.avgOrderChange / 100) : 0, format: "currency" },
+            ]}
+          />
+        )}
 
         {/* Main Charts */}
         <Tabs defaultValue="revenue" className="space-y-4">

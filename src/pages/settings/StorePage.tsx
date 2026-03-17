@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2, Database } from "lucide-react";
 import { StoreSettingsTab } from "@/components/settings/StoreSettingsTab";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { generateSchemaPDF } from "@/utils/generateSchemaPDF";
 import { toast } from "sonner";
+import { useBeforeUnload } from "react-router-dom";
 
 interface StoreSettings {
   storeName: string;
@@ -27,12 +28,32 @@ interface StoreSettings {
 
 export default function StorePage() {
   const { settings, loading, saving, updateMultipleSettings, getSettingValue } = useStoreSettings();
+  const [isDirty, setIsDirty] = useState(false);
+  const initializedRef = useRef(false);
 
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
     storeName: "", storeEmail: "", storePhone: "", address: "", city: "", postalCode: "",
     country: "Bangladesh", currency: "BDT", timezone: "Asia/Dhaka", logo: "", favicon: "",
     description: "", facebookUrl: "", instagramUrl: "", twitterUrl: "", youtubeUrl: "",
   });
+
+  // Warn on browser close/refresh when dirty
+  useBeforeUnload(
+    useCallback((e) => {
+      if (isDirty) {
+        e.preventDefault();
+      }
+    }, [isDirty])
+  );
+
+  // Also warn via native beforeunload
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isDirty) { e.preventDefault(); }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
 
   useEffect(() => {
     if (!loading && settings.length > 0) {
@@ -54,6 +75,8 @@ export default function StorePage() {
         twitterUrl: getSettingValue("STORE_TWITTER_URL") || "",
         youtubeUrl: getSettingValue("STORE_YOUTUBE_URL") || "",
       });
+      initializedRef.current = true;
+      setIsDirty(false);
     }
   }, [loading, settings]);
 
@@ -67,6 +90,7 @@ export default function StorePage() {
 
   const updateStoreField = <K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) => {
     setStoreSettings(prev => ({ ...prev, [key]: value }));
+    if (initializedRef.current) setIsDirty(true);
   };
 
   const handleSave = async () => {
@@ -88,10 +112,27 @@ export default function StorePage() {
       { key: "STORE_TWITTER_URL", value: storeSettings.twitterUrl },
       { key: "STORE_YOUTUBE_URL", value: storeSettings.youtubeUrl },
     ]);
+    setIsDirty(false);
   };
 
   return (
     <div className="space-y-6">
+      {/* Unsaved changes banner */}
+      {isDirty && (
+        <div className="flex items-center justify-between rounded-lg border border-warning/30 bg-warning/5 px-4 py-3">
+          <p className="text-sm font-medium text-warning">You have unsaved changes</p>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={() => { initializedRef.current = false; setIsDirty(false); window.location.reload(); }}>
+              Discard
+            </Button>
+            <Button size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />}
+              Save Now
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Store Settings</h2>
