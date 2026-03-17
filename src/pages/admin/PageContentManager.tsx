@@ -26,6 +26,7 @@ import {
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { toast } from "sonner";
 import { CarouselSlidesManager } from "@/components/admin/CarouselSlidesManager";
+import { SEOScoreIndicator } from "@/components/admin/SEOScoreIndicator";
 
 // ===== Page Content Icons & Labels =====
 const pageIcons: Record<string, React.ElementType> = {
