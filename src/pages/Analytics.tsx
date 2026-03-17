@@ -109,6 +109,7 @@ const StatCard = ({
 
 export default function Analytics() {
   const [period, setPeriod] = useState("30d");
+  const [showComparison, setShowComparison] = useState(false);
   const { 
     stats, 
     revenueData, 
