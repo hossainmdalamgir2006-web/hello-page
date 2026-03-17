@@ -406,6 +406,7 @@ export default function Customers() {
                     >
                       Total Spent
                     </SortableTableHead>
+                    <TableHead className="text-right">Avg Order</TableHead>
                     <TableHead>Tier</TableHead>
                     <TableHead>Tags</TableHead>
                     <TableHead>Status</TableHead>
