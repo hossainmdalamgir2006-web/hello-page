@@ -8,6 +8,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -62,7 +63,7 @@ const menuSections = [
   },
 ];
 
-export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMobile }: AccountSidebarProps) {
+export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl, fullName, email, onCloseMobile }: AccountSidebarProps) {
   const { signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -82,6 +83,13 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
     onCloseMobile?.();
   };
 
+  const getInitials = () => {
+    if (fullName) {
+      return fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+    }
+    return email?.slice(0, 2).toUpperCase() || "U";
+  };
+
   const renderNavItem = (item: { title: string; url: string; icon: React.ElementType; end?: boolean }) => {
     const active = isActive(item.url);
     const showBadge = item.url === "/myaccount/notifications" && unreadCount > 0;
@@ -90,14 +98,14 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
         key={item.url}
         onClick={() => handleNav(item.url)}
         className={cn(
-          "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-          collapsed && "justify-center px-2",
+          "group relative flex w-full items-center gap-3 rounded-r-lg py-2.5 text-sm font-medium transition-all",
+          collapsed ? "justify-center px-2 rounded-lg" : "px-3",
           active
-            ? "bg-sidebar-accent text-sidebar-foreground"
-            : "text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            ? "bg-sidebar-accent text-sidebar-primary-foreground border-l-[3px] border-sidebar-primary"
+            : "text-sidebar-muted hover:bg-sidebar-accent/50 hover:text-sidebar-foreground border-l-[3px] border-transparent"
         )}
       >
-        <item.icon className="h-5 w-5 shrink-0" />
+        <item.icon className={cn("h-[18px] w-[18px] shrink-0", active && "text-sidebar-primary")} />
         {!collapsed && <span className="flex-1 text-left">{item.title}</span>}
         {!collapsed && showBadge && (
           <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground text-[10px] font-bold px-1">
@@ -123,22 +131,20 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
 
   return (
     <aside className={cn(
-      "fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300",
+      "fixed left-0 top-0 z-40 h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300",
       collapsed ? "w-[68px]" : "w-64"
     )}>
-      <div className="flex h-full flex-col overflow-y-auto px-3 py-6">
+      <div className="flex h-full flex-col overflow-y-auto px-3 py-5">
         {/* Logo / Brand */}
-        <div className={cn("mb-8 flex items-center gap-3 px-2", collapsed && "justify-center px-0")}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
-            <span className="font-display text-lg font-bold text-sidebar-primary-foreground">E</span>
+        <div className={cn("flex items-center gap-3 px-2", collapsed && "justify-center px-0")}>
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
+            <span className="font-display text-base font-bold text-sidebar-primary-foreground">E</span>
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <h1 className="font-display text-lg font-bold text-sidebar-foreground">Ekta</h1>
-              <p className="text-xs text-sidebar-muted">My Account</p>
+              <h1 className="font-display text-base font-bold text-sidebar-foreground leading-tight">Ekta</h1>
             </div>
           )}
-          {/* Mobile close */}
           {onCloseMobile && !collapsed && (
             <Button variant="ghost" size="icon" className="lg:hidden h-8 w-8 text-sidebar-muted hover:text-sidebar-foreground" onClick={onCloseMobile}>
               <X className="h-4 w-4" />
@@ -146,56 +152,90 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
           )}
         </div>
 
+        {/* User Profile Card */}
+        <div className={cn(
+          "mt-5 mb-6 rounded-lg bg-sidebar-accent/60 transition-all",
+          collapsed ? "p-2 flex justify-center" : "p-3"
+        )}>
+          {collapsed ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <button onClick={() => handleNav("/myaccount/settings")} className="block">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={avatarUrl || ""} />
+                    <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs font-semibold">
+                      {getInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium">{fullName || "Profile"}</TooltipContent>
+            </Tooltip>
+          ) : (
+            <button onClick={() => handleNav("/myaccount/settings")} className="flex items-center gap-3 w-full text-left group">
+              <Avatar className="h-9 w-9 shrink-0">
+                <AvatarImage src={avatarUrl || ""} />
+                <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs font-semibold">
+                  {getInitials()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-sidebar-foreground truncate group-hover:text-sidebar-primary transition-colors">
+                  {fullName || "Customer"}
+                </p>
+                <p className="text-[11px] text-sidebar-muted truncate">{email || ""}</p>
+              </div>
+            </button>
+          )}
+        </div>
+
         {/* Navigation */}
-        <nav className="flex-1 space-y-6">
+        <nav className="flex-1 space-y-5">
           {menuSections.map((section, idx) => (
             <div key={section.label}>
               {!collapsed && (
-                <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
+                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-sidebar-muted/70">
                   {section.label}
                 </p>
               )}
               {collapsed && idx > 0 && <div className="my-3 border-t border-sidebar-border" />}
-              <div className="space-y-1">{section.items.map(renderNavItem)}</div>
+              <div className="space-y-0.5">{section.items.map(renderNavItem)}</div>
             </div>
           ))}
         </nav>
 
         {/* Bottom Actions */}
-        <div className="mt-auto space-y-1 border-t border-sidebar-border pt-4">
-          {/* Back to Store */}
+        <div className="mt-auto space-y-0.5 border-t border-sidebar-border pt-4">
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <button onClick={() => handleNav("/")} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-                  <Store className="h-5 w-5" />
+                  <Store className="h-[18px] w-[18px]" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-medium">Back to Store</TooltipContent>
             </Tooltip>
           ) : (
             <button onClick={() => handleNav("/")} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-              <Store className="h-5 w-5" /><span>Back to Store</span>
+              <Store className="h-[18px] w-[18px]" /><span>Back to Store</span>
             </button>
           )}
 
-          {/* Logout */}
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <button onClick={handleLogout} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-[18px] w-[18px]" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-medium">Sign Out</TooltipContent>
             </Tooltip>
           ) : (
             <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-              <LogOut className="h-5 w-5" /><span>Sign Out</span>
+              <LogOut className="h-[18px] w-[18px]" /><span>Sign Out</span>
             </button>
           )}
 
-          {/* Collapse toggle */}
           {onToggleCollapse && (
             <Button
               variant="ghost"
