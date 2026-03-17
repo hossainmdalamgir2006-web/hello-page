@@ -1,5 +1,7 @@
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
-import { Loader2, Bell, BellOff, Check, CheckCheck } from "lucide-react";
+import { Bell, BellOff, Check, CheckCheck } from "lucide-react";
+import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { GenericListSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
