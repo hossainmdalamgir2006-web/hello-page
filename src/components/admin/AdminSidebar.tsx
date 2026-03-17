@@ -11,7 +11,7 @@ import {
   Truck,
   MessageSquare,
   FileText,
-  Boxes,
+  
   Ticket,
   UserCog,
   User,
