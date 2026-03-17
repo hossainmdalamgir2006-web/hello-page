@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
   HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  Navigation, FileText, RotateCcw, Star, Bell, CreditCard, MessageCircle,
+  RotateCcw, Star, Bell, CreditCard, MessageCircle,
 } from "lucide-react";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -32,8 +32,6 @@ const menuSections = [
     label: "ORDERS",
     items: [
       { title: "My Orders", url: "/myaccount/orders", icon: Package },
-      { title: "Order Tracking", url: "/myaccount/tracking", icon: Navigation },
-      { title: "Invoices", url: "/myaccount/invoices", icon: FileText },
       { title: "Returns", url: "/myaccount/returns", icon: RotateCcw },
     ],
   },
@@ -42,7 +40,7 @@ const menuSections = [
     items: [
       { title: "Wishlist", url: "/myaccount/wishlist", icon: Heart },
       { title: "Shopping", url: "/myaccount/shopping", icon: ShoppingBag },
-      { title: "Recently Viewed", url: "/myaccount/recent", icon: Clock },
+      { title: "Recently Viewed", url: "/myaccount/recently-viewed", icon: Clock },
       { title: "My Reviews", url: "/myaccount/reviews", icon: Star },
     ],
   },
