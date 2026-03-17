@@ -97,7 +97,6 @@ export const EditorToolbar = ({
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        // Insert a <video> tag for uploaded video files
         const html = `<video controls style="max-width:100%;border-radius:8px;" src="${reader.result}"></video>`;
         document.execCommand("insertHTML", false, html);
         setVideoOpen(false);
@@ -109,22 +108,28 @@ export const EditorToolbar = ({
 
   return (
     <div className="flex flex-wrap items-center gap-0.5 border-b border-input p-1 bg-muted/30">
-      {/* Text style */}
-      <ToolBtn icon={Bold} command="bold" label="Bold (Ctrl+B)" active={isActive("bold")} disabled={isDisabled} execCommand={execCommand} />
-      <ToolBtn icon={Italic} command="italic" label="Italic (Ctrl+I)" active={isActive("italic")} disabled={isDisabled} execCommand={execCommand} />
-      <ToolBtn icon={Underline} command="underline" label="Underline (Ctrl+U)" active={isActive("underline")} disabled={isDisabled} execCommand={execCommand} />
-      <ToolBtn icon={Strikethrough} command="strikeThrough" label="Strikethrough" active={isActive("strikeThrough")} disabled={isDisabled} execCommand={execCommand} />
-
-      {toolbar === "full" && (
-        <>
-          <ToolBtn icon={Superscript} command="superscript" label="Superscript" active={isActive("superscript")} disabled={isDisabled} execCommand={execCommand} />
-          <ToolBtn icon={Subscript} command="subscript" label="Subscript" active={isActive("subscript")} disabled={isDisabled} execCommand={execCommand} />
-        </>
-      )}
+      {/* 1. Undo / Redo */}
+      <ToolBtn icon={Undo} command="undo" label="Undo (Ctrl+Z)" disabled={isDisabled} execCommand={execCommand} />
+      <ToolBtn icon={Redo} command="redo" label="Redo (Ctrl+Y)" disabled={isDisabled} execCommand={execCommand} />
 
       <Divider />
 
-      {/* Font Family & Size */}
+      {/* 2. Headings */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button type="button" disabled={isDisabled} className="h-7 px-1.5 flex items-center gap-0.5 rounded text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
+            {currentHeading}<ChevronDown className="h-3 w-3" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="min-w-[120px]">
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "p")}><span className="text-sm">Paragraph</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h1")}><span className="text-lg font-bold">Heading 1</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h2")}><span className="text-base font-bold">Heading 2</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h3")}><span className="text-sm font-bold">Heading 3</span></DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* 3. Font Family & Size (full toolbar only) */}
       {toolbar === "full" && (
         <>
           <DropdownMenu>
@@ -157,7 +162,6 @@ export const EditorToolbar = ({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Line Height */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 px-1.5 flex items-center gap-0.5 rounded text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
@@ -172,29 +176,76 @@ export const EditorToolbar = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <Divider />
         </>
       )}
 
-      {/* Headings dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button type="button" disabled={isDisabled} className="h-7 px-1.5 flex items-center gap-0.5 rounded text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
-            {currentHeading}<ChevronDown className="h-3 w-3" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="min-w-[120px]">
-          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "p")}><span className="text-sm">Paragraph</span></DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h1")}><span className="text-lg font-bold">Heading 1</span></DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h2")}><span className="text-base font-bold">Heading 2</span></DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h3")}><span className="text-sm font-bold">Heading 3</span></DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Divider />
+
+      {/* 4. Text Formatting */}
+      <ToolBtn icon={Bold} command="bold" label="Bold (Ctrl+B)" active={isActive("bold")} disabled={isDisabled} execCommand={execCommand} />
+      <ToolBtn icon={Italic} command="italic" label="Italic (Ctrl+I)" active={isActive("italic")} disabled={isDisabled} execCommand={execCommand} />
+      <ToolBtn icon={Underline} command="underline" label="Underline (Ctrl+U)" active={isActive("underline")} disabled={isDisabled} execCommand={execCommand} />
+      <ToolBtn icon={Strikethrough} command="strikeThrough" label="Strikethrough" active={isActive("strikeThrough")} disabled={isDisabled} execCommand={execCommand} />
+
+      {toolbar === "full" && (
+        <>
+          <ToolBtn icon={Superscript} command="superscript" label="Superscript" active={isActive("superscript")} disabled={isDisabled} execCommand={execCommand} />
+          <ToolBtn icon={Subscript} command="subscript" label="Subscript" active={isActive("subscript")} disabled={isDisabled} execCommand={execCommand} />
+        </>
+      )}
+
+      {toolbar === "full" && (
+        <>
+          <Divider />
+
+          {/* 5. Text & Highlight Color */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
+                <Palette className="h-3.5 w-3.5" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-2" align="start">
+              <div className="text-xs text-muted-foreground mb-1">Text Color</div>
+              <div className="grid grid-cols-4 gap-1">
+                {PRESET_COLORS.map((color) => (
+                  <button key={color} type="button" className="h-6 w-6 rounded border border-input hover:scale-110 transition-transform" style={{ backgroundColor: color }} onMouseDown={(e) => { e.preventDefault(); execCommand("foreColor", color); }} />
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
+                <Highlighter className="h-3.5 w-3.5" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-2" align="start">
+              <div className="text-xs text-muted-foreground mb-1">Highlight Color</div>
+              <div className="grid grid-cols-4 gap-1">
+                {HIGHLIGHT_COLORS.map((color) => (
+                  <button key={color} type="button" className="h-6 w-6 rounded border border-input hover:scale-110 transition-transform" style={{ backgroundColor: color }} onMouseDown={(e) => { e.preventDefault(); execCommand("hiliteColor", color); }} />
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </>
+      )}
 
       <Divider />
 
-      {/* Lists */}
+      {/* 6. Alignment */}
+      <ToolBtn icon={AlignLeft} command="justifyLeft" label="Align Left" active={isActive("justifyLeft")} disabled={isDisabled} execCommand={execCommand} />
+      <ToolBtn icon={AlignCenter} command="justifyCenter" label="Align Center" active={isActive("justifyCenter")} disabled={isDisabled} execCommand={execCommand} />
+      <ToolBtn icon={AlignRight} command="justifyRight" label="Align Right" active={isActive("justifyRight")} disabled={isDisabled} execCommand={execCommand} />
+      {toolbar === "full" && (
+        <ToolBtn icon={AlignJustify} command="justifyFull" label="Justify" active={isActive("justifyFull")} disabled={isDisabled} execCommand={execCommand} />
+      )}
+
+      <Divider />
+
+      {/* 7. Lists & Indentation */}
       <ToolBtn icon={List} command="insertUnorderedList" label="Bullet List" active={isActive("insertUnorderedList")} disabled={isDisabled} execCommand={execCommand} />
       <ToolBtn icon={ListOrdered} command="insertOrderedList" label="Numbered List" active={isActive("insertOrderedList")} disabled={isDisabled} execCommand={execCommand} />
       <ToolBtn icon={Quote} command="formatBlock" value="blockquote" label="Blockquote" active={isBlockActive("blockquote")} disabled={isDisabled} execCommand={execCommand} />
@@ -208,17 +259,7 @@ export const EditorToolbar = ({
 
       <Divider />
 
-      {/* Alignment */}
-      <ToolBtn icon={AlignLeft} command="justifyLeft" label="Align Left" active={isActive("justifyLeft")} disabled={isDisabled} execCommand={execCommand} />
-      <ToolBtn icon={AlignCenter} command="justifyCenter" label="Align Center" active={isActive("justifyCenter")} disabled={isDisabled} execCommand={execCommand} />
-      <ToolBtn icon={AlignRight} command="justifyRight" label="Align Right" active={isActive("justifyRight")} disabled={isDisabled} execCommand={execCommand} />
-      {toolbar === "full" && (
-        <ToolBtn icon={AlignJustify} command="justifyFull" label="Justify" active={isActive("justifyFull")} disabled={isDisabled} execCommand={execCommand} />
-      )}
-
-      <Divider />
-
-      {/* Link */}
+      {/* 8. Link */}
       <Popover open={linkOpen} onOpenChange={setLinkOpen}>
         <PopoverTrigger asChild>
           <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
@@ -236,41 +277,7 @@ export const EditorToolbar = ({
         <>
           <Divider />
 
-          {/* Text Color */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
-                <Palette className="h-3.5 w-3.5" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2" align="start">
-              <div className="text-xs text-muted-foreground mb-1">Text Color</div>
-              <div className="grid grid-cols-4 gap-1">
-                {PRESET_COLORS.map((color) => (
-                  <button key={color} type="button" className="h-6 w-6 rounded border border-input hover:scale-110 transition-transform" style={{ backgroundColor: color }} onMouseDown={(e) => { e.preventDefault(); execCommand("foreColor", color); }} />
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          {/* Highlight Color */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
-                <Highlighter className="h-3.5 w-3.5" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2" align="start">
-              <div className="text-xs text-muted-foreground mb-1">Highlight Color</div>
-              <div className="grid grid-cols-4 gap-1">
-                {HIGHLIGHT_COLORS.map((color) => (
-                  <button key={color} type="button" className="h-6 w-6 rounded border border-input hover:scale-110 transition-transform" style={{ backgroundColor: color }} onMouseDown={(e) => { e.preventDefault(); execCommand("hiliteColor", color); }} />
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          {/* Image — with Upload tab */}
+          {/* 9. Media: Image, Video, Table */}
           <Popover open={imageOpen} onOpenChange={setImageOpen}>
             <PopoverTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
@@ -298,7 +305,6 @@ export const EditorToolbar = ({
             </PopoverContent>
           </Popover>
 
-          {/* Video — with Upload tab */}
           <Popover open={videoOpen} onOpenChange={setVideoOpen}>
             <PopoverTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
@@ -326,15 +332,13 @@ export const EditorToolbar = ({
             </PopoverContent>
           </Popover>
 
-          {/* Table */}
           <TablePicker disabled={isDisabled} onInsertTable={onInsertTable} />
 
-          {/* Emoji */}
+          <Divider />
+
+          {/* 10. Extras: Emoji, Special Chars, HR, Code */}
           <EmojiPicker disabled={isDisabled} onInsertEmoji={onInsertEmoji} />
-
-          {/* Special Characters */}
           <SpecialCharsPicker disabled={isDisabled} onInsertChar={onInsertChar} />
-
           <ToolBtn icon={Minus} command="insertHorizontalRule" label="Horizontal Rule" disabled={isDisabled} execCommand={execCommand} />
           <ToolBtn icon={Code} command="formatBlock" value="pre" label="Code Block" active={isBlockActive("pre")} disabled={isDisabled} execCommand={execCommand} />
         </>
@@ -342,15 +346,14 @@ export const EditorToolbar = ({
 
       <Divider />
 
+      {/* 11. Clear Formatting */}
       <ToolBtn icon={RemoveFormatting} command="removeFormat" label="Clear Formatting" disabled={isDisabled} execCommand={execCommand} />
-      <ToolBtn icon={Undo} command="undo" label="Undo (Ctrl+Z)" disabled={isDisabled} execCommand={execCommand} />
-      <ToolBtn icon={Redo} command="redo" label="Redo (Ctrl+Y)" disabled={isDisabled} execCommand={execCommand} />
 
       {toolbar === "full" && (
         <>
           <Divider />
 
-          {/* Text Direction */}
+          {/* 12. Utilities: Direction, Find, Print, Fullscreen, Source */}
           <button
             type="button"
             disabled={isDisabled}
@@ -360,7 +363,6 @@ export const EditorToolbar = ({
             <ArrowRightLeft className="h-3.5 w-3.5" />
           </button>
 
-          {/* Find & Replace */}
           <button
             type="button"
             onMouseDown={(e) => { e.preventDefault(); onToggleFindReplace(); }}
@@ -369,7 +371,6 @@ export const EditorToolbar = ({
             <Search className="h-3.5 w-3.5" />
           </button>
 
-          {/* Print */}
           <button
             type="button"
             onMouseDown={(e) => { e.preventDefault(); onPrint(); }}
@@ -378,7 +379,6 @@ export const EditorToolbar = ({
             <Printer className="h-3.5 w-3.5" />
           </button>
 
-          {/* Fullscreen */}
           <button
             type="button"
             onMouseDown={(e) => { e.preventDefault(); onToggleFullscreen(); }}
@@ -390,7 +390,6 @@ export const EditorToolbar = ({
             {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
           </button>
 
-          {/* Source toggle */}
           <button
             type="button"
             onMouseDown={(e) => { e.preventDefault(); onToggleSource(); }}
