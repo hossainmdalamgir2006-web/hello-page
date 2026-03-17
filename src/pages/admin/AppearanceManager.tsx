@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Palette, Type, Square, PanelLeft, LayoutDashboard, ShoppingBag, FormInput, Tag, Navigation, Layers, Bell, BarChart3, Grid3X3, Code, Image, Save, RotateCcw } from "lucide-react";
+import { Palette, Type, Square, PanelLeft, LayoutDashboard, ShoppingBag, FormInput, Tag, Navigation, Layers, Bell, BarChart3, Grid3X3, Code, Image, Save, RotateCcw, Wand2 } from "lucide-react";
+import { ThemePresets } from "@/components/admin/ThemePresets";
 
 const GOOGLE_FONTS = [
   "Inter", "Poppins", "Roboto", "Open Sans", "Lato", "Montserrat", "Raleway",
@@ -154,6 +155,7 @@ export default function AppearanceManager() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="flex flex-wrap h-auto gap-1 bg-muted p-1">
+            <TabsTrigger value="presets" className="gap-1.5"><Wand2 className="h-3.5 w-3.5" />Presets</TabsTrigger>
             <TabsTrigger value="colors" className="gap-1.5"><Palette className="h-3.5 w-3.5" />Colors</TabsTrigger>
             <TabsTrigger value="buttons" className="gap-1.5"><Square className="h-3.5 w-3.5" />Buttons</TabsTrigger>
             <TabsTrigger value="typography" className="gap-1.5"><Type className="h-3.5 w-3.5" />Typography</TabsTrigger>
@@ -171,6 +173,21 @@ export default function AppearanceManager() {
             <TabsTrigger value="branding" className="gap-1.5"><Image className="h-3.5 w-3.5" />Branding</TabsTrigger>
             <TabsTrigger value="custom" className="gap-1.5"><Code className="h-3.5 w-3.5" />Custom CSS</TabsTrigger>
           </TabsList>
+
+          {/* Presets Tab */}
+          <TabsContent value="presets">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Theme Presets</CardTitle>
+                <CardDescription>Quick-apply a pre-built color scheme, then fine-tune in the Colors tab</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ThemePresets onApply={(values) => {
+                  Object.entries(values).forEach(([key, value]) => setVal(key, value));
+                }} />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Colors Tab */}
           <TabsContent value="colors">

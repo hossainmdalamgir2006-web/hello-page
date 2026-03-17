@@ -26,6 +26,7 @@ import {
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { toast } from "sonner";
 import { CarouselSlidesManager } from "@/components/admin/CarouselSlidesManager";
+import { SEOScoreIndicator } from "@/components/admin/SEOScoreIndicator";
 
 // ===== Page Content Icons & Labels =====
 const pageIcons: Record<string, React.ElementType> = {
@@ -156,6 +157,12 @@ export default function PageContentManager() {
                             {page.is_enabled ? "Active" : "Disabled"}
                           </Badge>
                         </CardTitle>
+                        <SEOScoreIndicator
+                          title={page.title}
+                          subtitle={page.subtitle}
+                          content={page.content}
+                          updatedAt={page.updated_at}
+                        />
                         {!isEditing ? (
                           <Button size="sm" onClick={() => startEdit(page)}>Edit</Button>
                         ) : (

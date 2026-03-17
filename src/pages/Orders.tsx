@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { LayoutGrid, List } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReturnRequestsTab } from "@/components/admin/ReturnRequestsTab";
@@ -77,6 +78,7 @@ import { DataExport } from "@/components/ui/data-export";
 import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { OrderKanbanView } from "@/components/orders/OrderKanbanView";
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -121,6 +123,7 @@ export default function Orders() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [quickStatusOrder, setQuickStatusOrder] = useState<Order | null>(null);
   const [quickStatusOpen, setQuickStatusOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
 
   const openCourierModal = (order: Order) => { setCourierOrder(order); setCourierModalOpen(true); };
   const openBulkCourierModal = () => { setBulkCourierModalOpen(true); };
@@ -307,7 +310,13 @@ export default function Orders() {
                   </SelectContent>
                 </Select>
               </div>
-              <DataExport data={sortedOrders} filename={`orders-${format(new Date(), 'yyyy-MM-dd')}`} columns={exportColumns} />
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center border rounded-lg overflow-hidden">
+                  <Button variant={viewMode === "table" ? "secondary" : "ghost"} size="sm" className="rounded-none h-9 px-3" onClick={() => setViewMode("table")}><List className="h-4 w-4" /></Button>
+                  <Button variant={viewMode === "kanban" ? "secondary" : "ghost"} size="sm" className="rounded-none h-9 px-3" onClick={() => setViewMode("kanban")}><LayoutGrid className="h-4 w-4" /></Button>
+                </div>
+                <DataExport data={sortedOrders} filename={`orders-${format(new Date(), 'yyyy-MM-dd')}`} columns={exportColumns} />
+              </div>
             </div>
 
             {/* Bulk Actions Bar */}
@@ -341,8 +350,13 @@ export default function Orders() {
               </Card>
             )}
 
+            {/* Kanban View */}
+            {viewMode === "kanban" && !isMobile && (
+              <OrderKanbanView orders={filteredOrders} onViewDetails={viewDetails} onUpdateStatus={handleUpdateStatus} />
+            )}
+
             {/* Orders Table */}
-            {isMobile ? (
+            {viewMode === "kanban" && !isMobile ? null : isMobile ? (
               <div className="space-y-3">
                 {paginatedOrders.length === 0 ? (
                   <Card><CardContent className="flex flex-col items-center gap-2 py-12"><ShoppingBag className="h-8 w-8 text-muted-foreground" /><p className="text-muted-foreground">No orders found</p></CardContent></Card>
@@ -446,7 +460,8 @@ export default function Orders() {
                   {totalItems > 0 && <TablePagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} totalItems={totalItems} onPageChange={goToPage} onPageSizeChange={changePageSize} />}
                 </CardContent>
               </Card>
-            )}
+            )
+            }
           </TabsContent>
         </Tabs>
 
