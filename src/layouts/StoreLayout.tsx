@@ -20,11 +20,7 @@ interface StoreLayoutProps {
   children?: ReactNode;
 }
 
-const StoreContentLoader = () => (
-  <div className="flex items-center justify-center min-h-[200px]">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
-);
+const StoreContentLoader = () => <div className="min-h-[200px]" />;
 
 export function StoreLayout({ children }: StoreLayoutProps) {
   usePageViewTracking();
