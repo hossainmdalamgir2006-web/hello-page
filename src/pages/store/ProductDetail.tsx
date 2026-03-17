@@ -538,7 +538,16 @@ export default function ProductDetail() {
               <TabsTrigger value="details" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">Details</TabsTrigger>
               <TabsTrigger value="reviews" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">Reviews ({reviewSummary.totalReviews})</TabsTrigger>
             </TabsList>
-            <TabsContent value="description" className="py-6"><div className="prose max-w-none"><p className="text-muted-foreground">{product.description || "No description available."}</p></div></TabsContent>
+            <TabsContent value="description" className="py-6">
+              {product.description ? (
+                <div
+                  className="prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-img:rounded-lg prose-img:max-w-full prose-video:rounded-lg prose-table:border prose-table:border-border prose-th:bg-muted prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-border prose-th:border prose-th:border-border text-foreground"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              ) : (
+                <p className="text-muted-foreground">No description available.</p>
+              )}
+            </TabsContent>
             {attributes.length > 0 && (
               <TabsContent value="specifications" className="py-6">
                 <Table><TableBody>{attributes.map((attr) => (<TableRow key={attr.id}><TableCell className="font-medium w-1/3">{attr.attribute_name}</TableCell><TableCell>{attr.attribute_values.join(', ')}</TableCell></TableRow>))}</TableBody></Table>

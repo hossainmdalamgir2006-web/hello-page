@@ -42,7 +42,6 @@ const statusOptions = [
   { value: "all", label: "All Status" },
   { value: "active", label: "Active" },
   { value: "draft", label: "Draft" },
-  { value: "archived", label: "Archived" },
 ];
 
 const stockOptions = [
