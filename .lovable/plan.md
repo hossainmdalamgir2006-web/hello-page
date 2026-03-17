@@ -1,56 +1,100 @@
 
 
-## Plan: Convert all Bengali text to English in Messages page and related hooks
+## Admin Panel UI/UX Audit & Settings Page Restructure
 
-### Files to update
+### Findings
 
-**1. `src/components/admin/TicketEscalationDialog.tsx`** — All Bengali labels and text:
-- "টিকেট এসকেলেট করুন" → "Escalate Ticket"
-- Warning text → "Escalating will increase the ticket priority and notify the relevant manager."
-- "বর্তমান প্রায়োরিটি" → "Current Priority"
-- "নতুন প্রায়োরিটি" → "New Priority"
-- "এসকেলেট করুন (ম্যানেজার/এডমিন)" → "Escalate To (Manager/Admin)"
-- "সিলেক্ট করুন" → "Select"
-- "কাউকে নির্দিষ্ট করবেন না" → "Don't assign to anyone"
-- "এসকেলেশনের কারণ *" → "Escalation Reason *"
-- Placeholder → "Describe why you are escalating..."
-- "বাতিল" → "Cancel"
-- "এসকেলেট করুন" (button) → "Escalate"
+#### A. Page Header Inconsistency
+Every admin page has a slightly different header pattern:
 
-**2. `src/hooks/useSupportTickets.ts`** — All toast messages:
-- "টিকেট স্ট্যাটাস আপডেট হয়েছে" → "Ticket status updated"
-- "স্ট্যাটাস আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update status"
-- "প্রায়োরিটি আপডেট হয়েছে" → "Priority updated"
-- "প্রায়োরিটি আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update priority"
-- "টিকেট অ্যাসাইন হয়েছে" → "Ticket assigned"
-- "অ্যাসাইন করতে ব্যর্থ হয়েছে" → "Failed to assign ticket"
-- "টিকেট ডিলিট হয়েছে" → "Ticket deleted"
-- "ডিলিট করতে ব্যর্থ হয়েছে" → "Failed to delete"
-- "টিকেটগুলো ডিলিট হয়েছে" → "Tickets deleted"
-- "স্ট্যাটাস আপডেট হয়েছে" → "Status updated"
-- "আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update"
-- "টিকেটগুলো অ্যাসাইন হয়েছে" → "Tickets assigned"
+| Page | Pattern | Issue |
+|------|---------|-------|
+| Products, Orders, Settings, Customers, Categories, Brands, GlobalTrash, Reviews | `font-display text-2xl font-bold text-foreground` | Correct baseline |
+| Messages | `text-xl sm:text-2xl md:text-3xl font-bold` | Missing `font-display`, different sizing |
+| HomepageManager | `text-2xl font-bold` | Missing `font-display`, `text-foreground` |
+| PageContentManager | `text-2xl font-bold` | Missing `font-display`, `text-foreground`, has inline icon |
+| AppearanceManager | `text-2xl font-display font-bold` | Bengali subtitle text mixed in |
+| AbandonedCarts, GlobalTrash | Has inline icon in h1 | Inconsistent with others |
 
-**3. `src/hooks/useChatNotifications.ts`** — Notification titles:
-- "নতুন চ্যাট মেসেজ" → "New Chat Message"
-- "নতুন সাপোর্ট টিকেট" → "New Support Ticket"
-- "নতুন কন্টাক্ট মেসেজ" → "New Contact Message"
+#### B. Settings Page — Currently 8 Tabs in One Page
+The current tab-based approach is cramped on mobile (8 tabs in a grid) and makes the URL non-bookmarkable. Converting to **separate sub-pages with a sidebar/nav** is the professional pattern (like Shopify, WordPress admin settings).
 
-**4. `src/hooks/useTabNotifications.ts`** — Tab title defaults:
-- "মেসেজ ও সাপোর্ট" → "Messages & Support"
-- "নতুন মেসেজ!" → "New Message!"
+#### C. Wrapper Spacing Inconsistency
+- Some pages use `space-y-6`, others `space-y-4 sm:space-y-6`
+- Some headers use `flex items-center justify-between`, others `flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between`
 
-**5. `src/components/admin/SupportTicketsTab.tsx`** — Menu items and labels:
-- "এসকেলেট করুন" → "Escalate"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "টিমের জন্য ইন্টারনাল নোট..." → "Internal note for team..."
+---
 
-**6. `src/components/admin/LiveChatTab.tsx`** — Menu items and labels:
-- "ট্রান্সফার" → "Transfer"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "📝 [ইন্টারনাল নোট]" → "📝 [Internal Note]"
+### Implementation Plan
 
-All changes are straightforward string replacements — no logic changes needed.
+#### Phase 1: Convert Settings into Sub-Pages (Biggest Impact)
+
+**New route structure:**
+```
+/admin/settings          → Redirect to /admin/settings/store
+/admin/settings/store    → StoreSettingsTab
+/admin/settings/payments → PaymentSettings
+/admin/settings/emails   → EmailTemplatesTab
+/admin/settings/notifications → EmailApiConfig + AllEmailNotifications
+/admin/settings/security → IPSecuritySettings + AccountLockouts + BlockedLoginAttempts
+/admin/settings/audit    → AuditLogTab
+/admin/settings/backup   → BackupSettings
+/admin/settings/integrations → IntegrationsSettings + AutoReply + CannedResponses
+```
+
+**New `SettingsLayout.tsx`** — a nested layout with:
+- Left sidebar navigation (icons + labels, vertical list)
+- Active state highlighting
+- Collapses to horizontal scroll on mobile
+- Each sub-page wrapped in consistent Card with title/description
+- Save button stays in the Store settings page only (where it's needed)
+
+**Files:**
+- Create `src/layouts/SettingsLayout.tsx` — sidebar + Outlet
+- Create 8 page files in `src/pages/settings/` (one per section)
+- Refactor `src/pages/Settings.tsx` → thin redirect
+- Update `src/App.tsx` — nested routes under `/admin/settings`
+- Update `AdminSidebar.tsx` — Settings link stays the same (points to `/admin/settings`)
+
+#### Phase 2: Standardize All Page Headers
+
+Create a reusable `AdminPageHeader` component:
+```tsx
+// src/components/admin/AdminPageHeader.tsx
+<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 className="font-display text-2xl font-bold text-foreground">{title}</h1>
+    <p className="text-sm text-muted-foreground">{description}</p>
+  </div>
+  {actions && <div className="flex items-center gap-2 flex-wrap">{actions}</div>}
+</div>
+```
+
+Apply to all 15+ admin pages for consistent headers.
+
+**Pages to update:** Messages, HomepageManager, PageContentManager, AppearanceManager, AbandonedCarts, GlobalTrash (remove inline icons from h1)
+
+#### Phase 3: Standardize Page Wrapper Spacing
+
+All admin pages should use the same root wrapper:
+```tsx
+<div className="space-y-6">
+  <AdminPageHeader ... />
+  {/* content */}
+</div>
+```
+
+Fix pages that use `space-y-4` or inconsistent gap patterns.
+
+#### Phase 4: Fix Specific Issues
+- Remove Bengali text from AppearanceManager subtitle
+- Ensure all table pages have consistent search bar + filter + action button layout
+- Ensure all stat cards use the same Card pattern (some use bare divs, others use Card components)
+
+### Files Changed Summary
+- **New:** `src/layouts/SettingsLayout.tsx`, `src/components/admin/AdminPageHeader.tsx`
+- **New:** 8 files in `src/pages/settings/` (StorePage, PaymentsPage, EmailsPage, NotificationsPage, SecurityPage, AuditPage, BackupPage, IntegrationsPage)
+- **Updated:** `src/App.tsx` (settings sub-routes)
+- **Updated:** `src/pages/Settings.tsx` (redirect only)
+- **Updated:** ~8 admin pages for header consistency (Messages, HomepageManager, PageContentManager, AppearanceManager, AbandonedCarts, GlobalTrash, etc.)
 
