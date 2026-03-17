@@ -67,7 +67,7 @@ export function CommandPalette() {
       { label: "Brands", icon: Award, path: "/admin/brands", roles: ["admin"], keywords: ["brand", "manufacturer"] },
       { label: "Analytics", icon: BarChart3, path: "/admin/analytics", roles: ["admin"], keywords: ["stats", "chart"] },
       { label: "Shipping", icon: Truck, path: `${role === "admin" ? "/admin" : "/manager"}/shipping`, roles: ["admin", "manager"], keywords: ["delivery", "courier"] },
-      { label: "Inventory", icon: Boxes, path: "/admin/inventory", roles: ["admin"], keywords: ["stock"] },
+      
       { label: "Coupons", icon: Ticket, path: `${role === "admin" ? "/admin" : "/manager"}/coupons`, roles: ["admin", "manager"], keywords: ["discount", "promo"] },
       { label: "Messages", icon: MessageSquare, path: `${basePath}/messages`, roles: ["admin", "manager", "support"], keywords: ["chat", "support", "ticket"] },
       { label: "Reports", icon: FileText, path: "/admin/reports", roles: ["admin"] },
