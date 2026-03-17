@@ -1,56 +1,33 @@
 
 
-## Plan: Convert all Bengali text to English in Messages page and related hooks
+## Plan: Add Remaining Toolbar Features to Rich Text Editor
 
-### Files to update
+### New Features (8 additions)
 
-**1. `src/components/admin/TicketEscalationDialog.tsx`** — All Bengali labels and text:
-- "টিকেট এসকেলেট করুন" → "Escalate Ticket"
-- Warning text → "Escalating will increase the ticket priority and notify the relevant manager."
-- "বর্তমান প্রায়োরিটি" → "Current Priority"
-- "নতুন প্রায়োরিটি" → "New Priority"
-- "এসকেলেট করুন (ম্যানেজার/এডমিন)" → "Escalate To (Manager/Admin)"
-- "সিলেক্ট করুন" → "Select"
-- "কাউকে নির্দিষ্ট করবেন না" → "Don't assign to anyone"
-- "এসকেলেশনের কারণ *" → "Escalation Reason *"
-- Placeholder → "Describe why you are escalating..."
-- "বাতিল" → "Cancel"
-- "এসকেলেট করুন" (button) → "Escalate"
+**1. Font Family Selector** — Dropdown with Sans-serif, Serif, Monospace, Cursive options. Uses `document.execCommand("fontName", false, font)`.
 
-**2. `src/hooks/useSupportTickets.ts`** — All toast messages:
-- "টিকেট স্ট্যাটাস আপডেট হয়েছে" → "Ticket status updated"
-- "স্ট্যাটাস আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update status"
-- "প্রায়োরিটি আপডেট হয়েছে" → "Priority updated"
-- "প্রায়োরিটি আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update priority"
-- "টিকেট অ্যাসাইন হয়েছে" → "Ticket assigned"
-- "অ্যাসাইন করতে ব্যর্থ হয়েছে" → "Failed to assign ticket"
-- "টিকেট ডিলিট হয়েছে" → "Ticket deleted"
-- "ডিলিট করতে ব্যর্থ হয়েছে" → "Failed to delete"
-- "টিকেটগুলো ডিলিট হয়েছে" → "Tickets deleted"
-- "স্ট্যাটাস আপডেট হয়েছে" → "Status updated"
-- "আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update"
-- "টিকেটগুলো অ্যাসাইন হয়েছে" → "Tickets assigned"
+**2. Special Characters Popup** — Grid of symbols (©, ™, ®, →, ←, ↑, ↓, ★, ☆, ÷, ±, ≤, ≥, °, µ, §, ¶, •, etc.) inserted via `insertText`.
 
-**3. `src/hooks/useChatNotifications.ts`** — Notification titles:
-- "নতুন চ্যাট মেসেজ" → "New Chat Message"
-- "নতুন সাপোর্ট টিকেট" → "New Support Ticket"
-- "নতুন কন্টাক্ট মেসেজ" → "New Contact Message"
+**3. YouTube/Video Embed** — Popover with URL input, extracts YouTube video ID, inserts responsive iframe HTML via `insertHTML`.
 
-**4. `src/hooks/useTabNotifications.ts`** — Tab title defaults:
-- "মেসেজ ও সাপোর্ট" → "Messages & Support"
-- "নতুন মেসেজ!" → "New Message!"
+**4. Line Height Selector** — Dropdown (1.0, 1.25, 1.5, 2.0). Wraps selection in a `<span>` with inline `line-height` style.
 
-**5. `src/components/admin/SupportTicketsTab.tsx`** — Menu items and labels:
-- "এসকেলেট করুন" → "Escalate"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "টিমের জন্য ইন্টারনাল নোট..." → "Internal note for team..."
+**5. Find & Replace** — Small toolbar popup with search input + replace input + buttons (Find Next, Replace, Replace All). Uses `window.find()` and range manipulation.
 
-**6. `src/components/admin/LiveChatTab.tsx`** — Menu items and labels:
-- "ট্রান্সফার" → "Transfer"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "📝 [ইন্টারনাল নোট]" → "📝 [Internal Note]"
+**6. Text Direction Toggle** — LTR/RTL button, sets `dir` attribute on the editor or selected block.
 
-All changes are straightforward string replacements — no logic changes needed.
+**7. Print** — Opens `window.print()` with editor content in a print-friendly format.
+
+**8. Special Characters Insert** — Popup grid, click to insert at cursor.
+
+### Files Changed
+
+1. **`src/components/ui/rich-text-editor/constants.ts`** — Add `FONT_FAMILIES`, `LINE_HEIGHTS`, `SPECIAL_CHARACTERS` arrays
+2. **`src/components/ui/rich-text-editor/EditorToolbar.tsx`** — Add new toolbar buttons/dropdowns
+3. **`src/components/ui/rich-text-editor/RichTextEditor.tsx`** — Add handler functions for new features (video embed, find/replace, print, text direction)
+4. **`src/components/ui/rich-text-editor/FindReplaceBar.tsx`** — New component for find & replace UI
+5. **`src/components/ui/rich-text-editor/SpecialCharsPicker.tsx`** — New component for special characters grid
+6. **`src/components/ui/rich-text-editor/types.ts`** — Update props interface if needed
+
+No new dependencies. All native browser APIs + existing shadcn/ui components.
 
