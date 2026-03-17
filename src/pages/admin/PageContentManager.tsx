@@ -157,6 +157,12 @@ export default function PageContentManager() {
                             {page.is_enabled ? "Active" : "Disabled"}
                           </Badge>
                         </CardTitle>
+                        <SEOScoreIndicator
+                          title={page.title}
+                          subtitle={page.subtitle}
+                          content={page.content}
+                          updatedAt={page.updated_at}
+                        />
                         {!isEditing ? (
                           <Button size="sm" onClick={() => startEdit(page)}>Edit</Button>
                         ) : (
