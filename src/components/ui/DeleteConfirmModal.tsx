@@ -46,7 +46,8 @@ export function DeleteConfirmModal({
   const resolvedConfirmLabel = confirmLabel || (isTrash ? "Move to Trash" : "Delete");
   const resolvedLoadingLabel = loadingLabel || (isTrash ? "Moving..." : "Deleting...");
 
-  const handleConfirm = () => {
+  const handleConfirm = (e: React.MouseEvent) => {
+    e.preventDefault();
     onConfirm();
     onOpenChange(false);
   };
