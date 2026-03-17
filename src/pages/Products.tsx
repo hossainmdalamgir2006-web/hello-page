@@ -37,6 +37,7 @@ interface ProductCardData {
   sizes?: string[];
   colors?: string[];
   description?: string;
+  short_description?: string;
   meta_title?: string;
   meta_description?: string;
   meta_keywords?: string[];
