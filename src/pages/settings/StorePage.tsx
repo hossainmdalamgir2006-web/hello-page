@@ -75,6 +75,8 @@ export default function StorePage() {
         twitterUrl: getSettingValue("STORE_TWITTER_URL") || "",
         youtubeUrl: getSettingValue("STORE_YOUTUBE_URL") || "",
       });
+      initializedRef.current = true;
+      setIsDirty(false);
     }
   }, [loading, settings]);
 
