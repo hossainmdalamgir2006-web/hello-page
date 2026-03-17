@@ -237,7 +237,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
               ) : (
                 <>
                   <ChevronsLeft className="h-4 w-4" />
-                  <span className="text-xs">সাইডবার গুটিয়ে রাখুন</span>
+                  <span className="text-xs">Collapse Sidebar</span>
                 </>
               )}
             </Button>

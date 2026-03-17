@@ -86,7 +86,7 @@ export function CommandPalette() {
     ["Dashboard", "Products", "Orders", "Customers", "Categories", "Brands", "Analytics"].includes(r.label)
   );
   const managementRoutes = filteredRoutes.filter((r) =>
-    ["Shipping", "Inventory", "Coupons", "Messages", "Reports", "Abandoned Carts", "Role Management"].includes(r.label)
+    ["Shipping", "Coupons", "Messages", "Reports", "Abandoned Carts", "Role Management"].includes(r.label)
   );
   const settingsRoutes = filteredRoutes.filter((r) =>
     ["Profile", "Settings"].includes(r.label)
