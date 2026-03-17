@@ -27,3 +27,28 @@ export const EMOJI_LIST = [
   "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍",
   "⭐", "🌟", "✨", "💡", "🔥", "✅", "❌", "⚡",
 ];
+
+export const FONT_FAMILIES = [
+  { label: "Sans-serif", value: "Arial, Helvetica, sans-serif" },
+  { label: "Serif", value: "Georgia, 'Times New Roman', serif" },
+  { label: "Monospace", value: "'Courier New', Courier, monospace" },
+  { label: "Cursive", value: "'Comic Sans MS', cursive" },
+  { label: "System UI", value: "system-ui, -apple-system, sans-serif" },
+];
+
+export const LINE_HEIGHTS = [
+  { label: "1.0", value: "1" },
+  { label: "1.25", value: "1.25" },
+  { label: "1.5", value: "1.5" },
+  { label: "1.75", value: "1.75" },
+  { label: "2.0", value: "2" },
+];
+
+export const SPECIAL_CHARACTERS = [
+  "©", "®", "™", "°", "±", "÷", "×", "µ",
+  "§", "¶", "†", "‡", "•", "…", "‰", "‱",
+  "→", "←", "↑", "↓", "↔", "⇒", "⇐", "⇔",
+  "★", "☆", "♠", "♣", "♥", "♦", "♩", "♪",
+  "≤", "≥", "≠", "≈", "∞", "∑", "√", "∆",
+  "α", "β", "γ", "δ", "ε", "π", "Ω", "λ",
+];
