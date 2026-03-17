@@ -554,7 +554,18 @@ export default function ProductDetail() {
             <TabsContent value="description" className="py-6">
               {product.description ? (
                 <div
-                  className="prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-img:rounded-lg prose-img:max-w-full prose-video:rounded-lg prose-table:border prose-table:border-border prose-th:bg-muted prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-border prose-th:border prose-th:border-border text-foreground"
+                  className="prose prose-sm sm:prose-base max-w-none dark:prose-invert text-foreground
+                    prose-img:rounded-xl prose-img:shadow-md prose-img:mx-auto prose-img:max-w-full prose-img:h-auto prose-img:block prose-img:my-6
+                    prose-video:rounded-xl prose-video:shadow-md prose-video:mx-auto prose-video:max-w-full prose-video:block prose-video:my-6
+                    prose-table:border prose-table:border-border prose-table:rounded-lg prose-table:overflow-hidden
+                    prose-th:bg-muted prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:border prose-th:border-border
+                    prose-td:p-3 prose-td:border prose-td:border-border
+                    prose-blockquote:border-l-4 prose-blockquote:border-primary/30 prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4
+                    prose-a:text-primary prose-a:underline-offset-2 hover:prose-a:text-primary/80
+                    prose-headings:font-display prose-headings:text-foreground
+                    [&_iframe]:w-full [&_iframe]:max-w-2xl [&_iframe]:mx-auto [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:shadow-md [&_iframe]:my-6 [&_iframe]:block
+                    [&_video]:w-full [&_video]:max-w-2xl [&_video]:mx-auto [&_video]:rounded-xl [&_video]:shadow-md [&_video]:my-6
+                    [&_.ql-video]:w-full [&_.ql-video]:aspect-video [&_.ql-video]:rounded-xl"
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
               ) : (
