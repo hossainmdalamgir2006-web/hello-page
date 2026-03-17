@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { usePagination } from "@/hooks/usePagination";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { ReviewRatingSummary } from "@/components/admin/ReviewRatingSummary";
 
 type ReviewRow = {
   id: string;
