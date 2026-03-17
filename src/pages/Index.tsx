@@ -26,6 +26,7 @@ import { useDashboardLayout } from "@/hooks/useDashboardLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WelcomeBanner } from "@/components/admin/WelcomeBanner";
 import { format } from "date-fns";
 
 // Lazy-loaded heavy dashboard widgets
