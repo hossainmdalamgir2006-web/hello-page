@@ -113,7 +113,7 @@ export function MegaMenuNav() {
   if (navCategories.length === 0) return null;
 
   return (
-    <nav className="hidden md:flex items-center gap-1" ref={menuRef}>
+    <nav className="flex items-center justify-center gap-1 py-1" ref={menuRef}>
       {navCategories.map((cat) => (
         <div
           key={cat.label}
