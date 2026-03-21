@@ -85,8 +85,9 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
     onCloseMobile?.();
   };
 
-  const renderNavItem = (item: { title: string; url: string; icon: React.ElementType; end?: boolean }) => {
+  const renderNavItem = (item: { titleKey: string; url: string; icon: React.ElementType; end?: boolean }) => {
     const active = isActive(item.url);
+    const title = t(item.titleKey);
     const showBadge = item.url === "/myaccount/notifications" && unreadCount > 0;
     const content = (
       <button
