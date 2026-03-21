@@ -21,44 +21,45 @@ interface AccountSidebarProps {
   onCloseMobile?: () => void;
 }
 
-const menuSections = [
+// Menu sections with translation keys
+const menuSectionsConfig = [
   {
-    label: "OVERVIEW",
+    labelKey: "account.overview",
     items: [
-      { title: "Dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
-      { title: "Notifications", url: "/myaccount/notifications", icon: Bell },
+      { titleKey: "account.dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
+      { titleKey: "account.notifications", url: "/myaccount/notifications", icon: Bell },
     ],
   },
   {
-    label: "ORDERS",
+    labelKey: "account.orders",
     items: [
-      { title: "My Orders", url: "/myaccount/orders", icon: Package },
-      { title: "Returns", url: "/myaccount/returns", icon: RotateCcw },
+      { titleKey: "account.myOrders", url: "/myaccount/orders", icon: Package },
+      { titleKey: "account.returns", url: "/myaccount/returns", icon: RotateCcw },
     ],
   },
   {
-    label: "SHOPPING",
+    labelKey: "account.shopping",
     items: [
-      { title: "Wishlist", url: "/myaccount/wishlist", icon: Heart },
-      { title: "Shopping", url: "/myaccount/shopping", icon: ShoppingBag },
-      { title: "Recently Viewed", url: "/myaccount/recently-viewed", icon: Clock },
-      { title: "My Reviews", url: "/myaccount/reviews", icon: Star },
+      { titleKey: "account.wishlist", url: "/myaccount/wishlist", icon: Heart },
+      { titleKey: "account.shoppingLink", url: "/myaccount/shopping", icon: ShoppingBag },
+      { titleKey: "account.recentlyViewed", url: "/myaccount/recently-viewed", icon: Clock },
+      { titleKey: "account.myReviews", url: "/myaccount/reviews", icon: Star },
     ],
   },
   {
-    label: "ACCOUNT",
+    labelKey: "account.accountSection",
     items: [
-      { title: "Addresses", url: "/myaccount/addresses", icon: MapPin },
-      { title: "Payment Methods", url: "/myaccount/payment-methods", icon: CreditCard },
-      { title: "Security", url: "/myaccount/security", icon: Shield },
-      { title: "Settings", url: "/myaccount/settings", icon: Settings },
+      { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
+      { titleKey: "account.paymentMethods", url: "/myaccount/payment-methods", icon: CreditCard },
+      { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
+      { titleKey: "account.settings", url: "/myaccount/settings", icon: Settings },
     ],
   },
   {
-    label: "HELP",
+    labelKey: "account.help",
     items: [
-      { title: "Support", url: "/myaccount/support", icon: HelpCircle },
-      { title: "Live Chat", url: "/myaccount/chat", icon: MessageCircle },
+      { titleKey: "account.support", url: "/myaccount/support", icon: HelpCircle },
+      { titleKey: "account.liveChat", url: "/myaccount/chat", icon: MessageCircle },
     ],
   },
 ];
