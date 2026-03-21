@@ -343,8 +343,7 @@ export default function Cart() {
                           <div className="flex gap-1">
                             <Button variant="outline" size="sm" className="h-8 text-xs"
                               onClick={() => moveToCart(item.id, item.size, item.color)}
-                            >
-                              Move to Cart
+                            >{t('store.moveToCart')}
                             </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive"
                               onClick={() => removeSavedItem(item.id, item.size, item.color)}
