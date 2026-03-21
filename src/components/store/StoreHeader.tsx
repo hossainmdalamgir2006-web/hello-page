@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingBag, Search, Menu, X, User, Heart, LogOut, LayoutDashboard } from "lucide-react";
+import { ShoppingBag, Search, Menu, User, Heart, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,20 +23,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { CartDrawer } from "./CartDrawer";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { MegaMenuNav, MobileMegaMenu } from "./MegaMenuNav";
+import { MegaMenuNav, MobileMegaMenu, useDynamicCategories } from "./MegaMenuNav";
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
 export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchCategory, setSearchCategory] = useState("all");
   const { data: settings } = useStoreSettingsCache();
   const { data: headerContent } = usePageContent("header");
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const { itemCount: wishlistCount } = useWishlist();
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
+  const { navCategories } = useDynamicCategories();
 
   const storeName = settings?.STORE_NAME || "Your Store";
   const storeLogo = settings?.STORE_LOGO || null;
@@ -37,6 +46,16 @@ export function StoreHeader() {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const handleSearch = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!searchQuery.trim()) return;
+    const params = new URLSearchParams({ search: searchQuery.trim() });
+    if (searchCategory && searchCategory !== "all") {
+      params.set("category", searchCategory);
+    }
+    navigate(`/products?${params.toString()}`);
   };
 
   return (
@@ -49,11 +68,12 @@ export function StoreHeader() {
       )}
 
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        {/* Main Row: Logo — Search — Icons */}
+        <div className="flex items-center justify-between h-16 md:h-20 gap-3">
           {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+            <SheetTrigger asChild className="lg:hidden">
+              <Button variant="ghost" size="icon" className="shrink-0">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -70,7 +90,7 @@ export function StoreHeader() {
           </Sheet>
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
             {storeLogo ? (
               <OptimizedImage
                 src={storeLogo}
@@ -84,31 +104,51 @@ export function StoreHeader() {
                 </span>
               </div>
             )}
-            <span className="font-display font-bold text-xl md:text-2xl bg-gradient-to-r from-store-primary to-store-secondary bg-clip-text text-transparent">
+            <span className="hidden sm:inline font-display font-bold text-xl md:text-2xl bg-gradient-to-r from-store-primary to-store-secondary bg-clip-text text-transparent">
               {storeName}
             </span>
           </Link>
 
-          {/* Desktop Navigation — Mega Menu */}
-          <MegaMenuNav />
-
-          {/* Actions */}
-          <div className="flex items-center gap-1 sm:gap-2">
-            <ThemeToggle />
-            {searchOpen ? (
-              <div className="absolute left-0 right-0 top-full bg-store-card p-4 border-b border-store-muted shadow-lg md:relative md:top-0 md:shadow-none md:border-none md:p-0">
-                <div className="flex items-center gap-2 max-w-md mx-auto md:mx-0">
-                  <Input placeholder="Search products..." className="flex-1" autoFocus />
-                  <Button variant="ghost" size="icon" onClick={() => setSearchOpen(false)}>
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} className="hidden md:flex">
+          {/* Center Search Bar — Desktop */}
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4">
+            <div className="flex w-full rounded-lg border border-store-muted overflow-hidden bg-background">
+              <Input
+                placeholder="Search for products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
+              />
+              <Select value={searchCategory} onValueChange={setSearchCategory}>
+                <SelectTrigger className="w-[160px] border-0 border-l border-store-muted rounded-none focus:ring-0 focus:ring-offset-0 bg-store-muted/30 text-sm">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {navCategories.map((cat) => (
+                    <SelectItem key={cat.slug} value={cat.slug}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                type="submit"
+                size="icon"
+                className="rounded-none bg-store-primary hover:bg-store-primary/90 text-store-primary-foreground shrink-0"
+              >
                 <Search className="h-5 w-5" />
               </Button>
-            )}
+            </div>
+          </form>
+
+          {/* Actions */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <ThemeToggle />
+
+            {/* Mobile Search */}
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => navigate('/products')}>
+              <Search className="h-5 w-5" />
+            </Button>
 
             {/* Wishlist */}
             <Button variant="ghost" size="icon" className="hidden md:flex relative" onClick={() => navigate('/wishlist')}>
@@ -173,6 +213,30 @@ export function StoreHeader() {
             </Button>
           </div>
         </div>
+
+        {/* Second Row: MegaMenu Nav — Desktop */}
+        <div className="hidden lg:block border-t border-store-muted/50">
+          <MegaMenuNav />
+        </div>
+      </div>
+
+      {/* Mobile Search Bar */}
+      <div className="md:hidden px-4 pb-3">
+        <form onSubmit={handleSearch} className="flex rounded-lg border border-store-muted overflow-hidden bg-background">
+          <Input
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none h-9 text-sm"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            className="rounded-none bg-store-primary hover:bg-store-primary/90 text-store-primary-foreground shrink-0 h-9 w-9"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+        </form>
       </div>
 
       <CartDrawer />
