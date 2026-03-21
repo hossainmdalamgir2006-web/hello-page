@@ -142,12 +142,12 @@ export default function Cart() {
           <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-store-muted flex items-center justify-center">
             <ShoppingBag className="w-16 h-16 text-muted-foreground" />
           </div>
-          <h1 className="font-display text-2xl font-bold mb-3">Your cart is empty</h1>
+          <h1 className="font-display text-2xl font-bold mb-3">{t('store.cartEmpty')}</h1>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            Looks like you haven't added anything to your cart yet. Start shopping to fill it up!
+            {t('store.cartEmptyDesc')}
           </p>
           <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild>
-            <Link to="/products">Start Shopping</Link>
+            <Link to="/products">{t('store.startShopping')}</Link>
           </Button>
         </div>
       </>
