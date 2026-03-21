@@ -172,7 +172,7 @@ export default function StoreHome() {
                   </Badge>
                 )}
                 <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-                  {bestSellers?.title || "Best Sellers"}
+                  {bestSellers?.title || t('store.bestSellers')}
                 </h2>
                 {bestSellers?.subtitle && (
                   <p className="text-muted-foreground mt-1">{bestSellers.subtitle}</p>
@@ -180,7 +180,7 @@ export default function StoreHome() {
               </div>
               <Button variant="outline" asChild>
                 <Link to="/products">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('store.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -188,9 +188,9 @@ export default function StoreHome() {
               <FeaturedProductsSkeleton />
             ) : products.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No products available yet.</p>
+                <p className="text-muted-foreground">{t('store.noProductsYet')}</p>
                 <Button asChild className="mt-4">
-                  <Link to="/products">Browse All Products</Link>
+                  <Link to="/products">{t('store.browseAllProducts')}</Link>
                 </Button>
               </div>
             ) : (
