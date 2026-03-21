@@ -1,49 +1,62 @@
 
 
-# Fixed Filter Sidebar — Store Products Page
+# Enhanced Product Filters — Sidebar
 
-## What Changes
-Replace the current **Sheet (slide-out drawer)** filter on `/products` with a **fixed left sidebar** that stays visible on desktop. On mobile, keep the Sheet drawer behavior.
+## What's Available in Database
 
-## Layout
+Based on the `products` and `product_variants` tables, here are ALL the filters we can add:
 
-```text
-Desktop (≥1024px):
-┌──────────────────────────────────────────────┐
-│              Page Header                     │
-├──────────┬───────────────────────────────────┤
-│ FILTERS  │  Search + Sort + View Toggle      │
-│ (fixed)  │───────────────────────────────────│
-│ 260px    │  Product Grid (3 cols)            │
-│          │                                   │
-│ Category │                                   │
-│ Price    │                                   │
-│ Sale/New │                                   │
-│          │                                   │
-│ [Clear]  │                                   │
-└──────────┴───────────────────────────────────┘
+| Filter | Source | Currently Exists |
+|---|---|---|
+| Category | `products.category` | Yes |
+| Price Range | `products.price` | Yes |
+| On Sale | `compare_at_price > price` | Yes |
+| New Arrivals | `created_at` last 30 days | Yes |
+| **Brand** | `products.brand` | No |
+| **Tags** | `products.tags[]` | No |
+| **Stock Status** | `products.quantity` | No |
+| **Color** | `product_variants.color` | No |
+| **Size** | `product_variants.size` | No |
+| **Rating** | `product_reviews.rating` (avg) | No |
+| **Product Type** | `products.product_type` | No |
 
-Mobile (<1024px):
-Same as now — Sheet drawer via "Filters" button
-```
-
-## File Changes
+## Plan
 
 ### `src/pages/store/StoreProducts.tsx`
-1. Extract filter content into a reusable `FilterPanel` component (inline or separate)
-2. Desktop layout: `flex` container with:
-   - Left: `w-[260px] shrink-0 sticky top-20` filter sidebar (always visible, scrolls independently with `overflow-y-auto max-h-[calc(100vh-5rem)]`)
-   - Right: `flex-1` product grid area (search bar + sort + grid)
-3. Mobile: Keep existing Sheet trigger + Sheet content with same filter controls
-4. Product grid changes from `lg:grid-cols-4` to `lg:grid-cols-3` to accommodate sidebar width
-5. Hide the "Filters" button on desktop (`lg:hidden`), show sidebar `hidden lg:block`
+
+**1. Fetch additional data on mount:**
+- Brands: `SELECT DISTINCT brand FROM products WHERE is_active AND brand IS NOT NULL`
+- Colors: `SELECT DISTINCT color FROM product_variants WHERE color IS NOT NULL`
+- Sizes: `SELECT DISTINCT size FROM product_variants WHERE size IS NOT NULL`
+- Tags: Aggregate unique tags from products
+- Average ratings: `SELECT product_id, AVG(rating) FROM product_reviews GROUP BY product_id`
+
+**2. Add new filter state:**
+- `selectedBrands: string[]`
+- `selectedColors: string[]`
+- `selectedSizes: string[]`
+- `selectedTags: string[]`
+- `stockStatus: "all" | "in-stock" | "out-of-stock"`
+- `minRating: number` (0-5, 0 = show all)
+
+**3. Update `FilterPanel` with new sections:**
+- **Brand** — checkboxes (like categories)
+- **Color** — color swatches (circles with `color_code` if available, else text)
+- **Size** — compact badges/chips (S, M, L, XL, etc.)
+- **Rating** — star buttons (4+, 3+, 2+, 1+)
+- **Stock** — radio: All / In Stock / Out of Stock
+- **Tags** — collapsible checkbox list
+
+**4. Update `filteredProducts` memo** to apply all new filters.
+
+**5. Update `activeFilterCount` and active filter badges** to reflect new filters.
+
+**6. Update `clearFilters`** to reset all new state.
 
 ### `src/components/skeletons/StoreFrontSkeletons.tsx`
-- Add `FilterSkeleton` variant for the sidebar (already exists, just needs integration)
+- Extend `FilterSkeleton` with a few more shimmer rows to match the taller sidebar.
 
-## Key Details
-- Sidebar uses `sticky top-20` so it stays in view while scrolling products
-- `ScrollArea` wrapping for long category lists
-- No new dependencies
-- Mobile UX unchanged — Sheet drawer stays
+### Files Changed
+- `src/pages/store/StoreProducts.tsx` — main changes
+- `src/components/skeletons/StoreFrontSkeletons.tsx` — minor update
 
