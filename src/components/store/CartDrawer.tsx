@@ -106,7 +106,7 @@ export function CartDrawer() {
 
             <div className="border-t pt-4 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-muted-foreground">{t('store.subtotal')}</span>
                 <span className="font-semibold">{formatPrice(subtotal)}</span>
               </div>
               {autoDiscount > 0 && (
