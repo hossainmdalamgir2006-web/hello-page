@@ -92,6 +92,7 @@ const defaultHelpLinks = [
 export function StoreFooter() {
   const { data: settings } = useStoreSettingsCache();
   const { data: footerContent } = usePageContent("footer");
+  const { t } = useLanguage();
   const content = (footerContent?.content as any) || {};
 
   const storeName = settings?.STORE_NAME || "Your Store";
