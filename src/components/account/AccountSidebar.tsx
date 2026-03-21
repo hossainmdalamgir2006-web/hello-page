@@ -153,11 +153,11 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
 
         {/* Navigation */}
         <nav className="flex-1 space-y-5">
-          {menuSections.map((section, idx) => (
-            <div key={section.label}>
+          {menuSectionsConfig.map((section, idx) => (
+            <div key={section.labelKey}>
               {!collapsed && (
                 <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-sidebar-muted/70">
-                  {section.label}
+                  {t(section.labelKey)}
                 </p>
               )}
               {collapsed && idx > 0 && <div className="my-3 border-t border-sidebar-border" />}
