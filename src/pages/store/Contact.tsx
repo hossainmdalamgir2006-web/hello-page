@@ -119,7 +119,7 @@ export default function Contact() {
                     <FormItem><FormLabel>{t('store.message')}</FormLabel><FormControl><Textarea placeholder="How can we help you?" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={isSubmitting}>
-                    {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Sending...</>) : "Send Message"}
+                    {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('store.sending')}</>) : t('store.sendMessage')}
                   </Button>
                 </form>
               </Form>
