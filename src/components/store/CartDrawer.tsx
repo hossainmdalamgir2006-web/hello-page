@@ -42,10 +42,10 @@ export function CartDrawer() {
             <div className="w-24 h-24 rounded-full bg-store-muted flex items-center justify-center mb-4">
               <ShoppingBag className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="font-display font-semibold text-lg mb-2">Your cart is empty</h3>
-            <p className="text-muted-foreground mb-6">Looks like you haven't added anything yet.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">{t('store.cartEmpty')}</h3>
+            <p className="text-muted-foreground mb-6">{t('store.cartEmptyDesc')}</p>
             <Button onClick={() => setIsOpen(false)} className="bg-store-primary hover:bg-store-primary/90" asChild>
-              <Link to="/products">Start Shopping</Link>
+              <Link to="/products">{t('store.startShopping')}</Link>
             </Button>
           </div>
         ) : (
