@@ -180,7 +180,7 @@ export function StoreHeader() {
                         role === 'manager' ? '/manager/dashboard' : '/support/dashboard'
                       )}>
                         <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Dashboard
+                        {t('store.dashboard')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
