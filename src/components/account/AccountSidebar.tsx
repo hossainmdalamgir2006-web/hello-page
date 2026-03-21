@@ -208,7 +208,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
                 collapsed ? "justify-center px-2" : "justify-start px-3 gap-3"
               )}
             >
-              {collapsed ? <ChevronsRight className="h-4 w-4" /> : <><ChevronsLeft className="h-4 w-4" /><span className="text-xs">Collapse</span></>}
+              {collapsed ? <ChevronsRight className="h-4 w-4" /> : <><ChevronsLeft className="h-4 w-4" /><span className="text-xs">{t('account.collapse')}</span></>}
             </Button>
           )}
         </div>
