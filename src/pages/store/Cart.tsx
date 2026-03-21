@@ -439,7 +439,7 @@ export default function Cart() {
                 </div>
 
                 <Button size="lg" className="w-full bg-store-primary hover:bg-store-primary/90" onClick={handleProceedToCheckout} disabled={selectedItems.length === 0}>
-                  Proceed to Checkout ({selectedCount} items)
+                  {t('store.proceedToCheckout')} ({selectedCount} {t('store.items')})
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">Taxes calculated at checkout</p>
