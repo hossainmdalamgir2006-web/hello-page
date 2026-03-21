@@ -434,7 +434,7 @@ export default function Cart() {
                 <Separator />
 
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
+                  <span>{t('store.total')}</span>
                   <span>{formatPrice(total)}</span>
                 </div>
 
