@@ -289,17 +289,17 @@ export default function Cart() {
                           <Button variant="ghost" size="sm" className="h-7 text-xs px-2"
                             onClick={() => saveForLater(item.id, item.size, item.color)}
                           >
-                            <Bookmark className="h-3 w-3 mr-1" /> Save for Later
+                            <Bookmark className="h-3 w-3 mr-1" /> {t('store.saveForLater')}
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-xs px-2"
                             onClick={() => handleMoveToWishlist(item)}
                           >
-                            <Heart className="h-3 w-3 mr-1" /> Wishlist
+                            <Heart className="h-3 w-3 mr-1" /> {t('store.wishlist')}
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-xs px-2"
                             onClick={() => setExpandedNotes(prev => ({ ...prev, [key]: !prev[key] }))}
                           >
-                            <MessageSquare className="h-3 w-3 mr-1" /> {item.note ? 'Edit Note' : 'Add Note'}
+                            <MessageSquare className="h-3 w-3 mr-1" /> {item.note ? t('store.editNote') : t('store.addNote')}
                           </Button>
                         </div>
 
