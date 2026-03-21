@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export function CartDrawer() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, itemCount } = useCart();
+  const { t } = useLanguage();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
 
   const autoDiscount = calculateAutoDiscount(subtotal);
