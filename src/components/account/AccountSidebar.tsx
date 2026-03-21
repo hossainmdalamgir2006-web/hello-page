@@ -175,7 +175,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
                   <Store className="h-[18px] w-[18px]" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">Back to Store</TooltipContent>
+              <TooltipContent side="right" className="font-medium">{t('account.backToStore')}</TooltipContent>
             </Tooltip>
           ) : (
             <button onClick={() => handleNav("/")} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
