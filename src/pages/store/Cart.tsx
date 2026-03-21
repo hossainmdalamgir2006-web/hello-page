@@ -326,7 +326,7 @@ export default function Cart() {
             {savedItems.length > 0 && (
               <div className="mt-8">
                 <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
-                  <Bookmark className="h-5 w-5" /> Saved for Later ({savedItems.length})
+                  <Bookmark className="h-5 w-5" /> {t('store.savedForLater')} ({savedItems.length})
                 </h2>
                 <div className="space-y-3">
                   {savedItems.map((item) => (
