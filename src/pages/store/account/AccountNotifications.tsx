@@ -1,22 +1,20 @@
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
-import { Bell, BellOff, Check, CheckCheck } from "lucide-react";
+import { BellOff, CheckCheck } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericListSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const typeIcons: Record<string, string> = {
-  order: "📦",
-  promo: "🎉",
-  system: "⚙️",
-  support: "💬",
+  order: "📦", promo: "🎉", system: "⚙️", support: "💬",
 };
 
 export default function AccountNotifications() {
   const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useRealtimeNotifications();
+  const { t } = useLanguage();
 
   if (isLoading) {
     return <DelayedLoader><GenericListSkeleton /></DelayedLoader>;
@@ -27,7 +25,7 @@ export default function AccountNotifications() {
       {unreadCount > 0 && (
         <div className="flex justify-end">
           <Button variant="outline" size="sm" onClick={markAllAsRead}>
-            <CheckCheck className="h-4 w-4 mr-1.5" />Mark all as read
+            <CheckCheck className="h-4 w-4 mr-1.5" />{t('account.markAllRead')}
           </Button>
         </div>
       )}
@@ -36,7 +34,7 @@ export default function AccountNotifications() {
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             <BellOff className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>No notifications yet</p>
+            <p>{t('account.noNotifications')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -44,10 +42,7 @@ export default function AccountNotifications() {
           {notifications.map((n) => (
             <Card
               key={n.id}
-              className={cn(
-                "transition-colors cursor-pointer hover:bg-accent/50",
-                !n.is_read && "border-primary/30 bg-primary/5"
-              )}
+              className={cn("transition-colors cursor-pointer hover:bg-accent/50", !n.is_read && "border-primary/30 bg-primary/5")}
               onClick={() => !n.is_read && markAsRead(n.id)}
             >
               <CardContent className="flex items-start gap-3 py-3">

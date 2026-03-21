@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface OrderReviewModalProps {
   open: boolean;
@@ -20,19 +21,10 @@ interface OrderReviewModalProps {
 }
 
 export function OrderReviewModal({
-  open,
-  onOpenChange,
-  items,
-  subtotal,
-  discount,
-  shippingCost,
-  codCharge,
-  total,
-  paymentMethodName,
-  shippingAddress,
-  onConfirm,
-  processing,
+  open, onOpenChange, items, subtotal, discount, shippingCost, codCharge, total,
+  paymentMethodName, shippingAddress, onConfirm, processing,
 }: OrderReviewModalProps) {
+  const { t } = useLanguage();
   const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   return (
@@ -41,14 +33,13 @@ export function OrderReviewModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-store-primary" />
-            Review Your Order
+            {t('store.reviewYourOrder')}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Items */}
           <div className="space-y-3">
-            <h4 className="font-medium text-sm text-muted-foreground">Items ({items.length})</h4>
+            <h4 className="font-medium text-sm text-muted-foreground">{t('store.items')} ({items.length})</h4>
             {items.map((item) => (
               <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-3">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
@@ -68,45 +59,42 @@ export function OrderReviewModal({
 
           <Separator />
 
-          {/* Shipping */}
           <div>
-            <h4 className="font-medium text-sm text-muted-foreground mb-1">Shipping To</h4>
+            <h4 className="font-medium text-sm text-muted-foreground mb-1">{t('store.shippingTo')}</h4>
             <p className="text-sm">{shippingAddress}</p>
           </div>
 
-          {/* Payment */}
           <div>
-            <h4 className="font-medium text-sm text-muted-foreground mb-1">Payment</h4>
+            <h4 className="font-medium text-sm text-muted-foreground mb-1">{t('store.payment')}</h4>
             <p className="text-sm">{paymentMethodName}</p>
           </div>
 
           <Separator />
 
-          {/* Totals */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-muted-foreground">{t('store.subtotal')}</span>
               <span>{formatPrice(subtotal)}</span>
             </div>
             {discount > 0 && (
               <div className="flex justify-between text-sm text-store-accent">
-                <span>Discount</span>
+                <span>{t('store.discount')}</span>
                 <span>-{formatPrice(discount)}</span>
               </div>
             )}
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Shipping</span>
-              <span className={shippingCost === 0 ? 'text-green-600' : ''}>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
+              <span className="text-muted-foreground">{t('store.shipping')}</span>
+              <span className={shippingCost === 0 ? 'text-green-600' : ''}>{shippingCost === 0 ? t('store.free') : formatPrice(shippingCost)}</span>
             </div>
             {codCharge > 0 && (
               <div className="flex justify-between text-sm text-warning">
-                <span>COD Charge</span>
+                <span>{t('store.codCharge')}</span>
                 <span>+{formatPrice(codCharge)}</span>
               </div>
             )}
             <Separator />
             <div className="flex justify-between font-bold text-lg">
-              <span>Total</span>
+              <span>{t('store.total')}</span>
               <span>{formatPrice(total)}</span>
             </div>
           </div>
@@ -114,7 +102,7 @@ export function OrderReviewModal({
 
         <DialogFooter className="flex flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={processing} className="flex-1">
-            Go Back
+            {t('store.goBack')}
           </Button>
           <Button
             onClick={onConfirm}
@@ -124,10 +112,10 @@ export function OrderReviewModal({
             {processing ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Processing...
+                {t('store.processing')}
               </>
             ) : (
-              `Confirm & Pay ${formatPrice(total)}`
+              `${t('store.confirmAndPay')} ${formatPrice(total)}`
             )}
           </Button>
         </DialogFooter>

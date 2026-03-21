@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { ShieldCheck, Tag, X, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CartItem {
   id: string;
@@ -46,10 +47,12 @@ export function CheckoutOrderSummary({
   selectedZoneName, selectedRateName, selectedRateMaxOrderAmount,
   formatPrice,
 }: CheckoutOrderSummaryProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="lg:col-span-1">
       <Card className="sticky top-24">
-        <CardHeader><CardTitle>Order Summary</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t('store.orderSummary')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {items.map((item) => (
@@ -78,8 +81,8 @@ export function CheckoutOrderSummary({
             </div>
           ) : (
             <div className="flex gap-2">
-              <Input placeholder="Coupon code" value={couponCode} onChange={(e) => onCouponCodeChange(e.target.value.toUpperCase())} className="h-9" />
-              <Button type="button" variant="outline" size="sm" onClick={onApplyCoupon} disabled={couponLoading || !couponCode.trim()}>Apply</Button>
+              <Input placeholder={t('store.couponCode')} value={couponCode} onChange={(e) => onCouponCodeChange(e.target.value.toUpperCase())} className="h-9" />
+              <Button type="button" variant="outline" size="sm" onClick={onApplyCoupon} disabled={couponLoading || !couponCode.trim()}>{t('store.apply')}</Button>
             </div>
           )}
 
@@ -87,49 +90,49 @@ export function CheckoutOrderSummary({
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-muted-foreground">{t('store.subtotal')}</span>
               <span>{formatPrice(subtotal)}</span>
             </div>
             {discount > 0 && (
               <div className="flex justify-between text-sm text-store-accent">
                 <span className="flex items-center gap-1">
                   {isAutoDiscountApplied && <Sparkles className="h-3 w-3" />}
-                  {isAutoDiscountApplied ? "Auto Discount" : "Discount"}
+                  {isAutoDiscountApplied ? t('store.autoDiscount') : t('store.discount')}
                 </span>
                 <span>-{formatPrice(discount)}</span>
               </div>
             )}
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">
-                Shipping
+                {t('store.shipping')}
                 {selectedZoneName && selectedRateName && <span className="block text-xs">{selectedZoneName} • {selectedRateName}</span>}
               </span>
-              <span className={shippingCost === 0 ? 'text-green-600' : ''}>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
+              <span className={shippingCost === 0 ? 'text-green-600' : ''}>{shippingCost === 0 ? t('store.free') : formatPrice(shippingCost)}</span>
             </div>
             {codCharge > 0 && (
               <div className="flex justify-between text-sm text-warning">
-                <span>COD Charge</span>
+                <span>{t('store.codCharge')}</span>
                 <span>+{formatPrice(codCharge)}</span>
               </div>
             )}
             {selectedRateMaxOrderAmount && subtotal < selectedRateMaxOrderAmount && (
-              <p className="text-xs text-muted-foreground">Order ৳{(selectedRateMaxOrderAmount - subtotal).toLocaleString()} more for free delivery!</p>
+              <p className="text-xs text-muted-foreground">৳{(selectedRateMaxOrderAmount - subtotal).toLocaleString()} {t('store.orderMoreForFree')}</p>
             )}
           </div>
 
           <Separator />
 
           <div className="flex justify-between font-semibold text-lg">
-            <span>Total</span>
+            <span>{t('store.total')}</span>
             <span>{formatPrice(total)}</span>
           </div>
 
           <Button type="submit" size="lg" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={processing || !selectedZoneId || !selectedRateId || !acceptedTerms}>
-            {processing ? "Processing..." : `Review & Place Order • ${formatPrice(total)}`}
+            {processing ? t('store.processing') : `${t('store.reviewPlaceOrder')} • ${formatPrice(total)}`}
           </Button>
 
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <ShieldCheck className="h-4 w-4" /><span>Secure checkout</span>
+            <ShieldCheck className="h-4 w-4" /><span>{t('store.secureCheckout')}</span>
           </div>
         </CardContent>
       </Card>
