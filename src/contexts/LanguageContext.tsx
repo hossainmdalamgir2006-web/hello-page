@@ -728,21 +728,6 @@ export const translations: Translations = {
 
   // ════════════ ACCOUNT WISHLIST ════════════
   'account.myWishlist': { en: 'My Wishlist', bn: 'আমার উইশলিস্ট' },
-
-  // ════════════ QUICK VIEW ════════════
-  'store.selectVariant': { en: 'Select Variant', bn: 'ভ্যারিয়েন্ট নির্বাচন করুন' },
-  'store.selectProducts': { en: 'Select Products', bn: 'পণ্য নির্বাচন করুন' },
-  'store.bundleIncludes': { en: 'Bundle Includes', bn: 'বান্ডেলে রয়েছে' },
-  'store.items': { en: 'items', bn: 'টি আইটেম' },
-  'store.addItems': { en: 'Add Items', bn: 'আইটেম যোগ করুন' },
-  'store.addBundleToCart': { en: 'Add Bundle to Cart', bn: 'বান্ডেল কার্টে যোগ করুন' },
-  'store.viewFullDetails': { en: 'View Full Details', bn: 'সম্পূর্ণ বিবরণ দেখুন' },
-  'store.selectAtLeastOne': { en: 'Please select at least one product', bn: 'অন্তত একটি পণ্য নির্বাচন করুন' },
-  'store.itemsAddedToCart': { en: 'items added to cart!', bn: 'টি আইটেম কার্টে যোগ হয়েছে!' },
-  'store.addedToCart': { en: 'Added to cart!', bn: 'কার্টে যোগ হয়েছে!' },
-  'store.pleaseSelectVariant': { en: 'Please select a variant', bn: 'একটি ভ্যারিয়েন্ট নির্বাচন করুন' },
-  'store.total': { en: 'Total', bn: 'মোট' },
-  'store.save': { en: 'Save', bn: 'সেভ করুন' },
 };
 
 interface LanguageContextType {
