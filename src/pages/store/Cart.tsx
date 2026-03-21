@@ -370,7 +370,7 @@ export default function Cart() {
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+                <CardTitle>{t('store.orderSummary')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Coupon Code */}
