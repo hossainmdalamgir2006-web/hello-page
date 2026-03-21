@@ -222,7 +222,7 @@ export default function Cart() {
                             </Link>
                             {(item.size || item.color) && (
                               <p className="text-sm text-muted-foreground mt-1">
-                                {item.size && `Size: ${item.size}`}{item.size && item.color && ' • '}{item.color && `Color: ${item.color}`}
+                                {item.size && `${t('store.sizeLabel')}: ${item.size}`}{item.size && item.color && ' • '}{item.color && `${t('store.colorLabel')}: ${item.color}`}
                               </p>
                             )}
                             {/* Stock Warning */}
