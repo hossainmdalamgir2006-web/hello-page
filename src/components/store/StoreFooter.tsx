@@ -176,7 +176,7 @@ export function StoreFooter() {
 
           {/* Help Links */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Help</h4>
+            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.helpFooter')}</h4>
             <ul className="space-y-2 text-sm">
               {helpLinks.map((link: any, i: number) => (
                 <li key={i}>
