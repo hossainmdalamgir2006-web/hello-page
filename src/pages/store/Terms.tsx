@@ -1,6 +1,7 @@
 
 import { SEOHead } from "@/components/SEOHead";
 import { usePageContent } from "@/hooks/usePageContents";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Terms() {
