@@ -211,8 +211,8 @@ export function StoreFooter() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[hsl(215,16%,60%)]">
           <p>© {new Date().getFullYear()} {storeName}. {copyrightText}</p>
           <div className="flex gap-6">
-            <Link to="/privacy" className="hover:text-store-accent transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-store-accent transition-colors">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-store-accent transition-colors">{t('store.privacyPolicy')}</Link>
+            <Link to="/terms" className="hover:text-store-accent transition-colors">{t('store.termsOfService')}</Link>
           </div>
         </div>
       </div>

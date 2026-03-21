@@ -266,9 +266,9 @@ export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
       {/* Static Pages */}
       <div className="border-t border-store-muted mt-2 pt-2">
         {[
-          { label: "Contact Us", href: "/contact" },
-          { label: "Track Order", href: "/track-order" },
-          { label: "Shipping Info", href: "/shipping-info" },
+          { label: t('store.contactUs'), href: "/contact" },
+          { label: t('store.trackOrder'), href: "/track-order" },
+          { label: t('store.shippingInfo'), href: "/shipping-info" },
         ].map((page) => (
           <Link
             key={page.label}
