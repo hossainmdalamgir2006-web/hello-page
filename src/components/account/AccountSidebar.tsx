@@ -118,7 +118,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
       return (
         <Tooltip key={item.url} delayDuration={0}>
           <TooltipTrigger asChild>{content}</TooltipTrigger>
-          <TooltipContent side="right" className="font-medium">{item.title}</TooltipContent>
+          <TooltipContent side="right" className="font-medium">{title}</TooltipContent>
         </Tooltip>
       );
     }
