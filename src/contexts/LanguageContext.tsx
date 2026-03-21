@@ -662,6 +662,80 @@ export const translations: Translations = {
   'account.shoppingPageDesc': { en: 'Buy again, coupons, and price alerts', bn: 'আবার কিনুন, কুপন, ও মূল্য সতর্কতা' },
   'account.recentlyViewedPageTitle': { en: 'Recently Viewed', bn: 'সম্প্রতি দেখা' },
   'account.recentlyViewedPageDesc': { en: "Products you've browsed recently", bn: 'সম্প্রতি আপনি যে পণ্যগুলো দেখেছেন' },
+
+  // ════════════ PRODUCT DETAIL EXTRA ════════════
+  'store.sizeGuide': { en: 'Size Guide', bn: 'সাইজ গাইড' },
+  'store.chest': { en: 'Chest', bn: 'বুক' },
+  'store.waist': { en: 'Waist', bn: 'কোমর' },
+  'store.hip': { en: 'Hip', bn: 'নিতম্ব' },
+  'store.description': { en: 'Description', bn: 'বিবরণ' },
+  'store.details': { en: 'Details', bn: 'বিস্তারিত' },
+  'store.reviews': { en: 'Reviews', bn: 'রিভিউ' },
+  'store.qty': { en: 'Qty', bn: 'পরিমাণ' },
+  'store.type': { en: 'Type', bn: 'ধরন' },
+  'store.off': { en: 'OFF', bn: 'ছাড়' },
+  'store.inStockCount': { en: 'in stock', bn: 'স্টকে আছে' },
+
+  // ════════════ CHECKOUT EXTRA ════════════
+  'store.contactInformation': { en: 'Contact Information', bn: 'যোগাযোগ তথ্য' },
+  'store.emailAddress': { en: 'Email Address', bn: 'ইমেইল ঠিকানা' },
+  'store.createAccountCheckout': { en: 'Create an account for faster checkout next time', bn: 'পরবর্তী সময়ে দ্রুত চেকআউটের জন্য একটি অ্যাকাউন্ট তৈরি করুন' },
+  'store.address': { en: 'Address', bn: 'ঠিকানা' },
+  'store.houseStreetArea': { en: 'House/Flat No, Street, Area', bn: 'বাড়ি/ফ্ল্যাট নম্বর, রাস্তা, এলাকা' },
+  'store.phoneFormat': { en: 'Format: +880 1XXX-XXXXXX or 01XXX-XXXXXX', bn: 'ফরম্যাট: +৮৮০ ১XXX-XXXXXX অথবা ০১XXX-XXXXXX' },
+  'store.giftOptions': { en: 'Gift Options', bn: 'গিফট অপশন' },
+  'store.thisOrderIsGift': { en: 'This order is a gift', bn: 'এই অর্ডারটি উপহার' },
+  'store.giftMessageOptional': { en: 'Gift Message (Optional)', bn: 'গিফট মেসেজ (ঐচ্ছিক)' },
+  'store.giftMessagePlaceholder': { en: 'Write a personal message for the recipient...', bn: 'প্রাপকের জন্য একটি ব্যক্তিগত বার্তা লিখুন...' },
+  'store.hidePricing': { en: 'Hide pricing from the package', bn: 'প্যাকেজ থেকে মূল্য লুকান' },
+  'store.reviewYourOrder': { en: 'Review Your Order', bn: 'আপনার অর্ডার রিভিউ করুন' },
+  'store.shippingTo': { en: 'Shipping To', bn: 'শিপিং ঠিকানা' },
+  'store.payment': { en: 'Payment', bn: 'পেমেন্ট' },
+  'store.goBack': { en: 'Go Back', bn: 'ফিরে যান' },
+  'store.confirmAndPay': { en: 'Confirm & Pay', bn: 'নিশ্চিত করুন ও পে করুন' },
+  'store.days': { en: 'days', bn: 'দিন' },
+  'store.freeAbove': { en: 'free', bn: 'ফ্রি' },
+  'store.saveBillingAddress': { en: 'Save this billing address', bn: 'এই বিলিং ঠিকানা সংরক্ষণ করুন' },
+  'store.loginForSaved': { en: 'Log in to use saved billing addresses.', bn: 'সেভ করা বিলিং ঠিকানা ব্যবহার করতে লগইন করুন।' },
+  'store.chequePayment': { en: 'Cheque Payment', bn: 'চেক পেমেন্ট' },
+  'store.chequeProcessed': { en: 'Your order will be processed after cheque clearance', bn: 'চেক ক্লিয়ারেন্সের পর আপনার অর্ডার প্রসেস হবে' },
+  'store.instructions': { en: 'Instructions', bn: 'নির্দেশনা' },
+  'store.chequeNumber': { en: 'Cheque Number', bn: 'চেক নম্বর' },
+  'store.payWith': { en: 'Pay with', bn: 'পে করুন' },
+  'store.secureRedirect': { en: 'You will be securely redirected to', bn: 'আপনাকে নিরাপদে রিডাইরেক্ট করা হবে' },
+  'store.paymentEncrypted': { en: 'Your payment information is encrypted and secure', bn: 'আপনার পেমেন্ট তথ্য এনক্রিপ্টেড ও নিরাপদ' },
+  'store.additionalCodCharge': { en: 'Additional COD charge', bn: 'অতিরিক্ত COD চার্জ' },
+  'store.notifyPaymentVerified': { en: 'We will notify you once your payment is verified.', bn: 'পেমেন্ট যাচাই হলে আপনাকে জানানো হবে।' },
+  'store.sentTo': { en: 'Sent to', bn: 'পাঠানো হয়েছে' },
+  'store.account': { en: 'Account', bn: 'অ্যাকাউন্ট' },
+
+  // ════════════ STORE PRODUCTS FILTER EXTRA ════════════
+  'store.noProductsFound': { en: 'No products found', bn: 'কোনো পণ্য পাওয়া যায়নি' },
+  'store.adjustFilters': { en: 'Try adjusting your filters or search terms', bn: 'ফিল্টার বা সার্চ পরিবর্তন করে দেখুন' },
+  'store.clearFilters': { en: 'Clear Filters', bn: 'ফিল্টার মুছুন' },
+  'store.sortBy': { en: 'Sort by', bn: 'সাজান' },
+  'store.newest': { en: 'Newest', bn: 'নতুন' },
+  'store.priceLowHigh': { en: 'Price: Low to High', bn: 'মূল্য: কম থেকে বেশি' },
+  'store.priceHighLow': { en: 'Price: High to Low', bn: 'মূল্য: বেশি থেকে কম' },
+  'store.nameAZ': { en: 'Name A-Z', bn: 'নাম A-Z' },
+  'store.priceRange': { en: 'Price Range', bn: 'মূল্য সীমা' },
+  'store.noProductsAvailable': { en: 'No products available yet.', bn: 'এখনো কোনো পণ্য পাওয়া যায়নি।' },
+  'store.browseAll': { en: 'Browse All Products', bn: 'সব পণ্য দেখুন' },
+
+  // ════════════ STORE HOME EXTRA ════════════
+  'store.shopByCategory': { en: 'Shop by Category', bn: 'ক্যাটাগরি অনুযায়ী কিনুন' },
+  'store.bestSellers': { en: 'Best Sellers', bn: 'সেরা বিক্রিত' },
+  'store.flashSale': { en: 'Flash Sale', bn: 'ফ্ল্যাশ সেল' },
+  'store.stayInLoop': { en: 'Stay in the Loop', bn: 'আপডেটেড থাকুন' },
+  'store.newsletterSubtitle': { en: 'Subscribe to our newsletter for exclusive deals and new arrivals.', bn: 'এক্সক্লুসিভ ডিল ও নতুন পণ্যের জন্য আমাদের নিউজলেটারে সাবস্ক্রাইব করুন।' },
+  'store.enterYourEmail': { en: 'Enter your email', bn: 'আপনার ইমেইল দিন' },
+
+  // ════════════ ACCOUNT NOTIFICATIONS ════════════
+  'account.markAllRead': { en: 'Mark all as read', bn: 'সব পঠিত হিসেবে চিহ্নিত করুন' },
+  'account.noNotifications': { en: 'No notifications yet', bn: 'এখনো কোনো নোটিফিকেশন নেই' },
+
+  // ════════════ ACCOUNT WISHLIST ════════════
+  'account.myWishlist': { en: 'My Wishlist', bn: 'আমার উইশলিস্ট' },
 };
 
 interface LanguageContextType {

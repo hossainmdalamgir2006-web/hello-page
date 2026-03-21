@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface OrderItem {
   name: string;
@@ -40,6 +41,7 @@ interface OrderState {
 export default function OrderConfirmation() {
   const location = useLocation();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
   const orderState = location.state as OrderState | undefined;
   const orderNumber = orderState?.orderNumber || `ORD-${Date.now().toString().slice(-8)}`;
@@ -66,29 +68,28 @@ export default function OrderConfirmation() {
   };
 
   const getPaymentStatusMessage = () => {
-    if (paymentMethod?.method_id === 'cod') return 'Payment will be collected upon delivery';
+    if (paymentMethod?.method_id === 'cod') return t('store.paymentOnDelivery');
     if (['bkash', 'nagad', 'rocket', 'upay'].includes(paymentMethod?.method_id || '')) {
-      return transactionId ? `TrxID: ${transactionId} - Payment verification pending` : 'Payment verification pending';
+      return transactionId ? `TrxID: ${transactionId} - ${t('store.paymentVerificationPending')}` : t('store.paymentVerificationPending');
     }
-    return 'Processing';
+    return t('store.processing');
   };
 
   return (
     <>
-      <SEOHead title="Order Confirmation" description="Your order has been placed successfully." noIndex={true} />
+      <SEOHead title={t('store.thankYouOrder')} description={t('store.orderPlacedSuccess')} noIndex={true} />
       <div className="container mx-auto px-4 py-12 max-w-3xl">
-        {/* Success Header */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
             <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
           </div>
           <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
-            Thank You for Your Order!
+            {t('store.thankYouOrder')}
           </h1>
-          <p className="text-muted-foreground mb-3">Your order has been placed successfully.</p>
+          <p className="text-muted-foreground mb-3">{t('store.orderPlacedSuccess')}</p>
           <div className="flex items-center justify-center gap-2">
             <p className="text-foreground font-medium">
-              Order Number: <span className="text-store-primary font-mono">{orderNumber}</span>
+              {t('store.orderNumber')}: <span className="text-store-primary font-mono">{orderNumber}</span>
             </p>
             <button onClick={handleCopyOrderNumber} className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted transition-colors" title="Copy order number">
               {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
@@ -96,25 +97,23 @@ export default function OrderConfirmation() {
           </div>
         </div>
 
-        {/* Estimated Delivery */}
         <Card className="mb-4">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Clock className="h-5 w-5 text-store-primary flex-shrink-0" />
               <div>
-                <p className="font-medium text-sm">Estimated Delivery</p>
+                <p className="font-medium text-sm">{t('store.estimatedDeliveryLabel')}</p>
                 <p className="text-sm text-muted-foreground">{deliveryEstimate}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Order Items */}
         {items && items.length > 0 && (
           <Card className="mb-4">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4" /> Order Items ({items.length})
+                <ShoppingBag className="h-4 w-4" /> {t('store.orderItems')} ({items.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -131,30 +130,29 @@ export default function OrderConfirmation() {
                 </div>
               ))}
 
-              {/* Total Breakdown */}
               <Separator className="my-3" />
               <div className="space-y-1.5">
                 {subtotal !== undefined && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">{t('store.subtotal')}</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
                 )}
                 {discount !== undefined && discount > 0 && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Discount</span>
+                    <span>{t('store.discount')}</span>
                     <span>-{formatPrice(discount)}</span>
                   </div>
                 )}
                 {shippingCost !== undefined && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className={shippingCost === 0 ? 'text-green-600' : ''}>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
+                    <span className="text-muted-foreground">{t('store.shipping')}</span>
+                    <span className={shippingCost === 0 ? 'text-green-600' : ''}>{shippingCost === 0 ? t('store.free') : formatPrice(shippingCost)}</span>
                   </div>
                 )}
                 {codCharge !== undefined && codCharge > 0 && (
                   <div className="flex justify-between text-sm text-warning">
-                    <span>COD Charge</span>
+                    <span>{t('store.codCharge')}</span>
                     <span>+{formatPrice(codCharge)}</span>
                   </div>
                 )}
@@ -162,7 +160,7 @@ export default function OrderConfirmation() {
                   <>
                     <Separator className="my-2" />
                     <div className="flex justify-between font-semibold">
-                      <span>Total</span>
+                      <span>{t('store.total')}</span>
                       <span>{formatPrice(total)}</span>
                     </div>
                   </>
@@ -172,7 +170,6 @@ export default function OrderConfirmation() {
           </Card>
         )}
 
-        {/* Payment Method Card */}
         {paymentMethod && (
           <Card className="mb-4">
             <CardContent className="p-5">
@@ -187,7 +184,7 @@ export default function OrderConfirmation() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold">Payment Method</h3>
+                  <h3 className="font-semibold">{t('store.paymentMethod')}</h3>
                   <p className="text-foreground font-medium mt-1">
                     {paymentMethod.name}
                     {paymentMethod.name_bn && <span className="text-muted-foreground ml-1">({paymentMethod.name_bn})</span>}
@@ -197,11 +194,11 @@ export default function OrderConfirmation() {
               </div>
               {['bkash', 'nagad', 'rocket', 'upay'].includes(paymentMethod.method_id) && paymentMethod.account_number && (
                 <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-sm text-muted-foreground">We will notify you once your payment is verified.</p>
+                  <p className="text-sm text-muted-foreground">{t('store.notifyPaymentVerified')}</p>
                   <div className="mt-2 p-3 rounded-lg bg-muted/50">
-                    <p className="text-xs text-muted-foreground">Sent to</p>
+                    <p className="text-xs text-muted-foreground">{t('store.sentTo')}</p>
                     <p className="font-mono font-medium">{paymentMethod.account_number}</p>
-                    {paymentMethod.account_type && <p className="text-xs text-muted-foreground capitalize">({paymentMethod.account_type} Account)</p>}
+                    {paymentMethod.account_type && <p className="text-xs text-muted-foreground capitalize">({paymentMethod.account_type} {t('store.account')})</p>}
                   </div>
                 </div>
               )}
@@ -209,38 +206,36 @@ export default function OrderConfirmation() {
           </Card>
         )}
 
-        {/* What's Next */}
         <Card className="mb-8">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
               <Package className="h-6 w-6 text-store-primary flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold mb-1">What's Next?</h3>
+                <h3 className="font-semibold mb-1">{t('store.whatsNext')}</h3>
                 <ul className="text-sm text-muted-foreground space-y-1.5">
-                  <li>• You will receive an order confirmation email shortly</li>
-                  <li>• We'll notify you when your order ships</li>
-                  <li>• Estimated delivery: {deliveryEstimate}</li>
-                  <li>• Track your order in your account dashboard</li>
+                  <li>• {t('store.confirmationEmail')}</li>
+                  <li>• {t('store.notifyShipment')}</li>
+                  <li>• {t('store.estimatedDeliveryLabel')}: {deliveryEstimate}</li>
+                  <li>• {t('store.trackInDashboard')}</li>
                 </ul>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild>
-            <Link to={`/track/${orderNumber}`}><MapPin className="mr-2 h-4 w-4" /> Track Order</Link>
+            <Link to={`/track/${orderNumber}`}><MapPin className="mr-2 h-4 w-4" /> {t('store.trackOrder')}</Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <Link to="/products">Continue Shopping <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            <Link to="/products">{t('store.continueShopping')} <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
         </div>
         
         {user && (
           <p className="text-sm text-muted-foreground mt-6 text-center">
-            You can also view all your orders in your{" "}
-            <Link to="/myaccount" className="text-store-primary hover:underline">account dashboard</Link>.
+            {t('store.viewAllOrders')}{" "}
+            <Link to="/myaccount" className="text-store-primary hover:underline">{t('store.accountDashboard')}</Link>.
           </p>
         )}
       </div>
