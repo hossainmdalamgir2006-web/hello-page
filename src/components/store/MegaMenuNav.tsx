@@ -64,7 +64,7 @@ function buildNavCategories(categories: Category[]): NavCategory[] {
   });
 }
 
-function useDynamicCategories() {
+export function useDynamicCategories() {
   const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
