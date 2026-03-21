@@ -426,8 +426,8 @@ export default function Cart() {
                     <p className="text-xs text-store-accent">✨ {activeAutoRules[0].name} applied!</p>
                   )}
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className={shippingCost === 0 ? 'text-green-600 dark:text-green-400' : ''}>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
+                    <span className="text-muted-foreground">{t('store.shipping')}</span>
+                    <span className={shippingCost === 0 ? 'text-green-600 dark:text-green-400' : ''}>{shippingCost === 0 ? t('store.free') : formatPrice(shippingCost)}</span>
                   </div>
                 </div>
 
