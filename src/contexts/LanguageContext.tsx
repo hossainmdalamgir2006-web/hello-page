@@ -479,7 +479,6 @@ export const translations: Translations = {
   'store.notifySuccess': { en: "We'll notify you when this product is back in stock!", bn: 'পণ্যটি স্টকে আসলে আমরা আপনাকে জানাব!' },
   'store.enterEmailError': { en: 'Please enter your email', bn: 'অনুগ্রহ করে আপনার ইমেইল দিন' },
   'store.itemsAddedToCart': { en: 'items added to cart!', bn: 'টি পণ্য কার্টে যোগ হয়েছে!' },
-  'store.selected': { en: 'selected', bn: 'নির্বাচিত' },
   'store.fullGuide': { en: 'Full guide', bn: 'সম্পূর্ণ গাইড' },
   'store.compare': { en: 'Compare', bn: 'তুলনা' },
   'store.viewFullDetails': { en: 'View Full Details', bn: 'সম্পূর্ণ বিবরণ দেখুন' },
