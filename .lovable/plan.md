@@ -1,56 +1,49 @@
 
 
-## Plan: Convert all Bengali text to English in Messages page and related hooks
+# Fixed Filter Sidebar — Store Products Page
 
-### Files to update
+## What Changes
+Replace the current **Sheet (slide-out drawer)** filter on `/products` with a **fixed left sidebar** that stays visible on desktop. On mobile, keep the Sheet drawer behavior.
 
-**1. `src/components/admin/TicketEscalationDialog.tsx`** — All Bengali labels and text:
-- "টিকেট এসকেলেট করুন" → "Escalate Ticket"
-- Warning text → "Escalating will increase the ticket priority and notify the relevant manager."
-- "বর্তমান প্রায়োরিটি" → "Current Priority"
-- "নতুন প্রায়োরিটি" → "New Priority"
-- "এসকেলেট করুন (ম্যানেজার/এডমিন)" → "Escalate To (Manager/Admin)"
-- "সিলেক্ট করুন" → "Select"
-- "কাউকে নির্দিষ্ট করবেন না" → "Don't assign to anyone"
-- "এসকেলেশনের কারণ *" → "Escalation Reason *"
-- Placeholder → "Describe why you are escalating..."
-- "বাতিল" → "Cancel"
-- "এসকেলেট করুন" (button) → "Escalate"
+## Layout
 
-**2. `src/hooks/useSupportTickets.ts`** — All toast messages:
-- "টিকেট স্ট্যাটাস আপডেট হয়েছে" → "Ticket status updated"
-- "স্ট্যাটাস আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update status"
-- "প্রায়োরিটি আপডেট হয়েছে" → "Priority updated"
-- "প্রায়োরিটি আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update priority"
-- "টিকেট অ্যাসাইন হয়েছে" → "Ticket assigned"
-- "অ্যাসাইন করতে ব্যর্থ হয়েছে" → "Failed to assign ticket"
-- "টিকেট ডিলিট হয়েছে" → "Ticket deleted"
-- "ডিলিট করতে ব্যর্থ হয়েছে" → "Failed to delete"
-- "টিকেটগুলো ডিলিট হয়েছে" → "Tickets deleted"
-- "স্ট্যাটাস আপডেট হয়েছে" → "Status updated"
-- "আপডেট করতে ব্যর্থ হয়েছে" → "Failed to update"
-- "টিকেটগুলো অ্যাসাইন হয়েছে" → "Tickets assigned"
+```text
+Desktop (≥1024px):
+┌──────────────────────────────────────────────┐
+│              Page Header                     │
+├──────────┬───────────────────────────────────┤
+│ FILTERS  │  Search + Sort + View Toggle      │
+│ (fixed)  │───────────────────────────────────│
+│ 260px    │  Product Grid (3 cols)            │
+│          │                                   │
+│ Category │                                   │
+│ Price    │                                   │
+│ Sale/New │                                   │
+│          │                                   │
+│ [Clear]  │                                   │
+└──────────┴───────────────────────────────────┘
 
-**3. `src/hooks/useChatNotifications.ts`** — Notification titles:
-- "নতুন চ্যাট মেসেজ" → "New Chat Message"
-- "নতুন সাপোর্ট টিকেট" → "New Support Ticket"
-- "নতুন কন্টাক্ট মেসেজ" → "New Contact Message"
+Mobile (<1024px):
+Same as now — Sheet drawer via "Filters" button
+```
 
-**4. `src/hooks/useTabNotifications.ts`** — Tab title defaults:
-- "মেসেজ ও সাপোর্ট" → "Messages & Support"
-- "নতুন মেসেজ!" → "New Message!"
+## File Changes
 
-**5. `src/components/admin/SupportTicketsTab.tsx`** — Menu items and labels:
-- "এসকেলেট করুন" → "Escalate"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "টিমের জন্য ইন্টারনাল নোট..." → "Internal note for team..."
+### `src/pages/store/StoreProducts.tsx`
+1. Extract filter content into a reusable `FilterPanel` component (inline or separate)
+2. Desktop layout: `flex` container with:
+   - Left: `w-[260px] shrink-0 sticky top-20` filter sidebar (always visible, scrolls independently with `overflow-y-auto max-h-[calc(100vh-5rem)]`)
+   - Right: `flex-1` product grid area (search bar + sort + grid)
+3. Mobile: Keep existing Sheet trigger + Sheet content with same filter controls
+4. Product grid changes from `lg:grid-cols-4` to `lg:grid-cols-3` to accommodate sidebar width
+5. Hide the "Filters" button on desktop (`lg:hidden`), show sidebar `hidden lg:block`
 
-**6. `src/components/admin/LiveChatTab.tsx`** — Menu items and labels:
-- "ট্রান্সফার" → "Transfer"
-- "CSAT রেটিং" → "CSAT Rating"
-- "ইন্টারনাল নোট" → "Internal Note"
-- "📝 [ইন্টারনাল নোট]" → "📝 [Internal Note]"
+### `src/components/skeletons/StoreFrontSkeletons.tsx`
+- Add `FilterSkeleton` variant for the sidebar (already exists, just needs integration)
 
-All changes are straightforward string replacements — no logic changes needed.
+## Key Details
+- Sidebar uses `sticky top-20` so it stays in view while scrolling products
+- `ScrollArea` wrapping for long category lists
+- No new dependencies
+- Mobile UX unchanged — Sheet drawer stays
 
