@@ -156,12 +156,12 @@ export default function Cart() {
 
   return (
     <>
-      <SEOHead title="Shopping Cart" description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
+      <SEOHead title={t('store.shoppingCart')} description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
       {/* Page Header */}
       <section className="bg-gradient-to-r from-store-primary to-store-secondary py-8">
         <div className="container mx-auto px-4">
           <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">
-            Shopping Cart
+            {t('store.shoppingCart')}
           </h1>
         </div>
       </section>
