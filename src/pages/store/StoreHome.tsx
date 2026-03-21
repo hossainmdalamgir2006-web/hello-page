@@ -137,7 +137,7 @@ export default function StoreHome() {
       {/* 3. Categories Grid */}
       {isEnabled(categoriesGrid) && (
         <CategoryGrid
-          title={categoriesGrid?.title || "Shop by Category"}
+          title={categoriesGrid?.title || t('store.shopByCategory')}
           subtitle={categoriesGrid?.subtitle || undefined}
           categories={categoriesGrid?.content?.categories}
         />
