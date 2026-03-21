@@ -410,7 +410,7 @@ export default function Cart() {
                 {/* Totals */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal ({selectedCount} items)</span>
+                    <span className="text-muted-foreground">{t('store.subtotal')} ({selectedCount} {t('store.items')})</span>
                     <span>{formatPrice(checkoutSubtotal)}</span>
                   </div>
                   {discount > 0 && (
