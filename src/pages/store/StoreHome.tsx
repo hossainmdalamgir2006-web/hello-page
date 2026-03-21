@@ -222,7 +222,7 @@ export default function StoreHome() {
       {/* 8. Testimonials */}
       {isEnabled(testimonials) && (
         <TestimonialsSection
-          title={testimonials?.title || "What Our Customers Say"}
+          title={testimonials?.title || t('store.whatCustomersSay')}
           subtitle={testimonials?.subtitle || undefined}
           testimonials={testimonials?.content?.testimonials}
         />
@@ -231,7 +231,7 @@ export default function StoreHome() {
       {/* 9. Lookbook */}
       {isEnabled(lookbook) && (
         <LookbookSection
-          title={lookbook?.title || "Style Inspiration"}
+          title={lookbook?.title || t('store.styleInspiration')}
           subtitle={lookbook?.subtitle || undefined}
           images={lookbook?.content?.images}
         />
