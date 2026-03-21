@@ -37,12 +37,20 @@ export default function StoreHome() {
   const { products, loading: productsLoading, isNewProduct } = useFeaturedProducts(8);
   const { getSection, loading: cmsLoading } = useHomepageSections();
   const { storeName } = useSiteTitle();
+  const { t } = useLanguage();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterLoading, setNewsletterLoading] = useState(false);
 
+  const defaultFeatures = [
+    { icon: "Truck", title: t('store.freeShipping'), desc: t('store.freeShippingDesc') },
+    { icon: "Shield", title: t('store.securePayment'), desc: t('store.securePaymentDesc') },
+    { icon: "RefreshCw", title: t('store.easyReturns'), desc: t('store.easyReturnsDesc') },
+    { icon: "Headphones", title: t('store.support247'), desc: t('store.support247Desc') },
+  ];
+
   const handleNewsletterSubmit = async () => {
     if (!newsletterEmail || !newsletterEmail.includes("@")) {
-      toast.error("Please enter a valid email address");
+      toast.error(t('store.validEmail'));
       return;
     }
     setNewsletterLoading(true);
@@ -52,14 +60,14 @@ export default function StoreHome() {
         .insert({ email: newsletterEmail, source: "homepage" });
       if (error) {
         if (error.code === "23505") {
-          toast.info("You're already subscribed!");
+          toast.info(t('store.alreadySubscribed'));
         } else throw error;
       } else {
-        toast.success("Successfully subscribed!");
+        toast.success(t('store.subscribedSuccess'));
         setNewsletterEmail("");
       }
     } catch {
-      toast.error("Failed to subscribe. Please try again.");
+      toast.error(t('store.subscribeFailed'));
     } finally {
       setNewsletterLoading(false);
     }
