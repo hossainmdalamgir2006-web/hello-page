@@ -33,7 +33,7 @@ const iconMap: Record<string, React.ElementType> = {
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: pageData, loading: pageLoading } = usePageContent("contact");
-  
+  const { t } = useLanguage();
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: { firstName: "", lastName: "", email: "", phone: "", message: "" },
