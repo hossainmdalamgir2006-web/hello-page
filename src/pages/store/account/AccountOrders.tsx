@@ -4,9 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { OrdersListSkeleton } from "@/components/skeletons";
 import { OrdersTab } from "@/components/account/OrdersTab";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AccountOrders() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,8 +81,8 @@ export default function AccountOrders() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">My Orders</h1>
-        <p className="text-sm text-muted-foreground">View and manage your order history</p>
+        <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.ordersTitle')}</h1>
+        <p className="text-sm text-muted-foreground">{t('account.ordersDesc')}</p>
       </div>
       <OrdersTab orders={orders} onRefresh={fetchOrders} />
     </div>
