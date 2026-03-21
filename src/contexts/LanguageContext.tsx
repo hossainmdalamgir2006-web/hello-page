@@ -712,21 +712,13 @@ export const translations: Translations = {
   'store.gotFreeShipping': { en: '🎉 You got free shipping!', bn: '🎉 আপনি ফ্রি শিপিং পেয়েছেন!' },
   'store.addMoreForFreeShipping': { en: 'more for free shipping', bn: 'আরো যোগ করুন ফ্রি শিপিংয়ের জন্য' },
 
-  // ════════════ PRODUCT REVIEWS ════════════
-  'store.writeReview': { en: 'Write a Review', bn: 'রিভিউ লিখুন' },
-  'store.loginToReview': { en: 'Please login to submit a review', bn: 'রিভিউ দিতে লগইন করুন' },
-  'store.verifiedBuyersOnly': { en: 'Only verified buyers can submit reviews', bn: 'শুধুমাত্র যাচাইকৃত ক্রেতারা রিভিউ দিতে পারবেন' },
+  // ════════════ PRODUCT REVIEWS EXTRA ════════════
   'store.selectRating': { en: 'Please select a rating', bn: 'রেটিং নির্বাচন করুন' },
-  'store.reviewSubmitted': { en: 'Review submitted! It will appear after approval.', bn: 'রিভিউ জমা হয়েছে! অনুমোদনের পর দেখা যাবে।' },
   'store.reviewTitle': { en: 'Review Title', bn: 'রিভিউ শিরোনাম' },
   'store.reviewContent': { en: 'Your Review', bn: 'আপনার রিভিউ' },
-  'store.submitReview': { en: 'Submit Review', bn: 'রিভিউ জমা দিন' },
-  'store.submitting': { en: 'Submitting...', bn: 'জমা হচ্ছে...' },
   'store.verifiedBuyer': { en: 'Verified Buyer', bn: 'যাচাইকৃত ক্রেতা' },
-  'store.noReviewsYet': { en: 'No reviews yet', bn: 'এখনো কোনো রিভিউ নেই' },
   'store.beFirstReview': { en: 'Be the first to review this product', bn: 'এই পণ্যে প্রথম রিভিউ দিন' },
   'store.addPhotos': { en: 'Add Photos', bn: 'ছবি যোগ করুন' },
-  'store.addVideo': { en: 'Add Video', bn: 'ভিডিও যোগ করুন' },
   'store.customerReviews': { en: 'Customer Reviews', bn: 'গ্রাহক রিভিউ' },
   'store.basedOnReviews': { en: 'based on reviews', bn: 'রিভিউ এর ভিত্তিতে' },
 
@@ -751,14 +743,6 @@ export const translations: Translations = {
   'store.pleaseSelectVariant': { en: 'Please select a variant', bn: 'একটি ভ্যারিয়েন্ট নির্বাচন করুন' },
   'store.total': { en: 'Total', bn: 'মোট' },
   'store.save': { en: 'Save', bn: 'সেভ করুন' },
-  'store.star': { en: 'star', bn: 'তারা' },
-  'store.review': { en: 'review', bn: 'রিভিউ' },
-  'store.loginToWriteReview': { en: 'Please login to write a review', bn: 'রিভিউ লিখতে লগইন করুন' },
-  'store.onlyVerifiedBuyers': { en: 'Only verified buyers can write a review', bn: 'শুধুমাত্র যাচাইকৃত ক্রেতারা রিভিউ লিখতে পারেন' },
-  'store.writeYourReview': { en: 'Write Your Review', bn: 'আপনার রিভিউ লিখুন' },
-  'store.titleOptional': { en: 'Title (optional)', bn: 'শিরোনাম (ঐচ্ছিক)' },
-  'store.photosOptional': { en: 'Photos (optional, max 5)', bn: 'ছবি (ঐচ্ছিক, সর্বোচ্চ ৫)' },
-  'store.videoOptional': { en: 'Video (optional)', bn: 'ভিডিও (ঐচ্ছিক)' },
 };
 
 interface LanguageContextType {
