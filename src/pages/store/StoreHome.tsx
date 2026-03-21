@@ -20,6 +20,7 @@ import { FlashSaleSection } from "@/components/store/FlashSaleSection";
 import { TestimonialsSection } from "@/components/store/TestimonialsSection";
 import { LookbookSection } from "@/components/store/LookbookSection";
 import { useSiteTitle } from "@/components/DynamicTitleProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const iconMap: Record<string, React.ElementType> = {
   Truck, Shield, RefreshCw, Headphones,
