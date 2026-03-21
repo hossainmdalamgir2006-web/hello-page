@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface RelatedProduct {
   id: string;
@@ -16,11 +17,12 @@ interface RelatedProductsGridProps {
 }
 
 export function RelatedProductsGrid({ products }: RelatedProductsGridProps) {
+  const { t } = useLanguage();
   if (products.length === 0) return null;
 
   return (
     <div className="mt-12">
-      <h2 className="font-display text-2xl font-bold mb-6">Related Products</h2>
+      <h2 className="font-display text-2xl font-bold mb-6">{t('store.relatedProducts')}</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {products.map((rp) => {
           const rpDiscount = rp.compare_at_price ? Math.round((1 - rp.price / rp.compare_at_price) * 100) : 0;
