@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ShoppingBag } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface StickyAddToCartBarProps {
   productName: string;
@@ -10,6 +11,8 @@ interface StickyAddToCartBarProps {
 }
 
 export function StickyAddToCartBar({ productName, displayPrice, onAddToCart, onBuyNow, visible }: StickyAddToCartBarProps) {
+  const { t } = useLanguage();
+  
   if (!visible) return null;
 
   return (
@@ -20,9 +23,9 @@ export function StickyAddToCartBar({ productName, displayPrice, onAddToCart, onB
           <p className="text-lg font-bold text-store-primary">৳{displayPrice.toLocaleString()}</p>
         </div>
         <Button size="sm" className="bg-store-primary hover:bg-store-primary/90 shrink-0" onClick={onAddToCart}>
-          <ShoppingBag className="h-4 w-4 mr-1" /> Add
+          <ShoppingBag className="h-4 w-4 mr-1" /> {t('store.addShort')}
         </Button>
-        <Button size="sm" variant="secondary" className="shrink-0" onClick={onBuyNow}>Buy Now</Button>
+        <Button size="sm" variant="secondary" className="shrink-0" onClick={onBuyNow}>{t('store.buyNow')}</Button>
       </div>
       <div className="h-20" />
     </>
