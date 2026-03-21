@@ -671,23 +671,18 @@ export const translations: Translations = {
   'store.description': { en: 'Description', bn: 'বিবরণ' },
   'store.details': { en: 'Details', bn: 'বিস্তারিত' },
   'store.reviews': { en: 'Reviews', bn: 'রিভিউ' },
-  'store.selected': { en: 'selected', bn: 'নির্বাচিত' },
   'store.qty': { en: 'Qty', bn: 'পরিমাণ' },
   'store.type': { en: 'Type', bn: 'ধরন' },
-  'store.items': { en: 'items', bn: 'আইটেম' },
-  'store.total': { en: 'Total', bn: 'মোট' },
   'store.off': { en: 'OFF', bn: 'ছাড়' },
   'store.inStockCount': { en: 'in stock', bn: 'স্টকে আছে' },
 
   // ════════════ CHECKOUT EXTRA ════════════
-  'store.checkout': { en: 'Checkout', bn: 'চেকআউট' },
   'store.contactInformation': { en: 'Contact Information', bn: 'যোগাযোগ তথ্য' },
   'store.emailAddress': { en: 'Email Address', bn: 'ইমেইল ঠিকানা' },
   'store.createAccountCheckout': { en: 'Create an account for faster checkout next time', bn: 'পরবর্তী সময়ে দ্রুত চেকআউটের জন্য একটি অ্যাকাউন্ট তৈরি করুন' },
   'store.address': { en: 'Address', bn: 'ঠিকানা' },
   'store.houseStreetArea': { en: 'House/Flat No, Street, Area', bn: 'বাড়ি/ফ্ল্যাট নম্বর, রাস্তা, এলাকা' },
   'store.phoneFormat': { en: 'Format: +880 1XXX-XXXXXX or 01XXX-XXXXXX', bn: 'ফরম্যাট: +৮৮০ ১XXX-XXXXXX অথবা ০১XXX-XXXXXX' },
-  'store.paymentMethod': { en: 'Payment Method', bn: 'পেমেন্ট পদ্ধতি' },
   'store.giftOptions': { en: 'Gift Options', bn: 'গিফট অপশন' },
   'store.thisOrderIsGift': { en: 'This order is a gift', bn: 'এই অর্ডারটি উপহার' },
   'store.giftMessageOptional': { en: 'Gift Message (Optional)', bn: 'গিফট মেসেজ (ঐচ্ছিক)' },
@@ -698,10 +693,6 @@ export const translations: Translations = {
   'store.payment': { en: 'Payment', bn: 'পেমেন্ট' },
   'store.goBack': { en: 'Go Back', bn: 'ফিরে যান' },
   'store.confirmAndPay': { en: 'Confirm & Pay', bn: 'নিশ্চিত করুন ও পে করুন' },
-  'store.orderSummary': { en: 'Order Summary', bn: 'অর্ডার সারাংশ' },
-  'store.couponCode': { en: 'Coupon code', bn: 'কুপন কোড' },
-  'store.apply': { en: 'Apply', bn: 'প্রয়োগ করুন' },
-  'store.free': { en: 'Free', bn: 'ফ্রি' },
   'store.days': { en: 'days', bn: 'দিন' },
   'store.freeAbove': { en: 'free', bn: 'ফ্রি' },
   'store.saveBillingAddress': { en: 'Save this billing address', bn: 'এই বিলিং ঠিকানা সংরক্ষণ করুন' },
@@ -719,7 +710,6 @@ export const translations: Translations = {
   'store.account': { en: 'Account', bn: 'অ্যাকাউন্ট' },
 
   // ════════════ STORE PRODUCTS FILTER EXTRA ════════════
-  'store.filters': { en: 'Filters', bn: 'ফিল্টার' },
   'store.noProductsFound': { en: 'No products found', bn: 'কোনো পণ্য পাওয়া যায়নি' },
   'store.adjustFilters': { en: 'Try adjusting your filters or search terms', bn: 'ফিল্টার বা সার্চ পরিবর্তন করে দেখুন' },
   'store.clearFilters': { en: 'Clear Filters', bn: 'ফিল্টার মুছুন' },
@@ -729,9 +719,6 @@ export const translations: Translations = {
   'store.priceHighLow': { en: 'Price: High to Low', bn: 'মূল্য: বেশি থেকে কম' },
   'store.nameAZ': { en: 'Name A-Z', bn: 'নাম A-Z' },
   'store.priceRange': { en: 'Price Range', bn: 'মূল্য সীমা' },
-  'store.rating': { en: 'Rating', bn: 'রেটিং' },
-  'store.tags': { en: 'Tags', bn: 'ট্যাগ' },
-  'store.onSale': { en: 'On Sale', bn: 'সেলে আছে' },
   'store.noProductsAvailable': { en: 'No products available yet.', bn: 'এখনো কোনো পণ্য পাওয়া যায়নি।' },
   'store.browseAll': { en: 'Browse All Products', bn: 'সব পণ্য দেখুন' },
 
@@ -742,7 +729,6 @@ export const translations: Translations = {
   'store.stayInLoop': { en: 'Stay in the Loop', bn: 'আপডেটেড থাকুন' },
   'store.newsletterSubtitle': { en: 'Subscribe to our newsletter for exclusive deals and new arrivals.', bn: 'এক্সক্লুসিভ ডিল ও নতুন পণ্যের জন্য আমাদের নিউজলেটারে সাবস্ক্রাইব করুন।' },
   'store.enterYourEmail': { en: 'Enter your email', bn: 'আপনার ইমেইল দিন' },
-  'store.subscribe': { en: 'Subscribe', bn: 'সাবস্ক্রাইব' },
 
   // ════════════ ACCOUNT NOTIFICATIONS ════════════
   'account.markAllRead': { en: 'Mark all as read', bn: 'সব পঠিত হিসেবে চিহ্নিত করুন' },
@@ -750,7 +736,6 @@ export const translations: Translations = {
 
   // ════════════ ACCOUNT WISHLIST ════════════
   'account.myWishlist': { en: 'My Wishlist', bn: 'আমার উইশলিস্ট' },
-  'account.wishlistDesc': { en: 'Products you\'ve saved for later', bn: 'পরে কেনার জন্য সংরক্ষিত পণ্য' },
 };
 
 interface LanguageContextType {
