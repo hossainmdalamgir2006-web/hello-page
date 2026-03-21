@@ -194,7 +194,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
             </Tooltip>
           ) : (
             <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-              <LogOut className="h-[18px] w-[18px]" /><span>Sign Out</span>
+              <LogOut className="h-[18px] w-[18px]" /><span>{t('account.signOut')}</span>
             </button>
           )}
 
