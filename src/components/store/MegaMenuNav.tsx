@@ -207,6 +207,7 @@ export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const { navCategories } = useDynamicCategories();
+  const { t } = useLanguage();
 
   return (
     <div className="flex flex-col gap-1">
