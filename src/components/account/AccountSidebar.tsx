@@ -179,7 +179,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
             </Tooltip>
           ) : (
             <button onClick={() => handleNav("/")} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-              <Store className="h-[18px] w-[18px]" /><span>Back to Store</span>
+              <Store className="h-[18px] w-[18px]" /><span>{t('account.backToStore')}</span>
             </button>
           )}
 
