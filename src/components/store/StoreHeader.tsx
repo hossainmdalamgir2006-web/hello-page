@@ -123,10 +123,10 @@ export function StoreHeader() {
               />
               <Select value={searchCategory} onValueChange={setSearchCategory}>
                 <SelectTrigger className="w-[160px] border-0 border-l border-store-muted rounded-none focus:ring-0 focus:ring-offset-0 bg-store-muted/30 text-sm">
-                  <SelectValue placeholder="All Categories" />
+                  <SelectValue placeholder={t('store.allCategories')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="all">{t('store.allCategories')}</SelectItem>
                   {navCategories.map((cat) => (
                     <SelectItem key={cat.slug} value={cat.slug}>
                       {cat.label}
