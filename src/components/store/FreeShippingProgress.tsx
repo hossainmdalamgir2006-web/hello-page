@@ -1,5 +1,6 @@
 import { Truck, Gift } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FreeShippingProgressProps {
   subtotal: number;
@@ -8,6 +9,7 @@ interface FreeShippingProgressProps {
 }
 
 export function FreeShippingProgress({ subtotal, threshold = 2000, className }: FreeShippingProgressProps) {
+  const { t } = useLanguage();
   const progress = Math.min((subtotal / threshold) * 100, 100);
   const remaining = threshold - subtotal;
   const isFree = subtotal >= threshold;
@@ -24,8 +26,8 @@ export function FreeShippingProgress({ subtotal, threshold = 2000, className }: 
         )}
         <span className={`text-sm font-semibold ${isFree ? 'text-green-700 dark:text-green-300' : 'text-foreground'}`}>
           {isFree 
-            ? '🎉 You got free shipping!' 
-            : `Add ${formatPrice(remaining)} more for free shipping`
+            ? t('store.gotFreeShipping')
+            : `${formatPrice(remaining)} ${t('store.addMoreForFreeShipping')}`
           }
         </span>
       </div>

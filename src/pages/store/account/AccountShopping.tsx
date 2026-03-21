@@ -4,9 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericCardGridSkeleton } from "@/components/skeletons";
 import { ShoppingTab } from "@/components/account/ShoppingTab";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AccountShopping() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,8 +59,8 @@ export default function AccountShopping() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Shopping</h1>
-        <p className="text-sm text-muted-foreground">Buy again, coupons, and price alerts</p>
+        <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.shoppingPageTitle')}</h1>
+        <p className="text-sm text-muted-foreground">{t('account.shoppingPageDesc')}</p>
       </div>
       <ShoppingTab orders={orders} />
     </div>

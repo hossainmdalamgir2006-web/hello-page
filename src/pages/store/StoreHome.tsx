@@ -20,6 +20,7 @@ import { FlashSaleSection } from "@/components/store/FlashSaleSection";
 import { TestimonialsSection } from "@/components/store/TestimonialsSection";
 import { LookbookSection } from "@/components/store/LookbookSection";
 import { useSiteTitle } from "@/components/DynamicTitleProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const iconMap: Record<string, React.ElementType> = {
   Truck, Shield, RefreshCw, Headphones,
@@ -36,12 +37,20 @@ export default function StoreHome() {
   const { products, loading: productsLoading, isNewProduct } = useFeaturedProducts(8);
   const { getSection, loading: cmsLoading } = useHomepageSections();
   const { storeName } = useSiteTitle();
+  const { t } = useLanguage();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterLoading, setNewsletterLoading] = useState(false);
 
+  const defaultFeatures = [
+    { icon: "Truck", title: t('store.freeShipping'), desc: t('store.freeShippingDesc') },
+    { icon: "Shield", title: t('store.securePayment'), desc: t('store.securePaymentDesc') },
+    { icon: "RefreshCw", title: t('store.easyReturns'), desc: t('store.easyReturnsDesc') },
+    { icon: "Headphones", title: t('store.support247'), desc: t('store.support247Desc') },
+  ];
+
   const handleNewsletterSubmit = async () => {
     if (!newsletterEmail || !newsletterEmail.includes("@")) {
-      toast.error("Please enter a valid email address");
+      toast.error(t('store.validEmail'));
       return;
     }
     setNewsletterLoading(true);
@@ -51,14 +60,14 @@ export default function StoreHome() {
         .insert({ email: newsletterEmail, source: "homepage" });
       if (error) {
         if (error.code === "23505") {
-          toast.info("You're already subscribed!");
+          toast.info(t('store.alreadySubscribed'));
         } else throw error;
       } else {
-        toast.success("Successfully subscribed!");
+        toast.success(t('store.subscribedSuccess'));
         setNewsletterEmail("");
       }
     } catch {
-      toast.error("Failed to subscribe. Please try again.");
+      toast.error(t('store.subscribeFailed'));
     } finally {
       setNewsletterLoading(false);
     }
@@ -128,7 +137,7 @@ export default function StoreHome() {
       {/* 3. Categories Grid */}
       {isEnabled(categoriesGrid) && (
         <CategoryGrid
-          title={categoriesGrid?.title || "Shop by Category"}
+          title={categoriesGrid?.title || t('store.shopByCategory')}
           subtitle={categoriesGrid?.subtitle || undefined}
           categories={categoriesGrid?.content?.categories}
         />
@@ -137,9 +146,9 @@ export default function StoreHome() {
       {/* 4. New Arrivals */}
       {isEnabled(newArrivals) && (
         <NewArrivalsSection
-          title={newArrivals?.title || "New Arrivals"}
+          title={newArrivals?.title || t('store.newArrivals')}
           subtitle={newArrivals?.subtitle || undefined}
-          badge={newArrivals?.badge_text || "Just In"}
+          badge={newArrivals?.badge_text || t('store.new')}
           count={newArrivals?.content?.product_count || 8}
         />
       )}
@@ -163,7 +172,7 @@ export default function StoreHome() {
                   </Badge>
                 )}
                 <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-                  {bestSellers?.title || "Best Sellers"}
+                  {bestSellers?.title || t('store.bestSellers')}
                 </h2>
                 {bestSellers?.subtitle && (
                   <p className="text-muted-foreground mt-1">{bestSellers.subtitle}</p>
@@ -171,7 +180,7 @@ export default function StoreHome() {
               </div>
               <Button variant="outline" asChild>
                 <Link to="/products">
-                  View All <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('store.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -179,9 +188,9 @@ export default function StoreHome() {
               <FeaturedProductsSkeleton />
             ) : products.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No products available yet.</p>
+                <p className="text-muted-foreground">{t('store.noProductsYet')}</p>
                 <Button asChild className="mt-4">
-                  <Link to="/products">Browse All Products</Link>
+                  <Link to="/products">{t('store.browseAllProducts')}</Link>
                 </Button>
               </div>
             ) : (
@@ -202,9 +211,9 @@ export default function StoreHome() {
       {/* 7. Flash Sale */}
       {isEnabled(flashSale) && (
         <FlashSaleSection
-          title={flashSale?.title || "Flash Sale"}
+          title={flashSale?.title || t('store.flashSale')}
           subtitle={flashSale?.subtitle || undefined}
-          badge={flashSale?.badge_text || "⚡ Flash Sale"}
+          badge={flashSale?.badge_text || `⚡ ${t('store.flashSale')}`}
           endTime={flashSale?.content?.end_time || null}
           count={flashSale?.content?.product_count || 4}
         />
@@ -213,7 +222,7 @@ export default function StoreHome() {
       {/* 8. Testimonials */}
       {isEnabled(testimonials) && (
         <TestimonialsSection
-          title={testimonials?.title || "What Our Customers Say"}
+          title={testimonials?.title || t('store.whatCustomersSay')}
           subtitle={testimonials?.subtitle || undefined}
           testimonials={testimonials?.content?.testimonials}
         />
@@ -222,7 +231,7 @@ export default function StoreHome() {
       {/* 9. Lookbook */}
       {isEnabled(lookbook) && (
         <LookbookSection
-          title={lookbook?.title || "Style Inspiration"}
+          title={lookbook?.title || t('store.styleInspiration')}
           subtitle={lookbook?.subtitle || undefined}
           images={lookbook?.content?.images}
         />
@@ -236,10 +245,10 @@ export default function StoreHome() {
               <Mail className="h-7 w-7 text-store-primary" />
             </div>
             <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
-              {newsletter?.title || "Stay in the Loop"}
+              {newsletter?.title || t('store.stayInLoop')}
             </h2>
             <p className="text-muted-foreground mb-6">
-              {newsletter?.subtitle || "Subscribe to our newsletter for exclusive deals and new arrivals."}
+              {newsletter?.subtitle || t('store.newsletterSubtitle')}
             </p>
             <form
               onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
@@ -247,7 +256,7 @@ export default function StoreHome() {
             >
               <Input
                 type="email"
-                placeholder={newsletter?.content?.placeholder || "Enter your email"}
+                placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
                 className="flex-1"
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
@@ -258,7 +267,7 @@ export default function StoreHome() {
                 className="bg-store-primary text-store-primary-foreground hover:bg-store-primary/90"
                 disabled={newsletterLoading}
               >
-                {newsletterLoading ? "..." : newsletter?.content?.button_text || "Subscribe"}
+                {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
               </Button>
             </form>
           </div>

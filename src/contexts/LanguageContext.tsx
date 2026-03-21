@@ -664,13 +664,10 @@ export const translations: Translations = {
   'account.recentlyViewedPageDesc': { en: "Products you've browsed recently", bn: 'সম্প্রতি আপনি যে পণ্যগুলো দেখেছেন' },
 
   // ════════════ PRODUCT DETAIL EXTRA ════════════
-  'store.sizeGuide': { en: 'Size Guide', bn: 'সাইজ গাইড' },
   'store.chest': { en: 'Chest', bn: 'বুক' },
   'store.waist': { en: 'Waist', bn: 'কোমর' },
   'store.hip': { en: 'Hip', bn: 'নিতম্ব' },
-  'store.description': { en: 'Description', bn: 'বিবরণ' },
   'store.details': { en: 'Details', bn: 'বিস্তারিত' },
-  'store.reviews': { en: 'Reviews', bn: 'রিভিউ' },
   'store.qty': { en: 'Qty', bn: 'পরিমাণ' },
   'store.type': { en: 'Type', bn: 'ধরন' },
   'store.off': { en: 'OFF', bn: 'ছাড়' },
@@ -707,28 +704,23 @@ export const translations: Translations = {
   'store.additionalCodCharge': { en: 'Additional COD charge', bn: 'অতিরিক্ত COD চার্জ' },
   'store.notifyPaymentVerified': { en: 'We will notify you once your payment is verified.', bn: 'পেমেন্ট যাচাই হলে আপনাকে জানানো হবে।' },
   'store.sentTo': { en: 'Sent to', bn: 'পাঠানো হয়েছে' },
-  'store.account': { en: 'Account', bn: 'অ্যাকাউন্ট' },
-
-  // ════════════ STORE PRODUCTS FILTER EXTRA ════════════
-  'store.noProductsFound': { en: 'No products found', bn: 'কোনো পণ্য পাওয়া যায়নি' },
   'store.adjustFilters': { en: 'Try adjusting your filters or search terms', bn: 'ফিল্টার বা সার্চ পরিবর্তন করে দেখুন' },
-  'store.clearFilters': { en: 'Clear Filters', bn: 'ফিল্টার মুছুন' },
-  'store.sortBy': { en: 'Sort by', bn: 'সাজান' },
-  'store.newest': { en: 'Newest', bn: 'নতুন' },
-  'store.priceLowHigh': { en: 'Price: Low to High', bn: 'মূল্য: কম থেকে বেশি' },
-  'store.priceHighLow': { en: 'Price: High to Low', bn: 'মূল্য: বেশি থেকে কম' },
-  'store.nameAZ': { en: 'Name A-Z', bn: 'নাম A-Z' },
-  'store.priceRange': { en: 'Price Range', bn: 'মূল্য সীমা' },
-  'store.noProductsAvailable': { en: 'No products available yet.', bn: 'এখনো কোনো পণ্য পাওয়া যায়নি।' },
-  'store.browseAll': { en: 'Browse All Products', bn: 'সব পণ্য দেখুন' },
-
-  // ════════════ STORE HOME EXTRA ════════════
-  'store.shopByCategory': { en: 'Shop by Category', bn: 'ক্যাটাগরি অনুযায়ী কিনুন' },
-  'store.bestSellers': { en: 'Best Sellers', bn: 'সেরা বিক্রিত' },
-  'store.flashSale': { en: 'Flash Sale', bn: 'ফ্ল্যাশ সেল' },
-  'store.stayInLoop': { en: 'Stay in the Loop', bn: 'আপডেটেড থাকুন' },
   'store.newsletterSubtitle': { en: 'Subscribe to our newsletter for exclusive deals and new arrivals.', bn: 'এক্সক্লুসিভ ডিল ও নতুন পণ্যের জন্য আমাদের নিউজলেটারে সাবস্ক্রাইব করুন।' },
   'store.enterYourEmail': { en: 'Enter your email', bn: 'আপনার ইমেইল দিন' },
+
+  // ════════════ FREE SHIPPING PROGRESS ════════════
+  'store.gotFreeShipping': { en: '🎉 You got free shipping!', bn: '🎉 আপনি ফ্রি শিপিং পেয়েছেন!' },
+  'store.addMoreForFreeShipping': { en: 'more for free shipping', bn: 'আরো যোগ করুন ফ্রি শিপিংয়ের জন্য' },
+
+  // ════════════ PRODUCT REVIEWS EXTRA ════════════
+  'store.selectRating': { en: 'Please select a rating', bn: 'রেটিং নির্বাচন করুন' },
+  'store.reviewTitle': { en: 'Review Title', bn: 'রিভিউ শিরোনাম' },
+  'store.reviewContent': { en: 'Your Review', bn: 'আপনার রিভিউ' },
+  'store.verifiedBuyer': { en: 'Verified Buyer', bn: 'যাচাইকৃত ক্রেতা' },
+  'store.beFirstReview': { en: 'Be the first to review this product', bn: 'এই পণ্যে প্রথম রিভিউ দিন' },
+  'store.addPhotos': { en: 'Add Photos', bn: 'ছবি যোগ করুন' },
+  'store.customerReviews': { en: 'Customer Reviews', bn: 'গ্রাহক রিভিউ' },
+  'store.basedOnReviews': { en: 'based on reviews', bn: 'রিভিউ এর ভিত্তিতে' },
 
   // ════════════ ACCOUNT NOTIFICATIONS ════════════
   'account.markAllRead': { en: 'Mark all as read', bn: 'সব পঠিত হিসেবে চিহ্নিত করুন' },
