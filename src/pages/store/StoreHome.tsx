@@ -211,9 +211,9 @@ export default function StoreHome() {
       {/* 7. Flash Sale */}
       {isEnabled(flashSale) && (
         <FlashSaleSection
-          title={flashSale?.title || "Flash Sale"}
+          title={flashSale?.title || t('store.flashSale')}
           subtitle={flashSale?.subtitle || undefined}
-          badge={flashSale?.badge_text || "⚡ Flash Sale"}
+          badge={flashSale?.badge_text || `⚡ ${t('store.flashSale')}`}
           endTime={flashSale?.content?.end_time || null}
           count={flashSale?.content?.product_count || 4}
         />
