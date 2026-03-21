@@ -65,6 +65,7 @@ const menuSections = [
 
 export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl, fullName, email, onCloseMobile }: AccountSidebarProps) {
   const { signOut } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
