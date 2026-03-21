@@ -245,10 +245,10 @@ export default function StoreHome() {
               <Mail className="h-7 w-7 text-store-primary" />
             </div>
             <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
-              {newsletter?.title || "Stay in the Loop"}
+              {newsletter?.title || t('store.stayInLoop')}
             </h2>
             <p className="text-muted-foreground mb-6">
-              {newsletter?.subtitle || "Subscribe to our newsletter for exclusive deals and new arrivals."}
+              {newsletter?.subtitle || t('store.newsletterSubtitle')}
             </p>
             <form
               onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
@@ -256,7 +256,7 @@ export default function StoreHome() {
             >
               <Input
                 type="email"
-                placeholder={newsletter?.content?.placeholder || "Enter your email"}
+                placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
                 className="flex-1"
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
@@ -267,7 +267,7 @@ export default function StoreHome() {
                 className="bg-store-primary text-store-primary-foreground hover:bg-store-primary/90"
                 disabled={newsletterLoading}
               >
-                {newsletterLoading ? "..." : newsletter?.content?.button_text || "Subscribe"}
+                {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
               </Button>
             </form>
           </div>
