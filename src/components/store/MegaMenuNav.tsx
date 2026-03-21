@@ -95,6 +95,7 @@ export function MegaMenuNav() {
   const menuRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { navCategories } = useDynamicCategories();
+  const { t } = useLanguage();
 
   const handleMouseEnter = (label: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -112,9 +113,9 @@ export function MegaMenuNav() {
   }, []);
 
   const staticPages = [
-    { label: "Contact Us", href: "/contact" },
-    { label: "Track Order", href: "/track-order" },
-    { label: "Shipping Info", href: "/shipping-info" },
+    { label: t('store.contactUs'), href: "/contact" },
+    { label: t('store.trackOrder'), href: "/track-order" },
+    { label: t('store.shippingInfo'), href: "/shipping-info" },
   ];
 
   return (
