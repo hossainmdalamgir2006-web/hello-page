@@ -6,9 +6,11 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { useCart } from "@/contexts/CartContext";
 import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
 import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function CartDrawer() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, itemCount } = useCart();
+  const { t } = useLanguage();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
 
   const autoDiscount = calculateAutoDiscount(subtotal);
@@ -31,7 +33,7 @@ export function CartDrawer() {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-store-primary" />
-            Your Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
+            {t('store.cart')} ({itemCount} {itemCount === 1 ? t('store.item') : t('store.items')})
           </SheetTitle>
         </SheetHeader>
 
@@ -40,10 +42,10 @@ export function CartDrawer() {
             <div className="w-24 h-24 rounded-full bg-store-muted flex items-center justify-center mb-4">
               <ShoppingBag className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="font-display font-semibold text-lg mb-2">Your cart is empty</h3>
-            <p className="text-muted-foreground mb-6">Looks like you haven't added anything yet.</p>
+            <h3 className="font-display font-semibold text-lg mb-2">{t('store.cartEmpty')}</h3>
+            <p className="text-muted-foreground mb-6">{t('store.cartEmptyDesc')}</p>
             <Button onClick={() => setIsOpen(false)} className="bg-store-primary hover:bg-store-primary/90" asChild>
-              <Link to="/products">Start Shopping</Link>
+              <Link to="/products">{t('store.startShopping')}</Link>
             </Button>
           </div>
         ) : (
@@ -61,7 +63,7 @@ export function CartDrawer() {
                     <h4 className="font-medium text-sm truncate">{item.name}</h4>
                     {(item.size || item.color) && (
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {item.size && `Size: ${item.size}`}{item.size && item.color && ' • '}{item.color && `Color: ${item.color}`}
+                        {item.size && `${t('store.sizeLabel')}: ${item.size}`}{item.size && item.color && ' • '}{item.color && `${t('store.colorLabel')}: ${item.color}`}
                       </p>
                     )}
                     <div className="flex items-center justify-between mt-2">
@@ -104,7 +106,7 @@ export function CartDrawer() {
 
             <div className="border-t pt-4 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-muted-foreground">{t('store.subtotal')}</span>
                 <span className="font-semibold">{formatPrice(subtotal)}</span>
               </div>
               {autoDiscount > 0 && (
@@ -116,13 +118,13 @@ export function CartDrawer() {
               {activeAutoRules.length > 0 && autoDiscount > 0 && (
                 <p className="text-xs text-store-accent">✨ {activeAutoRules[0].name} applied!</p>
               )}
-              <p className="text-xs text-muted-foreground text-center">Shipping and taxes calculated at checkout</p>
+              <p className="text-xs text-muted-foreground text-center">{t('store.shippingTaxNote')}</p>
               <div className="grid gap-2">
                 <Button className="w-full bg-store-primary hover:bg-store-primary/90" size="lg" asChild onClick={() => setIsOpen(false)}>
-                  <Link to="/checkout">Checkout</Link>
+                  <Link to="/checkout">{t('store.checkout')}</Link>
                 </Button>
                 <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)} asChild>
-                  <Link to="/cart">View Cart</Link>
+                  <Link to="/cart">{t('store.viewCart')}</Link>
                 </Button>
               </div>
             </div>

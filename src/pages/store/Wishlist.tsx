@@ -9,12 +9,14 @@ import { SEOHead } from '@/components/SEOHead';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
 export default function Wishlist() {
   const { items, loading, removeItem } = useWishlist();
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const handleAddToCart = (item: typeof items[0]) => {
     const imageUrl = item.images && item.images.length > 0 ? item.images[0] : '/placeholder.svg';
@@ -28,9 +30,9 @@ export default function Wishlist() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-store-muted flex items-center justify-center"><Heart className="w-16 h-16 text-muted-foreground" /></div>
-        <h1 className="font-display text-2xl font-bold mb-3">Login to view your wishlist</h1>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">Sign in to save your favorite products and access them anytime.</p>
-        <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild><Link to="/login">Sign In</Link></Button>
+        <h1 className="font-display text-2xl font-bold mb-3">{t('store.loginToViewWishlist')}</h1>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">{t('store.signInToSave')}</p>
+        <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild><Link to="/login">{t('store.signIn')}</Link></Button>
       </div>
     );
   }
@@ -49,20 +51,20 @@ export default function Wishlist() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-store-muted flex items-center justify-center"><Heart className="w-16 h-16 text-muted-foreground" /></div>
-        <h1 className="font-display text-2xl font-bold mb-3">Your wishlist is empty</h1>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">Browse our products and click the heart icon to save items you love.</p>
-        <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild><Link to="/products">Browse Products</Link></Button>
+        <h1 className="font-display text-2xl font-bold mb-3">{t('store.wishlistEmpty')}</h1>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">{t('store.wishlistEmptyDesc')}</p>
+        <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild><Link to="/products">{t('store.browseProducts')}</Link></Button>
       </div>
     );
   }
 
   return (
     <>
-      <SEOHead title="My Wishlist" description="Your saved favorite products." canonicalPath="/wishlist" noIndex />
+      <SEOHead title={t('store.myWishlist')} description="Your saved favorite products." canonicalPath="/wishlist" noIndex />
       <section className="bg-gradient-to-r from-store-primary to-store-secondary py-8">
         <div className="container mx-auto px-4">
-          <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">My Wishlist</h1>
-          <p className="text-store-primary-foreground/80 mt-1">{items.length} {items.length === 1 ? 'item' : 'items'} saved</p>
+          <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">{t('store.myWishlist')}</h1>
+          <p className="text-store-primary-foreground/80 mt-1">{items.length} {items.length === 1 ? t('store.itemSaved') : t('store.itemsSaved')}</p>
         </div>
       </section>
       <div className="container mx-auto px-4 py-8">
@@ -76,7 +78,7 @@ export default function Wishlist() {
                   <div className="relative aspect-[3/4] overflow-hidden bg-muted">
                     <img src={imageUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     {discount > 0 && <Badge className="absolute top-3 left-3 bg-store-secondary text-store-primary-foreground">{discount}% OFF</Badge>}
-                    {item.quantity === 0 && <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center"><Badge variant="secondary" className="text-lg">Out of Stock</Badge></div>}
+                    {item.quantity === 0 && <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center"><Badge variant="secondary" className="text-lg">{t('store.outOfStock')}</Badge></div>}
                   </div>
                 </Link>
                 <CardContent className="p-4">
@@ -87,7 +89,7 @@ export default function Wishlist() {
                     {item.compare_at_price && <span className="text-sm text-muted-foreground line-through">৳{item.compare_at_price.toLocaleString()}</span>}
                   </div>
                   <div className="flex gap-2 mt-4">
-                    <Button className="flex-1 bg-store-primary hover:bg-store-primary/90" onClick={() => handleAddToCart(item)} disabled={item.quantity === 0}><ShoppingBag className="h-4 w-4 mr-2" />Add to Cart</Button>
+                    <Button className="flex-1 bg-store-primary hover:bg-store-primary/90" onClick={() => handleAddToCart(item)} disabled={item.quantity === 0}><ShoppingBag className="h-4 w-4 mr-2" />{t('store.addToCart')}</Button>
                     <Button variant="outline" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleRemove(item.product_id)}><Trash2 className="h-4 w-4" /></Button>
                   </div>
                 </CardContent>

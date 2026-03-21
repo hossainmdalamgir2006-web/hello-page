@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Category {
   id: string;
@@ -94,6 +95,7 @@ export function MegaMenuNav() {
   const menuRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { navCategories } = useDynamicCategories();
+  const { t } = useLanguage();
 
   const handleMouseEnter = (label: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -111,9 +113,9 @@ export function MegaMenuNav() {
   }, []);
 
   const staticPages = [
-    { label: "Contact Us", href: "/contact" },
-    { label: "Track Order", href: "/track-order" },
-    { label: "Shipping Info", href: "/shipping-info" },
+    { label: t('store.contactUs'), href: "/contact" },
+    { label: t('store.trackOrder'), href: "/track-order" },
+    { label: t('store.shippingInfo'), href: "/shipping-info" },
   ];
 
   return (
@@ -205,6 +207,7 @@ export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const { navCategories } = useDynamicCategories();
+  const { t } = useLanguage();
 
   return (
     <div className="flex flex-col gap-1">
@@ -263,9 +266,9 @@ export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
       {/* Static Pages */}
       <div className="border-t border-store-muted mt-2 pt-2">
         {[
-          { label: "Contact Us", href: "/contact" },
-          { label: "Track Order", href: "/track-order" },
-          { label: "Shipping Info", href: "/shipping-info" },
+          { label: t('store.contactUs'), href: "/contact" },
+          { label: t('store.trackOrder'), href: "/track-order" },
+          { label: t('store.shippingInfo'), href: "/shipping-info" },
         ].map((page) => (
           <Link
             key={page.label}

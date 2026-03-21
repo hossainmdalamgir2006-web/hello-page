@@ -3,12 +3,14 @@ import { SEOHead } from "@/components/SEOHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle, RefreshCw, Package } from "lucide-react";
 import { usePageContent } from "@/hooks/usePageContents";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Returns() {
   const { data, loading } = usePageContent("returns");
-  const title = data?.title || "Returns & Exchange";
-  const subtitle = data?.subtitle || "We want you to be completely satisfied with your purchase.";
+  const { t } = useLanguage();
+  const title = data?.title || t('store.returnsTitle');
+  const subtitle = data?.subtitle || t('store.returnsSubtitle');
   const c = (data?.content || {}) as any;
 
   if (loading) {

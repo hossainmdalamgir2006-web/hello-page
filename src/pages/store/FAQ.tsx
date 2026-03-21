@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { usePageContent } from "@/hooks/usePageContents";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const defaultFaqs = [
@@ -16,8 +17,9 @@ const defaultFaqs = [
 
 export default function FAQ() {
   const { data, loading } = usePageContent("faq");
-  const title = data?.title || "Frequently Asked Questions";
-  const subtitle = data?.subtitle || "Find answers to common questions about our products, shipping, returns, and more.";
+  const { t } = useLanguage();
+  const title = data?.title || t('store.faqTitle');
+  const subtitle = data?.subtitle || t('store.faqSubtitle');
   const faqs = (data?.content as any)?.faqs || defaultFaqs;
 
   const faqJsonLd = {

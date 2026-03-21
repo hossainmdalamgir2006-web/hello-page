@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -18,6 +19,7 @@ import { useShippingRates } from "@/hooks/useShippingRates";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount } = useCart();
+  const { t } = useLanguage();
   const { appliedCoupon, loading: couponLoading, validateCoupon, removeCoupon } = useCoupon();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
   const { addItem: addToWishlist } = useWishlist();
@@ -140,12 +142,12 @@ export default function Cart() {
           <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-store-muted flex items-center justify-center">
             <ShoppingBag className="w-16 h-16 text-muted-foreground" />
           </div>
-          <h1 className="font-display text-2xl font-bold mb-3">Your cart is empty</h1>
+          <h1 className="font-display text-2xl font-bold mb-3">{t('store.cartEmpty')}</h1>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            Looks like you haven't added anything to your cart yet. Start shopping to fill it up!
+            {t('store.cartEmptyDesc')}
           </p>
           <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild>
-            <Link to="/products">Start Shopping</Link>
+            <Link to="/products">{t('store.startShopping')}</Link>
           </Button>
         </div>
       </>
@@ -154,12 +156,12 @@ export default function Cart() {
 
   return (
     <>
-      <SEOHead title="Shopping Cart" description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
+      <SEOHead title={t('store.shoppingCart')} description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
       {/* Page Header */}
       <section className="bg-gradient-to-r from-store-primary to-store-secondary py-8">
         <div className="container mx-auto px-4">
           <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">
-            Shopping Cart
+            {t('store.shoppingCart')}
           </h1>
         </div>
       </section>
@@ -186,10 +188,10 @@ export default function Cart() {
               </div>
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" onClick={handleShareCart}>
-                  <Share2 className="h-4 w-4 mr-1" /> Share
+                  <Share2 className="h-4 w-4 mr-1" /> {t('store.share')}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={clearCart}>
-                  Clear Cart
+                  {t('store.clearCart')}
                 </Button>
               </div>
             </div>
@@ -220,7 +222,7 @@ export default function Cart() {
                             </Link>
                             {(item.size || item.color) && (
                               <p className="text-sm text-muted-foreground mt-1">
-                                {item.size && `Size: ${item.size}`}{item.size && item.color && ' • '}{item.color && `Color: ${item.color}`}
+                                {item.size && `${t('store.sizeLabel')}: ${item.size}`}{item.size && item.color && ' • '}{item.color && `${t('store.colorLabel')}: ${item.color}`}
                               </p>
                             )}
                             {/* Stock Warning */}
@@ -235,7 +237,7 @@ export default function Cart() {
                             })()}
                             {/* Estimated Delivery */}
                             <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                              <PackageCheck className="h-3 w-3" /> Estimated delivery: 2-4 days
+                              <PackageCheck className="h-3 w-3" /> {t('store.estimatedDelivery')}
                             </p>
                           </div>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive flex-shrink-0"
@@ -287,17 +289,17 @@ export default function Cart() {
                           <Button variant="ghost" size="sm" className="h-7 text-xs px-2"
                             onClick={() => saveForLater(item.id, item.size, item.color)}
                           >
-                            <Bookmark className="h-3 w-3 mr-1" /> Save for Later
+                            <Bookmark className="h-3 w-3 mr-1" /> {t('store.saveForLater')}
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-xs px-2"
                             onClick={() => handleMoveToWishlist(item)}
                           >
-                            <Heart className="h-3 w-3 mr-1" /> Wishlist
+                            <Heart className="h-3 w-3 mr-1" /> {t('store.wishlist')}
                           </Button>
                           <Button variant="ghost" size="sm" className="h-7 text-xs px-2"
                             onClick={() => setExpandedNotes(prev => ({ ...prev, [key]: !prev[key] }))}
                           >
-                            <MessageSquare className="h-3 w-3 mr-1" /> {item.note ? 'Edit Note' : 'Add Note'}
+                            <MessageSquare className="h-3 w-3 mr-1" /> {item.note ? t('store.editNote') : t('store.addNote')}
                           </Button>
                         </div>
 
@@ -324,7 +326,7 @@ export default function Cart() {
             {savedItems.length > 0 && (
               <div className="mt-8">
                 <h2 className="font-display text-lg font-semibold mb-4 flex items-center gap-2">
-                  <Bookmark className="h-5 w-5" /> Saved for Later ({savedItems.length})
+                  <Bookmark className="h-5 w-5" /> {t('store.savedForLater')} ({savedItems.length})
                 </h2>
                 <div className="space-y-3">
                   {savedItems.map((item) => (
@@ -341,8 +343,7 @@ export default function Cart() {
                           <div className="flex gap-1">
                             <Button variant="outline" size="sm" className="h-8 text-xs"
                               onClick={() => moveToCart(item.id, item.size, item.color)}
-                            >
-                              Move to Cart
+                            >{t('store.moveToCart')}
                             </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive"
                               onClick={() => removeSavedItem(item.id, item.size, item.color)}
@@ -360,7 +361,7 @@ export default function Cart() {
 
             <Button variant="outline" asChild>
               <Link to="/products">
-                <ArrowLeft className="h-4 w-4 mr-2" /> Continue Shopping
+                <ArrowLeft className="h-4 w-4 mr-2" /> {t('store.continueShopping')}
               </Link>
             </Button>
           </div>
@@ -369,7 +370,7 @@ export default function Cart() {
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+                <CardTitle>{t('store.orderSummary')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Coupon Code */}
@@ -393,13 +394,13 @@ export default function Cart() {
                 ) : (
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Coupon code"
+                      placeholder={t('store.couponCode')}
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
                     />
                     <Button variant="outline" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()}>
-                      {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}
+                      {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('store.apply')}
                     </Button>
                   </div>
                 )}
@@ -409,14 +410,14 @@ export default function Cart() {
                 {/* Totals */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal ({selectedCount} items)</span>
+                    <span className="text-muted-foreground">{t('store.subtotal')} ({selectedCount} {t('store.items')})</span>
                     <span>{formatPrice(checkoutSubtotal)}</span>
                   </div>
                   {discount > 0 && (
                     <div className="flex justify-between text-sm text-store-accent">
                       <span className="flex items-center gap-1">
                         {isAutoDiscountApplied && <Sparkles className="h-3 w-3" />}
-                        {isAutoDiscountApplied ? "Auto Discount" : "Discount"}
+                        {isAutoDiscountApplied ? "Auto Discount" : t('store.discount')}
                       </span>
                       <span>-{formatPrice(discount)}</span>
                     </div>
@@ -425,20 +426,20 @@ export default function Cart() {
                     <p className="text-xs text-store-accent">✨ {activeAutoRules[0].name} applied!</p>
                   )}
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className={shippingCost === 0 ? 'text-green-600 dark:text-green-400' : ''}>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
+                    <span className="text-muted-foreground">{t('store.shipping')}</span>
+                    <span className={shippingCost === 0 ? 'text-green-600 dark:text-green-400' : ''}>{shippingCost === 0 ? t('store.free') : formatPrice(shippingCost)}</span>
                   </div>
                 </div>
 
                 <Separator />
 
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
+                  <span>{t('store.total')}</span>
                   <span>{formatPrice(total)}</span>
                 </div>
 
                 <Button size="lg" className="w-full bg-store-primary hover:bg-store-primary/90" onClick={handleProceedToCheckout} disabled={selectedItems.length === 0}>
-                  Proceed to Checkout ({selectedCount} items)
+                  {t('store.proceedToCheckout')} ({selectedCount} {t('store.items')})
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">Taxes calculated at checkout</p>

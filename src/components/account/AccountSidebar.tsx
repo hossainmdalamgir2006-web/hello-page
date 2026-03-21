@@ -6,6 +6,7 @@ import {
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,50 +21,52 @@ interface AccountSidebarProps {
   onCloseMobile?: () => void;
 }
 
-const menuSections = [
+// Menu sections with translation keys
+const menuSectionsConfig = [
   {
-    label: "OVERVIEW",
+    labelKey: "account.overview",
     items: [
-      { title: "Dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
-      { title: "Notifications", url: "/myaccount/notifications", icon: Bell },
+      { titleKey: "account.dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
+      { titleKey: "account.notifications", url: "/myaccount/notifications", icon: Bell },
     ],
   },
   {
-    label: "ORDERS",
+    labelKey: "account.orders",
     items: [
-      { title: "My Orders", url: "/myaccount/orders", icon: Package },
-      { title: "Returns", url: "/myaccount/returns", icon: RotateCcw },
+      { titleKey: "account.myOrders", url: "/myaccount/orders", icon: Package },
+      { titleKey: "account.returns", url: "/myaccount/returns", icon: RotateCcw },
     ],
   },
   {
-    label: "SHOPPING",
+    labelKey: "account.shopping",
     items: [
-      { title: "Wishlist", url: "/myaccount/wishlist", icon: Heart },
-      { title: "Shopping", url: "/myaccount/shopping", icon: ShoppingBag },
-      { title: "Recently Viewed", url: "/myaccount/recently-viewed", icon: Clock },
-      { title: "My Reviews", url: "/myaccount/reviews", icon: Star },
+      { titleKey: "account.wishlist", url: "/myaccount/wishlist", icon: Heart },
+      { titleKey: "account.shoppingLink", url: "/myaccount/shopping", icon: ShoppingBag },
+      { titleKey: "account.recentlyViewed", url: "/myaccount/recently-viewed", icon: Clock },
+      { titleKey: "account.myReviews", url: "/myaccount/reviews", icon: Star },
     ],
   },
   {
-    label: "ACCOUNT",
+    labelKey: "account.accountSection",
     items: [
-      { title: "Addresses", url: "/myaccount/addresses", icon: MapPin },
-      { title: "Payment Methods", url: "/myaccount/payment-methods", icon: CreditCard },
-      { title: "Security", url: "/myaccount/security", icon: Shield },
-      { title: "Settings", url: "/myaccount/settings", icon: Settings },
+      { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
+      { titleKey: "account.paymentMethods", url: "/myaccount/payment-methods", icon: CreditCard },
+      { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
+      { titleKey: "account.settings", url: "/myaccount/settings", icon: Settings },
     ],
   },
   {
-    label: "HELP",
+    labelKey: "account.help",
     items: [
-      { title: "Support", url: "/myaccount/support", icon: HelpCircle },
-      { title: "Live Chat", url: "/myaccount/chat", icon: MessageCircle },
+      { titleKey: "account.support", url: "/myaccount/support", icon: HelpCircle },
+      { titleKey: "account.liveChat", url: "/myaccount/chat", icon: MessageCircle },
     ],
   },
 ];
 
 export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl, fullName, email, onCloseMobile }: AccountSidebarProps) {
   const { signOut } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -82,8 +85,9 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
     onCloseMobile?.();
   };
 
-  const renderNavItem = (item: { title: string; url: string; icon: React.ElementType; end?: boolean }) => {
+  const renderNavItem = (item: { titleKey: string; url: string; icon: React.ElementType; end?: boolean }) => {
     const active = isActive(item.url);
+    const title = t(item.titleKey);
     const showBadge = item.url === "/myaccount/notifications" && unreadCount > 0;
     const content = (
       <button
@@ -98,7 +102,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
         )}
       >
         <item.icon className={cn("h-[18px] w-[18px] shrink-0", active && "text-sidebar-primary")} />
-        {!collapsed && <span className="flex-1 text-left">{item.title}</span>}
+        {!collapsed && <span className="flex-1 text-left">{title}</span>}
         {!collapsed && showBadge && (
           <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground text-[10px] font-bold px-1">
             {unreadCount}
@@ -114,7 +118,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
       return (
         <Tooltip key={item.url} delayDuration={0}>
           <TooltipTrigger asChild>{content}</TooltipTrigger>
-          <TooltipContent side="right" className="font-medium">{item.title}</TooltipContent>
+          <TooltipContent side="right" className="font-medium">{title}</TooltipContent>
         </Tooltip>
       );
     }
@@ -149,11 +153,11 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
 
         {/* Navigation */}
         <nav className="flex-1 space-y-5">
-          {menuSections.map((section, idx) => (
-            <div key={section.label}>
+          {menuSectionsConfig.map((section, idx) => (
+            <div key={section.labelKey}>
               {!collapsed && (
                 <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-sidebar-muted/70">
-                  {section.label}
+                  {t(section.labelKey)}
                 </p>
               )}
               {collapsed && idx > 0 && <div className="my-3 border-t border-sidebar-border" />}
@@ -171,11 +175,11 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
                   <Store className="h-[18px] w-[18px]" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">Back to Store</TooltipContent>
+              <TooltipContent side="right" className="font-medium">{t('account.backToStore')}</TooltipContent>
             </Tooltip>
           ) : (
             <button onClick={() => handleNav("/")} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-              <Store className="h-[18px] w-[18px]" /><span>Back to Store</span>
+              <Store className="h-[18px] w-[18px]" /><span>{t('account.backToStore')}</span>
             </button>
           )}
 
@@ -186,11 +190,11 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
                   <LogOut className="h-[18px] w-[18px]" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">Sign Out</TooltipContent>
+              <TooltipContent side="right" className="font-medium">{t('account.signOut')}</TooltipContent>
             </Tooltip>
           ) : (
             <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-              <LogOut className="h-[18px] w-[18px]" /><span>Sign Out</span>
+              <LogOut className="h-[18px] w-[18px]" /><span>{t('account.signOut')}</span>
             </button>
           )}
 
@@ -204,7 +208,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
                 collapsed ? "justify-center px-2" : "justify-start px-3 gap-3"
               )}
             >
-              {collapsed ? <ChevronsRight className="h-4 w-4" /> : <><ChevronsLeft className="h-4 w-4" /><span className="text-xs">Collapse</span></>}
+              {collapsed ? <ChevronsRight className="h-4 w-4" /> : <><ChevronsLeft className="h-4 w-4" /><span className="text-xs">{t('account.collapse')}</span></>}
             </Button>
           )}
         </div>

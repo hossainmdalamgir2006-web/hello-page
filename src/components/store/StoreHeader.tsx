@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingBag, Search, Menu, User, Heart, LogOut, LayoutDashboard } from "lucide-react";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -39,6 +41,7 @@ export function StoreHeader() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const { navCategories } = useDynamicCategories();
+  const { t } = useLanguage();
 
   const storeName = settings?.STORE_NAME || "Your Store";
   const storeLogo = settings?.STORE_LOGO || null;
@@ -113,17 +116,17 @@ export function StoreHeader() {
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4">
             <div className="flex w-full rounded-lg border border-store-muted overflow-hidden bg-background">
               <Input
-                placeholder="Search for products..."
+                placeholder={t('store.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
               />
               <Select value={searchCategory} onValueChange={setSearchCategory}>
                 <SelectTrigger className="w-[160px] border-0 border-l border-store-muted rounded-none focus:ring-0 focus:ring-offset-0 bg-store-muted/30 text-sm">
-                  <SelectValue placeholder="All Categories" />
+                  <SelectValue placeholder={t('store.allCategories')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="all">{t('store.allCategories')}</SelectItem>
                   {navCategories.map((cat) => (
                     <SelectItem key={cat.slug} value={cat.slug}>
                       {cat.label}
@@ -143,6 +146,7 @@ export function StoreHeader() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <LanguageToggle />
             <ThemeToggle />
 
             {/* Mobile Search */}
@@ -176,23 +180,23 @@ export function StoreHeader() {
                         role === 'manager' ? '/manager/dashboard' : '/support/dashboard'
                       )}>
                         <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Dashboard
+                        {t('store.dashboard')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
                   <DropdownMenuItem onClick={() => navigate('/myaccount')}>
                     <User className="mr-2 h-4 w-4" />
-                    My Account
+                    {t('store.myAccount')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/myaccount/orders')}>
                     <ShoppingBag className="mr-2 h-4 w-4" />
-                    My Orders
+                    {t('store.myOrders')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    {t('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -224,7 +228,7 @@ export function StoreHeader() {
       <div className="md:hidden px-4 pb-3">
         <form onSubmit={handleSearch} className="flex rounded-lg border border-store-muted overflow-hidden bg-background">
           <Input
-            placeholder="Search products..."
+            placeholder={t('store.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none h-9 text-sm"

@@ -1,11 +1,13 @@
 
 import { SEOHead } from "@/components/SEOHead";
 import { usePageContent } from "@/hooks/usePageContents";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Privacy() {
   const { data, loading } = usePageContent("privacy");
-  const title = data?.title || "Privacy Policy";
+  const { t } = useLanguage();
+  const title = data?.title || t('store.privacyTitle');
   const subtitle = data?.subtitle || "Last updated: January 2024";
   const sections = (data?.content as any)?.sections || [];
 

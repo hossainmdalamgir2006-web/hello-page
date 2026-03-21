@@ -1,6 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { AccountHeader } from "@/components/account/AccountHeader";
@@ -8,21 +9,21 @@ import { cn } from "@/lib/utils";
 
 const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
 
-const pageTitles: Record<string, { title: string; description: string }> = {
-  "/myaccount": { title: "Dashboard", description: "Overview of your account activity" },
-  "/myaccount/orders": { title: "My Orders", description: "View and track your orders" },
-  "/myaccount/returns": { title: "Returns & Refunds", description: "Submit return or refund requests" },
-  "/myaccount/wishlist": { title: "Wishlist", description: "Products you've saved for later" },
-  "/myaccount/shopping": { title: "Shopping", description: "Buy again, coupons & deals" },
-  "/myaccount/recently-viewed": { title: "Recently Viewed", description: "Products you've browsed" },
-  "/myaccount/reviews": { title: "My Reviews", description: "Your product reviews & ratings" },
-  "/myaccount/addresses": { title: "Addresses", description: "Manage delivery addresses" },
-  "/myaccount/payment-methods": { title: "Payment Methods", description: "Manage saved payment methods" },
-  "/myaccount/security": { title: "Security", description: "Account protection settings" },
-  "/myaccount/support": { title: "Support", description: "Get help from our team" },
-  "/myaccount/chat": { title: "Live Chat", description: "Chat with our support team" },
-  "/myaccount/notifications": { title: "Notifications", description: "All your notifications in one place" },
-  "/myaccount/settings": { title: "Settings", description: "Profile & preferences" },
+const pageTitleKeys: Record<string, { titleKey: string; descKey: string }> = {
+  "/myaccount": { titleKey: "account.dashboard", descKey: "account.dashboardDesc" },
+  "/myaccount/orders": { titleKey: "account.ordersTitle", descKey: "account.ordersDesc" },
+  "/myaccount/returns": { titleKey: "account.returnsTitle", descKey: "account.returnsDesc" },
+  "/myaccount/wishlist": { titleKey: "account.wishlistTitle", descKey: "account.wishlistDesc" },
+  "/myaccount/shopping": { titleKey: "account.shoppingTitle", descKey: "account.shoppingDesc" },
+  "/myaccount/recently-viewed": { titleKey: "account.recentlyViewedTitle", descKey: "account.recentlyViewedDesc" },
+  "/myaccount/reviews": { titleKey: "account.reviewsTitle", descKey: "account.reviewsDesc" },
+  "/myaccount/addresses": { titleKey: "account.addressesTitle", descKey: "account.addressesDesc" },
+  "/myaccount/payment-methods": { titleKey: "account.paymentTitle", descKey: "account.paymentDesc" },
+  "/myaccount/security": { titleKey: "account.securityTitle", descKey: "account.securityDesc" },
+  "/myaccount/support": { titleKey: "account.supportTitle", descKey: "account.supportDesc" },
+  "/myaccount/chat": { titleKey: "account.chatTitle", descKey: "account.chatDesc" },
+  "/myaccount/notifications": { titleKey: "account.notificationsTitle", descKey: "account.notificationsDesc" },
+  "/myaccount/settings": { titleKey: "account.settingsTitle", descKey: "account.settingsDesc" },
 };
 
 interface CustomerAccountLayoutProps {
@@ -31,6 +32,7 @@ interface CustomerAccountLayoutProps {
 
 export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
@@ -58,7 +60,8 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
     }
   }, [user]);
 
-  const pageInfo = pageTitles[location.pathname] || { title: "My Account", description: "" };
+  const keys = pageTitleKeys[location.pathname] || { titleKey: "store.myAccount", descKey: "" };
+  const pageInfo = { title: t(keys.titleKey), description: keys.descKey ? t(keys.descKey) : "" };
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">

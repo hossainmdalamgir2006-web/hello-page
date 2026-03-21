@@ -1,11 +1,13 @@
 
 import { SEOHead } from "@/components/SEOHead";
 import { usePageContent } from "@/hooks/usePageContents";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Terms() {
   const { data, loading } = usePageContent("terms");
-  const title = data?.title || "Terms of Service";
+  const { t } = useLanguage();
+  const title = data?.title || t('store.termsTitle');
   const subtitle = data?.subtitle || "Last updated: January 2024";
   const sections = (data?.content as any)?.sections || [];
 

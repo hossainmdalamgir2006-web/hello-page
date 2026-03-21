@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
 import { usePageContent } from "@/hooks/usePageContents";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const contactFormSchema = z.object({
@@ -32,7 +33,7 @@ const iconMap: Record<string, React.ElementType> = {
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: pageData, loading: pageLoading } = usePageContent("contact");
-  
+  const { t } = useLanguage();
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: { firstName: "", lastName: "", email: "", phone: "", message: "" },
@@ -56,9 +57,9 @@ export default function Contact() {
     }
   };
 
-  const title = pageData?.title || "Contact Us";
-  const subtitle = pageData?.subtitle || "Have questions? We'd love to hear from you.";
-  const formTitle = (pageData?.content as any)?.form_title || "Send us a message";
+  const title = pageData?.title || t('store.contactTitle');
+  const subtitle = pageData?.subtitle || t('store.contactSubtitle');
+  const formTitle = (pageData?.content as any)?.form_title || t('store.sendUsMessage');
   const cards = (pageData?.content as any)?.cards || [
     { icon: "map-pin", title: "Visit Us", text: "Update your address in admin settings" },
     { icon: "phone", title: "Call Us", text: "Update your phone in admin settings" },
@@ -80,7 +81,7 @@ export default function Contact() {
   return (
     <>
       <SEOHead
-        title="Contact Us"
+        title={t('store.contactTitle')}
         description={subtitle}
         canonicalPath="/contact"
         jsonLd={{
@@ -102,23 +103,23 @@ export default function Contact() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <FormField control={form.control} name="firstName" render={({ field }) => (
-                      <FormItem><FormLabel>First Name</FormLabel><FormControl><Input placeholder="John" {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem><FormLabel>{t('store.firstName')}</FormLabel><FormControl><Input placeholder="John" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="lastName" render={({ field }) => (
-                      <FormItem><FormLabel>Last Name</FormLabel><FormControl><Input placeholder="Doe" {...field} /></FormControl><FormMessage /></FormItem>
+                      <FormItem><FormLabel>{t('store.lastName')}</FormLabel><FormControl><Input placeholder="Doe" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                   </div>
                   <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('common.email')}</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="phone" render={({ field }) => (
-                    <FormItem><FormLabel>Phone (Optional)</FormLabel><FormControl><Input placeholder="+880 1XXX-XXXXXX" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('store.phoneOptional')}</FormLabel><FormControl><Input placeholder="+880 1XXX-XXXXXX" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="message" render={({ field }) => (
-                    <FormItem><FormLabel>Message</FormLabel><FormControl><Textarea placeholder="How can we help you?" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('store.message')}</FormLabel><FormControl><Textarea placeholder="How can we help you?" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={isSubmitting}>
-                    {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Sending...</>) : "Send Message"}
+                    {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('store.sending')}</>) : t('store.sendMessage')}
                   </Button>
                 </form>
               </Form>

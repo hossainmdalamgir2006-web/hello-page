@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 const RATE_LIMIT_MS = 30_000; // 30 seconds between submissions
@@ -91,6 +92,7 @@ const defaultHelpLinks = [
 export function StoreFooter() {
   const { data: settings } = useStoreSettingsCache();
   const { data: footerContent } = usePageContent("footer");
+  const { t } = useLanguage();
   const content = (footerContent?.content as any) || {};
 
   const storeName = settings?.STORE_NAME || "Your Store";
@@ -162,7 +164,7 @@ export function StoreFooter() {
 
           {/* Shop Links */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Shop</h4>
+            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.shopFooter')}</h4>
             <ul className="space-y-2 text-sm">
               {shopLinks.map((link: any, i: number) => (
                 <li key={i}>
@@ -174,7 +176,7 @@ export function StoreFooter() {
 
           {/* Help Links */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Help</h4>
+            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.helpFooter')}</h4>
             <ul className="space-y-2 text-sm">
               {helpLinks.map((link: any, i: number) => (
                 <li key={i}>
@@ -186,7 +188,7 @@ export function StoreFooter() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Contact</h4>
+            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.contact')}</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
                 <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -209,8 +211,8 @@ export function StoreFooter() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[hsl(215,16%,60%)]">
           <p>© {new Date().getFullYear()} {storeName}. {copyrightText}</p>
           <div className="flex gap-6">
-            <Link to="/privacy" className="hover:text-store-accent transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-store-accent transition-colors">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-store-accent transition-colors">{t('store.privacyPolicy')}</Link>
+            <Link to="/terms" className="hover:text-store-accent transition-colors">{t('store.termsOfService')}</Link>
           </div>
         </div>
       </div>

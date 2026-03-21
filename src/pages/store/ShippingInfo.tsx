@@ -3,12 +3,14 @@ import { SEOHead } from "@/components/SEOHead";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Truck, Clock, MapPin, Package } from "lucide-react";
 import { usePageContent } from "@/hooks/usePageContents";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ShippingInfo() {
   const { data, loading } = usePageContent("shipping-info");
-  const title = data?.title || "Shipping Information";
-  const subtitle = data?.subtitle || "Everything you need to know about our shipping policies and delivery times.";
+  const { t } = useLanguage();
+  const title = data?.title || t('store.shippingInfoTitle');
+  const subtitle = data?.subtitle || t('store.shippingInfoSubtitle');
   const c = (data?.content || {}) as any;
 
   if (loading) {
