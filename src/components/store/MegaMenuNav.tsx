@@ -110,7 +110,11 @@ export function MegaMenuNav() {
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, []);
 
-  if (navCategories.length === 0) return null;
+  const staticPages = [
+    { label: "Contact Us", href: "/contact" },
+    { label: "Track Order", href: "/track-order" },
+    { label: "Shipping Info", href: "/shipping-info" },
+  ];
 
   return (
     <nav className="flex items-center justify-center gap-1 py-1" ref={menuRef}>
@@ -176,6 +180,17 @@ export function MegaMenuNav() {
             </div>
           )}
         </div>
+      ))}
+
+      {/* Static Pages */}
+      {staticPages.map((page) => (
+        <Link
+          key={page.label}
+          to={page.href}
+          className="px-3 py-2 text-sm font-medium rounded-lg transition-colors text-foreground hover:text-store-primary hover:bg-store-muted"
+        >
+          {page.label}
+        </Link>
       ))}
     </nav>
   );
