@@ -33,7 +33,7 @@ export function CartDrawer() {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-store-primary" />
-            Your Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
+            {t('store.cart')} ({itemCount} {itemCount === 1 ? t('store.item') : t('store.items')})
           </SheetTitle>
         </SheetHeader>
 
