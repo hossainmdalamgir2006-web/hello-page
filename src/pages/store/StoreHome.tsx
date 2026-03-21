@@ -146,9 +146,9 @@ export default function StoreHome() {
       {/* 4. New Arrivals */}
       {isEnabled(newArrivals) && (
         <NewArrivalsSection
-          title={newArrivals?.title || "New Arrivals"}
+          title={newArrivals?.title || t('store.newArrivals')}
           subtitle={newArrivals?.subtitle || undefined}
-          badge={newArrivals?.badge_text || "Just In"}
+          badge={newArrivals?.badge_text || t('store.new')}
           count={newArrivals?.content?.product_count || 8}
         />
       )}
