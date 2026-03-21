@@ -102,7 +102,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
         )}
       >
         <item.icon className={cn("h-[18px] w-[18px] shrink-0", active && "text-sidebar-primary")} />
-        {!collapsed && <span className="flex-1 text-left">{item.title}</span>}
+        {!collapsed && <span className="flex-1 text-left">{title}</span>}
         {!collapsed && showBadge && (
           <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground text-[10px] font-bold px-1">
             {unreadCount}
