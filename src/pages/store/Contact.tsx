@@ -57,9 +57,9 @@ export default function Contact() {
     }
   };
 
-  const title = pageData?.title || "Contact Us";
-  const subtitle = pageData?.subtitle || "Have questions? We'd love to hear from you.";
-  const formTitle = (pageData?.content as any)?.form_title || "Send us a message";
+  const title = pageData?.title || t('store.contactTitle');
+  const subtitle = pageData?.subtitle || t('store.contactSubtitle');
+  const formTitle = (pageData?.content as any)?.form_title || t('store.sendUsMessage');
   const cards = (pageData?.content as any)?.cards || [
     { icon: "map-pin", title: "Visit Us", text: "Update your address in admin settings" },
     { icon: "phone", title: "Call Us", text: "Update your phone in admin settings" },
