@@ -259,6 +259,24 @@ export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
           )}
         </div>
       ))}
+
+      {/* Static Pages */}
+      <div className="border-t border-store-muted mt-2 pt-2">
+        {[
+          { label: "Contact Us", href: "/contact" },
+          { label: "Track Order", href: "/track-order" },
+          { label: "Shipping Info", href: "/shipping-info" },
+        ].map((page) => (
+          <Link
+            key={page.label}
+            to={page.href}
+            className="block py-3 text-base font-medium text-foreground hover:text-store-primary transition-colors"
+            onClick={onClose}
+          >
+            {page.label}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
