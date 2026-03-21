@@ -394,13 +394,13 @@ export default function Cart() {
                 ) : (
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Coupon code"
+                      placeholder={t('store.couponCode')}
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
                     />
                     <Button variant="outline" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()}>
-                      {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}
+                      {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('store.apply')}
                     </Button>
                   </div>
                 )}
