@@ -110,13 +110,13 @@ export default function Contact() {
                     )} />
                   </div>
                   <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('common.email')}</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="phone" render={({ field }) => (
-                    <FormItem><FormLabel>Phone (Optional)</FormLabel><FormControl><Input placeholder="+880 1XXX-XXXXXX" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('store.phoneOptional')}</FormLabel><FormControl><Input placeholder="+880 1XXX-XXXXXX" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="message" render={({ field }) => (
-                    <FormItem><FormLabel>Message</FormLabel><FormControl><Textarea placeholder="How can we help you?" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>{t('store.message')}</FormLabel><FormControl><Textarea placeholder="How can we help you?" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={isSubmitting}>
                     {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Sending...</>) : "Send Message"}
