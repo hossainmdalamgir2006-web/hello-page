@@ -63,7 +63,7 @@ export function CartDrawer() {
                     <h4 className="font-medium text-sm truncate">{item.name}</h4>
                     {(item.size || item.color) && (
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {item.size && `Size: ${item.size}`}{item.size && item.color && ' • '}{item.color && `Color: ${item.color}`}
+                        {item.size && `${t('store.sizeLabel')}: ${item.size}`}{item.size && item.color && ' • '}{item.color && `${t('store.colorLabel')}: ${item.color}`}
                       </p>
                     )}
                     <div className="flex items-center justify-between mt-2">
