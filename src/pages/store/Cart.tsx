@@ -417,7 +417,7 @@ export default function Cart() {
                     <div className="flex justify-between text-sm text-store-accent">
                       <span className="flex items-center gap-1">
                         {isAutoDiscountApplied && <Sparkles className="h-3 w-3" />}
-                        {isAutoDiscountApplied ? "Auto Discount" : "Discount"}
+                        {isAutoDiscountApplied ? "Auto Discount" : t('store.discount')}
                       </span>
                       <span>-{formatPrice(discount)}</span>
                     </div>
