@@ -188,10 +188,10 @@ export default function Cart() {
               </div>
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" onClick={handleShareCart}>
-                  <Share2 className="h-4 w-4 mr-1" /> Share
+                  <Share2 className="h-4 w-4 mr-1" /> {t('store.share')}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={clearCart}>
-                  Clear Cart
+                  {t('store.clearCart')}
                 </Button>
               </div>
             </div>
