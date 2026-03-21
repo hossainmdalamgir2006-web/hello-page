@@ -41,6 +41,7 @@ export function StoreHeader() {
   const { user, role, signOut } = useAuth();
   const navigate = useNavigate();
   const { navCategories } = useDynamicCategories();
+  const { t } = useLanguage();
 
   const storeName = settings?.STORE_NAME || "Your Store";
   const storeLogo = settings?.STORE_LOGO || null;
