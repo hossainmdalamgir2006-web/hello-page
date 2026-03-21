@@ -237,7 +237,7 @@ export default function Cart() {
                             })()}
                             {/* Estimated Delivery */}
                             <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                              <PackageCheck className="h-3 w-3" /> Estimated delivery: 2-4 days
+                              <PackageCheck className="h-3 w-3" /> {t('store.estimatedDelivery')}
                             </p>
                           </div>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive flex-shrink-0"
