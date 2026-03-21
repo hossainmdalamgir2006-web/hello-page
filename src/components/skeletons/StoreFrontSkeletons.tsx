@@ -25,13 +25,41 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
 
 export function FilterSkeleton() {
   return (
-    <div className="space-y-4">
-      {Array.from({ length: 4 }).map((_, i) => (
+    <div className="space-y-5">
+      {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-5/6" />
         </div>
       ))}
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-full" />
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-16" />
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-7 w-16 rounded-full" />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-14" />
+        <div className="flex flex-wrap gap-1.5">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-7 w-10 rounded" />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-16" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-6 w-full" />
+        ))}
+      </div>
     </div>
   );
 }
