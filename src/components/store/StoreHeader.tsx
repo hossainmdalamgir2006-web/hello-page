@@ -196,7 +196,7 @@ export function StoreHeader() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    {t('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
