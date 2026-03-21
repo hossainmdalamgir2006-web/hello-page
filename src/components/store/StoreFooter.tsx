@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 const RATE_LIMIT_MS = 30_000; // 30 seconds between submissions
