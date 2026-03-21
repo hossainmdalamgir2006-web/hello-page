@@ -596,7 +596,6 @@ export const translations: Translations = {
   'store.backToStore': { en: 'Back to Store', bn: 'স্টোরে ফিরে যান' },
 
   // ════════════ STORE PRODUCTS FILTER PAGE ════════════
-  'store.allProducts': { en: 'All Products', bn: 'সব পণ্য' },
   'store.saleItems': { en: 'Sale Items', bn: 'সেলের পণ্য' },
   'store.productsAvailable': { en: 'products available', bn: 'টি পণ্য পাওয়া যাচ্ছে' },
   'store.searchProducts': { en: 'Search products...', bn: 'পণ্য খুঁজুন...' },
