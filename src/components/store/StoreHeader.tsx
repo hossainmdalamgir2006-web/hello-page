@@ -187,11 +187,11 @@ export function StoreHeader() {
                   )}
                   <DropdownMenuItem onClick={() => navigate('/myaccount')}>
                     <User className="mr-2 h-4 w-4" />
-                    My Account
+                    {t('store.myAccount')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/myaccount/orders')}>
                     <ShoppingBag className="mr-2 h-4 w-4" />
-                    My Orders
+                    {t('store.myOrders')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
