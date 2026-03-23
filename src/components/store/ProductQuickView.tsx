@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useProductVariants } from "@/hooks/useProductVariants";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -55,6 +56,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const { variants } = useProductVariants(open ? product.id : null);
+  const { t } = useLanguage();
   const inWishlist = isInWishlist(product.id);
 
   const [quantity, setQuantity] = useState(1);
@@ -174,12 +176,12 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
 
   const handleAddToCart = () => {
     if (isVariable && variants.length > 0 && !selectedVariant) {
-      toast.error("Please select a variant");
+      toast.error(t('store.pleaseSelectVariant'));
       return;
     }
     if (isGrouped) {
       if (selectedGroupChildren.length === 0) {
-        toast.error("Please select at least one product");
+        toast.error(t('store.pleaseSelectProduct'));
         return;
       }
       selectedGroupChildren.forEach((child) => {
@@ -190,7 +192,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
           image: child.images[0] || "/placeholder.svg",
         }, child.childQuantity);
       });
-      toast.success(`${selectedGroupChildren.length} items added to cart!`);
+      toast.success(`${selectedGroupChildren.length} ${t('store.itemsAddedToCart')}`);
       onOpenChange(false);
       return;
     }
@@ -207,7 +209,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
       },
       quantity
     );
-    toast.success("Added to cart!");
+    toast.success(t('store.addedToCart'));
     onOpenChange(false);
   };
 
@@ -278,7 +280,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
 
             {/* Price */}
             <div className="flex items-baseline gap-2">
-              {isGrouped && <span className="text-xs text-muted-foreground">Total: </span>}
+              {isGrouped && <span className="text-xs text-muted-foreground">{t('common.total')}: </span>}
               <span className="text-2xl font-bold text-foreground">
                 ৳{displayPrice.toLocaleString()}
               </span>
@@ -289,15 +291,15 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
               )}
               {isBundle && discount > 0 && (
                 <Badge className="bg-store-secondary/10 text-store-secondary border-store-secondary/20 text-xs">
-                  Save {discount}%
+                  {t('store.save')} {discount}%
                 </Badge>
               )}
             </div>
 
-            {/* Stock (not for grouped) */}
+            {/* Stock */}
             {!isGrouped && (
               <p className={cn("text-sm font-medium", displayStock > 0 ? "text-success" : "text-destructive")}>
-                {displayStock > 0 ? `In Stock (${displayStock})` : "Out of Stock"}
+                {displayStock > 0 ? `${t('store.inStock')} (${displayStock})` : t('store.outOfStock')}
               </p>
             )}
 
@@ -311,10 +313,10 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
 
             <Separator />
 
-            {/* ===== VARIABLE: Variant Selection ===== */}
+            {/* VARIABLE: Variant Selection */}
             {isVariable && variants.length > 0 && (
               <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">Select Variant</p>
+                <p className="text-sm font-medium text-foreground">{t('store.selectVariant')}</p>
                 <div className="flex flex-wrap gap-2">
                   {variants
                     .filter((v) => v.is_active)
@@ -331,17 +333,17 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
                         disabled={(variant.quantity || 0) === 0}
                       >
                         {variant.name}
-                        {(variant.quantity || 0) === 0 && " (Out)"}
+                        {(variant.quantity || 0) === 0 && ` (${t('store.outOfStock')})`}
                       </Button>
                     ))}
                 </div>
               </div>
             )}
 
-            {/* ===== GROUPED: Child Product Selection ===== */}
+            {/* GROUPED: Child Product Selection */}
             {isGrouped && groupChildren.length > 0 && (
               <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">Select Products ({selectedGroupChildren.length}/{groupChildren.length})</p>
+                <p className="text-sm font-medium text-foreground">{t('store.selectProducts')} ({selectedGroupChildren.length}/{groupChildren.length})</p>
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {groupChildren.map((child) => (
                     <div key={child.id} className={cn(
@@ -374,10 +376,10 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
               </div>
             )}
 
-            {/* ===== BUNDLE: Included Items (read-only) ===== */}
+            {/* BUNDLE: Included Items */}
             {isBundle && bundleChildren.length > 0 && (
               <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">Bundle Includes ({bundleChildren.length} items)</p>
+                <p className="text-sm font-medium text-foreground">{t('store.bundleIncludes')} ({bundleChildren.length} {t('store.items')})</p>
                 <div className="space-y-1.5 max-h-40 overflow-y-auto">
                   {bundleChildren.map((child) => (
                     <div key={child.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
@@ -395,10 +397,10 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
               </div>
             )}
 
-            {/* Quantity (for simple, variable, bundle) */}
+            {/* Quantity */}
             {displayStock > 0 && !isGrouped && (
               <div className="flex items-center gap-3">
-                <p className="text-sm font-medium text-foreground">Quantity</p>
+                <p className="text-sm font-medium text-foreground">{t('store.quantity')}</p>
                 <div className="flex items-center border rounded-md">
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
                     <Minus className="h-3 w-3" />
@@ -420,12 +422,12 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
               >
                 <ShoppingBag className="h-4 w-4 mr-2" />
                 {isGrouped
-                  ? `Add ${selectedGroupChildren.length} Items`
+                  ? `${t('store.addItemsToCart')} (${selectedGroupChildren.length})`
                   : isBundle
-                    ? "Add Bundle to Cart"
+                    ? t('store.addBundleToCart')
                     : displayStock === 0
-                      ? "Out of Stock"
-                      : "Add to Cart"}
+                      ? t('store.outOfStock')
+                      : t('store.addToCart')}
               </Button>
               <Button
                 variant="outline"
@@ -443,7 +445,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
               onClick={() => onOpenChange(false)}
               className="text-sm text-store-primary hover:underline text-center"
             >
-              View Full Details →
+              {t('store.viewFullDetails')} →
             </Link>
           </div>
         </div>
