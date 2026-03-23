@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 interface Review {
@@ -33,6 +34,7 @@ interface ProductReviewsProps {
 
 export function ProductReviews({ productId }: ProductReviewsProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -145,17 +147,17 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
   const handleSubmitReview = async () => {
     if (!user) {
-      toast.error("Please login to submit a review");
+      toast.error(t('store.loginToSubmitReview'));
       return;
     }
 
     if (!isVerifiedBuyer) {
-      toast.error("Only verified buyers can submit reviews");
+      toast.error(t('store.onlyVerifiedCanReview'));
       return;
     }
 
     if (rating < 1 || rating > 5) {
-      toast.error("Please select a rating");
+      toast.error(t('store.selectRating'));
       return;
     }
 
@@ -190,7 +192,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
       if (error) throw error;
 
-      toast.success("Review submitted! It will appear after approval.");
+      toast.success(t('store.reviewSubmitted'));
       setShowForm(false);
       setRating(5);
       setTitle("");
@@ -201,7 +203,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       fetchReviews();
     } catch (error: any) {
       console.error("Error submitting review:", error);
-      toast.error("Failed to submit review");
+      toast.error(t('store.failedSubmitReview'));
     } finally {
       setSubmitting(false);
       setUploading(false);
@@ -275,7 +277,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
             <div>
               <StarRating value={Math.round(averageRating)} />
               <p className="text-sm text-muted-foreground mt-1">
-                {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
+                {totalReviews} {totalReviews === 1 ? t('store.review') : t('store.reviewsPlural')}
               </p>
             </div>
           </div>
@@ -284,17 +286,17 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
               onClick={() => setShowForm(!showForm)}
               className="bg-store-primary hover:bg-store-primary/90"
             >
-              Write a Review
+              {t('store.writeReview')}
             </Button>
           )}
           {user && !isVerifiedBuyer && !checkingPurchase && (
             <p className="text-sm text-muted-foreground">
-              Only verified buyers can write a review
+              {t('store.onlyVerifiedBuyers')}
             </p>
           )}
           {!user && (
             <p className="text-sm text-muted-foreground">
-              Please <a href="/login" className="text-store-primary hover:underline">login</a> to write a review
+              {t('store.loginToReview').split(t('store.login'))[0]}<a href="/login" className="text-store-primary hover:underline">{t('store.login')}</a>{t('store.loginToReview').split(t('store.login'))[1] || ''}
             </p>
           )}
         </div>
@@ -303,7 +305,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
         <div className="space-y-2">
           {[5, 4, 3, 2, 1].map((star, idx) => (
             <div key={star} className="flex items-center gap-3">
-              <span className="text-sm w-8">{star} star</span>
+              <span className="text-sm w-8">{star} {t('store.star')}</span>
               <Progress
                 value={totalReviews > 0 ? (ratingCounts[idx] / totalReviews) * 100 : 0}
                 className="flex-1 h-2"
@@ -319,24 +321,24 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       {/* Review Form */}
       {showForm && (
         <div className="p-6 border rounded-lg bg-store-card">
-          <h4 className="font-semibold mb-4">Write Your Review</h4>
+          <h4 className="font-semibold mb-4">{t('store.writeYourReview')}</h4>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">Rating</label>
+              <label className="text-sm font-medium mb-2 block">{t('store.rating')}</label>
               <StarRating value={rating} interactive />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Title (optional)</label>
+              <label className="text-sm font-medium mb-2 block">{t('store.titleOptional')}</label>
               <Input
-                placeholder="Summarize your experience"
+                placeholder={t('store.summarizeExperience')}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Review</label>
+              <label className="text-sm font-medium mb-2 block">{t('store.reviewLabel')}</label>
               <Textarea
-                placeholder="Tell others about your experience..."
+                placeholder={t('store.tellOthers')}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={4}
@@ -345,7 +347,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
             {/* Image Upload */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Photos (optional, max 5)</label>
+              <label className="text-sm font-medium mb-2 block">{t('store.photosOptional')}</label>
               <div className="flex flex-wrap gap-2">
                 {reviewImages.map((file, idx) => (
                   <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border bg-muted">
@@ -364,7 +366,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                     className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center text-muted-foreground hover:border-store-primary hover:text-store-primary transition-colors"
                   >
                     <ImagePlus className="h-5 w-5" />
-                    <span className="text-[10px] mt-1">Add</span>
+                    <span className="text-[10px] mt-1">{t('common.add')}</span>
                   </button>
                 )}
               </div>
@@ -373,7 +375,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
             {/* Video Upload */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Video (optional, max 20MB)</label>
+              <label className="text-sm font-medium mb-2 block">{t('store.videoOptional')}</label>
               {reviewVideo ? (
                 <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/50">
                   <Play className="h-5 w-5 text-store-primary" />
@@ -385,7 +387,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 </div>
               ) : (
                 <Button variant="outline" size="sm" onClick={() => videoInputRef.current?.click()}>
-                  <Upload className="h-4 w-4 mr-2" /> Add Video
+                  <Upload className="h-4 w-4 mr-2" /> {t('store.addVideo')}
                 </Button>
               )}
               <input ref={videoInputRef} type="file" accept="video/*" hidden onChange={handleVideoSelect} />
@@ -394,7 +396,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
             {uploading && (
               <div className="space-y-1">
                 <Progress value={uploadProgress} className="h-2" />
-                <p className="text-xs text-muted-foreground">Uploading media... {uploadProgress}%</p>
+                <p className="text-xs text-muted-foreground">{t('store.uploadingMedia')} {uploadProgress}%</p>
               </div>
             )}
 
@@ -405,11 +407,11 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 className="bg-store-primary hover:bg-store-primary/90"
               >
                 {submitting ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>
-                ) : "Submit Review"}
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t('store.submitting')}</>
+                ) : t('store.submitReview')}
               </Button>
               <Button variant="outline" onClick={() => setShowForm(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
             </div>
           </div>
@@ -421,7 +423,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       {/* Reviews List */}
       {reviews.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">
-          No reviews yet. Be the first to review this product!
+          {t('store.noReviewsYet')}
         </p>
       ) : (
         <div className="space-y-6">
@@ -437,8 +439,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                       <span className="font-medium">{review.customer_name}</span>
                       {review.is_verified && (
                         <Badge variant="secondary" className="text-xs">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          Verified Purchase
+                          <CheckCircle className="h-3 w-3 mr-1" />{t('store.verifiedPurchase')}
                         </Badge>
                       )}
                     </div>
@@ -473,9 +474,9 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                     </button>
                   ))}
                   {review.video_url && (
-                    <div className="w-32 h-16 rounded-lg overflow-hidden border bg-black">
-                      <video src={review.video_url} className="w-full h-full object-cover" controls />
-                    </div>
+                    <a href={review.video_url} target="_blank" rel="noopener noreferrer" className="w-16 h-16 rounded-lg border bg-muted flex items-center justify-center hover:ring-2 ring-store-primary transition-all">
+                      <Play className="h-6 w-6 text-store-primary" />
+                    </a>
                   )}
                 </div>
               )}
@@ -486,7 +487,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
       {/* Image Lightbox */}
       <Dialog open={!!lightboxImage} onOpenChange={() => setLightboxImage(null)}>
-        <DialogContent className="max-w-2xl p-2">
+        <DialogContent className="max-w-3xl p-2">
           {lightboxImage && (
             <img src={lightboxImage} alt="Review" className="w-full h-auto rounded-lg" />
           )}
