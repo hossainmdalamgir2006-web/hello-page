@@ -728,13 +728,6 @@ export const translations: Translations = {
 
   // ════════════ ACCOUNT WISHLIST ════════════
   'account.myWishlist': { en: 'My Wishlist', bn: 'আমার উইশলিস্ট' },
-};
-
-interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
-}
 
   // ===== Quick View =====
   'store.selectVariant': { en: 'Select Variant', bn: 'ভেরিয়েন্ট নির্বাচন করুন' },
@@ -843,6 +836,12 @@ interface LanguageContextType {
   'account.noReviews': { en: 'No reviews yet', bn: 'এখনো কোনো রিভিউ নেই' },
   'account.published': { en: 'Published', bn: 'প্রকাশিত' },
 };
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
