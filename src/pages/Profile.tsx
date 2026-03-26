@@ -122,7 +122,7 @@ export default function Profile() {
     if (!ALLOWED_TYPES.includes(file.type)) {
       toast({
         variant: 'destructive',
-        title: t('profile.uploadFailed'),
+        title: 'Upload Failed',
         description: 'Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.',
       });
       return;
