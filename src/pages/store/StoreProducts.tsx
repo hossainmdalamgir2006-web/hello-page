@@ -551,7 +551,7 @@ export default function StoreProducts() {
           <aside className="hidden lg:block w-[260px] shrink-0">
             <div className="sticky top-20">
               <ScrollArea className="max-h-[calc(100vh-6rem)] pr-3">
-                <h3 className="font-semibold text-base mb-4">Filters</h3>
+                <h3 className="font-semibold text-base mb-4">{t('storeProducts.filters')}</h3>
                 {loading ? <FilterSkeleton /> : <FilterPanel {...filterPanelProps} />}
               </ScrollArea>
             </div>
