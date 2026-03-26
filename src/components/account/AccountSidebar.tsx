@@ -102,7 +102,6 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
       groupKey: "account",
       items: [
         { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
-        { titleKey: "account.paymentMethods", url: "/myaccount/payment-methods", icon: CreditCard },
         { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
         { titleKey: "account.settings", url: "/myaccount/settings", icon: Settings },
       ],
