@@ -9,9 +9,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SizeGuide() {
+  const { t } = useLanguage();
   const { data, loading } = usePageContent("size-guide");
-  const title = data?.title || "Size Guide";
-  const subtitle = data?.subtitle || "Find your perfect fit with our comprehensive size guide. All measurements are in inches.";
+  const title = data?.title || t('sizeGuide.title');
+  const subtitle = data?.subtitle || t('sizeGuide.subtitle');
   const c = (data?.content || {}) as any;
 
   const mensSizes = c.mens_sizes || [];
