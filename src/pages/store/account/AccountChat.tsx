@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Send, MessageCircle, Plus } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
@@ -7,7 +8,6 @@ import { ChatSkeleton } from "@/components/skeletons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import { format } from "date-fns";
 
 export default function AccountChat() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [conversations, setConversations] = useState<any[]>([]);
   const [activeConv, setActiveConv] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -50,27 +51,25 @@ export default function AccountChat() {
   useEffect(() => {
     if (!activeConv) return;
     fetchMessages(activeConv);
-
     const channel = supabase
       .channel(`chat-${activeConv}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "live_chat_messages", filter: `conversation_id=eq.${activeConv}` }, () => {
         fetchMessages(activeConv);
       })
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [activeConv]);
 
   const startNewChat = async () => {
     if (!user) return;
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("live_chat_conversations")
       .insert({
         user_id: user.id,
         customer_name: user.user_metadata?.full_name || user.email,
         customer_email: user.email,
         status: "open",
-        subject: "New Support Chat",
+        subject: t('account.newSupportChat'),
       })
       .select()
       .single();
@@ -91,7 +90,7 @@ export default function AccountChat() {
       sender_name: user!.user_metadata?.full_name || user!.email,
     });
     if (!error) setNewMsg("");
-    else toast.error("Failed to send");
+    else toast.error(t('account.failedToSend'));
     setSending(false);
   };
 
@@ -101,10 +100,9 @@ export default function AccountChat() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-14rem)]">
-      {/* Conversations list */}
       <Card className="md:col-span-1 flex flex-col">
         <CardHeader className="pb-2 flex-row items-center justify-between">
-          <CardTitle className="text-sm">Chats</CardTitle>
+          <CardTitle className="text-sm">{t('account.chats')}</CardTitle>
           <Button size="sm" variant="ghost" onClick={startNewChat}>
             <Plus className="h-4 w-4" />
           </Button>
@@ -112,7 +110,7 @@ export default function AccountChat() {
         <ScrollArea className="flex-1">
           <div className="px-3 pb-3 space-y-1">
             {conversations.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-6">No conversations yet</p>
+              <p className="text-xs text-muted-foreground text-center py-6">{t('account.noConversations')}</p>
             ) : (
               conversations.map((c) => (
                 <button
@@ -123,7 +121,7 @@ export default function AccountChat() {
                     activeConv === c.id ? "bg-primary text-primary-foreground" : "hover:bg-accent"
                   )}
                 >
-                  <p className="font-medium truncate">{c.subject || "Support Chat"}</p>
+                  <p className="font-medium truncate">{c.subject || t('account.supportChat')}</p>
                   <p className={cn("text-xs mt-0.5", activeConv === c.id ? "text-primary-foreground/70" : "text-muted-foreground")}>
                     {format(new Date(c.updated_at), "MMM dd, HH:mm")}
                   </p>
@@ -134,7 +132,6 @@ export default function AccountChat() {
         </ScrollArea>
       </Card>
 
-      {/* Messages */}
       <Card className="md:col-span-2 flex flex-col">
         {activeConv ? (
           <>
@@ -162,7 +159,7 @@ export default function AccountChat() {
               <Input
                 value={newMsg}
                 onChange={(e) => setNewMsg(e.target.value)}
-                placeholder="Type a message..."
+                placeholder={t('account.typeMessage')}
                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
               />
               <Button onClick={sendMessage} disabled={sending || !newMsg.trim()} size="icon">
@@ -174,7 +171,7 @@ export default function AccountChat() {
           <CardContent className="flex-1 flex items-center justify-center text-muted-foreground">
             <div className="text-center">
               <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">Select a chat or start a new one</p>
+              <p className="text-sm">{t('account.selectOrStartChat')}</p>
             </div>
           </CardContent>
         )}
