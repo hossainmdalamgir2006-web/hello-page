@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, LogOut, Settings, Store, Bell, Search, Command, ChevronDown, User } from "lucide-react";
+import { Menu, LogOut, Settings, Store, Bell, Search, Command, ChevronDown, User, CheckCheck, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
