@@ -134,7 +134,6 @@ export default function AccountPaymentMethods() {
                     <p className="text-xs text-muted-foreground">
                       {getMethodName(m.method_type)}{m.last_four && ` · •••• ${m.last_four}`}
                     </p>
-                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
