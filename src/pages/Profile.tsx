@@ -496,7 +496,7 @@ export default function Profile() {
                 <Lock className="h-5 w-5" />
                 Change Password
               </CardTitle>
-              <CardDescription>{t('profile.changePasswordDesc')}</CardDescription>
+              <CardDescription>Update your password for security</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...passwordForm}>
