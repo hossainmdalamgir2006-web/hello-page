@@ -717,7 +717,7 @@ export default function Checkout() {
                             </div>
                             <div className="grid sm:grid-cols-2 gap-4">
                               <div>
-                                <Label htmlFor="billingCity">City *</Label>
+                                <Label htmlFor="billingCity">{t('checkout.city')} *</Label>
                                 <Input id="billingCity" value={billingFormData.city} onChange={(e) => setBillingFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
                               </div>
                               <div>
