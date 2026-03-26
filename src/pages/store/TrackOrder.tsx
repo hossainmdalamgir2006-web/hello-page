@@ -117,8 +117,8 @@ export default function TrackOrder() {
             <CardContent>
               <Tabs defaultValue="order" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="order" className="flex items-center gap-2"><Hash className="h-4 w-4" />Order Number</TabsTrigger>
-                  <TabsTrigger value="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Phone Number</TabsTrigger>
+                  <TabsTrigger value="order" className="flex items-center gap-2"><Hash className="h-4 w-4" />{t('track.orderNumber')}</TabsTrigger>
+                  <TabsTrigger value="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />{t('track.phoneNumber')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="order">
