@@ -872,7 +872,7 @@ export default function Checkout() {
                                 </ol>
                               </div>
                               <div>
-                                <Label htmlFor="transactionId" className="text-sm font-medium">Cheque Number *</Label>
+                                <Label htmlFor="transactionId" className="text-sm font-medium">{t('checkout.chequeNumber')} *</Label>
                                 <Input id="transactionId" value={transactionId} onChange={(e) => setTransactionId(e.target.value.toUpperCase())} placeholder="e.g. CHQ-123456" className="mt-1 font-mono" required />
                               </div>
                             </div>
