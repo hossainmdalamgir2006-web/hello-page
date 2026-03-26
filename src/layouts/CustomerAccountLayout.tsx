@@ -9,21 +9,19 @@ import { cn } from "@/lib/utils";
 
 const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
 
-const pageTitleKeys: Record<string, { titleKey: string; descKey: string }> = {
-  "/myaccount": { titleKey: "account.dashboard", descKey: "account.dashboardDesc" },
-  "/myaccount/orders": { titleKey: "account.ordersTitle", descKey: "account.ordersDesc" },
-  "/myaccount/returns": { titleKey: "account.returnsTitle", descKey: "account.returnsDesc" },
-  "/myaccount/wishlist": { titleKey: "account.wishlistTitle", descKey: "account.wishlistDesc" },
-  "/myaccount/shopping": { titleKey: "account.shoppingTitle", descKey: "account.shoppingDesc" },
-  "/myaccount/recently-viewed": { titleKey: "account.recentlyViewedTitle", descKey: "account.recentlyViewedDesc" },
-  "/myaccount/reviews": { titleKey: "account.reviewsTitle", descKey: "account.reviewsDesc" },
-  "/myaccount/addresses": { titleKey: "account.addressesTitle", descKey: "account.addressesDesc" },
-  
-  "/myaccount/security": { titleKey: "account.securityTitle", descKey: "account.securityDesc" },
-  "/myaccount/support": { titleKey: "account.supportTitle", descKey: "account.supportDesc" },
-  "/myaccount/chat": { titleKey: "account.chatTitle", descKey: "account.chatDesc" },
-  
-  "/myaccount/settings": { titleKey: "account.settingsTitle", descKey: "account.settingsDesc" },
+const pageTitles: Record<string, { title: string; description: string }> = {
+  "/myaccount": { title: "Dashboard", description: "Overview of your account" },
+  "/myaccount/orders": { title: "My Orders", description: "View and track your orders" },
+  "/myaccount/returns": { title: "Returns", description: "Manage your return requests" },
+  "/myaccount/wishlist": { title: "Wishlist", description: "Products you've saved" },
+  "/myaccount/shopping": { title: "Shopping History", description: "Your purchase history" },
+  "/myaccount/recently-viewed": { title: "Recently Viewed", description: "Products you've browsed" },
+  "/myaccount/reviews": { title: "My Reviews", description: "Your product reviews" },
+  "/myaccount/addresses": { title: "Addresses", description: "Manage your saved addresses" },
+  "/myaccount/security": { title: "Security", description: "Manage your account security" },
+  "/myaccount/support": { title: "Support", description: "Get help from our team" },
+  "/myaccount/chat": { title: "Live Chat", description: "Chat with support" },
+  "/myaccount/settings": { title: "Settings", description: "Account preferences" },
 };
 
 interface CustomerAccountLayoutProps {
