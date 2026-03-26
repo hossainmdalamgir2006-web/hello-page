@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NewArrivalsSectionProps {
   title?: string;
