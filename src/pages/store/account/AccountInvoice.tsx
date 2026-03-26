@@ -95,7 +95,7 @@ export default function AccountInvoice() {
       }
       y += 7;
       doc.setFont("helvetica", "bold");
-      doc.text("Total:", 140, y); doc.text(`${formatPrice(order.total_amount).toFixed(0)}`, 170, y);
+      doc.text("Total:", 140, y); doc.text(formatPrice(order.total_amount), 170, y);
       doc.save(`Invoice-${order.order_number}.pdf`);
       toast.success(t('account.invoiceDownloaded'));
     } catch {
