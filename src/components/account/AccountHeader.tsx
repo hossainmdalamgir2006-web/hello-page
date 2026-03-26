@@ -130,8 +130,6 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account", pageDescr
             )}
           </Button>
 
-          <GoogleTranslateWidget />
-          <CurrencySwitcher />
           <ThemeToggle />
 
           <DropdownMenu>

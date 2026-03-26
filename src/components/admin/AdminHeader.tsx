@@ -112,8 +112,6 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
           <AgentAvailabilityToggle />
         )}
         <ThemeToggle />
-        <CurrencySwitcher />
-        <GoogleTranslateWidget />
         <NotificationCenter />
 
         {/* Profile */}

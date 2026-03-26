@@ -147,8 +147,6 @@ export function StoreHeader() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <GoogleTranslateWidget />
-            <CurrencySwitcher />
             <ThemeToggle />
 
             {/* Mobile Search */}
