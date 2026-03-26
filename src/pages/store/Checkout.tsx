@@ -708,7 +708,7 @@ export default function Checkout() {
                               </div>
                             </div>
                             <div>
-                              <Label htmlFor="billingPhone">Phone Number *</Label>
+                              <Label htmlFor="billingPhone">{t('checkout.phoneNumber')} *</Label>
                               <Input id="billingPhone" type="tel" value={billingFormData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 15); setBillingFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={15} required={!billingAddressSameAsShipping} />
                             </div>
                             <div>
