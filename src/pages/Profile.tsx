@@ -40,7 +40,7 @@ const passwordSchema = z.object({
 
 export default function Profile() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const { toast } = useToast();
   const { calculateStrength, checkLeakedPassword, leakCheck, resetLeakCheck } = usePasswordSecurity();
   
