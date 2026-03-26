@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Menu, LogOut, User, Settings, Command } from "lucide-react";
+import { Search, Menu, LogOut, User, Settings, Command, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -117,39 +117,68 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
         {/* Profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2 px-1 sm:px-2 h-9">
-            <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
+            <button className="flex items-center gap-2.5 rounded-full border border-border bg-muted/50 px-2 py-1.5 sm:px-3 transition-all hover:bg-accent hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1">
+              <Avatar className="h-7 w-7 sm:h-8 sm:w-8 ring-2 ring-background">
                 <AvatarImage src={avatarUrl || ''} />
-                <AvatarFallback className="bg-accent text-accent-foreground text-xs sm:text-sm">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs sm:text-sm font-semibold">
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden text-left lg:block">
-                <p className="text-sm font-medium">
-                  {user?.user_metadata?.full_name || 'Admin'}
-                </p>
-                <p className="text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-semibold text-foreground leading-tight">
+                    {user?.user_metadata?.full_name || 'Admin'}
+                  </p>
+                  <span className="inline-flex items-center rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary capitalize">
+                    {role || 'admin'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
                   {user?.email || 'admin@ekta.com'}
                 </p>
               </div>
-            </Button>
+              <ChevronDown className="hidden lg:block h-3.5 w-3.5 text-muted-foreground" />
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate(`${basePath}/profile`)}>
-              <User className="mr-2 h-4 w-4" />
-              {t('header.profile')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate(`${basePath}/settings`)}>
-              <Settings className="mr-2 h-4 w-4" />
-              {t('nav.settings')}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
-              {t('nav.logout')}
-            </DropdownMenuItem>
+          <DropdownMenuContent align="end" className="w-64 p-0">
+            {/* User info header */}
+            <div className="flex items-center gap-3 p-3 bg-muted/30 border-b border-border">
+              <Avatar className="h-10 w-10 ring-2 ring-background shadow-sm">
+                <AvatarImage src={avatarUrl || ''} />
+                <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                  {getInitials()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {user?.user_metadata?.full_name || 'Admin'}
+                  </p>
+                  <span className="inline-flex items-center rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary capitalize shrink-0">
+                    {role || 'admin'}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.email || 'admin@ekta.com'}
+                </p>
+              </div>
+            </div>
+            <div className="p-1">
+              <DropdownMenuItem onClick={() => navigate(`${basePath}/profile`)} className="rounded-md py-2 cursor-pointer">
+                <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                {t('header.profile')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`${basePath}/settings`)} className="rounded-md py-2 cursor-pointer">
+                <Settings className="mr-2 h-4 w-4 text-muted-foreground" />
+                {t('nav.settings')}
+              </DropdownMenuItem>
+            </div>
+            <div className="border-t border-border p-1">
+              <DropdownMenuItem onClick={handleLogout} className="rounded-md py-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+                <LogOut className="mr-2 h-4 w-4" />
+                {t('nav.logout')}
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
