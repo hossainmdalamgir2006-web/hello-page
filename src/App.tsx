@@ -216,7 +216,13 @@ const App = () => (
             <Route path="/support/customers" element={<Customers />} />
             <Route path="/support/messages" element={<Messages />} />
             <Route path="/support/settings" element={<SupportSettings />} />
-            <Route path="/support/profile" element={<Profile />} />
+            <Route path="/support/profile" element={<ProfileLayout />}>
+              <Route index element={<ProfilePersonal />} />
+              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="password" element={<ProfilePassword />} />
+              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="sessions" element={<ProfileSessions />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NotFound />} />
