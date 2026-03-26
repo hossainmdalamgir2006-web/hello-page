@@ -795,6 +795,45 @@ export type Database = {
           },
         ]
       }
+      currency_settings: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_default: boolean
+          is_enabled: boolean
+          name: string
+          rate_to_bdt: number
+          sort_order: number
+          symbol: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          is_enabled?: boolean
+          name: string
+          rate_to_bdt?: number
+          sort_order?: number
+          symbol: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          is_enabled?: boolean
+          name?: string
+          rate_to_bdt?: number
+          sort_order?: number
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customer_communication_log: {
         Row: {
           content: string
