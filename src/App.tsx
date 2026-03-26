@@ -59,12 +59,12 @@ const Customers = lazy(() => import("./pages/Customers"));
 const SettingsLayout = lazy(() => import("./layouts/SettingsLayout"));
 const SettingsStore = lazy(() => import("./pages/settings/StorePage"));
 const SettingsPayments = lazy(() => import("./pages/settings/PaymentsPage"));
-const SettingsEmails = lazy(() => import("./pages/settings/EmailsPage"));
-const SettingsNotifications = lazy(() => import("./pages/settings/NotificationsPage"));
-const SettingsSecurity = lazy(() => import("./pages/settings/SecurityPage"));
-const SettingsAudit = lazy(() => import("./pages/settings/AuditPage"));
-const SettingsBackup = lazy(() => import("./pages/settings/BackupPage"));
-const SettingsIntegrations = lazy(() => import("./pages/settings/IntegrationsPage"));
+const SettingsEmails = lazy(() => import("./pages/system-settings/EmailsPage"));
+const SettingsNotifications = lazy(() => import("./pages/system-settings/NotificationsPage"));
+const SettingsSecurity = lazy(() => import("./pages/system-settings/SecurityPage"));
+const SettingsAudit = lazy(() => import("./pages/system-settings/AuditPage"));
+const SettingsBackup = lazy(() => import("./pages/system-settings/BackupPage"));
+const SettingsIntegrations = lazy(() => import("./pages/system-settings/IntegrationsPage"));
 
 const Shipping = lazy(() => import("./pages/Shipping"));
 const Messages = lazy(() => import("./pages/Messages"));
