@@ -754,7 +754,7 @@ export default function Checkout() {
                   )}
                   {!billingAddressSameAsShipping && !user && (
                     <p className="text-sm text-muted-foreground">
-                      <Link to="/login" className="text-store-primary hover:underline">Log in</Link> to use saved billing addresses.
+                      <Link to="/login" className="text-store-primary hover:underline">{t('nav.logout') === 'লগআউট' ? 'লগ ইন' : 'Log in'}</Link> {t('checkout.loginForSavedAddr')}
                     </p>
                   )}
                 </CardContent>
