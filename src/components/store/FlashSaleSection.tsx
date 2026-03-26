@@ -4,6 +4,7 @@ import { Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FlashSaleSectionProps {
   title?: string;
