@@ -312,7 +312,7 @@ export default function Profile() {
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('profile.passwordFailed'),
+        title: 'Password Change Failed',
         description: error.message,
       });
     } finally {
