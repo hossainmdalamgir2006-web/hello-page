@@ -99,7 +99,7 @@ export function BankTransferInstructions({
                 
                 <div className="flex items-center justify-between p-2 bg-background rounded border">
                   <div>
-                    <p className="text-xs text-muted-foreground">Account Number</p>
+                    <p className="text-xs text-muted-foreground">{t('bankTransfer.accountNumber')}</p>
                     <p className="font-mono font-medium">{account.account_number}</p>
                   </div>
                   <Button
