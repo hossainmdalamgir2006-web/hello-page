@@ -523,7 +523,7 @@ export default function OrderTracking() {
                   <p className="font-medium">{order.order_number}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Order Date</p>
+                  <p className="text-sm text-muted-foreground">{t('orderTracking.orderDate')}</p>
                   <p className="font-medium">{formatDate(order.created_at)}</p>
                 </div>
               </div>
