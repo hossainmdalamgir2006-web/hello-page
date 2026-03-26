@@ -171,7 +171,7 @@ export default function RoleManagement() {
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('roles.updateFailed'),
+        title: 'Update Failed',
         description: error.message,
       });
     } finally {
