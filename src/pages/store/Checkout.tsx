@@ -840,7 +840,7 @@ export default function Checkout() {
                                     <div className="mt-2 p-2 bg-warning/10 rounded border border-warning/20">
                                       <p className="text-sm text-warning flex items-center gap-1">
                                         <AlertCircle className="h-4 w-4" />
-                                        Additional {formatPrice(codCharge)} COD charge
+                                        {t('checkout.additionalCodCharge')} {formatPrice(codCharge)}
                                         {selectedMethod.cod_charge_type === 'percentage' && ` (${selectedMethod.cod_charge_value}%)`}
                                       </p>
                                     </div>
