@@ -896,7 +896,7 @@ export default function Checkout() {
                               </div>
                               <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
                                 <ShieldCheck className="h-4 w-4 text-green-500" />
-                                <span>Your payment information is encrypted and secure</span>
+                                <span>{t('checkout.paymentSecure')}</span>
                               </div>
                             </div>
                           );
