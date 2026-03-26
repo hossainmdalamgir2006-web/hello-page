@@ -596,9 +596,9 @@ export default function Checkout() {
                     ) : (
                       <>
                         <div>
-                          <Label htmlFor="shippingZone">Shipping Zone *</Label>
+                          <Label htmlFor="shippingZone">{t('checkout.shippingZone')} *</Label>
                           <Select value={selectedZoneId} onValueChange={setSelectedZoneId}>
-                            <SelectTrigger><SelectValue placeholder="Select your area" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('checkout.selectArea')} /></SelectTrigger>
                             <SelectContent>
                               {zonesWithRates.filter(z => z.is_active).map((zone) => (
                                 <SelectItem key={zone.id} value={zone.id}>{zone.name} ({zone.regions.join(', ')})</SelectItem>
