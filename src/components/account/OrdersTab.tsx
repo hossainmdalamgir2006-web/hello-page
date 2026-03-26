@@ -464,7 +464,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                         <p className="font-medium">{item.product_name}</p>
                         <p className="text-sm text-muted-foreground">{formatPrice(item.unit_price)} × {item.quantity}</p>
                       </div>
-                      <p className="font-semibold">{formatPrice(item.total_price.toFixed(2))}</p>
+                      <p className="font-semibold">{formatPrice(item.total_price)}</p>
                     </div>
                   ))}
                 </div>
