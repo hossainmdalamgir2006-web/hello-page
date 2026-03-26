@@ -1,6 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface SalesDataPoint {
   name: string;
@@ -14,7 +14,6 @@ interface SalesChartProps {
 }
 
 export function SalesChart({ data = [], loading = false }: SalesChartProps) {
-  const { formatPrice } = useCurrency();
   if (loading) {
     return (
       <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-fade-in">

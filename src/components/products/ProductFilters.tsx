@@ -20,7 +20,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Search, SlidersHorizontal, X, Grid3X3, List } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export interface FilterState {
   search: string;
@@ -64,7 +64,6 @@ const sortOptions = [
 ];
 
 export function ProductFilters({
-  const { formatPrice } = useCurrency();
   filters,
   onFiltersChange,
   categories,

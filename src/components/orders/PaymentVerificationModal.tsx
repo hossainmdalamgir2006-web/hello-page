@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface PaymentVerificationModalProps {
   open: boolean;
@@ -47,7 +47,6 @@ interface PaymentVerificationModalProps {
 }
 
 export function PaymentVerificationModal({
-  const { formatPrice } = useCurrency();
   open,
   onOpenChange,
   order,

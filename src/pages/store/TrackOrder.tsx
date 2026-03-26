@@ -11,7 +11,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderResult {
   orderNumber: string;
@@ -24,7 +24,6 @@ interface OrderResult {
 }
 
 export default function TrackOrder() {
-  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [orderNumber, setOrderNumber] = useState("");

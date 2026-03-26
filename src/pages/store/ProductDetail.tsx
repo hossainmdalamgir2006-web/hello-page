@@ -31,7 +31,7 @@ import { ProductActions } from "@/components/product/ProductActions";
 import { ProductTrustBadges } from "@/components/product/ProductTrustBadges";
 import { RelatedProductsGrid } from "@/components/product/RelatedProductsGrid";
 import { StickyAddToCartBar } from "@/components/product/StickyAddToCartBar";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 // --- Types ---
 interface Product {
@@ -62,7 +62,6 @@ interface ProductAttribute { id: string; attribute_name: string; attribute_value
 
 // --- Helpers ---
 function extractYoutubeId(url: string): string | null {
-  const { formatPrice } = useCurrency();
   const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/, /^([a-zA-Z0-9_-]{11})$/];
   for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
   return null;

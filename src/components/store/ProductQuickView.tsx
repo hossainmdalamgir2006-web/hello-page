@@ -13,7 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface QuickViewProduct {
   id: string;
@@ -54,7 +54,6 @@ interface ProductQuickViewProps {
 }
 
 export function ProductQuickView({ product, open, onOpenChange }: ProductQuickViewProps) {
-  const { formatPrice } = useCurrency();
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const { variants } = useProductVariants(open ? product.id : null);

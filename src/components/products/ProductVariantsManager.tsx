@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Trash2, Package, DollarSign, Hash, Loader2, Pencil, X, Palette } from "lucide-react";
 import { useProductVariants, ProductVariant } from "@/hooks/useProductVariants";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductVariantsManagerProps {
   productId: string | null;
@@ -39,7 +39,6 @@ interface VariantOptions {
 }
 
 export function ProductVariantsManager({ productId }: ProductVariantsManagerProps) {
-  const { formatPrice } = useCurrency();
   const { variants, loading, addVariant, updateVariant, deleteVariant } = useProductVariants(productId);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);

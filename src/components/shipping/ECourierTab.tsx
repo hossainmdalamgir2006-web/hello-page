@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useECourier, ECourierOrder } from "@/hooks/useECourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { Loader2, Package, RefreshCw, Search, Send, Truck, Clock, CheckCircle, RotateCcw } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ECourierTabProps {
   pendingOrders: any[];
@@ -108,7 +108,6 @@ export const ECourierTab = forwardRef<HTMLDivElement, ECourierTabProps>(function
   };
 
   const openSendDialog = (order: any) => {
-  const { formatPrice } = useCurrency();
     const existingShipment = ecourierShipments.find(s => s.order_id === order.id);
     if (existingShipment) {
       toast.error(`Already sent. Tracking: ${existingShipment.tracking_number}`);

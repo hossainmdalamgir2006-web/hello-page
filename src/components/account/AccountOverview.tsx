@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Package, ShoppingBag, Truck, CheckCircle, Clock, TrendingUp } from 'lucide-react';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Order {
   id: string;
@@ -17,7 +17,6 @@ interface AccountOverviewProps {
 }
 
 export function AccountOverview({ orders, profile }: AccountOverviewProps) {
-  const { formatPrice } = useCurrency();
   const stats = useMemo(() => {
     const totalSpent = orders.reduce((sum, o) => sum + o.total, 0);
     const deliveredCount = orders.filter(o => o.status === 'delivered').length;

@@ -1,7 +1,7 @@
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { TopProduct } from "@/hooks/useDashboardData";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface TopProductsProps {
   products?: TopProduct[];
@@ -9,7 +9,6 @@ interface TopProductsProps {
 }
 
 export function TopProducts({ products = [], loading = false }: TopProductsProps) {
-  const { formatPrice } = useCurrency();
 
   // Calculate max stock for percentage
   const maxStock = products.length > 0 ? Math.max(...products.map(p => p.quantity)) : 100;

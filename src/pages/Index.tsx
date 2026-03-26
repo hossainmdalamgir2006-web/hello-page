@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WelcomeBanner } from "@/components/admin/WelcomeBanner";
 import { format } from "date-fns";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 // Lazy-loaded heavy dashboard widgets
 const SalesChart = lazy(() => import("@/components/admin/SalesChart").then(m => ({ default: m.SalesChart })));
@@ -42,7 +42,6 @@ const RecentReturnRequests = lazy(() => import("@/components/admin/RecentReturnR
 const WidgetLoader = () => <Skeleton className="h-48 w-full rounded-lg" />;
 
 const Index = () => {
-  const { formatPrice } = useCurrency();
   const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("last30days");
   const [customRange, setCustomRange] = useState<{ from: Date; to: Date } | undefined>();
   const [pendingReturns, setPendingReturns] = useState(0);

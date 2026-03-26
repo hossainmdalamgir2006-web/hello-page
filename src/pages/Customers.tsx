@@ -58,7 +58,7 @@ import { MobileCustomerCard } from "@/components/admin/MobileCustomerCard";
 import { CustomerQuickLookup } from "@/components/admin/CustomerQuickLookup";
 import { CustomerSegmentTabs, segments } from "@/components/admin/CustomerSegmentTabs";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const tierConfig = {
   bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
@@ -75,7 +75,6 @@ const statusConfig = {
 };
 
 const getCustomerName = (customer: Customer): string => {
-  const { formatPrice } = useCurrency();
   return customer.full_name || customer.email?.split('@')[0] || 'Unknown';
 };
 

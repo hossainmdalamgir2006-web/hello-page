@@ -20,7 +20,7 @@ import { useOrdersData, type Order } from "@/hooks/useOrdersData";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const priorityWeight: Record<string, number> = {
   urgent: 4,
@@ -49,7 +49,6 @@ interface PriorityItem {
 }
 
 export function PriorityQueue() {
-  const { formatPrice } = useCurrency();
   const { tickets } = useSupportTickets();
   const { orders } = useOrdersData();
   const navigate = useNavigate();

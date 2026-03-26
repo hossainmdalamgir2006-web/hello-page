@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingBag, Package, ChevronDown, ChevronUp } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface CustomerOrder {
   id: string;
@@ -31,7 +31,6 @@ const statusColors: Record<string, string> = {
 };
 
 export function CustomerOrdersPanel({ customerEmail, customerName }: CustomerOrdersPanelProps) {
-  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);

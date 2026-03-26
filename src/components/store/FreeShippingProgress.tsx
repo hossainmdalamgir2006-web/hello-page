@@ -1,7 +1,7 @@
 import { Truck, Gift } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface FreeShippingProgressProps {
   subtotal: number;
@@ -10,7 +10,6 @@ interface FreeShippingProgressProps {
 }
 
 export function FreeShippingProgress({ subtotal, threshold = 2000, className }: FreeShippingProgressProps) {
-  const { formatPrice } = useCurrency();
   const { t } = useLanguage();
   const progress = Math.min((subtotal / threshold) * 100, 100);
   const remaining = threshold - subtotal;

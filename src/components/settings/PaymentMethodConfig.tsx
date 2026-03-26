@@ -11,7 +11,7 @@ import { Eye, EyeOff, Save, Loader2, Upload, X, ImageIcon, CheckCircle2, Percent
 import { PaymentMethod, PaymentMethodConfig as PaymentMethodConfigType } from "@/hooks/usePaymentMethods";
 import { toast } from "sonner";
 import { BankAccountsEditor } from "./BankAccountsEditor";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface PaymentMethodConfigProps {
   method: PaymentMethod | null;
@@ -23,7 +23,6 @@ interface PaymentMethodConfigProps {
 
 // Check if a field should be shown based on its dependsOn conditions
 function shouldShowField(field: { dependsOn?: string; dependsOnValue?: string }, formData: Record<string, string>): boolean {
-  const { formatPrice } = useCurrency();
   if (!field.dependsOn) return true;
   const val = formData[field.dependsOn];
   if (field.dependsOnValue) {

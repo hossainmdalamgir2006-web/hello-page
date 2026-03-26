@@ -9,7 +9,7 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import { ProductQuickView } from "@/components/store/ProductQuickView";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Product {
   id: string;
@@ -30,7 +30,6 @@ interface StoreProductCardProps {
 }
 
 export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCardProps) {
-  const { formatPrice } = useCurrency();
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const [quickViewOpen, setQuickViewOpen] = useState(false);

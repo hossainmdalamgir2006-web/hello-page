@@ -49,10 +49,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAnalyticsData } from "@/hooks/useAnalyticsData";
 import { PeriodComparison } from "@/components/admin/PeriodComparison";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const StatCard = ({ 
-  const { formatPrice } = useCurrency();
   title, 
   value, 
   change, 

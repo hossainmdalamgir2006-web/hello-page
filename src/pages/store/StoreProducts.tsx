@@ -16,7 +16,7 @@ import { StoreProductCard } from "@/components/store/StoreProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductGridSkeleton, FilterSkeleton } from "@/components/skeletons";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Product {
   id: string;
@@ -40,7 +40,6 @@ interface Product {
 
 /* ─── Collapsible Filter Section ─── */
 function FilterSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
-  const { formatPrice } = useCurrency();
   const [open, setOpen] = useState(defaultOpen);
   return (
     <Collapsible open={open} onOpenChange={setOpen}>

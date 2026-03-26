@@ -58,7 +58,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { generateInvoicePDF } from '@/utils/generateInvoicePDF';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
   id: string;
@@ -100,7 +100,6 @@ interface OrdersTabProps {
 }
 
 export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
-  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addItem } = useCart();

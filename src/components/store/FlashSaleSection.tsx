@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface FlashSaleSectionProps {
   title?: string;
@@ -16,7 +16,6 @@ interface FlashSaleSectionProps {
 }
 
 function useCountdown(endTime: string | null) {
-  const { formatPrice } = useCurrency();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [expired, setExpired] = useState(false);
 

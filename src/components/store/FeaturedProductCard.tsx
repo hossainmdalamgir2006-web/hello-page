@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface FeaturedProductCardProps {
   product: {
@@ -20,7 +20,6 @@ interface FeaturedProductCardProps {
 }
 
 export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps) {
-  const { formatPrice } = useCurrency();
   const { addItem } = useCart();
   const { t } = useLanguage();
 

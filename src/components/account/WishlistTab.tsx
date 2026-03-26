@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Heart, ShoppingCart, Trash2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export function WishlistTab() {
-  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { items, removeItem, loading } = useWishlist();
   const { addItem } = useCart();

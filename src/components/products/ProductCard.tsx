@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Edit, Trash2, Eye, Package, Copy, AlertTriangle, Star, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export interface Product {
   id: string;
@@ -50,7 +50,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onEdit, onDelete, onView, onDuplicate }: ProductCardProps) {
-  const { formatPrice } = useCurrency();
   const getStatusColor = (status: Product["status"]) => {
     switch (status) {
       case "active":

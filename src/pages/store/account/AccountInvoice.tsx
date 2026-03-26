@@ -9,10 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function AccountInvoice() {
-  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { t } = useLanguage();
   const [orders, setOrders] = useState<any[]>([]);

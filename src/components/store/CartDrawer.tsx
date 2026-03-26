@@ -7,10 +7,9 @@ import { useCart } from "@/contexts/CartContext";
 import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
 import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export function CartDrawer() {
-  const { formatPrice } = useCurrency();
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, itemCount } = useCart();
   const { t } = useLanguage();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();

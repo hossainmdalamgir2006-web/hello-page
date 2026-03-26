@@ -77,7 +77,7 @@ import { DataExport } from "@/components/ui/data-export";
 import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
@@ -96,7 +96,6 @@ const paymentStatusConfig: Record<string, { label: string; color: string }> = {
 };
 
 const getShippingAddressString = (address: any): string => {
-  const { formatPrice } = useCurrency();
   if (!address) return 'N/A';
   if (typeof address === 'string') return address;
   if (typeof address === 'object') {

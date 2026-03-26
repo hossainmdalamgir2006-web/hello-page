@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ShoppingBag } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface StickyAddToCartBarProps {
   productName: string;
@@ -12,7 +12,6 @@ interface StickyAddToCartBarProps {
 }
 
 export function StickyAddToCartBar({ productName, displayPrice, onAddToCart, onBuyNow, visible }: StickyAddToCartBarProps) {
-  const { formatPrice } = useCurrency();
   const { t } = useLanguage();
   
   if (!visible) return null;

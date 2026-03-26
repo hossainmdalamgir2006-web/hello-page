@@ -32,7 +32,7 @@ import { CustomerCommunicationLog } from "@/components/admin/CustomerCommunicati
 import { CustomerBlacklistDialog } from "@/components/admin/CustomerBlacklistDialog";
 import { useCommunicationLog } from "@/hooks/useCommunicationLog";
 import type { Customer, CustomerOrder } from "@/hooks/useCustomersData";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const tierConfig = {
   bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
@@ -42,7 +42,6 @@ const tierConfig = {
 };
 
 const getLoyaltyTier = (totalSpent: number): keyof typeof tierConfig => {
-  const { formatPrice } = useCurrency();
   if (totalSpent >= 80000) return "platinum";
   if (totalSpent >= 50000) return "gold";
   if (totalSpent >= 20000) return "silver";

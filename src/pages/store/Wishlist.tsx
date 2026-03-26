@@ -11,10 +11,9 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function Wishlist() {
-  const { formatPrice } = useCurrency();
   const { items, loading, removeItem } = useWishlist();
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();

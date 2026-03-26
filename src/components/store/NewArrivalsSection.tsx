@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface NewArrivalsSectionProps {
   title?: string;
@@ -15,7 +15,6 @@ interface NewArrivalsSectionProps {
 }
 
 export function NewArrivalsSection({
-  const { formatPrice } = useCurrency();
   title,
   subtitle,
   badge,

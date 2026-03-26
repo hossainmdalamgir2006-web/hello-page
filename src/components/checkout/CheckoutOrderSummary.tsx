@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { ShieldCheck, Tag, X, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface CartItem {
   id: string;
@@ -40,7 +40,6 @@ interface CheckoutOrderSummaryProps {
 }
 
 export function CheckoutOrderSummary({
-  const { formatPrice } = useCurrency();
   items, subtotal, discount, shippingCost, codCharge, total,
   isAutoDiscountApplied, couponCode, onCouponCodeChange, appliedCouponCode,
   onApplyCoupon, onRemoveCoupon, couponLoading, processing,

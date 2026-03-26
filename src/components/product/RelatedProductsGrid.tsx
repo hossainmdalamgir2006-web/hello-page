@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface RelatedProduct {
   id: string;
@@ -18,7 +18,6 @@ interface RelatedProductsGridProps {
 }
 
 export function RelatedProductsGrid({ products }: RelatedProductsGridProps) {
-  const { formatPrice } = useCurrency();
   const { t } = useLanguage();
   if (products.length === 0) return null;
 

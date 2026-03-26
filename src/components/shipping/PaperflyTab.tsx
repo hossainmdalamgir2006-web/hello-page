@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { usePaperflyCourier, PaperflyParcel } from "@/hooks/usePaperflyCourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { Loader2, Package, RefreshCw, Search, Send, Truck, Clock, CheckCircle, RotateCcw } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface PaperflyTabProps {
   pendingOrders: any[];
@@ -106,7 +106,6 @@ export const PaperflyTab = forwardRef<HTMLDivElement, PaperflyTabProps>(function
   };
 
   const openSendDialog = (order: any) => {
-  const { formatPrice } = useCurrency();
     const existingShipment = paperflyShipments.find(s => s.order_id === order.id);
     if (existingShipment) {
       toast.error(`Already sent. Tracking: ${existingShipment.tracking_number}`);

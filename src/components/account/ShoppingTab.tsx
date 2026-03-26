@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { RefreshCw, ShoppingCart, Tag, Ticket, Copy, Check, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, isAfter } from 'date-fns';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Coupon {
   id: string;
@@ -50,7 +50,6 @@ interface ShoppingTabProps {
 }
 
 export function ShoppingTab({ orders }: ShoppingTabProps) {
-  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();

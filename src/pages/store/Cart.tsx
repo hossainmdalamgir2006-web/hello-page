@@ -16,10 +16,9 @@ import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
 import { SEOHead } from "@/components/SEOHead";
 import { toast } from "sonner";
 import { useShippingRates } from "@/hooks/useShippingRates";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function Cart() {
-  const { formatPrice } = useCurrency();
   const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount } = useCart();
   const { t } = useLanguage();
   const { appliedCoupon, loading: couponLoading, validateCoupon, removeCoupon } = useCoupon();

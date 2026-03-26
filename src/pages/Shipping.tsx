@@ -36,7 +36,7 @@ import {
   RefreshCw,
   ExternalLink,
 } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
@@ -49,7 +49,6 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 };
 
 export default function Shipping() {
-  const { formatPrice } = useCurrency();
   // Database hooks
   const shippingData = useShippingData();
   const { zonesWithRates, loading: shippingLoading, addZone, toggleZone, deleteZone, addRate, updateRate, deleteRate, toggleRate } = shippingData;

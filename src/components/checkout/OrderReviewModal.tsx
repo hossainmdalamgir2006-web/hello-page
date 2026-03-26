@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderReviewModalProps {
   open: boolean;
@@ -22,7 +22,6 @@ interface OrderReviewModalProps {
 }
 
 export function OrderReviewModal({
-  const { formatPrice } = useCurrency();
   open, onOpenChange, items, subtotal, discount, shippingCost, codCharge, total,
   paymentMethodName, shippingAddress, onConfirm, processing,
 }: OrderReviewModalProps) {

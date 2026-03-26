@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useSteadfastCourier, SteadfastOrder } from "@/hooks/useSteadfastCourier";
 import { useShipmentsData, Shipment } from "@/hooks/useShipmentsData";
 import { Loader2, Package, RefreshCw, Search, Send, Wallet, Clock, Truck, CheckCircle, RotateCcw } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface SteadfastTabProps {
   pendingOrders: any[];
@@ -119,7 +119,6 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
   };
 
   const openSendDialog = (order: any) => {
-  const { formatPrice } = useCurrency();
     // Check if already sent
     const existingShipment = steadfastShipments.find(s => s.order_id === order.id);
     if (existingShipment) {

@@ -30,7 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { generateRefundInvoicePDF } from "@/utils/generateRefundInvoicePDF";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -40,7 +40,6 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 };
 
 export function ReturnRequestsTab() {
-  const { formatPrice } = useCurrency();
   const { requests, isLoading, updateStatus, isUpdating, counts } = useReturnRequests();
   const { processRefund, isProcessing: isRefundProcessing } = useRefundProcessing();
   const [search, setSearch] = useState("");

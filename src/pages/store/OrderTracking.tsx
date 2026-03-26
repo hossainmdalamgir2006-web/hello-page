@@ -25,7 +25,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
   id: string;
@@ -62,7 +62,6 @@ interface Order {
 
 // Helper to get address as string
 const getAddressString = (addr: any): string => {
-  const { formatPrice } = useCurrency();
   if (!addr) return 'N/A';
   if (typeof addr === 'string') return addr;
   if (typeof addr === 'object') {

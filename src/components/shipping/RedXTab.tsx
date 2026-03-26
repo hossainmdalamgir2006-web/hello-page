@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useRedXCourier, RedXParcel } from "@/hooks/useRedXCourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { Loader2, Package, RefreshCw, Search, Send, Truck, Clock, CheckCircle, RotateCcw } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface RedXTabProps {
   pendingOrders: any[];
@@ -108,7 +108,6 @@ export const RedXTab = forwardRef<HTMLDivElement, RedXTabProps>(function RedXTab
   };
 
   const openSendDialog = (order: any) => {
-  const { formatPrice } = useCurrency();
     const existingShipment = redxShipments.find(s => s.order_id === order.id);
     if (existingShipment) {
       toast.error(`Already sent. Tracking: ${existingShipment.tracking_number}`);

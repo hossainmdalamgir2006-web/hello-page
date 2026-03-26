@@ -28,7 +28,7 @@ import { GiftOptions } from "@/components/checkout/GiftOptions";
 import { OrderReviewModal } from "@/components/checkout/OrderReviewModal";
 import { CheckoutContactSection } from "@/components/checkout/CheckoutContactSection";
 import { CheckoutOrderSummary } from "@/components/checkout/CheckoutOrderSummary";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface CouponState {
   couponId?: string;
@@ -51,7 +51,6 @@ interface SavedAddress {
 }
 
 export default function Checkout() {
-  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const location = useLocation();
   const { items: allItems, selectedItems, selectedSubtotal, subtotal: cartSubtotal, clearCart, markCartRecovered, removeSelectedItems } = useCart();

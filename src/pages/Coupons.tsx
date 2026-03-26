@@ -50,7 +50,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 // Updated interface to match DB schema
 interface Coupon {
@@ -101,7 +101,6 @@ interface AutoRule {
 }
 
 const getCouponStatus = (coupon: Coupon): 'active' | 'scheduled' | 'expired' | 'disabled' => {
-  const { formatPrice } = useCurrency();
   if (!coupon.is_active) return 'disabled';
   
   const now = new Date();

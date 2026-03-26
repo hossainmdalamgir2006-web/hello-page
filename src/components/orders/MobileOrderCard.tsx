@@ -28,7 +28,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Order, OrderStatus } from "@/hooks/useOrdersData";
 import { format } from "date-fns";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -58,7 +58,6 @@ interface MobileOrderCardProps {
 }
 
 export function MobileOrderCard({
-  const { formatPrice } = useCurrency();
   order,
   onViewDetails,
   onUpdateStatus,

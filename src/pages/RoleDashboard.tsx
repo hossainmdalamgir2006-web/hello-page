@@ -35,10 +35,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatsCard } from "@/components/admin/StatsCard";
 import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const RoleDashboard = () => {
-  const { formatPrice } = useCurrency();
   const { role, user } = useAuth();
   const { t } = useLanguage();
   const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("last30days");

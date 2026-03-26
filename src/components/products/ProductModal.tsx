@@ -32,7 +32,7 @@ import { ProductVariantsManager } from "./ProductVariantsManager";
 import { ProductGroupManager } from "./ProductGroupManager";
 import { ProductVideoSection } from "./ProductVideoSection";
 import { ProductTypeSelector } from "./ProductTypeSelector";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductModalProps {
   open: boolean;
@@ -85,7 +85,6 @@ const colorOptions = [
 ];
 
 export function ProductModal({
-  const { formatPrice } = useCurrency();
   open,
   onOpenChange,
   product,

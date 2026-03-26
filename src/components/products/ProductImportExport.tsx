@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { Product } from "./ProductCard";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductImportExportProps {
   products: Product[];
@@ -89,7 +89,6 @@ const CSV_HEADERS = [
 ];
 
 export function ProductImportExport({ products, onImport }: ProductImportExportProps) {
-  const { formatPrice } = useCurrency();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [importing, setImporting] = useState(false);

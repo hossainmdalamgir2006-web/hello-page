@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RotateCcw, Clock, CheckCircle2, XCircle, DollarSign } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface RecentReturn {
   id: string;
@@ -25,7 +25,6 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 };
 
 export function RecentReturnRequests({ loading: externalLoading }: { loading?: boolean }) {
-  const { formatPrice } = useCurrency();
   const [returns, setReturns] = useState<RecentReturn[]>([]);
   const [stats, setStats] = useState({ pending: 0, completed: 0, totalRefunded: 0 });
   const [loading, setLoading] = useState(true);

@@ -19,7 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const typeConfig: Record<
   ApprovalItemType,
@@ -43,7 +43,6 @@ const typeConfig: Record<
 };
 
 export function ManagerApprovalQueue() {
-  const { formatPrice } = useCurrency();
   const { items, isLoading, counts } = useApprovalQueue();
   const [activeTab, setActiveTab] = useState<"all" | ApprovalItemType>("all");
   const navigate = useNavigate();

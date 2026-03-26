@@ -12,7 +12,7 @@ import {
 import { Eye, Send, MoreVertical, Crown, CheckCircle2, Clock, Ban, ChevronRight, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Customer } from "@/hooks/useCustomersData";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const tierConfig = {
   bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
@@ -29,7 +29,6 @@ const statusConfig = {
 };
 
 const getCustomerName = (customer: Customer): string => {
-  const { formatPrice } = useCurrency();
   return customer.full_name || customer.email?.split('@')[0] || 'Unknown';
 };
 

@@ -28,7 +28,7 @@ import { usePathaoCourier, type PathaoOrder, type PathaoCity, type PathaoZone, t
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderData {
   id: string;
@@ -54,7 +54,6 @@ interface SendToCourierModalProps {
 type CourierType = "steadfast" | "pathao";
 
 export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: SendToCourierModalProps) {
-  const { formatPrice } = useCurrency();
   const [selectedCourier, setSelectedCourier] = useState<CourierType>("steadfast");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);

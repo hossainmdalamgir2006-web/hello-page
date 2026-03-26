@@ -22,7 +22,7 @@ import type { Product } from "./ProductCard";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { SortableTableHead, type SortDirection } from "@/components/ui/sortable-table-head";
 import { useSorting } from "@/hooks/useSorting";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductTableProps {
   products: Product[];
@@ -42,7 +42,6 @@ interface ProductTableProps {
 }
 
 export function ProductTable({
-  const { formatPrice } = useCurrency();
   products,
   selectedProducts,
   onSelectProduct,

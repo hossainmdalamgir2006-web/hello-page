@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AbandonedCartStats as StatsType } from "@/hooks/useAbandonedCartsData";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface StatCardProps {
   title: string;
@@ -22,7 +22,6 @@ interface StatCardProps {
 }
 
 function StatCard({ title, value, icon: Icon, trend = "neutral", subtitle }: StatCardProps) {
-  const { formatPrice } = useCurrency();
   return (
     <Card>
       <CardContent className="p-4">

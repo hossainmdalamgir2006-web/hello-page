@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AbandonedCart } from "@/hooks/useAbandonedCartsData";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface AbandonedCartTableProps {
   carts: AbandonedCart[];
@@ -48,7 +48,6 @@ interface AbandonedCartTableProps {
 }
 
 export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCartTableProps) {
-  const { formatPrice } = useCurrency();
   const [selectedCart, setSelectedCart] = useState<AbandonedCart | null>(null);
   const [sendingReminder, setSendingReminder] = useState<string | null>(null);
   const { toast } = useToast();

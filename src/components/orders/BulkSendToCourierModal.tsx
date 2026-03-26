@@ -26,7 +26,7 @@ import { useSteadfastCourier, type SteadfastOrder } from "@/hooks/useSteadfastCo
 import { usePathaoCourier, type PathaoOrder, type PathaoCity, type PathaoZone } from "@/hooks/usePathaoCourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { toast } from "sonner";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderData {
   id: string;
@@ -60,7 +60,6 @@ interface OrderResult {
 
 // Helper to get address string
 const getAddressString = (address: any): string => {
-  const { formatPrice } = useCurrency();
   if (!address) return "";
   if (typeof address === "string") return address;
   if (typeof address === "object") {

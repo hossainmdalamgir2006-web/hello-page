@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { RecentOrder } from "@/hooks/useDashboardData";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface RecentOrdersProps {
   orders?: RecentOrder[];
@@ -29,7 +29,6 @@ const statusStyles: Record<string, string> = {
 };
 
 export function RecentOrders({ orders = [], loading = false }: RecentOrdersProps) {
-  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
 

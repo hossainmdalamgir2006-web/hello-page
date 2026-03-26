@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Customer } from "@/hooks/useCustomersData";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface DuplicateGroup {
   key: string;
@@ -48,7 +48,6 @@ interface MergeCustomersModalProps {
 }
 
 const getCustomerName = (customer: Customer): string => {
-  const { formatPrice } = useCurrency();
   return customer.full_name || customer.email?.split("@")[0] || "Unknown";
 };
 

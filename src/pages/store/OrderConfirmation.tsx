@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
   name: string;
@@ -40,7 +40,6 @@ interface OrderState {
 }
 
 export default function OrderConfirmation() {
-  const { formatPrice } = useCurrency();
   const location = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();

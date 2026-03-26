@@ -1,6 +1,6 @@
 import { ArrowUp, ArrowDown, Minus, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ComparisonMetric {
   label: string;
@@ -17,7 +17,6 @@ interface PeriodComparisonProps {
 }
 
 export function PeriodComparison({
-  const { formatPrice } = useCurrency();
   metrics,
   currentPeriodLabel,
   previousPeriodLabel,

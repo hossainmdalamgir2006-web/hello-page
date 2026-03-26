@@ -25,10 +25,9 @@ import { GoogleAnalyticsSettings } from "./GoogleAnalyticsSettings";
 import { GoogleTagManagerSettings } from "./GoogleTagManagerSettings";
 import { MetaPixelSettings } from "./MetaPixelSettings";
 import { GoogleSearchConsoleSettings } from "./GoogleSearchConsoleSettings";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export function IntegrationsSettings() {
-  const { formatPrice } = useCurrency();
   const { settings, loading, saving, updateMultipleSettings, getSettingValue, refetch } = useStoreSettings();
   
   const [apiKey, setApiKey] = useState("");

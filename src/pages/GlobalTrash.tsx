@@ -22,7 +22,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { usePagination } from "@/hooks/usePagination";
 import { formatDistanceToNow, format } from "date-fns";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const ENTITY_ICONS: Record<TrashEntityType, React.ElementType> = {
   product: Package,
@@ -65,7 +65,6 @@ const FILTER_OPTIONS: { value: TrashEntityType | 'all'; label: string }[] = [
 ];
 
 export default function GlobalTrash() {
-  const { formatPrice } = useCurrency();
   const {
     items, activityLog, loading, logLoading, filter, setFilter,
     restoreItem, permanentDelete, bulkRestore, bulkPermanentDelete, fetchActivityLog,

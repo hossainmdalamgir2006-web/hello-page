@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2, Search, Package, Loader2 } from "lucide-react";
 import { useProductGroupItems } from "@/hooks/useProductGroupItems";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductGroupManagerProps {
   productId: string | null;
@@ -15,7 +15,6 @@ interface ProductGroupManagerProps {
 }
 
 export function ProductGroupManager({ productId, productType, allProducts }: ProductGroupManagerProps) {
-  const { formatPrice } = useCurrency();
   const { items, loading, addItem, updateItem, removeItem } = useProductGroupItems(productId);
   const [search, setSearch] = useState("");
   const [showPicker, setShowPicker] = useState(false);

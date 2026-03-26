@@ -12,7 +12,7 @@ import { Package, Edit, X, Tag, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Product } from "./ProductCard";
 import { useProductVariants } from "@/hooks/useProductVariants";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductViewModalProps {
   open: boolean;
@@ -28,7 +28,6 @@ const colorNames: Record<string, string> = {
 };
 
 const getStatusColor = (status: Product["status"]) => {
-  const { formatPrice } = useCurrency();
   switch (status) {
     case "active": return "bg-success/10 text-success border-success/20";
     case "draft": return "bg-warning/10 text-warning border-warning/20";

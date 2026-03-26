@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingBag, Clock, Package, Truck, TrendingUp } from "lucide-react";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderStats {
   total: number;
@@ -15,7 +15,6 @@ interface OrderStatsCardsProps {
 }
 
 export function OrderStatsCards({ stats }: OrderStatsCardsProps) {
-  const { formatPrice } = useCurrency();
   const cards = [
     { label: "Total Orders", value: stats.total.toString(), icon: ShoppingBag, color: "bg-primary/10 text-primary" },
     { label: "Pending", value: stats.pending.toString(), icon: Clock, color: "bg-warning/10 text-warning" },

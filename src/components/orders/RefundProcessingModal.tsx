@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Loader2, RotateCcw, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export type RefundStatus = "none" | "requested" | "processing" | "refunded" | "rejected";
 
@@ -37,7 +37,6 @@ const refundStatusConfig: Record<RefundStatus, { label: string; color: string }>
 };
 
 export function RefundProcessingModal({ open, onOpenChange, order, onProcess, isProcessing }: RefundProcessingModalProps) {
-  const { formatPrice } = useCurrency();
   const [refundStatus, setRefundStatus] = useState<RefundStatus>("requested");
   const [refundAmount, setRefundAmount] = useState("");
   const [refundReason, setRefundReason] = useState("");

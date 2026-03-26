@@ -7,10 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, ShoppingCart, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 export function RecentlyViewedTab() {
-  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { items, clearAll } = useRecentlyViewed();
   const { addItem } = useCart();

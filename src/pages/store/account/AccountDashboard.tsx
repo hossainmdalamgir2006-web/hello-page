@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProfileCompletion } from "@/components/account/ProfileCompletion";
 import { format } from "date-fns";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Order {
   id: string;
@@ -22,7 +22,6 @@ interface Order {
 }
 
 export default function AccountDashboard() {
-  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
