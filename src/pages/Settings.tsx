@@ -128,10 +128,6 @@ export default function Settings() {
           <p className="text-sm text-muted-foreground">Manage your store configuration and preferences</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => { generateSchemaPDF(storeSettings.storeName || undefined); toast.success("Database schema PDF downloaded!"); }} className="gap-2">
-            <Database className="h-4 w-4" />
-            <span className="hidden sm:inline">DB Schema</span>
-          </Button>
           <Button onClick={handleSave} disabled={saving || settingsLoading} className="gap-2">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Saving..." : "Save Changes"}
