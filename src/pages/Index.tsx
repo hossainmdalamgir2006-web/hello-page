@@ -114,8 +114,7 @@ const Index = () => {
   };
 
   const { formatPrice } = useCurrency();
-    return `${formatPrice(amount)}`;
-  };
+
 
   const statsData = [
     { 
