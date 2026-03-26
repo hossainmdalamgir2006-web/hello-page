@@ -56,7 +56,7 @@ export default function TrackOrder() {
       return;
     }
     if (!/^[\d+]+$/.test(cleanPhone)) {
-      setPhoneError("Phone number can only contain digits and + sign");
+      setPhoneError(t('track.validPhone'));
       return;
     }
     setIsLoading(true);
