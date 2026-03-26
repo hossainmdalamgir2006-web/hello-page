@@ -80,7 +80,7 @@ export function BankTransferInstructions({
               <div className="grid gap-2 text-sm">
                 <div className="flex items-center justify-between p-2 bg-background rounded border">
                   <div>
-                    <p className="text-xs text-muted-foreground">Account Name</p>
+                    <p className="text-xs text-muted-foreground">{t('bankTransfer.accountName')}</p>
                     <p className="font-medium">{account.account_name}</p>
                   </div>
                   <Button
