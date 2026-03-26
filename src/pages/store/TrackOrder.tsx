@@ -52,7 +52,7 @@ export default function TrackOrder() {
     setShowPhoneResults(false);
     const cleanPhone = phoneNumber.replace(/[\s\-\(\)]/g, "");
     if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-      setPhoneError("Please enter a valid phone number");
+      setPhoneError(t('track.validPhone'));
       return;
     }
     if (!/^[\d+]+$/.test(cleanPhone)) {
