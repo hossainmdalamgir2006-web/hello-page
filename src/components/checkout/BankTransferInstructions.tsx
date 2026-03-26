@@ -35,7 +35,7 @@ export function BankTransferInstructions({
   const copyToClipboard = (text: string, fieldName: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(fieldName);
-    toast.success("Copied!");
+    toast.success(t('bankTransfer.copied'));
     setTimeout(() => setCopiedField(null), 2000);
   };
 
