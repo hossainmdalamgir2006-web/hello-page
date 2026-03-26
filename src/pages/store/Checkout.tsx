@@ -56,6 +56,7 @@ export default function Checkout() {
   const items = selectedItems.length > 0 ? selectedItems : allItems;
   const subtotal = selectedItems.length > 0 ? selectedSubtotal : cartSubtotal;
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { appliedCoupon, validateCoupon, removeCoupon, incrementCouponUsage, loading: couponLoading } = useCoupon();
   const { zonesWithRates, loading: shippingLoading } = useShippingData();
   const { paymentMethods: enabledPaymentMethods, loading: paymentMethodsLoading } = useEnabledPaymentMethods();
