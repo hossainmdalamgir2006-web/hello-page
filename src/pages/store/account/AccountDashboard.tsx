@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Package, TrendingUp, CheckCircle, Truck, Clock, ArrowRight, ShoppingBag, User, HelpCircle } from "lucide-react";
@@ -19,28 +20,29 @@ interface Order {
   created_at: string;
 }
 
-const statusConfig: Record<string, { label: string; className: string; icon: any }> = {
-  pending: { label: "Pending", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", icon: Clock },
-  processing: { label: "Processing", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400", icon: Package },
-  shipped: { label: "Shipped", className: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400", icon: Truck },
-  delivered: { label: "Delivered", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400", icon: CheckCircle },
-};
-
-const quickActions = [
-  { label: "My Orders", icon: Package, url: "/myaccount/orders", color: "text-blue-600 dark:text-blue-400" },
-  { label: "Shop Now", icon: ShoppingBag, url: "/store/products", color: "text-accent" },
-  { label: "Edit Profile", icon: User, url: "/myaccount/settings", color: "text-emerald-600 dark:text-emerald-400" },
-  { label: "Get Support", icon: HelpCircle, url: "/myaccount/support", color: "text-purple-600 dark:text-purple-400" },
-];
-
 export default function AccountDashboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [addressCount, setAddressCount] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const statusConfig: Record<string, { label: string; className: string; icon: any }> = {
+    pending: { label: t('account.pending'), className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400", icon: Clock },
+    processing: { label: t('account.processing'), className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400", icon: Package },
+    shipped: { label: t('account.shipped'), className: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400", icon: Truck },
+    delivered: { label: t('account.delivered'), className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400", icon: CheckCircle },
+  };
+
+  const quickActions = [
+    { label: t('account.myOrders'), icon: Package, url: "/myaccount/orders", color: "text-blue-600 dark:text-blue-400" },
+    { label: t('account.shopNow'), icon: ShoppingBag, url: "/store/products", color: "text-accent" },
+    { label: t('account.editProfile'), icon: User, url: "/myaccount/settings", color: "text-emerald-600 dark:text-emerald-400" },
+    { label: t('account.getSupport'), icon: HelpCircle, url: "/myaccount/support", color: "text-purple-600 dark:text-purple-400" },
+  ];
 
   useEffect(() => {
     if (!user) return;
@@ -108,32 +110,24 @@ export default function AccountDashboard() {
   const recentOrders = orders.slice(0, 5);
 
   const statCards = [
-    { label: "Total Orders", value: orders.length, borderColor: "border-l-blue-500", textColor: "text-blue-600 dark:text-blue-400" },
-    { label: "Total Spent", value: `৳${totalSpent.toLocaleString()}`, borderColor: "border-l-green-500", textColor: "text-green-600 dark:text-green-400" },
-    { label: "Delivered", value: deliveredCount, borderColor: "border-l-emerald-500", textColor: "text-emerald-600 dark:text-emerald-400" },
-    { label: "In Transit", value: shippedCount, borderColor: "border-l-purple-500", textColor: "text-purple-600 dark:text-purple-400" },
-    { label: "Pending", value: pendingCount, borderColor: "border-l-amber-500", textColor: "text-amber-600 dark:text-amber-400" },
+    { label: t('account.totalOrders'), value: orders.length, borderColor: "border-l-blue-500", textColor: "text-blue-600 dark:text-blue-400" },
+    { label: t('account.totalSpent'), value: `৳${totalSpent.toLocaleString()}`, borderColor: "border-l-green-500", textColor: "text-green-600 dark:text-green-400" },
+    { label: t('account.delivered'), value: deliveredCount, borderColor: "border-l-emerald-500", textColor: "text-emerald-600 dark:text-emerald-400" },
+    { label: t('account.inTransit'), value: shippedCount, borderColor: "border-l-purple-500", textColor: "text-purple-600 dark:text-purple-400" },
+    { label: t('account.pending'), value: pendingCount, borderColor: "border-l-amber-500", textColor: "text-amber-600 dark:text-amber-400" },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Welcome */}
       <div className="rounded-xl bg-gradient-to-r from-primary/5 via-accent/5 to-transparent p-5 sm:p-6 border border-border">
         <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
-          Welcome back, {profile?.full_name || "Customer"}! 👋
+          {t('account.welcomeBack')}, {profile?.full_name || t('orders.customer')}! 👋
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">Here's what's happening with your account.</p>
+        <p className="text-sm text-muted-foreground mt-1">{t('account.whatsHappening')}</p>
       </div>
 
-      {/* Profile Completion */}
-      <ProfileCompletion
-        profile={profile}
-        avatarUrl={avatarUrl}
-        addressCount={addressCount}
-        orderCount={orders.length}
-      />
+      <ProfileCompletion profile={profile} avatarUrl={avatarUrl} addressCount={addressCount} orderCount={orders.length} />
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {statCards.map((stat) => (
           <Card key={stat.label} className={`border-l-4 ${stat.borderColor} shadow-sm`}>
@@ -145,7 +139,6 @@ export default function AccountDashboard() {
         ))}
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {quickActions.map((action) => {
           const Icon = action.icon;
@@ -162,21 +155,20 @@ export default function AccountDashboard() {
         })}
       </div>
 
-      {/* Recent Orders */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base">Recent Orders</CardTitle>
+          <CardTitle className="text-base">{t('account.recentOrders')}</CardTitle>
           <Button variant="ghost" size="sm" onClick={() => navigate("/myaccount/orders")}>
-            View All <ArrowRight className="h-4 w-4 ml-1" />
+            {t('account.viewAll')} <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
         </CardHeader>
         <CardContent>
           {recentOrders.length === 0 ? (
             <div className="text-center py-8">
               <Package className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">No orders yet</p>
+              <p className="text-sm text-muted-foreground">{t('account.noOrdersYet')}</p>
               <Button variant="outline" size="sm" className="mt-3" onClick={() => navigate("/store/products")}>
-                Start Shopping
+                {t('account.startShopping')}
               </Button>
             </div>
           ) : (

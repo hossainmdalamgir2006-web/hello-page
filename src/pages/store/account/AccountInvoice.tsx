@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Download, FileText, Receipt } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -11,6 +12,7 @@ import jsPDF from "jspdf";
 
 export default function AccountInvoice() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
@@ -19,25 +21,16 @@ export default function AccountInvoice() {
     if (!user) return;
     const fetch = async () => {
       setLoading(true);
-      const { data: customer } = await supabase
-        .from("customers")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const { data: customer } = await supabase.from("customers").select("id").eq("user_id", user.id).maybeSingle();
       if (!customer) { setLoading(false); return; }
-
       const { data } = await supabase
         .from("orders")
         .select("id, order_number, status, payment_status, total_amount, shipping_cost, discount_amount, created_at, payment_method, shipping_address")
         .eq("customer_id", customer.id)
         .order("created_at", { ascending: false });
-
       if (data) {
         const withItems = await Promise.all(data.map(async (o) => {
-          const { data: items } = await supabase
-            .from("order_items")
-            .select("product_name, quantity, unit_price, total_price")
-            .eq("order_id", o.id);
+          const { data: items } = await supabase.from("order_items").select("product_name, quantity, unit_price, total_price").eq("order_id", o.id);
           return { ...o, items: items || [] };
         }));
         setOrders(withItems);
@@ -52,20 +45,15 @@ export default function AccountInvoice() {
     try {
       const doc = new jsPDF();
       const w = doc.internal.pageSize.getWidth();
-
-      // Header
       doc.setFontSize(20);
       doc.setFont("helvetica", "bold");
       doc.text("INVOICE", 14, 25);
-
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.text(`Order: #${order.order_number}`, 14, 35);
       doc.text(`Date: ${format(new Date(order.created_at), "MMM dd, yyyy")}`, 14, 41);
       doc.text(`Payment: ${order.payment_method || "N/A"}`, 14, 47);
       doc.text(`Status: ${order.payment_status || "pending"}`, 14, 53);
-
-      // Shipping address
       const addr = order.shipping_address;
       if (addr) {
         doc.text("Ship To:", w - 80, 35);
@@ -74,8 +62,6 @@ export default function AccountInvoice() {
         doc.text(`${addr.city || ""}, ${addr.area || ""}`, w - 80, 53);
         doc.text(addr.phone || "", w - 80, 59);
       }
-
-      // Table header
       let y = 70;
       doc.setFillColor(245, 245, 245);
       doc.rect(14, y, w - 28, 8, "F");
@@ -85,8 +71,6 @@ export default function AccountInvoice() {
       doc.text("Qty", 120, y + 6);
       doc.text("Price", 140, y + 6);
       doc.text("Total", 170, y + 6);
-
-      // Items
       y += 12;
       doc.setFont("helvetica", "normal");
       for (const item of order.items) {
@@ -96,8 +80,6 @@ export default function AccountInvoice() {
         doc.text(`৳${Number(item.total_price).toFixed(0)}`, 170, y);
         y += 7;
       }
-
-      // Totals
       y += 5;
       doc.setDrawColor(200);
       doc.line(14, y, w - 14, y);
@@ -113,11 +95,10 @@ export default function AccountInvoice() {
       y += 7;
       doc.setFont("helvetica", "bold");
       doc.text("Total:", 140, y); doc.text(`৳${Number(order.total_amount).toFixed(0)}`, 170, y);
-
       doc.save(`Invoice-${order.order_number}.pdf`);
-      toast.success("Invoice downloaded!");
+      toast.success(t('account.invoiceDownloaded'));
     } catch {
-      toast.error("Failed to generate invoice");
+      toast.error(t('account.failedToGenerate'));
     } finally {
       setDownloading(null);
     }
@@ -133,7 +114,7 @@ export default function AccountInvoice() {
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             <Receipt className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>No invoices available</p>
+            <p>{t('account.noInvoices')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -153,20 +134,11 @@ export default function AccountInvoice() {
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={order.payment_status === "paid" ? "default" : "secondary"}>
-                  {order.payment_status || "pending"}
+                  {order.payment_status || t('account.pending')}
                 </Badge>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => generatePDF(order)}
-                  disabled={downloading === order.id}
-                >
-                  {downloading === order.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Download className="h-4 w-4" />
-                  )}
-                  <span className="ml-1.5">Download</span>
+                <Button size="sm" variant="outline" onClick={() => generatePDF(order)} disabled={downloading === order.id}>
+                  {downloading === order.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  <span className="ml-1.5">{t('common.download')}</span>
                 </Button>
               </div>
             </CardContent>
