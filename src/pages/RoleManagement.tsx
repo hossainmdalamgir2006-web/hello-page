@@ -316,7 +316,7 @@ export default function RoleManagement() {
                                 </AvatarFallback>
                               </Avatar>
                               <span className="font-medium">
-                                {userItem.full_name || t('roles.unnamed')}
+                                {userItem.full_name || 'Unnamed User'}
                               </span>
                             </div>
                           </TableCell>
