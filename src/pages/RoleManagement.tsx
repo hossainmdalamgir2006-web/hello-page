@@ -224,7 +224,7 @@ export default function RoleManagement() {
                   <p className="text-2xl font-bold">
                     {users.filter((u) => u.role === 'user').length}
                   </p>
-                  <p className="text-sm text-muted-foreground">{t('roles.users')}</p>
+                  <p className="text-sm text-muted-foreground">Users</p>
                 </div>
               </div>
             </CardContent>
