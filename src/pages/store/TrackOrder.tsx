@@ -5,8 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { StoreHeader } from "@/components/store/StoreHeader";
-import { StoreFooter } from "@/components/store/StoreFooter";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -96,11 +94,10 @@ export default function TrackOrder() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <>
       <SEOHead title="Track Order" description="Track your order status using your order number or phone number." canonicalPath="/track-order" />
-      <StoreHeader />
       
-      <main className="flex-1 container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12">
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-store-primary/10 flex items-center justify-center">
@@ -178,9 +175,7 @@ export default function TrackOrder() {
             </CardContent>
           </Card>
         </div>
-      </main>
-
-      <StoreFooter />
-    </div>
+      </div>
+    </>
   );
 }
