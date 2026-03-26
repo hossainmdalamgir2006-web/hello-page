@@ -12,6 +12,7 @@ import { WishlistProvider } from "@/contexts/WishlistContext";
 import { GA4Provider } from "@/components/GA4Provider";
 import { DynamicTitleProvider } from "@/components/DynamicTitleProvider";
 import { SiteThemeProvider } from "@/components/SiteThemeProvider";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { AppInitializer } from "@/components/AppInitializer";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 
