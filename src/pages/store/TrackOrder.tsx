@@ -156,8 +156,8 @@ export default function TrackOrder() {
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(order.status)}`}>{order.status}</span>
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            <p>Date: {formatDate(order.createdAt)}</p>
-                            <p>Total: ৳{order.total?.toLocaleString()}</p>
+                            <p>{t('track.date')}: {formatDate(order.createdAt)}</p>
+                            <p>{t('track.total')}: ৳{order.total?.toLocaleString()}</p>
                           </div>
                         </div>
                       ))}
