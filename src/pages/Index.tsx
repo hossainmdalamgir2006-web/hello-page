@@ -117,7 +117,7 @@ const Index = () => {
 
   const statsData = [
     { 
-      title: t('dashboard.totalSales'), 
+      title: 'Total Sales', 
       value: formatPrice(stats.totalSales), 
       change: stats.salesChange, 
       icon: TrendingUp, 
