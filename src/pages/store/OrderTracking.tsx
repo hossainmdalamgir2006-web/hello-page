@@ -577,7 +577,7 @@ export default function OrderTracking() {
                     {/* Extract Transaction ID from notes if present */}
                     {order.notes && order.notes.includes('TrxID:') && (
                       <p className="text-sm text-muted-foreground mt-2">
-                        Transaction ID: <span className="font-mono font-medium text-foreground">
+                        {t('orderTracking.transactionId')}: <span className="font-mono font-medium text-foreground">
                           {order.notes.match(/TrxID:\s*(\S+)/)?.[1] || 'N/A'}
                         </span>
                       </p>
