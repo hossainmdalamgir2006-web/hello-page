@@ -635,7 +635,7 @@ export default function Checkout() {
                             </RadioGroup>
                           </div>
                         )}
-                        {selectedZone && availableRates.length === 0 && <p className="text-sm text-muted-foreground">No shipping options available for this zone</p>}
+                        {selectedZone && availableRates.length === 0 && <p className="text-sm text-muted-foreground">{t('checkout.noShippingOptions')}</p>}
                       </>
                     )}
                   </div>
