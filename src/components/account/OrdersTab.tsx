@@ -292,7 +292,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                       {order.items.slice(0, 3).map((item) => (
                         <div key={item.id} className="flex justify-between text-sm">
                           <span>{item.product_name} × {item.quantity}</span>
-                          <span className="font-medium">{formatPrice(item.total_price.toFixed(2))}</span>
+                          <span className="font-medium">{formatPrice(item.total_price)}</span>
                         </div>
                       ))}
                       {order.items.length > 3 && (
