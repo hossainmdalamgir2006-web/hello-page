@@ -9,7 +9,7 @@ import { ShoppingTab } from "@/components/account/ShoppingTab";
 
 export default function AccountShopping() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
