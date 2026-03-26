@@ -553,7 +553,7 @@ export default function Checkout() {
                       <p className="text-xs text-muted-foreground mt-1">{formData.firstName.length}/50</p>
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Label htmlFor="lastName">{t('checkout.lastName')} *</Label>
                       <Input id="lastName" name="lastName" value={formData.lastName} onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value.slice(0, 50) }))} maxLength={50} required />
                       <p className="text-xs text-muted-foreground mt-1">{formData.lastName.length}/50</p>
                     </div>
