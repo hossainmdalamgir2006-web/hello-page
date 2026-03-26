@@ -82,9 +82,12 @@ export default function PasswordPage() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="border-l-4 border-l-primary/20 hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Lock className="h-5 w-5" />Change Password</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2"><Lock className="h-5 w-5 text-primary" /></div>
+            Change Password
+          </CardTitle>
           <CardDescription>Update your password for security</CardDescription>
         </CardHeader>
         <CardContent>
