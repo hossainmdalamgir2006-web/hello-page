@@ -209,7 +209,7 @@ export default function OrderTracking() {
     }
 
     if (!orderData) {
-      setError("Order not found. Please check your order number.");
+      setError(t('orderTracking.couldntFind'));
       setLoading(false);
       return;
     }
