@@ -180,7 +180,7 @@ export default function Profile() {
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('profile.uploadFailed'),
+        title: 'Upload Failed',
         description: error.message,
       });
     } finally {
