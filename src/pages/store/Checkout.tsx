@@ -608,7 +608,7 @@ export default function Checkout() {
                         </div>
                         {selectedZone && availableRates.length > 0 && (
                           <div>
-                            <Label>Delivery Option *</Label>
+                            <Label>{t('checkout.deliveryOption')} *</Label>
                             <RadioGroup value={selectedRateId} onValueChange={setSelectedRateId} className="mt-2">
                               {availableRates.map((rate) => {
                                 const isFree = rate.max_order_amount && subtotal >= rate.max_order_amount;
