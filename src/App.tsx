@@ -200,7 +200,13 @@ const App = () => (
             <Route path="/manager/trash" element={<GlobalTrash />} />
             <Route path="/manager/settings" element={<ManagerSettings />} />
             <Route path="/manager/messages" element={<Messages />} />
-            <Route path="/manager/profile" element={<Profile />} />
+            <Route path="/manager/profile" element={<ProfileLayout />}>
+              <Route index element={<ProfilePersonal />} />
+              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="password" element={<ProfilePassword />} />
+              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="sessions" element={<ProfileSessions />} />
+            </Route>
           </Route>
 
           {/* Support Routes */}
