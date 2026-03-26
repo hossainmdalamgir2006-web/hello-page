@@ -863,7 +863,7 @@ export default function Checkout() {
                                 </div>
                               </div>
                               <div className="text-sm bg-background p-3 rounded-lg border space-y-2">
-                                <p className="font-medium">Instructions:</p>
+                                <p className="font-medium">{t('checkout.instructions')}</p>
                                 <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
                                   <li>Write the cheque for the exact order amount: <strong className="text-foreground">{formatPrice(total)}</strong></li>
                                   <li>Make it payable to: <strong className="text-foreground">{selectedMethod.payable_to || 'Our Store'}</strong></li>
