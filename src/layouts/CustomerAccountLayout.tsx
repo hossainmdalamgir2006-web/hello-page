@@ -58,8 +58,7 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
     }
   }, [user]);
 
-  const keys = pageTitleKeys[location.pathname] || { titleKey: "store.myAccount", descKey: "" };
-  const pageInfo = { title: t(keys.titleKey), description: keys.descKey ? t(keys.descKey) : "" };
+  const pageInfo = pageTitles[location.pathname] || { title: "My Account", description: "" };
 
   return (
     <div className="min-h-screen bg-background">
