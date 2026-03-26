@@ -86,10 +86,10 @@ export function ManualPaymentInstructions({
           <div className="text-center sm:text-left">
             <p className="text-sm font-medium flex items-center gap-1 justify-center sm:justify-start">
               <QrCode className="h-4 w-4" />
-              Scan QR Code
+              {t('manualPayment.scanQR')}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Scan with {paymentMethod.name} App to pay directly
+              {t('manualPayment.scanWith')} {paymentMethod.name} {t('manualPayment.appToPay')}
             </p>
             <Button 
               type="button"
