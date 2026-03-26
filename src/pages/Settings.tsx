@@ -14,7 +14,6 @@ import {
   ClipboardList,
   HardDrive,
   Plug,
-  Database,
 } from "lucide-react";
 import { IntegrationsSettings } from "@/components/settings/IntegrationsSettings";
 import { CannedResponsesSettings } from "@/components/settings/CannedResponsesSettings";
@@ -31,7 +30,7 @@ import { StoreSettingsTab } from "@/components/settings/StoreSettingsTab";
 import { EmailTemplatesTab } from "@/components/settings/EmailTemplatesTab";
 import { toast } from "sonner";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { generateSchemaPDF } from "@/utils/generateSchemaPDF";
+
 import { useEmailTemplates } from "@/hooks/useEmailTemplates";
 
 interface StoreSettings {
@@ -129,10 +128,6 @@ export default function Settings() {
           <p className="text-sm text-muted-foreground">Manage your store configuration and preferences</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => { generateSchemaPDF(storeSettings.storeName || undefined); toast.success("Database schema PDF downloaded!"); }} className="gap-2">
-            <Database className="h-4 w-4" />
-            <span className="hidden sm:inline">DB Schema</span>
-          </Button>
           <Button onClick={handleSave} disabled={saving || settingsLoading} className="gap-2">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Saving..." : "Save Changes"}
