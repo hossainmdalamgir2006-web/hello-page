@@ -589,7 +589,7 @@ export default function OrderTracking() {
               <Separator />
 
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Shipping Address</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('orderTracking.shippingAddress')}</p>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                   <p className="font-medium">{shippingAddr}</p>
