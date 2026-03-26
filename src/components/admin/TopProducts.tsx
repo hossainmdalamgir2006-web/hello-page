@@ -9,6 +9,7 @@ interface TopProductsProps {
 }
 
 export function TopProducts({ products = [], loading = false }: TopProductsProps) {
+  const { formatPrice } = useCurrency();
 
   // Calculate max stock for percentage
   const maxStock = products.length > 0 ? Math.max(...products.map(p => p.quantity)) : 100;

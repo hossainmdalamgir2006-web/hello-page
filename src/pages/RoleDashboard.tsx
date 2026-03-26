@@ -38,6 +38,7 @@ import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock } from "lu
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 const RoleDashboard = () => {
+  const { formatPrice } = useCurrency();
   const { role, user } = useAuth();
   const { t } = useLanguage();
   const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("last30days");

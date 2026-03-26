@@ -29,6 +29,7 @@ const statusStyles: Record<string, string> = {
 };
 
 export function RecentOrders({ orders = [], loading = false }: RecentOrdersProps) {
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
 
