@@ -514,7 +514,7 @@ export default function OrderTracking() {
           {/* Order Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Details</CardTitle>
+              <CardTitle>{t('orderTracking.orderDetails')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
