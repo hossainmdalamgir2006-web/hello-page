@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useBrandsData } from "@/hooks/useBrandsData";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -155,20 +157,60 @@ export function ProductModal({
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const result = event.target?.result as string;
-          setImages((prev) => [...prev, result]);
-          if (!formData.image) {
-            updateField("image", result);
-          }
-        };
-        reader.readAsDataURL(file);
+    if (!files || files.length === 0) return;
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+    const validFiles = Array.from(files).filter((file) => {
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(`${file.name}: Only JPG, PNG, WebP, GIF allowed`);
+        return false;
+      }
+      if (file.size > maxSize) {
+        toast.error(`${file.name}: Max 5MB allowed`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    setUploading(true);
+    try {
+      const uploadPromises = validFiles.map(async (file) => {
+        const ext = file.name.split('.').pop() || 'jpg';
+        const fileName = `${crypto.randomUUID()}.${ext}`;
+        const filePath = `products/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, file, { cacheControl: '31536000', upsert: false });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        return urlData.publicUrl;
       });
+
+      const urls = await Promise.all(uploadPromises);
+      setImages((prev) => [...prev, ...urls]);
+      if (!formData.image && urls.length > 0) {
+        updateField("image", urls[0]);
+      }
+      toast.success(`${urls.length} image(s) uploaded`);
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      toast.error('Image upload failed: ' + (err.message || 'Unknown error'));
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -350,10 +392,20 @@ export function ProductModal({
                 ))}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-24 w-24 flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50 text-muted-foreground transition-colors hover:border-accent hover:bg-accent/5"
+                  disabled={uploading}
+                  className="flex h-24 w-24 flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50 text-muted-foreground transition-colors hover:border-accent hover:bg-accent/5 disabled:opacity-50"
                 >
-                  <Upload className="mb-1 h-5 w-5" />
-                  <span className="text-xs">Upload</span>
+                  {uploading ? (
+                    <>
+                      <div className="mb-1 h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+                      <span className="text-xs">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mb-1 h-5 w-5" />
+                      <span className="text-xs">Upload</span>
+                    </>
+                  )}
                 </button>
                 <input
                   ref={fileInputRef}

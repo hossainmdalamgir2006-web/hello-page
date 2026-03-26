@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 import { ProductCard } from "@/components/products/ProductCard";
 import { ProductFilters, type FilterState } from "@/components/products/ProductFilters";
@@ -16,8 +16,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, Package, Trash2, ChevronDown, Eye, EyeOff } from "lucide-react";
+import { Plus, Package, Trash2, ChevronDown, Eye, EyeOff, ImageIcon, Loader2 } from "lucide-react";
 import { useProductsData, type Product } from "@/hooks/useProductsData";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useCategoriesData } from "@/hooks/useCategoriesData";
 import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
@@ -49,6 +51,34 @@ interface ProductCardData {
   video_url?: string | null;
   youtube_url?: string | null;
   video_thumbnail?: string | null;
+}
+
+function MigrateImagesButton() {
+  const [migrating, setMigrating] = useState(false);
+
+  const handleMigrate = async () => {
+    setMigrating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('migrate-product-images');
+      if (error) throw error;
+      if (data?.success) {
+        toast.success(`Migrated ${data.migratedImages} images from ${data.migratedProducts} products to Storage`);
+      } else {
+        toast.error(data?.error || 'Migration failed');
+      }
+    } catch (err: any) {
+      toast.error('Migration failed: ' + (err.message || 'Unknown error'));
+    } finally {
+      setMigrating(false);
+    }
+  };
+
+  return (
+    <Button variant="outline" size="sm" onClick={handleMigrate} disabled={migrating} className="gap-2">
+      {migrating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+      {migrating ? 'Migrating...' : 'Migrate Images'}
+    </Button>
+  );
 }
 
 export default function Products() {
@@ -355,6 +385,7 @@ export default function Products() {
               products={uiProducts} 
               onImport={handleImport} 
             />
+            <MigrateImagesButton />
             <Button onClick={handleAddProduct} className="gap-2">
               <Plus className="h-4 w-4" />
               Add Product
