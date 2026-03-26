@@ -1,11 +1,10 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-type Language = 'en' | 'bn';
+type Language = string;
 
 interface Translations {
   [key: string]: {
-    en: string;
-    bn: string;
+    [lang: string]: string;
   };
 }
 
