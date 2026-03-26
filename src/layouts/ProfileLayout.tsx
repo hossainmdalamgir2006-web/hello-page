@@ -154,6 +154,7 @@ export default function ProfileLayout() {
               </CollapsibleContent>
             </Collapsible>
 
+            <Collapsible defaultOpen={isSessionsActive}>
               <CollapsibleTrigger className={cn(
                 "flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isSessionsActive
