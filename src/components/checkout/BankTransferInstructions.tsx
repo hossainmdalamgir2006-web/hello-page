@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { EnabledPaymentMethod } from "@/hooks/useEnabledPaymentMethods";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BankTransferInstructionsProps {
   paymentMethod: EnabledPaymentMethod;
