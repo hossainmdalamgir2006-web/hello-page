@@ -35,12 +35,7 @@ interface Product {
   variantSizes?: string[];
 }
 
-const sortOptions = [
-  { value: "newest", label: "Newest" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "name", label: "Name A-Z" },
-];
+// Sort options will be created inside the component to use t()
 
 /* ─── Collapsible Filter Section ─── */
 function FilterSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
