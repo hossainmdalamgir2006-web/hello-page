@@ -600,7 +600,7 @@ export default function OrderTracking() {
 
               {/* Items */}
               <div>
-                <p className="text-sm text-muted-foreground mb-3">Items</p>
+                <p className="text-sm text-muted-foreground mb-3">{t('orderTracking.items')}</p>
                 <div className="space-y-2">
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between items-center py-2 border-b last:border-0">
