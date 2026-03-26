@@ -20,9 +20,10 @@ interface CategoryGridProps {
 
 const defaultImage = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=800&fit=crop";
 
-export function CategoryGrid({ title = "Shop by Category", subtitle, categories }: CategoryGridProps) {
+export function CategoryGrid({ title, subtitle, categories }: CategoryGridProps) {
+  const { t } = useLanguage();
+  const displayTitle = title || t('categoryGrid.shopByCategory');
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (categories && categories.length > 0) {
