@@ -89,8 +89,8 @@ export default function AccountPaymentMethods() {
                 <Select value={methodType} onValueChange={setMethodType}>
                   <SelectTrigger><SelectValue placeholder={t('account.selectType')} /></SelectTrigger>
                   <SelectContent>
-                    {METHOD_TYPES.map((m) => (
-                      <SelectItem key={m.value} value={m.value}>{m.icon} {m.label}</SelectItem>
+                    {enabledMethods.map((m) => (
+                      <SelectItem key={m.code} value={m.code}>{m.icon} {m.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
