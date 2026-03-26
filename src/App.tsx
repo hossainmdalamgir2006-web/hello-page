@@ -158,11 +158,8 @@ const App = () => (
             <Route path="/admin/orders" element={<Orders />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/customers" element={<Customers />} />
-            <Route path="/admin/settings" element={<SettingsLayout />}>
-              <Route index element={<SettingsStore />} />
-              <Route path="store" element={<SettingsStore />} />
-              <Route path="payments" element={<SettingsPayments />} />
-            </Route>
+            <Route path="/admin/settings/store" element={<SettingsStore />} />
+            <Route path="/admin/settings/payments" element={<SettingsPayments />} />
             <Route path="/admin/settings/emails" element={<SettingsEmails />} />
             <Route path="/admin/settings/notifications" element={<SettingsNotifications />} />
             <Route path="/admin/settings/security" element={<SettingsSecurity />} />
