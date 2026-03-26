@@ -26,7 +26,7 @@ export function BankTransferInstructions({
     return (
       <div className="mt-4 p-4 bg-warning/10 rounded-lg border border-warning/20">
         <p className="text-sm text-warning">
-          ⚠️ No bank account has been configured. Please use a different payment method.
+          ⚠️ {t('bankTransfer.noBankConfig')}
         </p>
       </div>
     );
