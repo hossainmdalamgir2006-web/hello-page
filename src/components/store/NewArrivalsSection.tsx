@@ -116,7 +116,7 @@ export function NewArrivalsSection({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-                        No Image
+                        {t('newArrivals.noImage')}
                       </div>
                     )}
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
