@@ -310,7 +310,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                         <span className="capitalize">{order.payment_status}</span>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-bold text-lg mr-2">{formatPrice(order.total.toFixed(2))}</p>
+                        <p className="font-bold text-lg mr-2">{formatPrice(order.total)}</p>
                         <Button
                           size="sm"
                           variant="outline"
