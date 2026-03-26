@@ -14,8 +14,14 @@ export default function ProfileLayout() {
     { to: `${basePath}/personal`, label: "Personal Info", icon: User },
     { to: `${basePath}/password`, label: "Password", icon: Lock },
     { to: `${basePath}/security`, label: "Security", icon: Shield },
-    { to: `${basePath}/sessions`, label: "Sessions", icon: Monitor },
   ];
+
+  const sessionsSubItems = [
+    { to: `${basePath}/sessions/active`, label: "Active Sessions", icon: Monitor },
+    { to: `${basePath}/sessions/activity`, label: "Login Activity", icon: History },
+  ];
+
+  const isSessionsActive = location.pathname.includes(`${basePath}/sessions`);
 
   if (location.pathname === basePath || location.pathname === `${basePath}/`) {
     return <Navigate to={`${basePath}/personal`} replace />;
