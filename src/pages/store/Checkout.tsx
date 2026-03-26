@@ -769,7 +769,7 @@ export default function Checkout() {
                   {paymentMethodsLoading ? (
                     <div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
                   ) : enabledPaymentMethods.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-4">No payment methods available</p>
+                    <p className="text-sm text-muted-foreground text-center py-4">{t('checkout.noPaymentMethods')}</p>
                   ) : (
                     <>
                       <RadioGroup value={paymentMethod} onValueChange={(value) => { setPaymentMethod(value); setTransactionId(""); }}>
