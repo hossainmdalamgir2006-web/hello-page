@@ -70,7 +70,7 @@ export function NewArrivalsSection({
             </Button>
             <Button variant="outline" asChild>
               <Link to="/products?filter=new">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
+                {t('newArrivals.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
