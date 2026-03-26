@@ -1,6 +1,8 @@
 import { useEffect, useState, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+const STORE_NAME_CACHE_KEY = "_store_name";
+
 interface TitleContextType {
   storeName: string;
   setPageTitle: (title?: string) => void;
@@ -16,9 +18,15 @@ export function useSiteTitle() {
 }
 
 export function DynamicTitleProvider({ children }: { children: ReactNode }) {
-  const [storeName, setStoreName] = useState("Store");
+  // Read cached store name instantly
+  const cachedName = localStorage.getItem(STORE_NAME_CACHE_KEY) || "Store";
+  const [storeName, setStoreName] = useState(cachedName);
 
   useEffect(() => {
+    // Set title immediately from cache
+    if (cachedName !== "Store") {
+      document.title = cachedName;
+    }
     fetchStoreName();
   }, []);
 
@@ -35,6 +43,7 @@ export function DynamicTitleProvider({ children }: { children: ReactNode }) {
         if (settingValue) {
           setStoreName(settingValue);
           document.title = settingValue;
+          localStorage.setItem(STORE_NAME_CACHE_KEY, settingValue);
           updateMetaTags(settingValue);
         }
       }
@@ -44,11 +53,9 @@ export function DynamicTitleProvider({ children }: { children: ReactNode }) {
   };
 
   const updateMetaTags = (name: string) => {
-    // OG Title
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute('content', name);
     
-    // Twitter Title
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) twitterTitle.setAttribute('content', name);
   };
