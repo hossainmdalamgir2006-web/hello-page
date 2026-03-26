@@ -301,7 +301,7 @@ export default function RoleManagement() {
                     {filteredUsers.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                          {t('roles.noUsers')}
+                          No users found
                         </TableCell>
                       </TableRow>
                     ) : (
