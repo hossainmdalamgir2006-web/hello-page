@@ -14,14 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-
-const METHOD_TYPES = [
-  { value: "bkash", label: "bKash", icon: "📱" },
-  { value: "nagad", label: "Nagad", icon: "📱" },
-  { value: "rocket", label: "Rocket", icon: "📱" },
-  { value: "bank", label: "Bank Account", icon: "🏦" },
-  { value: "card", label: "Card", icon: "💳" },
-];
+import { useEnabledPaymentMethods } from "@/hooks/useEnabledPaymentMethods";
 
 export default function AccountPaymentMethods() {
   const { user } = useAuth();
