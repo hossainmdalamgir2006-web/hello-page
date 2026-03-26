@@ -67,8 +67,8 @@ export function ManualPaymentInstructions({
           </div>
         )}
         <div>
-          <p className="font-semibold">{paymentMethod.name} Payment</p>
-          <p className="text-xs text-muted-foreground">{accountTypeLabel} Account</p>
+          <p className="font-semibold">{paymentMethod.name} {t('manualPayment.payment')}</p>
+          <p className="text-xs text-muted-foreground">{accountTypeLabel} {t('manualPayment.account')}</p>
         </div>
       </div>
 
