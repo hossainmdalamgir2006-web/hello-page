@@ -151,7 +151,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-sm font-semibold text-foreground truncate">
+                  <p className="text-sm font-semibold text-foreground">
                     {user?.user_metadata?.full_name || 'Admin'}
                   </p>
                   <span className="inline-flex items-center rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary capitalize shrink-0">
