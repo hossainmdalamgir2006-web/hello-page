@@ -66,6 +66,7 @@ const SettingsAudit = lazy(() => import("./pages/settings/AuditPage"));
 const SettingsBackup = lazy(() => import("./pages/settings/BackupPage"));
 const SettingsIntegrations = lazy(() => import("./pages/settings/IntegrationsPage"));
 const SettingsLanguages = lazy(() => import("./pages/settings/LanguagesPage"));
+const SettingsCurrencies = lazy(() => import("./pages/settings/CurrenciesPage"));
 
 const Shipping = lazy(() => import("./pages/Shipping"));
 const Messages = lazy(() => import("./pages/Messages"));
