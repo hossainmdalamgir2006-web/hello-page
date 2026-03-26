@@ -14,7 +14,6 @@ import {
   ClipboardList,
   HardDrive,
   Plug,
-  Database,
 } from "lucide-react";
 import { IntegrationsSettings } from "@/components/settings/IntegrationsSettings";
 import { CannedResponsesSettings } from "@/components/settings/CannedResponsesSettings";
