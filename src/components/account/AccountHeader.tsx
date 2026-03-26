@@ -131,6 +131,7 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account", pageDescr
             )}
           </Button>
 
+          <GoogleTranslateWidget />
           <ThemeToggle />
 
           <DropdownMenu>
