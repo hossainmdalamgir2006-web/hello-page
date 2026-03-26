@@ -96,7 +96,7 @@ export default function SizeGuide() {
           {howToMeasure.length > 0 && (
             <div className="mt-12">
               <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
-                <Ruler className="h-6 w-6 text-store-primary" /> How to Measure
+                <Ruler className="h-6 w-6 text-store-primary" /> {t('sizeGuide.howToMeasure')}
               </h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {howToMeasure.map((item: any, i: number) => (
