@@ -113,19 +113,69 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
           <span className="text-sm">Store</span>
         </Button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/myaccount/notifications")}
-          className="h-9 w-9 text-muted-foreground hover:text-foreground relative"
-        >
-          <Bell className="h-4 w-4" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-0.5">
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </span>
-          )}
-        </Button>
+        {/* Notification dropdown — same as admin */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative h-9 w-9">
+              <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80 sm:w-96">
+            <div className="flex items-center justify-between px-3 py-2">
+              <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
+              {unreadCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={(e) => { e.preventDefault(); markAllAsRead(); }}
+                >
+                  <CheckCheck className="h-3 w-3" />
+                  Mark all read
+                </Button>
+              )}
+            </div>
+            <DropdownMenuSeparator />
+            {notifications.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Bell className="h-8 w-8 mx-auto mb-2 opacity-40" />
+                <p className="text-sm">No notifications</p>
+              </div>
+            ) : (
+              <ScrollArea className="h-[320px]">
+                {notifications.map((notif) => (
+                  <DropdownMenuItem
+                    key={notif.id}
+                    className={cn(
+                      "flex items-start gap-3 py-3 px-3 cursor-pointer",
+                      !notif.is_read && "bg-primary/5"
+                    )}
+                    onClick={() => { if (!notif.is_read) markAsRead(notif.id); }}
+                  >
+                    <span className="text-lg shrink-0 mt-0.5">
+                      {notif.type === "order" ? "📦" : notif.type === "promo" ? "🎉" : notif.type === "support" ? "💬" : "🔔"}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className={cn("text-sm truncate", !notif.is_read && "font-semibold")}>{notif.title}</p>
+                        {!notif.is_read && <span className="h-2 w-2 rounded-full bg-primary shrink-0" />}
+                      </div>
+                      {notif.message && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{notif.message}</p>}
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true })}
+                      </p>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </ScrollArea>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <ThemeToggle />
 
