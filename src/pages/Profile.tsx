@@ -348,7 +348,7 @@ export default function Profile() {
                 <Camera className="h-5 w-5" />
                 Avatar
               </CardTitle>
-              <CardDescription>{t('profile.avatarDesc')}</CardDescription>
+              <CardDescription>Upload a profile photo</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4">
               <div className="relative">
