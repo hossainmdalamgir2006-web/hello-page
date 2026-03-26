@@ -206,7 +206,7 @@ export default function Checkout() {
     if (formData.city.length > 50) { toast.error("City must be less than 50 characters"); return false; }
     if (formData.postalCode && formData.postalCode.length > 10) { toast.error("Postal code must be less than 10 characters"); return false; }
     if (!formData.email) { toast.error("Please provide an email address"); return false; }
-    if (!selectedZoneId || !selectedRateId) { toast.error("Please select a shipping zone and delivery option"); return false; }
+    if (!selectedZoneId || !selectedRateId) { toast.error(t('checkout.selectShipping')); return false; }
     
     if (!billingAddressSameAsShipping && !useSavedBillingAddress) {
       if (!billingFormData.firstName || !billingFormData.lastName || !billingFormData.phone || !billingFormData.address || !billingFormData.city) {
