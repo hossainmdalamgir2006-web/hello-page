@@ -70,7 +70,11 @@ const Shipping = lazy(() => import("./pages/Shipping"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Reports = lazy(() => import("./pages/Reports"));
 const Coupons = lazy(() => import("./pages/Coupons"));
-const Profile = lazy(() => import("./pages/Profile"));
+const ProfileLayout = lazy(() => import("./layouts/ProfileLayout"));
+const ProfilePersonal = lazy(() => import("./pages/profile/PersonalInfoPage"));
+const ProfilePassword = lazy(() => import("./pages/profile/PasswordPage"));
+const ProfileSecurity = lazy(() => import("./pages/profile/SecurityPage"));
+const ProfileSessions = lazy(() => import("./pages/profile/SessionsPage"));
 const Brands = lazy(() => import("./pages/Brands"));
 const Login = lazy(() => import("./pages/Login"));
 
