@@ -223,7 +223,7 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
                 </Button>
               )}
               {slide.secondary_cta_text && slide.secondary_cta_link && (
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/15 font-semibold px-8 text-base h-12" asChild>
+                <Button size="lg" variant="outline" className="border-white/80 bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm font-semibold px-8 text-base h-12" asChild>
                   <Link to={slide.secondary_cta_link}>{slide.secondary_cta_text}</Link>
                 </Button>
               )}
