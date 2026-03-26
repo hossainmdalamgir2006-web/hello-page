@@ -74,6 +74,9 @@ const ProfileLayout = lazy(() => import("./layouts/ProfileLayout"));
 const ProfilePersonal = lazy(() => import("./pages/profile/PersonalInfoPage"));
 const ProfilePassword = lazy(() => import("./pages/profile/PasswordPage"));
 const ProfileSecurity = lazy(() => import("./pages/profile/SecurityPage"));
+const ProfileSecurity2FA = lazy(() => import("./pages/profile/Security2FAPage"));
+const ProfileSecurityRecovery = lazy(() => import("./pages/profile/SecurityRecoveryPage"));
+const ProfileSecurityDevices = lazy(() => import("./pages/profile/SecurityDevicesPage"));
 const ProfileSessions = lazy(() => import("./pages/profile/SessionsPage"));
 const ProfileSessionsActive = lazy(() => import("./pages/profile/SessionsActivePage"));
 const ProfileSessionsActivity = lazy(() => import("./pages/profile/SessionsActivityPage"));
@@ -175,7 +178,12 @@ const App = () => (
               <Route index element={<ProfilePersonal />} />
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
-              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="security" element={<ProfileSecurity />}>
+                <Route index element={<ProfileSecurity2FA />} />
+                <Route path="2fa" element={<ProfileSecurity2FA />} />
+                <Route path="recovery" element={<ProfileSecurityRecovery />} />
+                <Route path="devices" element={<ProfileSecurityDevices />} />
+              </Route>
               <Route path="sessions" element={<ProfileSessions />}>
                 <Route index element={<ProfileSessionsActive />} />
                 <Route path="active" element={<ProfileSessionsActive />} />
@@ -210,7 +218,12 @@ const App = () => (
               <Route index element={<ProfilePersonal />} />
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
-              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="security" element={<ProfileSecurity />}>
+                <Route index element={<ProfileSecurity2FA />} />
+                <Route path="2fa" element={<ProfileSecurity2FA />} />
+                <Route path="recovery" element={<ProfileSecurityRecovery />} />
+                <Route path="devices" element={<ProfileSecurityDevices />} />
+              </Route>
               <Route path="sessions" element={<ProfileSessions />}>
                 <Route index element={<ProfileSessionsActive />} />
                 <Route path="active" element={<ProfileSessionsActive />} />
@@ -230,7 +243,12 @@ const App = () => (
               <Route index element={<ProfilePersonal />} />
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
-              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="security" element={<ProfileSecurity />}>
+                <Route index element={<ProfileSecurity2FA />} />
+                <Route path="2fa" element={<ProfileSecurity2FA />} />
+                <Route path="recovery" element={<ProfileSecurityRecovery />} />
+                <Route path="devices" element={<ProfileSecurityDevices />} />
+              </Route>
               <Route path="sessions" element={<ProfileSessions />}>
                 <Route index element={<ProfileSessionsActive />} />
                 <Route path="active" element={<ProfileSessionsActive />} />
