@@ -24,6 +24,7 @@ interface OrderResult {
 
 export default function TrackOrder() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [orderNumber, setOrderNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [orderError, setOrderError] = useState("");
