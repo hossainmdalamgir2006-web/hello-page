@@ -294,10 +294,10 @@ export default function OrderTracking() {
       <>
         <div className="container mx-auto px-4 py-16 text-center">
           <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h1 className="font-display text-2xl font-bold mb-2">Order Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error || "We couldn't find this order."}</p>
+          <h1 className="font-display text-2xl font-bold mb-2">{t('orderTracking.orderNotFound')}</h1>
+          <p className="text-muted-foreground mb-6">{error || t('orderTracking.couldntFind')}</p>
           <Button asChild>
-            <Link to="/">Back to Store</Link>
+            <Link to="/">{t('orderTracking.backToStore')}</Link>
           </Button>
         </div>
       </>
