@@ -56,7 +56,7 @@ const Categories = lazy(() => import("./pages/Categories"));
 const Orders = lazy(() => import("./pages/Orders"));
 const Analytics = lazy(() => import("./pages/Analytics"));
 const Customers = lazy(() => import("./pages/Customers"));
-const SettingsLayout = lazy(() => import("./layouts/SettingsLayout"));
+
 const SettingsStore = lazy(() => import("./pages/system-settings/StorePage"));
 const SettingsPayments = lazy(() => import("./pages/system-settings/PaymentsPage"));
 const SettingsEmails = lazy(() => import("./pages/system-settings/EmailsPage"));
