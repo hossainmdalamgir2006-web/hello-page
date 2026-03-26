@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Ruler, Info } from "lucide-react";
 import { usePageContent } from "@/hooks/usePageContents";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SizeGuide() {
   const { data, loading } = usePageContent("size-guide");
