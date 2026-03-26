@@ -158,7 +158,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
 
   return (
     <aside className={cn(
-      "fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300",
+      "fixed left-0 top-0 z-40 h-screen bg-sidebar border-r border-sidebar-border",
       collapsed ? "w-[68px]" : "w-64"
     )}>
       <div className="flex h-full flex-col overflow-y-auto px-3 py-6">
