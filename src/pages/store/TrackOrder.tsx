@@ -74,7 +74,7 @@ export default function TrackOrder() {
       }
     } catch (error: any) {
       console.error("Phone search error:", error);
-      setPhoneError("Error searching for orders. Please try again.");
+      setPhoneError(t('track.searchError'));
     } finally {
       setIsLoading(false);
     }
