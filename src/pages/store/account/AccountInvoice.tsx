@@ -91,7 +91,7 @@ export default function AccountInvoice() {
       doc.text("Shipping:", 140, y); doc.text(formatPrice(order.shipping_cost || 0), 170, y);
       if (Number(order.discount_amount) > 0) {
         y += 7;
-        doc.text("Discount:", 140, y); doc.text(`-${formatPrice(order.discount_amount).toFixed(0)}`, 170, y);
+        doc.text("Discount:", 140, y); doc.text(`-${formatPrice(order.discount_amount)}`, 170, y);
       }
       y += 7;
       doc.setFont("helvetica", "bold");
