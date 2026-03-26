@@ -260,5 +260,6 @@ export default function AccountSettings() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }
