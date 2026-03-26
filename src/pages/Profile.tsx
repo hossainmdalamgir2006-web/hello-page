@@ -539,7 +539,7 @@ export default function Profile() {
                     name="newPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('newPassword')}</FormLabel>
+                        <FormLabel>New Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
