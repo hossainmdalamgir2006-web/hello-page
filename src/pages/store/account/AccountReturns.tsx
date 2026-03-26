@@ -116,9 +116,9 @@ export default function AccountReturns() {
                 </Select>
               </div>
               <div>
-                <Label>{t('account.reason')}</Label>
+                <Label>Reason</Label>
                 <Select value={reason} onValueChange={setReason}>
-                  <SelectTrigger><SelectValue placeholder={t('account.selectReason')} /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select a reason" /></SelectTrigger>
                   <SelectContent>
                     {REASONS.map((r) => (<SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>))}
                   </SelectContent>
