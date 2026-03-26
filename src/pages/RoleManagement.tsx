@@ -351,9 +351,9 @@ export default function RoleManagement() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('roles.changeRoleTitle')}</DialogTitle>
+            <DialogTitle>Change User Role</DialogTitle>
             <DialogDescription>
-              {t('roles.changeRoleDesc')} <strong>{selectedUser?.full_name}</strong>
+              Select a new role for <strong>{selectedUser?.full_name}</strong>
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
