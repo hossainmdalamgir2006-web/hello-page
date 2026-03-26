@@ -5,7 +5,6 @@ import {
   RotateCcw, Star, CreditCard, MessageCircle, ChevronDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
