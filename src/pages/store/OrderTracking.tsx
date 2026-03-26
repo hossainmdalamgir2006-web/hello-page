@@ -636,7 +636,7 @@ export default function OrderTracking() {
                 )}
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
+                  <span>{t('store.total')}</span>
                   <span>{formatPrice(order.total)}</span>
                 </div>
               </div>
