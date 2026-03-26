@@ -102,7 +102,7 @@ export default function AccountReturns() {
             <Button size="sm" disabled={orders.length === 0}><Plus className="h-4 w-4 mr-1.5" />New Request</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>{t('account.submitReturnRequest')}</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>Submit Return Request</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div>
                 <Label>{t('account.selectOrder')}</Label>
