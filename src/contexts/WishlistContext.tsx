@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -29,14 +29,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const lastFetchedUserId = useRef<string | null>(null);
 
   useEffect(() => {
     if (user) {
-      fetchWishlist();
+      // Only fetch if user actually changed
+      if (lastFetchedUserId.current !== user.id) {
+        lastFetchedUserId.current = user.id;
+        fetchWishlist();
+      }
     } else {
+      lastFetchedUserId.current = null;
       setItems([]);
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchWishlist = async () => {
     if (!user) return;
@@ -137,14 +143,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const itemCount = items.length;
 
   return (
-    <WishlistContext.Provider value={{
-      items,
-      loading,
-      addItem,
-      removeItem,
-      isInWishlist,
-      itemCount,
-    }}>
+    <WishlistContext.Provider value={{ items, loading, addItem, removeItem, isInWishlist, itemCount }}>
       {children}
     </WishlistContext.Provider>
   );
