@@ -147,7 +147,7 @@ export function BankTransferInstructions({
 
       <div>
         <Label htmlFor="transactionId" className="text-sm font-medium">
-          Transaction Reference / Receipt No. *
+          {t('bankTransfer.transactionRef')} *
         </Label>
         <Input
           id="transactionId"
