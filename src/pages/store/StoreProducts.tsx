@@ -261,6 +261,7 @@ function FilterPanel({
 }
 
 export default function StoreProducts() {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
