@@ -141,7 +141,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                  {user?.email || 'admin@ekta.com'}
+                  {maskEmail(user?.email || 'admin@ekta.com')}
                 </p>
               </div>
               <ChevronDown className="hidden lg:block h-3.5 w-3.5 text-muted-foreground" />
