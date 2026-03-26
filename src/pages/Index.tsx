@@ -113,7 +113,6 @@ const Index = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => {
   const { formatPrice } = useCurrency();
     return `${formatPrice(amount)}`;
   };
@@ -121,7 +120,7 @@ const Index = () => {
   const statsData = [
     { 
       title: t('dashboard.totalSales'), 
-      value: formatCurrency(stats.totalSales), 
+      value: formatPrice(stats.totalSales), 
       change: stats.salesChange, 
       icon: TrendingUp, 
       iconBg: "accent" as const 
@@ -156,7 +155,7 @@ const Index = () => {
     },
     { 
       title: "Total Refunded", 
-      value: formatCurrency(refundStats.amount), 
+      value: formatPrice(refundStats.amount), 
       change: 0, 
       icon: RotateCcw, 
       iconBg: "accent" as const 

@@ -56,7 +56,7 @@ export function TopProducts({ products = [], loading = false }: TopProductsProps
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="font-semibold text-sm sm:text-base text-foreground">{formatCurrency(product.price)}</p>
+                  <p className="font-semibold text-sm sm:text-base text-foreground">{formatPrice(product.price)}</p>
                   <p className="text-[10px] sm:text-xs text-muted-foreground">{product.quantity} in stock</p>
                 </div>
               </div>

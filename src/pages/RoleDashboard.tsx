@@ -65,7 +65,7 @@ const RoleDashboard = () => {
 
   // Stats cards data
   const statsData = [
-    { title: t("dashboard.totalSales"), value: formatCurrency(stats.totalSales), change: stats.salesChange, icon: TrendingUp, iconBg: "accent" as const },
+    { title: t("dashboard.totalSales"), value: formatPrice(stats.totalSales), change: stats.salesChange, icon: TrendingUp, iconBg: "accent" as const },
     { title: t("dashboard.totalOrders"), value: stats.totalOrders.toString(), change: stats.ordersChange, icon: ShoppingCart, iconBg: "primary" as const },
     { title: t("dashboard.totalProducts"), value: stats.totalProducts.toString(), change: stats.productsChange, icon: Package, iconBg: "warning" as const },
     { title: t("dashboard.totalCustomers"), value: stats.totalCustomers.toString(), change: stats.customersChange, icon: Users, iconBg: "success" as const },

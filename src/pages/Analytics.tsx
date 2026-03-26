@@ -123,7 +123,6 @@ export default function Analytics() {
     refetch,
   } = useAnalyticsData(period);
 
-  const formatCurrency = (value: number) => {
     if (value >= 100000) {
   const { formatPrice } = useCurrency();
       return `${formatPrice((value / 100000).toFixed(2))} লাখ`;
@@ -179,7 +178,7 @@ export default function Analytics() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Total Revenue"
-            value={formatCurrency(stats.totalRevenue)}
+            value={formatPrice(stats.totalRevenue)}
             change={`${Math.abs(stats.revenueChange)}%`}
             changeType={stats.revenueChange >= 0 ? "positive" : "negative"}
             icon={DollarSign}
@@ -206,7 +205,7 @@ export default function Analytics() {
           />
           <StatCard
             title="Avg. Order Value"
-            value={formatCurrency(stats.avgOrderValue)}
+            value={formatPrice(stats.avgOrderValue)}
             change={`${Math.abs(stats.avgOrderChange)}%`}
             changeType={stats.avgOrderChange >= 0 ? "positive" : "negative"}
             icon={Target}
