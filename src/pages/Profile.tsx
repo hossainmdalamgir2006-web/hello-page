@@ -306,8 +306,8 @@ export default function Profile() {
       setShowNewPassword(false);
       setShowConfirmPassword(false);
       toast({
-        title: t('profile.passwordChanged'),
-        description: t('profile.passwordChangedDesc'),
+        title: 'Password Changed',
+        description: 'Your password has been updated successfully.',
       });
     } catch (error: any) {
       toast({
