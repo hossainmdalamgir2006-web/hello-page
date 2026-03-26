@@ -211,5 +211,6 @@ export default function AccountDashboard() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }

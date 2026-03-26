@@ -66,5 +66,6 @@ export default function AccountNotifications() {
         </div>
       )}
     </div>
+    </>
   );
 }
