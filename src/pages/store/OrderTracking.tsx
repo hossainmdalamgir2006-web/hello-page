@@ -630,7 +630,7 @@ export default function OrderTracking() {
                 </div>
                 {order.discount > 0 && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Discount</span>
+                    <span>{t('orderTracking.discount')}</span>
                     <span>-{formatPrice(order.discount)}</span>
                   </div>
                 )}
