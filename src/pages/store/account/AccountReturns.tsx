@@ -95,7 +95,7 @@ export default function AccountReturns() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <p className="text-xs text-muted-foreground">
-          {t('account.returnWindowMsg')} {returnWindowDays} {t('account.daysOfDelivery')}
+          Returns accepted within {returnWindowDays} days of delivery
         </p>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
