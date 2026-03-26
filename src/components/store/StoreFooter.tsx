@@ -125,7 +125,7 @@ export function StoreFooter() {
   );
 
   return (
-    <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]">
+    <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]" style={{ minHeight: "380px" }}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
