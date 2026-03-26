@@ -24,6 +24,7 @@ export function CategoryGrid({ title, subtitle, categories }: CategoryGridProps)
   const { t } = useLanguage();
   const displayTitle = title || t('categoryGrid.shopByCategory');
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (categories && categories.length > 0) {
