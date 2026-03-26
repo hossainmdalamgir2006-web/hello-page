@@ -74,7 +74,9 @@ export function TestimonialsSection({ title: propTitle, subtitle: propSubtitle, 
             <div className="flex justify-center gap-2 mt-6">
               {items.map((_: any, i: number) => (
                 <button key={i} onClick={() => { setCurrent(i); if (timerRef.current) clearInterval(timerRef.current); }}
-                  className={`transition-all rounded-full ${i === current ? "w-6 h-2 bg-store-primary" : "w-2 h-2 bg-store-muted-foreground/30"}`} />
+                  className={`transition-all rounded-full min-w-[24px] min-h-[24px] flex items-center justify-center ${i === current ? "w-6 h-6 bg-store-primary" : "w-6 h-6 bg-store-muted-foreground/30"}`}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                />
               ))}
             </div>
           </div>
