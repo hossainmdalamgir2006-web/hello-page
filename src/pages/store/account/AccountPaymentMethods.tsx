@@ -131,8 +131,9 @@ export default function AccountPaymentMethods() {
                       {m.label}
                       {m.is_default && <Badge variant="default" className="text-[10px]">{t('account.default')}</Badge>}
                     </p>
-                    <p className="text-xs text-muted-foreground capitalize">
-                      {m.method_type}{m.last_four && ` · •••• ${m.last_four}`}
+                    <p className="text-xs text-muted-foreground">
+                      {getMethodName(m.method_type)}{m.last_four && ` · •••• ${m.last_four}`}
+                    </p>
                     </p>
                   </div>
                 </div>
