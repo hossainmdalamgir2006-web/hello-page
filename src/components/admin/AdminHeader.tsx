@@ -113,9 +113,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
           <AgentAvailabilityToggle />
         )}
         <ThemeToggle />
-        <div className="hidden xs:block">
-          <LanguageToggle />
-        </div>
+        <LanguageToggle />
         <NotificationCenter />
 
         {/* Profile */}
