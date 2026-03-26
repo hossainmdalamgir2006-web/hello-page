@@ -77,7 +77,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
       groupKey: "overview",
       items: [
         { titleKey: "account.dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
-        { titleKey: "account.notifications", url: "/myaccount/notifications", icon: Bell, badge: unreadCount },
+        
       ],
     },
     {

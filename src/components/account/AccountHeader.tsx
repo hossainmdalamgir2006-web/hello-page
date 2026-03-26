@@ -28,7 +28,7 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
   const { toast } = useToast();
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const { unreadCount } = useRealtimeNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useRealtimeNotifications();
 
   useEffect(() => {
     if (user) {
