@@ -1,5 +1,6 @@
 import { SecurityTab } from "@/components/account/SecurityTab";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function AccountSecurity() {
   const { t } = useLanguage();

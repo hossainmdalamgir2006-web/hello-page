@@ -1,5 +1,6 @@
 import { RecentlyViewedTab } from "@/components/account/RecentlyViewedTab";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function AccountRecentlyViewed() {
   const { t } = useLanguage();

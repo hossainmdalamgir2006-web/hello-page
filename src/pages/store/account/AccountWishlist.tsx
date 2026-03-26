@@ -1,5 +1,6 @@
 import { WishlistTab } from "@/components/account/WishlistTab";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function AccountWishlist() {
   const { t } = useLanguage();

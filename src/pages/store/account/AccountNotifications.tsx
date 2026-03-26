@@ -1,5 +1,6 @@
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { BellOff, CheckCheck } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericListSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
