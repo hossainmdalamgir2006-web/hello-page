@@ -462,7 +462,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                     <div key={item.id} className="p-3 flex justify-between items-center">
                       <div>
                         <p className="font-medium">{item.product_name}</p>
-                        <p className="text-sm text-muted-foreground">{formatPrice(item.unit_price.toFixed(2))} × {item.quantity}</p>
+                        <p className="text-sm text-muted-foreground">{formatPrice(item.unit_price)} × {item.quantity}</p>
                       </div>
                       <p className="font-semibold">{formatPrice(item.total_price.toFixed(2))}</p>
                     </div>
