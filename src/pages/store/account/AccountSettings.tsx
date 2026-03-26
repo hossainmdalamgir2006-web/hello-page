@@ -136,6 +136,8 @@ export default function AccountSettings() {
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
+    <>
+    <SEOHead title="Account Settings" noIndex />
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.settings')}</h1>
