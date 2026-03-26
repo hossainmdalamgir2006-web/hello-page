@@ -111,6 +111,8 @@ export default function AccountInvoice() {
   }
 
   return (
+    <>
+    <SEOHead title="Invoices" noIndex />
     <div className="space-y-4">
       {orders.length === 0 ? (
         <Card>

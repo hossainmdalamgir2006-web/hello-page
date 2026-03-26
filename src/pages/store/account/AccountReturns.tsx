@@ -90,6 +90,8 @@ export default function AccountReturns() {
   if (loading) return <DelayedLoader><GenericListSkeleton /></DelayedLoader>;
 
   return (
+    <>
+    <SEOHead title="Returns" noIndex />
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <p className="text-xs text-muted-foreground">
