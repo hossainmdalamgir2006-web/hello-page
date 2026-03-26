@@ -721,7 +721,7 @@ export default function Checkout() {
                                 <Input id="billingCity" value={billingFormData.city} onChange={(e) => setBillingFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
                               </div>
                               <div>
-                                <Label htmlFor="billingPostalCode">Postal Code</Label>
+                                <Label htmlFor="billingPostalCode">{t('checkout.postalCode')}</Label>
                                 <Input id="billingPostalCode" value={billingFormData.postalCode} onChange={(e) => { const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10); setBillingFormData(prev => ({ ...prev, postalCode: value })); }} maxLength={10} placeholder="1205" />
                               </div>
                             </div>
