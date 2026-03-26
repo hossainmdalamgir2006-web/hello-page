@@ -449,7 +449,7 @@ export default function OrderTracking() {
                         {estimate.isOverdue ? (
                           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
                             <AlertCircle className="h-3 w-3 mr-1" />
-                            Delayed
+                            {t('orderTracking.delayed')}
                           </Badge>
                         ) : estimate.daysUntilMax === 0 ? (
                           <Badge className="bg-store-primary text-store-primary-foreground">
