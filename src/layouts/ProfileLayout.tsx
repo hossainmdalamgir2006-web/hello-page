@@ -94,6 +94,42 @@ export default function ProfileLayout() {
                 {item.label}
               </NavLink>
             ))}
+
+            <Collapsible defaultOpen={isSessionsActive}>
+              <CollapsibleTrigger className={cn(
+                "flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                isSessionsActive
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}>
+                <span className="flex items-center gap-3">
+                  <Monitor className="h-4 w-4 shrink-0" />
+                  Sessions
+                </span>
+                <ChevronDown className="h-4 w-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="ml-4 flex flex-col gap-0.5 mt-0.5">
+                  {sessionsSubItems.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                          isActive
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )
+                      }
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </nav>
         </div>
 
