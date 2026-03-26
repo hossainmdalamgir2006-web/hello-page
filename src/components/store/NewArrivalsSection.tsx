@@ -85,7 +85,7 @@ export function NewArrivalsSection({
           </div>
         ) : newProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">New products coming soon!</p>
+            <p className="text-muted-foreground">{t('newArrivals.comingSoon')}</p>
           </div>
         ) : (
           <div
