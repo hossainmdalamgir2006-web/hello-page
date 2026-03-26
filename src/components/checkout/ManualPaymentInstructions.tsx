@@ -171,7 +171,7 @@ export function ManualPaymentInstructions({
 
       <div>
         <Label htmlFor="transactionId" className="text-sm font-medium">
-          Transaction ID / TrxID *
+          {t('manualPayment.transactionId')} *
         </Label>
         <Input
           id="transactionId"
