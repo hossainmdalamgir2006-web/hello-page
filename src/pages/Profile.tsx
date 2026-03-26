@@ -215,7 +215,7 @@ export default function Profile() {
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('profile.updateFailed'),
+        title: 'Update Failed',
         description: error.message,
       });
     } finally {
