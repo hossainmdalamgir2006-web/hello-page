@@ -832,9 +832,9 @@ export default function Checkout() {
                               <div className="flex items-start gap-2">
                                 <Truck className="h-5 w-5 text-store-primary shrink-0 mt-0.5" />
                                 <div>
-                                  <p className="font-medium">Cash on Delivery</p>
+                                  <p className="font-medium">{t('checkout.cashOnDelivery')}</p>
                                   <p className="text-sm text-muted-foreground mt-1">
-                                    Pay with cash when your order is delivered to your doorstep.
+                                    {t('checkout.codDescription')}
                                   </p>
                                   {selectedMethod.cod_charge_enabled && codCharge > 0 && (
                                     <div className="mt-2 p-2 bg-warning/10 rounded border border-warning/20">
