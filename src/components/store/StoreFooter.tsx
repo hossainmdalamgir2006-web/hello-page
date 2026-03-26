@@ -146,10 +146,10 @@ export function StoreFooter() {
             <div className="flex gap-3">
               {hasSocial ? (
                 <>
-                  {socialLinks.facebook && <SocialIcon href={socialLinks.facebook}><Facebook className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.instagram && <SocialIcon href={socialLinks.instagram}><Instagram className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.twitter && <SocialIcon href={socialLinks.twitter}><Twitter className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.youtube && <SocialIcon href={socialLinks.youtube}><Youtube className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.facebook && <SocialIcon href={socialLinks.facebook} label="Facebook"><Facebook className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.instagram && <SocialIcon href={socialLinks.instagram} label="Instagram"><Instagram className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.twitter && <SocialIcon href={socialLinks.twitter} label="Twitter"><Twitter className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.youtube && <SocialIcon href={socialLinks.youtube} label="YouTube"><Youtube className="h-4 w-4" /></SocialIcon>}
                 </>
               ) : (
                 <>
