@@ -163,12 +163,9 @@ export function ManualPaymentInstructions({
       </div>
 
       <div className="text-sm text-muted-foreground bg-warning/10 p-3 rounded-lg border border-warning/20">
-        <p className="font-medium text-warning mb-1">📱 How to pay:</p>
+        <p className="font-medium text-warning mb-1">📱 {t('manualPayment.howToPay')}</p>
         <p className="text-warning/80">
-          {paymentMethod.qr_code_url 
-            ? `${paymentMethod.name} App → Scan QR / Send Money → Send to number → Copy Transaction ID`
-            : `Open ${paymentMethod.name} App → Send Money → Send to number → Copy Transaction ID`
-          }
+          {paymentMethod.name} → {t('manualPayment.scanQR')} / Send Money → {t('manualPayment.transactionId')}
         </p>
       </div>
 
