@@ -225,7 +225,7 @@ export default function Checkout() {
     }
 
     if (!acceptedTerms) {
-      toast.error("Please accept the Terms & Conditions"); return false;
+      toast.error(t('checkout.acceptTerms')); return false;
     }
 
     return true;
