@@ -481,10 +481,9 @@ export default function OrderTracking() {
                     {estimate.isOverdue && (
                       <div className="flex items-start gap-2 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                         <AlertCircle className="h-4 w-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                          Your order is taking longer than expected. We're working to get it to you as soon as possible. 
-                          Please contact support if you need assistance.
-                        </p>
+                         <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                           {t('orderTracking.deliveryOverdue')}
+                         </p>
                       </div>
                     )}
                   </CardContent>
