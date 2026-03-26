@@ -142,7 +142,7 @@ export default function TrackOrder() {
                     </div>
                     {phoneError && <p className="text-sm text-destructive">{phoneError}</p>}
                     <Button type="submit" className="w-full h-12 bg-store-primary hover:bg-store-primary/90" disabled={!phoneNumber.trim() || isLoading}>
-                      {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Searching...</>) : (<>Find Orders<ArrowRight className="ml-2 h-4 w-4" /></>)}
+                      {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('track.searching')}</>) : (<>{t('track.findOrders')}<ArrowRight className="ml-2 h-4 w-4" /></>)}
                     </Button>
                   </form>
 
