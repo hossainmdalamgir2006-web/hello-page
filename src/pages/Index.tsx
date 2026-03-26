@@ -131,7 +131,7 @@ const Index = () => {
       iconBg: "primary" as const 
     },
     { 
-      title: t('dashboard.totalProducts'), 
+      title: 'Total Products', 
       value: stats.totalProducts.toString(), 
       change: stats.productsChange, 
       icon: Package, 
