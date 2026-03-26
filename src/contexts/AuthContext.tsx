@@ -104,9 +104,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState<AppRole | null>(null);
+  const [role, _setRole] = useState<AppRole | null>(null);
   const [roleLoading, setRoleLoading] = useState(true);
   const initDone = useRef(false);
+  const roleRef = useRef<AppRole | null>(null);
+
+  const setRole = (r: AppRole | null) => {
+    roleRef.current = r;
+    _setRole(r);
+  };
 
   // Fetch user role from database
   const fetchUserRole = async (userId: string, useCache = false) => {
