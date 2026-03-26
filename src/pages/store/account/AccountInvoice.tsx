@@ -129,7 +129,7 @@ export default function AccountInvoice() {
                 <div>
                   <p className="font-semibold text-sm">#{order.order_number}</p>
                   <p className="text-xs text-muted-foreground">
-                    {format(new Date(order.created_at), "MMM dd, yyyy")} · {formatPrice(order.total_amount).toFixed(0)}
+                    {format(new Date(order.created_at), "MMM dd, yyyy")} · {formatPrice(order.total_amount)}
                   </p>
                 </div>
               </div>

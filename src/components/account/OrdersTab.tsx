@@ -500,7 +500,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                   <Separator />
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span className="text-primary">{formatPrice(selectedOrder.total.toFixed(2))}</span>
+                    <span className="text-primary">{formatPrice(selectedOrder.total)}</span>
                   </div>
                 </div>
               </div>

@@ -962,7 +962,7 @@ export default function Checkout() {
               selectedZoneName={selectedZone?.name}
               selectedRateName={selectedRate?.name}
               selectedRateMaxOrderAmount={selectedRate?.max_order_amount}
-              formatPrice={formatPrice}
+              
             />
           </div>
         </form>
