@@ -210,7 +210,7 @@ export default function Checkout() {
     
     if (!billingAddressSameAsShipping && !useSavedBillingAddress) {
       if (!billingFormData.firstName || !billingFormData.lastName || !billingFormData.phone || !billingFormData.address || !billingFormData.city) {
-        toast.error("Please fill in all required billing address fields"); return false;
+        toast.error(t('checkout.fillBilling')); return false;
       }
       const phoneRegex2 = /^(\+?880|0)?1[3-9]\d{8}$/;
       if (!phoneRegex2.test(billingFormData.phone.replace(/[\s-]/g, ''))) {
