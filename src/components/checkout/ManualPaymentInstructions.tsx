@@ -48,8 +48,9 @@ export function ManualPaymentInstructions({
   };
 
   const colorClass = METHOD_COLORS[paymentMethod.method_id] || "bg-primary";
-  const accountTypeLabel = paymentMethod.account_type === "merchant" ? "Merchant" 
-    : paymentMethod.account_type === "agent" ? "Agent" : "Personal";
+  const accountTypeLabel = paymentMethod.account_type === "merchant" ? t('manualPayment.merchant') 
+    : paymentMethod.account_type === "agent" ? t('manualPayment.agent') : t('manualPayment.personal');
+  const [showQrModal, setShowQrModal] = useState(false);
 
   return (
     <div className="space-y-4 mt-4 p-4 bg-muted/50 rounded-lg border">
