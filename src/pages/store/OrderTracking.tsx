@@ -325,7 +325,7 @@ export default function OrderTracking() {
             </Button>
             <div>
               <h1 className="font-display text-2xl font-bold text-store-primary-foreground">
-                Track Order
+                {t('orderTracking.orderStatus')}
               </h1>
               <p className="text-store-primary-foreground/80 text-sm">
                 {order.order_number}
