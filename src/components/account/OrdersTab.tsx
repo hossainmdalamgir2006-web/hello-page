@@ -495,7 +495,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                   {selectedOrder.discount_amount > 0 && (
                     <div className="flex justify-between text-green-600">
                       <span>Discount</span>
-                      <span>-৳{selectedOrder.discount_amount.toFixed(2)}</span>
+                      <span>-{formatPrice(selectedOrder.discount_amount)}</span>
                     </div>
                   )}
                   <Separator />

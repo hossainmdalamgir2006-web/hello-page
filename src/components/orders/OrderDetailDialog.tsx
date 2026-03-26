@@ -197,7 +197,7 @@ export function OrderDetailDialog({
               {order.discount > 0 && (
                 <div className="flex justify-between text-sm text-success">
                   <span>Discount</span>
-                  <span>-৳{order.discount.toLocaleString()}</span>
+                  <span>-{formatPrice(order.discount)}</span>
                 </div>
               )}
               <Separator />

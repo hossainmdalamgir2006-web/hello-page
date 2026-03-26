@@ -425,7 +425,7 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
                   <span className="font-bold">
                     {selectedOrder.payment_method === 'cod' 
                       ? `${formatPrice(selectedOrder.total)}` 
-                      : '৳0 (Prepaid)'}
+                      : '0 (Prepaid)'}
                   </span>
                 </div>
               </div>

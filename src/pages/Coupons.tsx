@@ -871,7 +871,7 @@ export default function Coupons() {
                             </code>
                           </TableCell>
                           <TableCell className="font-medium text-green-600">
-                            -৳{record.discount_amount.toLocaleString()}
+                            -{formatPrice(record.discount_amount)}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
                             {format(new Date(record.created_at), 'dd MMM yyyy')}

@@ -383,7 +383,7 @@ export default function ProductDetail() {
             {hasFlashSale && <CountdownBanner discount={discount} t={t} />}
 
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-3xl font-bold text-foreground">{isGrouped && selectedChildren.length > 0 ? `${t('store.total')}: ` : ''}৳{displayPrice.toLocaleString()}</span>
+              <span className="text-3xl font-bold text-foreground">{isGrouped && selectedChildren.length > 0 ? `${t('store.total')}: ` : ''{formatPrice(displayPrice)}</span>
               {displayComparePrice && <span className="text-xl text-muted-foreground line-through">{formatPrice(displayComparePrice)}</span>}
               {discount > 0 && <Badge className="bg-store-accent text-store-accent-foreground">{t('store.save')} {formatPrice(((displayComparePrice || 0) - displayPrice))}</Badge>}
             </div>

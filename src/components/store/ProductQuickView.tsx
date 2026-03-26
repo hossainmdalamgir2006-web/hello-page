@@ -390,7 +390,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{child.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {child.bundleQty > 1 ? `${child.bundleQty}x ` : ""}৳{child.price.toLocaleString()}
+                          {child.bundleQty > 1 ? `${child.bundleQty}x ` : ""}{formatPrice(child.price)}
                         </p>
                       </div>
                     </div>
