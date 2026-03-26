@@ -83,7 +83,7 @@ export function CategoryGrid({ title, subtitle, categories }: CategoryGridProps)
             ))}
           </div>
         ) : cats.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">No categories available yet.</p>
+          <p className="text-center text-muted-foreground py-8">{t('categoryGrid.noCategories')}</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
             {cats.map((cat, i) => (
