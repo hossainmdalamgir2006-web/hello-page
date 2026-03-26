@@ -48,7 +48,7 @@ export function useProductsData() {
       setLoading(true);
       let query = supabase
         .from('products' as any)
-        .select('*')
+        .select('id, name, slug, sku, price, compare_at_price, cost_price, quantity, category, category_id, images, is_active, is_featured, description, short_description, barcode, weight, dimensions, tags, created_at, updated_at, meta_title, meta_description, meta_keywords, publish_at, low_stock_threshold, brand, product_type, video_url, youtube_url, video_thumbnail, deleted_at')
         .order('created_at', { ascending: false });
 
       if (!includeDeleted) {

@@ -294,18 +294,21 @@ export default function StoreProducts() {
   const [minRating, setMinRating] = useState(0);
   const [stockStatus, setStockStatus] = useState<"all" | "in-stock" | "out-of-stock">("all");
 
+  // Use shared categories cache instead of separate fetch
+  const { data: cachedCategories } = useCategoriesCache();
+  
+  useEffect(() => {
+    if (cachedCategories) {
+      setDbCategories(cachedCategories.map(c => c.name));
+    }
+  }, [cachedCategories]);
+
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
     fetchBrands();
     fetchVariantOptions();
     fetchRatings();
   }, []);
-
-  const fetchCategories = async () => {
-    const { data } = await supabase.from("categories").select("name").eq("is_active", true).is("deleted_at", null).order("sort_order");
-    if (data) setDbCategories(data.map((c: any) => c.name));
-  };
 
   const fetchBrands = async () => {
     const { data } = await supabase.from("products").select("brand").eq("is_active", true).is("deleted_at", null).not("brand", "is", null);
