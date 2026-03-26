@@ -25,6 +25,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 };
 
 export function RecentReturnRequests({ loading: externalLoading }: { loading?: boolean }) {
+  const { formatPrice } = useCurrency();
   const [returns, setReturns] = useState<RecentReturn[]>([]);
   const [stats, setStats] = useState({ pending: 0, completed: 0, totalRefunded: 0 });
   const [loading, setLoading] = useState(true);
@@ -92,7 +93,6 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
   }, []);
 
   if (loading || externalLoading) {
-  const { formatPrice } = useCurrency();
     return (
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-14" />)}

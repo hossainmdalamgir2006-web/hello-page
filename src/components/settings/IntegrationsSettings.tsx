@@ -28,6 +28,7 @@ import { GoogleSearchConsoleSettings } from "./GoogleSearchConsoleSettings";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function IntegrationsSettings() {
+  const { formatPrice } = useCurrency();
   const { settings, loading, saving, updateMultipleSettings, getSettingValue, refetch } = useStoreSettings();
   
   const [apiKey, setApiKey] = useState("");
@@ -58,7 +59,6 @@ export function IntegrationsSettings() {
   const testConnection = async () => {
     if (!apiKey || !secretKey) {
       toast.error("Please enter both API Key and Secret Key");
-  const { formatPrice } = useCurrency();
       return;
     }
 

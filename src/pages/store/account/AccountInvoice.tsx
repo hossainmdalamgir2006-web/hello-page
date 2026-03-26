@@ -12,6 +12,7 @@ import jsPDF from "jspdf";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export default function AccountInvoice() {
+  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { t } = useLanguage();
   const [orders, setOrders] = useState<any[]>([]);
@@ -32,7 +33,6 @@ export default function AccountInvoice() {
       if (data) {
         const withItems = await Promise.all(data.map(async (o) => {
           const { data: items } = await supabase.from("order_items").select("product_name, quantity, unit_price, total_price").eq("order_id", o.id);
-  const { formatPrice } = useCurrency();
           return { ...o, items: items || [] };
         }));
         setOrders(withItems);

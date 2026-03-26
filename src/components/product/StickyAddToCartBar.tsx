@@ -12,11 +12,11 @@ interface StickyAddToCartBarProps {
 }
 
 export function StickyAddToCartBar({ productName, displayPrice, onAddToCart, onBuyNow, visible }: StickyAddToCartBarProps) {
+  const { formatPrice } = useCurrency();
   const { t } = useLanguage();
   
   if (!visible) return null;
 
-  const { formatPrice } = useCurrency();
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t shadow-lg p-3 flex items-center gap-3 animate-slide-up">

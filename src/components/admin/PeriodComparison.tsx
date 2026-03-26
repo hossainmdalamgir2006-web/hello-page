@@ -17,6 +17,7 @@ interface PeriodComparisonProps {
 }
 
 export function PeriodComparison({
+  const { formatPrice } = useCurrency();
   metrics,
   currentPeriodLabel,
   previousPeriodLabel,
@@ -25,7 +26,6 @@ export function PeriodComparison({
   const formatValue = (value: number, format: "currency" | "number" | "percent") => {
     switch (format) {
       case "currency":
-  const { formatPrice } = useCurrency();
         return `${formatPrice(value)}`;
       case "percent":
         return `${value.toFixed(1)}%`;

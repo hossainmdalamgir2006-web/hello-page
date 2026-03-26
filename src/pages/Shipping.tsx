@@ -49,6 +49,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 };
 
 export default function Shipping() {
+  const { formatPrice } = useCurrency();
   // Database hooks
   const shippingData = useShippingData();
   const { zonesWithRates, loading: shippingLoading, addZone, toggleZone, deleteZone, addRate, updateRate, deleteRate, toggleRate } = shippingData;
@@ -100,7 +101,6 @@ export default function Shipping() {
   const handleAddZone = async () => {
     if (!newZone.name || !newZone.regions) {
       toast.error("Please fill in all fields");
-  const { formatPrice } = useCurrency();
       return;
     }
 

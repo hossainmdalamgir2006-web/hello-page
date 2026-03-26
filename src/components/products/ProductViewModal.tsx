@@ -28,6 +28,7 @@ const colorNames: Record<string, string> = {
 };
 
 const getStatusColor = (status: Product["status"]) => {
+  const { formatPrice } = useCurrency();
   switch (status) {
     case "active": return "bg-success/10 text-success border-success/20";
     case "draft": return "bg-warning/10 text-warning border-warning/20";
@@ -50,7 +51,6 @@ export function ProductViewModal({ open, onOpenChange, product, onEdit }: Produc
     ? Math.round((1 - product.price / product.comparePrice) * 100)
     : 0;
 
-  const { formatPrice } = useCurrency();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto bg-card p-0">

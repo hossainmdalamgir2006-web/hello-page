@@ -62,9 +62,9 @@ interface ProductAttribute { id: string; attribute_name: string; attribute_value
 
 // --- Helpers ---
 function extractYoutubeId(url: string): string | null {
+  const { formatPrice } = useCurrency();
   const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/, /^([a-zA-Z0-9_-]{11})$/];
   for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
-  const { formatPrice } = useCurrency();
   return null;
 }
 

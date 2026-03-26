@@ -24,6 +24,7 @@ interface OrderResult {
 }
 
 export default function TrackOrder() {
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [orderNumber, setOrderNumber] = useState("");
@@ -41,7 +42,6 @@ export default function TrackOrder() {
     const orderNumberRegex = /^ORD-\d{8}-\d{4}$/;
     if (!orderNumberRegex.test(trimmedOrder)) {
       setOrderError(t('track.invalidOrder'));
-  const { formatPrice } = useCurrency();
       return;
     }
     navigate(`/track/${trimmedOrder}`);

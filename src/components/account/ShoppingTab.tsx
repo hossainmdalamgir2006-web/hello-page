@@ -50,6 +50,7 @@ interface ShoppingTabProps {
 }
 
 export function ShoppingTab({ orders }: ShoppingTabProps) {
+  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
@@ -83,7 +84,6 @@ export function ShoppingTab({ orders }: ShoppingTabProps) {
       });
     });
 
-  const { formatPrice } = useCurrency();
     return Array.from(productMap.values())
       .sort((a, b) => b.times_ordered - a.times_ordered)
       .slice(0, 10);

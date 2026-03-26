@@ -17,13 +17,13 @@ interface AccountOverviewProps {
 }
 
 export function AccountOverview({ orders, profile }: AccountOverviewProps) {
+  const { formatPrice } = useCurrency();
   const stats = useMemo(() => {
     const totalSpent = orders.reduce((sum, o) => sum + o.total, 0);
     const deliveredCount = orders.filter(o => o.status === 'delivered').length;
     const pendingCount = orders.filter(o => ['pending', 'processing'].includes(o.status)).length;
     const shippedCount = orders.filter(o => o.status === 'shipped').length;
 
-  const { formatPrice } = useCurrency();
     return {
       totalOrders: orders.length,
       totalSpent,

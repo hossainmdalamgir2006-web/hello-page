@@ -22,6 +22,7 @@ interface Order {
 }
 
 export default function AccountDashboard() {
+  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -101,7 +102,6 @@ export default function AccountDashboard() {
   }, [user]);
 
   if (loading) {
-  const { formatPrice } = useCurrency();
     return <DelayedLoader><DashboardSkeleton /></DelayedLoader>;
   }
 

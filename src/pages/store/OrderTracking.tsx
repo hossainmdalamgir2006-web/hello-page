@@ -62,11 +62,11 @@ interface Order {
 
 // Helper to get address as string
 const getAddressString = (addr: any): string => {
+  const { formatPrice } = useCurrency();
   if (!addr) return 'N/A';
   if (typeof addr === 'string') return addr;
   if (typeof addr === 'object') {
     const parts = [addr.street, addr.area, addr.city].filter(Boolean);
-  const { formatPrice } = useCurrency();
     return parts.length > 0 ? parts.join(', ') : 'N/A';
   }
   return 'N/A';

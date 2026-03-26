@@ -47,6 +47,7 @@ interface PaymentVerificationModalProps {
 }
 
 export function PaymentVerificationModal({
+  const { formatPrice } = useCurrency();
   open,
   onOpenChange,
   order,
@@ -60,7 +61,6 @@ export function PaymentVerificationModal({
   const extractTrxId = (noteText: string | null): string | null => {
     if (!noteText) return null;
     const match = noteText.match(/TrxID:\s*([A-Z0-9]+)/i);
-  const { formatPrice } = useCurrency();
     return match ? match[1] : null;
   };
 

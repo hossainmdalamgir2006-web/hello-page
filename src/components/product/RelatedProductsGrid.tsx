@@ -18,10 +18,10 @@ interface RelatedProductsGridProps {
 }
 
 export function RelatedProductsGrid({ products }: RelatedProductsGridProps) {
+  const { formatPrice } = useCurrency();
   const { t } = useLanguage();
   if (products.length === 0) return null;
 
-  const { formatPrice } = useCurrency();
   return (
     <div className="mt-12">
       <h2 className="font-display text-2xl font-bold mb-6">{t('store.relatedProducts')}</h2>

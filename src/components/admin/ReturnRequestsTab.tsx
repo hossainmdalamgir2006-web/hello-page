@@ -40,6 +40,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 };
 
 export function ReturnRequestsTab() {
+  const { formatPrice } = useCurrency();
   const { requests, isLoading, updateStatus, isUpdating, counts } = useReturnRequests();
   const { processRefund, isProcessing: isRefundProcessing } = useRefundProcessing();
   const [search, setSearch] = useState("");
@@ -97,7 +98,6 @@ export function ReturnRequestsTab() {
       r.order_number?.toLowerCase().includes(search.toLowerCase()) ||
       r.customer_name?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = statusFilter === "all" || r.status === statusFilter;
-  const { formatPrice } = useCurrency();
     return matchesSearch && matchesStatus;
   });
 

@@ -43,6 +43,7 @@ const typeConfig: Record<
 };
 
 export function ManagerApprovalQueue() {
+  const { formatPrice } = useCurrency();
   const { items, isLoading, counts } = useApprovalQueue();
   const [activeTab, setActiveTab] = useState<"all" | ApprovalItemType>("all");
   const navigate = useNavigate();
@@ -65,7 +66,6 @@ export function ManagerApprovalQueue() {
   };
 
   if (isLoading) {
-  const { formatPrice } = useCurrency();
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">

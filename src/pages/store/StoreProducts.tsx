@@ -40,8 +40,8 @@ interface Product {
 
 /* ─── Collapsible Filter Section ─── */
 function FilterSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
-  const [open, setOpen] = useState(defaultOpen);
   const { formatPrice } = useCurrency();
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex items-center justify-between w-full group">

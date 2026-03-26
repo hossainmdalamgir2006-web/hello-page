@@ -23,10 +23,10 @@ interface PaymentMethodConfigProps {
 
 // Check if a field should be shown based on its dependsOn conditions
 function shouldShowField(field: { dependsOn?: string; dependsOnValue?: string }, formData: Record<string, string>): boolean {
+  const { formatPrice } = useCurrency();
   if (!field.dependsOn) return true;
   const val = formData[field.dependsOn];
   if (field.dependsOnValue) {
-  const { formatPrice } = useCurrency();
     return val === field.dependsOnValue;
   }
   // Default: show if truthy

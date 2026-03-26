@@ -15,12 +15,12 @@ interface ProductGroupManagerProps {
 }
 
 export function ProductGroupManager({ productId, productType, allProducts }: ProductGroupManagerProps) {
+  const { formatPrice } = useCurrency();
   const { items, loading, addItem, updateItem, removeItem } = useProductGroupItems(productId);
   const [search, setSearch] = useState("");
   const [showPicker, setShowPicker] = useState(false);
 
   if (!productId) {
-  const { formatPrice } = useCurrency();
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <Package className="h-10 w-10 text-muted-foreground mb-3" />

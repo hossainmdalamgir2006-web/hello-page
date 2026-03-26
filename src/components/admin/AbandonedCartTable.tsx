@@ -48,6 +48,7 @@ interface AbandonedCartTableProps {
 }
 
 export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCartTableProps) {
+  const { formatPrice } = useCurrency();
   const [selectedCart, setSelectedCart] = useState<AbandonedCart | null>(null);
   const [sendingReminder, setSendingReminder] = useState<string | null>(null);
   const { toast } = useToast();
@@ -59,7 +60,6 @@ export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCar
         description: "This customer has no email address.",
         variant: "destructive",
       });
-  const { formatPrice } = useCurrency();
       return;
     }
 

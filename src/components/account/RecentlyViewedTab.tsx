@@ -10,6 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function RecentlyViewedTab() {
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { items, clearAll } = useRecentlyViewed();
   const { addItem } = useCart();
@@ -24,7 +25,6 @@ export function RecentlyViewedTab() {
     toast.success(`${item.name} added to cart`);
   };
 
-  const { formatPrice } = useCurrency();
   return (
     <Card>
       <CardHeader>

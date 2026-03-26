@@ -20,6 +20,7 @@ interface FeaturedProductCardProps {
 }
 
 export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps) {
+  const { formatPrice } = useCurrency();
   const { addItem } = useCart();
   const { t } = useLanguage();
 
@@ -33,7 +34,6 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
     addItem({ id: product.id, name: product.name, price: product.price, comparePrice: product.compare_at_price || undefined, image: imageUrl });
   };
 
-  const { formatPrice } = useCurrency();
   return (
     <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
       <Link to={`/product/${product.slug || product.id}`} className="relative aspect-[3/4] overflow-hidden block">

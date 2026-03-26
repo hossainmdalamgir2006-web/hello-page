@@ -64,6 +64,7 @@ const sortOptions = [
 ];
 
 export function ProductFilters({
+  const { formatPrice } = useCurrency();
   filters,
   onFiltersChange,
   categories,
@@ -94,7 +95,6 @@ export function ProductFilters({
     filters.priceRange[0] > 0 || filters.priceRange[1] < 50000,
   ].filter(Boolean).length;
 
-  const { formatPrice } = useCurrency();
   return (
     <div className="space-y-4">
       {/* Top Bar */}

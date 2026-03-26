@@ -85,6 +85,7 @@ const colorOptions = [
 ];
 
 export function ProductModal({
+  const { formatPrice } = useCurrency();
   open,
   onOpenChange,
   product,
@@ -180,7 +181,6 @@ export function ProductModal({
       } else if (newImages.length === 0) {
         updateField("image", "");
       }
-  const { formatPrice } = useCurrency();
       return newImages;
     });
   };

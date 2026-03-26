@@ -54,6 +54,7 @@ interface SendToCourierModalProps {
 type CourierType = "steadfast" | "pathao";
 
 export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: SendToCourierModalProps) {
+  const { formatPrice } = useCurrency();
   const [selectedCourier, setSelectedCourier] = useState<CourierType>("steadfast");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -155,7 +156,6 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
     // Validation
     if (!recipientName || !recipientPhone || !recipientAddress) {
       toast.error("Please fill in all required fields");
-  const { formatPrice } = useCurrency();
       return;
     }
 

@@ -65,6 +65,7 @@ const FILTER_OPTIONS: { value: TrashEntityType | 'all'; label: string }[] = [
 ];
 
 export default function GlobalTrash() {
+  const { formatPrice } = useCurrency();
   const {
     items, activityLog, loading, logLoading, filter, setFilter,
     restoreItem, permanentDelete, bulkRestore, bulkPermanentDelete, fetchActivityLog,
@@ -128,7 +129,6 @@ export default function GlobalTrash() {
   const entityCounts = useMemo(() => {
     const counts: Record<string, number> = { all: items.length };
     items.forEach(i => { counts[i.entity_type] = (counts[i.entity_type] || 0) + 1; });
-  const { formatPrice } = useCurrency();
     return counts;
   }, [items]);
 

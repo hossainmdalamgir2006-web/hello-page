@@ -52,6 +52,7 @@ import { PeriodComparison } from "@/components/admin/PeriodComparison";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 const StatCard = ({ 
+  const { formatPrice } = useCurrency();
   title, 
   value, 
   change, 
@@ -123,7 +124,6 @@ export default function Analytics() {
     refetch,
   } = useAnalyticsData(period);
 
-  const { formatPrice } = useCurrency();
 
 
   return (

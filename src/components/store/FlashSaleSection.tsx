@@ -16,6 +16,7 @@ interface FlashSaleSectionProps {
 }
 
 function useCountdown(endTime: string | null) {
+  const { formatPrice } = useCurrency();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [expired, setExpired] = useState(false);
 
@@ -29,7 +30,6 @@ function useCountdown(endTime: string | null) {
 
       if (diff <= 0) {
         setExpired(true);
-  const { formatPrice } = useCurrency();
         return;
       }
       setTimeLeft({

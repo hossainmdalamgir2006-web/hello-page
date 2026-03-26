@@ -119,11 +119,11 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
   };
 
   const openSendDialog = (order: any) => {
+  const { formatPrice } = useCurrency();
     // Check if already sent
     const existingShipment = steadfastShipments.find(s => s.order_id === order.id);
     if (existingShipment) {
       toast.error(`This order has already been sent. Tracking: ${existingShipment.tracking_number}`);
-  const { formatPrice } = useCurrency();
       return;
     }
     setSelectedOrder(order);

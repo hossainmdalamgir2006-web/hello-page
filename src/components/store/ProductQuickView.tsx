@@ -54,6 +54,7 @@ interface ProductQuickViewProps {
 }
 
 export function ProductQuickView({ product, open, onOpenChange }: ProductQuickViewProps) {
+  const { formatPrice } = useCurrency();
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const { variants } = useProductVariants(open ? product.id : null);
@@ -109,7 +110,6 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
           if (childProducts) {
             const ordered = childIds.map((cid) => {
               const cp = (childProducts as any[]).find((p) => p.id === cid);
-  const { formatPrice } = useCurrency();
               return cp ? { id: cp.id, name: cp.name, price: Number(cp.price), images: cp.images || [], quantity: cp.quantity || 0, selected: true, childQuantity: 1 } : null;
             }).filter(Boolean) as GroupChildProduct[];
             setGroupChildren(ordered);

@@ -42,6 +42,7 @@ const RecentReturnRequests = lazy(() => import("@/components/admin/RecentReturnR
 const WidgetLoader = () => <Skeleton className="h-48 w-full rounded-lg" />;
 
 const Index = () => {
+  const { formatPrice } = useCurrency();
   const [dateRangePreset, setDateRangePreset] = useState<DateRangePreset>("last30days");
   const [customRange, setCustomRange] = useState<{ from: Date; to: Date } | undefined>();
   const [pendingReturns, setPendingReturns] = useState(0);
@@ -113,7 +114,6 @@ const Index = () => {
     }
   };
 
-  const { formatPrice } = useCurrency();
 
 
   const statsData = [

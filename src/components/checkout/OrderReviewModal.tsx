@@ -22,12 +22,12 @@ interface OrderReviewModalProps {
 }
 
 export function OrderReviewModal({
+  const { formatPrice } = useCurrency();
   open, onOpenChange, items, subtotal, discount, shippingCost, codCharge, total,
   paymentMethodName, shippingAddress, onConfirm, processing,
 }: OrderReviewModalProps) {
   const { t } = useLanguage();
 
-  const { formatPrice } = useCurrency();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">

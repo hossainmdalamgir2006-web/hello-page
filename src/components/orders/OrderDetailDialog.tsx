@@ -59,11 +59,11 @@ const paymentStatusConfig: Record<string, { label: string; color: string }> = {
 };
 
 const getShippingAddressString = (address: any): string => {
+  const { formatPrice } = useCurrency();
   if (!address) return 'N/A';
   if (typeof address === 'string') return address;
   if (typeof address === 'object') {
     const parts = [address.street, address.area, address.city].filter(Boolean);
-  const { formatPrice } = useCurrency();
     return parts.length > 0 ? parts.join(', ') : 'N/A';
   }
   return 'N/A';

@@ -37,6 +37,7 @@ const refundStatusConfig: Record<RefundStatus, { label: string; color: string }>
 };
 
 export function RefundProcessingModal({ open, onOpenChange, order, onProcess, isProcessing }: RefundProcessingModalProps) {
+  const { formatPrice } = useCurrency();
   const [refundStatus, setRefundStatus] = useState<RefundStatus>("requested");
   const [refundAmount, setRefundAmount] = useState("");
   const [refundReason, setRefundReason] = useState("");
@@ -66,7 +67,6 @@ export function RefundProcessingModal({ open, onOpenChange, order, onProcess, is
   const amount = parseFloat(refundAmount) || 0;
   const isValid = amount > 0 && amount <= order.total && refundReason.trim().length > 0;
 
-  const { formatPrice } = useCurrency();
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogContent className="max-w-md bg-card">

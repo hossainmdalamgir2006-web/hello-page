@@ -15,6 +15,7 @@ interface NewArrivalsSectionProps {
 }
 
 export function NewArrivalsSection({
+  const { formatPrice } = useCurrency();
   title,
   subtitle,
   badge,
@@ -35,7 +36,6 @@ export function NewArrivalsSection({
   // Use latest products (sorted by created_at desc)
   const newProducts = [...products].slice(0, count);
 
-  const { formatPrice } = useCurrency();
   return (
     <section className="py-16 bg-store-card">
       <div className="container mx-auto px-4">

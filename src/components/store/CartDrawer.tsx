@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function CartDrawer() {
+  const { formatPrice } = useCurrency();
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, itemCount } = useCart();
   const { t } = useLanguage();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
@@ -27,7 +28,6 @@ export function CartDrawer() {
     }
   };
 
-  const { formatPrice } = useCurrency();
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetContent className="w-full sm:max-w-md flex flex-col">

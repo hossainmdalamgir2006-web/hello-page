@@ -31,6 +31,7 @@ const statusColors: Record<string, string> = {
 };
 
 export function CustomerOrdersPanel({ customerEmail, customerName }: CustomerOrdersPanelProps) {
+  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -72,7 +73,6 @@ export function CustomerOrdersPanel({ customerEmail, customerName }: CustomerOrd
 
   if (!customerEmail) return null;
 
-  const { formatPrice } = useCurrency();
   return (
     <div className="border-t pt-2">
       <Button

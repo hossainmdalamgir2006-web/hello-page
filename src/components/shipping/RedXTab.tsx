@@ -108,10 +108,10 @@ export const RedXTab = forwardRef<HTMLDivElement, RedXTabProps>(function RedXTab
   };
 
   const openSendDialog = (order: any) => {
+  const { formatPrice } = useCurrency();
     const existingShipment = redxShipments.find(s => s.order_id === order.id);
     if (existingShipment) {
       toast.error(`Already sent. Tracking: ${existingShipment.tracking_number}`);
-  const { formatPrice } = useCurrency();
       return;
     }
     setSelectedOrder(order);

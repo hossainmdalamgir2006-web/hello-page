@@ -58,6 +58,7 @@ interface MobileOrderCardProps {
 }
 
 export function MobileOrderCard({
+  const { formatPrice } = useCurrency();
   order,
   onViewDetails,
   onUpdateStatus,
@@ -112,7 +113,6 @@ export function MobileOrderCard({
 
   const formatDate = (dateString: string) => {
     try {
-  const { formatPrice } = useCurrency();
       return format(new Date(dateString), 'MMM dd, HH:mm');
     } catch {
       return dateString;

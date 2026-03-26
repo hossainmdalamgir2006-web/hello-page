@@ -40,6 +40,7 @@ interface OrderState {
 }
 
 export default function OrderConfirmation() {
+  const { formatPrice } = useCurrency();
   const location = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();
@@ -70,7 +71,6 @@ export default function OrderConfirmation() {
   const getPaymentStatusMessage = () => {
     if (paymentMethod?.method_id === 'cod') return t('store.paymentOnDelivery');
     if (['bkash', 'nagad', 'rocket', 'upay'].includes(paymentMethod?.method_id || '')) {
-  const { formatPrice } = useCurrency();
       return transactionId ? `TrxID: ${transactionId} - ${t('store.paymentVerificationPending')}` : t('store.paymentVerificationPending');
     }
     return t('store.processing');

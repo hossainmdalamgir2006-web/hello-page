@@ -60,11 +60,11 @@ interface OrderResult {
 
 // Helper to get address string
 const getAddressString = (address: any): string => {
+  const { formatPrice } = useCurrency();
   if (!address) return "";
   if (typeof address === "string") return address;
   if (typeof address === "object") {
     const parts = [address.street, address.area, address.city].filter(Boolean);
-  const { formatPrice } = useCurrency();
     return parts.join(", ");
   }
   return "";

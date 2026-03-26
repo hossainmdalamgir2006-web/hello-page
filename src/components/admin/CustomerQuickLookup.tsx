@@ -22,10 +22,10 @@ const tierConfig = {
 };
 
 const getLoyaltyTier = (totalSpent: number): keyof typeof tierConfig => {
+  const { formatPrice } = useCurrency();
   if (totalSpent >= 80000) return "platinum";
   if (totalSpent >= 50000) return "gold";
   if (totalSpent >= 20000) return "silver";
-  const { formatPrice } = useCurrency();
   return "bronze";
 };
 

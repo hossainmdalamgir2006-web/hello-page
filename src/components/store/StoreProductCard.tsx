@@ -30,6 +30,7 @@ interface StoreProductCardProps {
 }
 
 export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCardProps) {
+  const { formatPrice } = useCurrency();
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const [quickViewOpen, setQuickViewOpen] = useState(false);
@@ -75,7 +76,6 @@ export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCar
   const needsVariantSelection = isVariable || isGrouped;
 
   if (viewMode === "list") {
-  const { formatPrice } = useCurrency();
     return (
       <Card className="overflow-hidden">
         <div className="flex">

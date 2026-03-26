@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export default function Wishlist() {
+  const { formatPrice } = useCurrency();
   const { items, loading, removeItem } = useWishlist();
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
@@ -28,7 +29,6 @@ export default function Wishlist() {
   const handleRemove = async (productId: string) => { await removeItem(productId); };
 
   if (!user) {
-  const { formatPrice } = useCurrency();
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-store-muted flex items-center justify-center"><Heart className="w-16 h-16 text-muted-foreground" /></div>

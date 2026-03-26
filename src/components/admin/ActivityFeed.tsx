@@ -48,6 +48,7 @@ interface ActivityFeedProps {
 }
 
 export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
+  const { formatPrice } = useCurrency();
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -161,7 +162,6 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, fetchActivities)
       .subscribe();
 
-  const { formatPrice } = useCurrency();
     return () => {
       supabase.removeChannel(ordersChannel);
       supabase.removeChannel(customersChannel);

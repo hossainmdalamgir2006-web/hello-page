@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function WishlistTab() {
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { items, removeItem, loading } = useWishlist();
   const { addItem } = useCart();
@@ -27,7 +28,6 @@ export function WishlistTab() {
     await removeItem(productId);
   };
 
-  const { formatPrice } = useCurrency();
   return (
     <Card>
       <CardHeader>

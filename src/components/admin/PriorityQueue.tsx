@@ -49,6 +49,7 @@ interface PriorityItem {
 }
 
 export function PriorityQueue() {
+  const { formatPrice } = useCurrency();
   const { tickets } = useSupportTickets();
   const { orders } = useOrdersData();
   const navigate = useNavigate();
@@ -107,7 +108,6 @@ export function PriorityQueue() {
     // Sort by urgency score descending
     items.sort((a, b) => b.urgencyScore - a.urgencyScore);
 
-  const { formatPrice } = useCurrency();
     return items;
   }, [tickets, orders]);
 

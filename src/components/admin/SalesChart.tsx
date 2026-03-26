@@ -14,8 +14,8 @@ interface SalesChartProps {
 }
 
 export function SalesChart({ data = [], loading = false }: SalesChartProps) {
-  if (loading) {
   const { formatPrice } = useCurrency();
+  if (loading) {
     return (
       <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-fade-in">
         <div className="mb-4 sm:mb-6">

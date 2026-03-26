@@ -50,10 +50,10 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onEdit, onDelete, onView, onDuplicate }: ProductCardProps) {
+  const { formatPrice } = useCurrency();
   const getStatusColor = (status: Product["status"]) => {
     switch (status) {
       case "active":
-  const { formatPrice } = useCurrency();
         return "bg-success/10 text-success border-success/20";
       case "draft":
         return "bg-warning/10 text-warning border-warning/20";

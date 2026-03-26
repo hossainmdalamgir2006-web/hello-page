@@ -51,6 +51,7 @@ interface SavedAddress {
 }
 
 export default function Checkout() {
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const location = useLocation();
   const { items: allItems, selectedItems, selectedSubtotal, subtotal: cartSubtotal, clearCart, markCartRecovered, removeSelectedItems } = useCart();
@@ -123,7 +124,6 @@ export default function Checkout() {
     if (!formData.firstName || !formData.phone || !formData.address || !formData.city) return 0;
     if (!selectedZoneId || !selectedRateId) return 1;
     if (!paymentMethod) return 2;
-  const { formatPrice } = useCurrency();
     return 3;
   }, [formData, selectedZoneId, selectedRateId, paymentMethod]);
 

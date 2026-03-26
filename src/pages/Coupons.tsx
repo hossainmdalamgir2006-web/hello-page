@@ -101,6 +101,7 @@ interface AutoRule {
 }
 
 const getCouponStatus = (coupon: Coupon): 'active' | 'scheduled' | 'expired' | 'disabled' => {
+  const { formatPrice } = useCurrency();
   if (!coupon.is_active) return 'disabled';
   
   const now = new Date();
@@ -110,7 +111,6 @@ const getCouponStatus = (coupon: Coupon): 'active' | 'scheduled' | 'expired' | '
   if (startDate && startDate > now) return 'scheduled';
   if (endDate && endDate < now) return 'expired';
   
-  const { formatPrice } = useCurrency();
   return 'active';
 };
 

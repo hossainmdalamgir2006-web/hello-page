@@ -15,6 +15,7 @@ interface OrderStatsCardsProps {
 }
 
 export function OrderStatsCards({ stats }: OrderStatsCardsProps) {
+  const { formatPrice } = useCurrency();
   const cards = [
     { label: "Total Orders", value: stats.total.toString(), icon: ShoppingBag, color: "bg-primary/10 text-primary" },
     { label: "Pending", value: stats.pending.toString(), icon: Clock, color: "bg-warning/10 text-warning" },
@@ -23,7 +24,6 @@ export function OrderStatsCards({ stats }: OrderStatsCardsProps) {
     { label: "Revenue", value: `${formatPrice((stats.revenue / 1000).toFixed(1))}k`, icon: TrendingUp, color: "bg-success/10 text-success" },
   ];
 
-  const { formatPrice } = useCurrency();
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
       {cards.map((card) => (

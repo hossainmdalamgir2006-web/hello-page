@@ -39,6 +39,7 @@ interface VariantOptions {
 }
 
 export function ProductVariantsManager({ productId }: ProductVariantsManagerProps) {
+  const { formatPrice } = useCurrency();
   const { variants, loading, addVariant, updateVariant, deleteVariant } = useProductVariants(productId);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);
@@ -56,7 +57,6 @@ export function ProductVariantsManager({ productId }: ProductVariantsManagerProp
   });
 
   if (!productId) {
-  const { formatPrice } = useCurrency();
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <Package className="h-10 w-10 text-muted-foreground mb-3" />

@@ -100,6 +100,7 @@ interface OrdersTabProps {
 }
 
 export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addItem } = useCart();
@@ -116,7 +117,6 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
 
   // Filter & search
   const filteredOrders = useMemo(() => {
-  const { formatPrice } = useCurrency();
     return orders.filter((order) => {
       const matchesSearch =
         !searchQuery ||

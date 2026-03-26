@@ -89,6 +89,7 @@ const CSV_HEADERS = [
 ];
 
 export function ProductImportExport({ products, onImport }: ProductImportExportProps) {
+  const { formatPrice } = useCurrency();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -100,7 +101,6 @@ export function ProductImportExport({ products, onImport }: ProductImportExportP
     if (value === null || value === undefined) return "";
     const str = String(value);
     if (str.includes(",") || str.includes('"') || str.includes("\n")) {
-  const { formatPrice } = useCurrency();
       return `"${str.replace(/"/g, '""')}"`;
     }
     return str;

@@ -19,6 +19,7 @@ import { useShippingRates } from "@/hooks/useShippingRates";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 export default function Cart() {
+  const { formatPrice } = useCurrency();
   const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount } = useCart();
   const { t } = useLanguage();
   const { appliedCoupon, loading: couponLoading, validateCoupon, removeCoupon } = useCoupon();
@@ -69,7 +70,6 @@ export default function Cart() {
     );
     if (matchingRate) return matchingRate.rate;
     // Fallback: free shipping over 2000, else 100
-  const { formatPrice } = useCurrency();
     return checkoutSubtotal >= 2000 ? 0 : 100;
   })();
   const total = checkoutSubtotal - discount + shippingCost;

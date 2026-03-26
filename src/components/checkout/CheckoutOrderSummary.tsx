@@ -40,6 +40,7 @@ interface CheckoutOrderSummaryProps {
 }
 
 export function CheckoutOrderSummary({
+  const { formatPrice } = useCurrency();
   items, subtotal, discount, shippingCost, codCharge, total,
   isAutoDiscountApplied, couponCode, onCouponCodeChange, appliedCouponCode,
   onApplyCoupon, onRemoveCoupon, couponLoading, processing,
@@ -47,7 +48,6 @@ export function CheckoutOrderSummary({
   selectedZoneName, selectedRateName, selectedRateMaxOrderAmount,
 }: CheckoutOrderSummaryProps) {
   const { t } = useLanguage();
-  const { formatPrice } = useCurrency();
   return (
     <div className="lg:col-span-1">
       <Card className="sticky top-24">

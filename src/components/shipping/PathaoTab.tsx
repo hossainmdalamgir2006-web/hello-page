@@ -222,11 +222,11 @@ export const PathaoTab = forwardRef<HTMLDivElement, PathaoTabProps>(function Pat
   };
 
   const openSendDialog = (order: any) => {
+  const { formatPrice } = useCurrency();
     // Check if already sent
     const existingShipment = pathaoShipments.find(s => s.order_id === order.id);
     if (existingShipment) {
       toast.error(`This order has already been sent. Consignment: ${existingShipment.consignment_id}`);
-  const { formatPrice } = useCurrency();
       return;
     }
     setSelectedOrder(order);
