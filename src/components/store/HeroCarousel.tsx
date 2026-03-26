@@ -240,9 +240,11 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
             <button
               key={i}
               onClick={() => { goTo(i); resetTimer(); }}
-              className={`transition-all rounded-full ${i === current ? "w-8 h-2.5 bg-store-accent" : "w-2.5 h-2.5 bg-white/50 hover:bg-white/80"}`}
+              className={`transition-all rounded-full p-1 ${i === current ? "w-10 h-6 bg-store-accent" : "w-6 h-6 bg-white/50 hover:bg-white/80"}`}
               aria-label={`Go to slide ${i + 1}`}
-            />
+            >
+              <span className={`block rounded-full ${i === current ? "w-full h-full bg-store-accent" : "w-2.5 h-2.5 bg-white/80 mx-auto"}`} />
+            </button>
           ))}
         </div>
       )}

@@ -141,6 +141,7 @@ export function StoreHeader() {
                 className="rounded-none bg-store-primary hover:bg-store-primary/90 text-store-primary-foreground shrink-0"
               >
                 <Search className="h-5 w-5" />
+                <span className="sr-only">Search</span>
               </Button>
             </div>
           </form>

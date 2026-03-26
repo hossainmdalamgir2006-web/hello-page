@@ -38,7 +38,7 @@ export function MobileBottomNav() {
               to={path}
               className={cn(
                 "flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] transition-colors relative",
-                active ? "text-primary font-medium" : "text-muted-foreground"
+                active ? "text-foreground font-medium" : "text-muted-foreground"
               )}
             >
               <div className="relative">

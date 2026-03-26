@@ -190,18 +190,24 @@ export function StoreFooter() {
           <div>
             <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.contact')}</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
-                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>{storeAddress}</span>
-              </li>
-              <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
-                <Phone className="h-4 w-4 flex-shrink-0" />
-                <span>{storePhone}</span>
-              </li>
-              <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
-                <Mail className="h-4 w-4 flex-shrink-0" />
-                <span>{storeEmail}</span>
-              </li>
+              {storeAddress && (
+                <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" aria-hidden="true" />
+                  <span>{storeAddress}</span>
+                </li>
+              )}
+              {storePhone && (
+                <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
+                  <Phone className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                  <span>{storePhone}</span>
+                </li>
+              )}
+              {storeEmail && (
+                <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
+                  <Mail className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                  <span>{storeEmail}</span>
+                </li>
+              )}
             </ul>
           </div>
         </div>

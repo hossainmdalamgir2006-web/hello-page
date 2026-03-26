@@ -98,7 +98,7 @@ function TestimonialCard({ item, color }: { item: Testimonial; color: string }) 
     <div className="bg-store-card rounded-2xl p-6 shadow-sm border border-store-muted relative">
       <Quote className="absolute top-4 right-4 h-8 w-8 text-store-primary/10 fill-current" />
       <StarRating rating={item.rating} />
-      <p className="text-foreground/80 text-sm leading-relaxed mt-3 mb-5">"{item.review}"</p>
+      <p className="text-foreground text-sm leading-relaxed mt-3 mb-5">"{item.review}"</p>
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${color} flex items-center justify-center flex-shrink-0`}>
           <span className="text-white font-bold text-sm">{item.avatar || item.name.charAt(0)}</span>
