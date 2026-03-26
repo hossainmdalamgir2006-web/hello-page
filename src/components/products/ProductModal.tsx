@@ -392,10 +392,20 @@ export function ProductModal({
                 ))}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-24 w-24 flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50 text-muted-foreground transition-colors hover:border-accent hover:bg-accent/5"
+                  disabled={uploading}
+                  className="flex h-24 w-24 flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50 text-muted-foreground transition-colors hover:border-accent hover:bg-accent/5 disabled:opacity-50"
                 >
-                  <Upload className="mb-1 h-5 w-5" />
-                  <span className="text-xs">Upload</span>
+                  {uploading ? (
+                    <>
+                      <div className="mb-1 h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+                      <span className="text-xs">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mb-1 h-5 w-5" />
+                      <span className="text-xs">Upload</span>
+                    </>
+                  )}
                 </button>
                 <input
                   ref={fileInputRef}

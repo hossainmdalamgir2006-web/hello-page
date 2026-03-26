@@ -357,6 +357,7 @@ export default function Products() {
               products={uiProducts} 
               onImport={handleImport} 
             />
+            <MigrateImagesButton />
             <Button onClick={handleAddProduct} className="gap-2">
               <Plus className="h-4 w-4" />
               Add Product
