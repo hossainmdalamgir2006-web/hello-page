@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingBag, Search, Menu, User, Heart, LogOut, LayoutDashboard } from "lucide-react";
-import { GoogleTranslateWidget } from "@/components/GoogleTranslateWidget";
+
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
