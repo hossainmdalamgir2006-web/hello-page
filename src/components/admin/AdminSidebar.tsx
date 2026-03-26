@@ -55,7 +55,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
     content: true,
     operations: true,
     communication: true,
-    system: true,
+    'system settings': true,
     account: true,
   });
 
@@ -124,9 +124,10 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
       ],
     },
     {
-      label: "System",
+      label: "System Settings",
       items: [
         { title: t('nav.roles'), url: "/admin/role-management", icon: UserCog, roles: ['admin'] },
+        { title: t('nav.settings'), url: role === 'manager' ? '/manager/settings' : role === 'support' ? '/support/settings' : '/admin/settings', icon: Settings, roles: ['admin', 'manager', 'support'] },
       ],
     },
   ];
@@ -141,7 +142,6 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
 
   const bottomMenuItems = [
     { title: t('nav.profile'), url: `${basePath}/profile`, icon: User, roles: ['admin', 'manager', 'support'] },
-    { title: t('nav.settings'), url: role === 'manager' ? '/manager/settings' : role === 'support' ? '/support/settings' : '/admin/settings', icon: Settings, roles: ['admin', 'manager', 'support'] },
   ].filter(item => role && item.roles.includes(role));
 
   const renderNavItem = (item: MenuItem, isEnd?: boolean) => {
