@@ -25,7 +25,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { CartDrawer } from "./CartDrawer";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { CurrencySwitcher } from "@/components/CurrencySwitcher";
+
 import { MegaMenuNav, MobileMegaMenu, useDynamicCategories } from "./MegaMenuNav";
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
