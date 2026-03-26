@@ -167,11 +167,11 @@ export default function TrackOrder() {
               </Tabs>
 
               <div className="mt-6 pt-6 border-t">
-                <h3 className="font-medium text-sm text-foreground mb-3">Where to find your order number?</h3>
+                <h3 className="font-medium text-sm text-foreground mb-3">{t('track.whereToFind')}</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>In your order confirmation email</li>
-                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>In your SMS notification</li>
-                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>In your account order history</li>
+                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>{t('track.inEmail')}</li>
+                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>{t('track.inSms')}</li>
+                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>{t('track.inAccount')}</li>
                 </ul>
               </div>
             </CardContent>
