@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Providers } from "@/components/Providers";
 import { ProtectedRoute, AdminRoute, ManagerRoute, SupportRoute } from "@/components/ProtectedRoute";
 import { AutoPageTitle } from "@/components/AutoPageTitle";
@@ -158,6 +158,7 @@ const App = () => (
             <Route path="/admin/orders" element={<Orders />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/customers" element={<Customers />} />
+            <Route path="/admin/settings" element={<Navigate to="/admin/settings/store" replace />} />
             <Route path="/admin/settings/store" element={<SettingsStore />} />
             <Route path="/admin/settings/payments" element={<SettingsPayments />} />
             <Route path="/admin/settings/emails" element={<SettingsEmails />} />
