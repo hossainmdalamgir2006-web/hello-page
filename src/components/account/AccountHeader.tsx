@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { GoogleTranslateWidget } from "@/components/GoogleTranslateWidget";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -130,6 +131,7 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account", pageDescr
             )}
           </Button>
 
+          <GoogleTranslateWidget />
           <ThemeToggle />
 
           <DropdownMenu>
