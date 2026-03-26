@@ -64,23 +64,21 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
   const pageInfo = { title: t(keys.titleKey), description: keys.descKey ? t(keys.descKey) : "" };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden animate-fade-in"
+          className="fixed inset-0 z-30 bg-foreground/20 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div
-        className={cn(
-          "fixed left-0 top-0 z-40 h-screen transition-transform lg:translate-x-0",
-          collapsed ? "w-[68px]" : "w-64",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
+      <div className={cn(
+        "fixed left-0 top-0 z-40 h-screen transition-transform lg:translate-x-0",
+        collapsed ? "w-[68px]" : "w-64",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         <AccountSidebar
           collapsed={collapsed}
           onToggleCollapse={toggleCollapsed}
@@ -92,19 +90,17 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
       </div>
 
       {/* Main content */}
-      <div
-        className={cn(
-          "transition-all duration-300",
-          collapsed ? "lg:ml-[68px]" : "lg:ml-64"
-        )}
-      >
+      <div className={cn(
+        "transition-all duration-300",
+        collapsed ? "lg:ml-[68px]" : "lg:ml-64"
+      )}>
         <AccountHeader
           onMenuClick={() => setSidebarOpen(true)}
           collapsed={collapsed}
           pageTitle={pageInfo.title}
           pageDescription={pageInfo.description}
         />
-        <main className="p-4 sm:p-6 lg:p-8">
+        <main className="p-3 sm:p-4 md:p-6">
           <div key={location.pathname} className="mx-auto max-w-6xl animate-fade-in">
             {children || <Outlet />}
           </div>
