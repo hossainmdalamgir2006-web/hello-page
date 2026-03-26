@@ -195,9 +195,9 @@ export default function RoleManagement() {
       <>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
           <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
-          <h1 className="text-2xl font-bold mb-2">{t('roles.accessDenied')}</h1>
+          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
           <p className="text-muted-foreground max-w-md">
-            {t('roles.accessDeniedDesc')}
+            You don't have permission to access this page. Only admins can manage roles.
           </p>
         </div>
       </>
