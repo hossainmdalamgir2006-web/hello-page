@@ -70,7 +70,11 @@ const Shipping = lazy(() => import("./pages/Shipping"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Reports = lazy(() => import("./pages/Reports"));
 const Coupons = lazy(() => import("./pages/Coupons"));
-const Profile = lazy(() => import("./pages/Profile"));
+const ProfileLayout = lazy(() => import("./layouts/ProfileLayout"));
+const ProfilePersonal = lazy(() => import("./pages/profile/PersonalInfoPage"));
+const ProfilePassword = lazy(() => import("./pages/profile/PasswordPage"));
+const ProfileSecurity = lazy(() => import("./pages/profile/SecurityPage"));
+const ProfileSessions = lazy(() => import("./pages/profile/SessionsPage"));
 const Brands = lazy(() => import("./pages/Brands"));
 const Login = lazy(() => import("./pages/Login"));
 
@@ -165,7 +169,13 @@ const App = () => (
             <Route path="/admin/messages" element={<Messages />} />
             <Route path="/admin/reports" element={<Reports />} />
             <Route path="/admin/coupons" element={<Coupons />} />
-            <Route path="/admin/profile" element={<Profile />} />
+            <Route path="/admin/profile" element={<ProfileLayout />}>
+              <Route index element={<ProfilePersonal />} />
+              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="password" element={<ProfilePassword />} />
+              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="sessions" element={<ProfileSessions />} />
+            </Route>
             
             <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
             <Route path="/admin/role-management" element={<RoleManagement />} />
@@ -190,7 +200,13 @@ const App = () => (
             <Route path="/manager/trash" element={<GlobalTrash />} />
             <Route path="/manager/settings" element={<ManagerSettings />} />
             <Route path="/manager/messages" element={<Messages />} />
-            <Route path="/manager/profile" element={<Profile />} />
+            <Route path="/manager/profile" element={<ProfileLayout />}>
+              <Route index element={<ProfilePersonal />} />
+              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="password" element={<ProfilePassword />} />
+              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="sessions" element={<ProfileSessions />} />
+            </Route>
           </Route>
 
           {/* Support Routes */}
@@ -200,7 +216,13 @@ const App = () => (
             <Route path="/support/customers" element={<Customers />} />
             <Route path="/support/messages" element={<Messages />} />
             <Route path="/support/settings" element={<SupportSettings />} />
-            <Route path="/support/profile" element={<Profile />} />
+            <Route path="/support/profile" element={<ProfileLayout />}>
+              <Route index element={<ProfilePersonal />} />
+              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="password" element={<ProfilePassword />} />
+              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="sessions" element={<ProfileSessions />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NotFound />} />
