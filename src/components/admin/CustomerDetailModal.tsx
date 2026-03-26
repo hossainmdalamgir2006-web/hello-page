@@ -32,6 +32,7 @@ import { CustomerCommunicationLog } from "@/components/admin/CustomerCommunicati
 import { CustomerBlacklistDialog } from "@/components/admin/CustomerBlacklistDialog";
 import { useCommunicationLog } from "@/hooks/useCommunicationLog";
 import type { Customer, CustomerOrder } from "@/hooks/useCustomersData";
+import { formatPrice } from "@/lib/formatPrice";
 
 const tierConfig = {
   bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
@@ -231,7 +232,7 @@ export function CustomerDetailModal({
                     <CardContent className="p-4 text-center">
                       <DollarSign className="mx-auto h-6 w-6 text-muted-foreground mb-2" />
                       <p className="text-2xl font-bold">
-                        ৳{Number(customer.total_spent).toLocaleString()}
+                        {formatPrice(customer.total_spent)}
                       </p>
                       <p className="text-xs text-muted-foreground">Total Spent</p>
                     </CardContent>
@@ -273,7 +274,7 @@ export function CustomerDetailModal({
                           </div>
                           <div className="text-right">
                             <p className="font-medium">
-                              ৳{order.total.toLocaleString()}
+                              {formatPrice(order.total)}
                             </p>
                             <Badge
                               variant="outline"

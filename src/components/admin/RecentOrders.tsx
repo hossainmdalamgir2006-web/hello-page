@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { RecentOrder } from "@/hooks/useDashboardData";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface RecentOrdersProps {
   orders?: RecentOrder[];
@@ -30,7 +31,6 @@ const statusStyles: Record<string, string> = {
 export function RecentOrders({ orders = [], loading = false }: RecentOrdersProps) {
   const navigate = useNavigate();
 
-  const formatCurrency = (amount: number) => `৳${amount.toLocaleString('en-BD')}`;
 
   const formatDate = (dateString: string) => {
     try {
@@ -99,7 +99,7 @@ export function RecentOrders({ orders = [], loading = false }: RecentOrdersProps
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold text-foreground">{formatCurrency(order.total)}</span>
+                  <span className="font-semibold text-foreground">{formatPrice(order.total)}</span>
                   <span className="text-muted-foreground">{formatDate(order.created_at)}</span>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export function RecentOrders({ orders = [], loading = false }: RecentOrdersProps
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-4 lg:px-6 py-4 font-semibold text-foreground">
-                      {formatCurrency(order.total)}
+                      {formatPrice(order.total)}
                     </td>
                     <td className="whitespace-nowrap px-4 lg:px-6 py-4">
                       <Badge variant="outline" className={statusStyles[order.status] || statusStyles.pending}>

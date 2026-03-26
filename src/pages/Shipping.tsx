@@ -36,6 +36,7 @@ import {
   RefreshCw,
   ExternalLink,
 } from "lucide-react";
+import { formatPrice } from "@/lib/formatPrice";
 
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
@@ -333,7 +334,7 @@ export default function Shipping() {
                         {zone.rates?.slice(0, 2).map((rate) => (
                           <div key={rate.id} className="flex justify-between text-sm">
                             <span className="text-muted-foreground">{rate.name}</span>
-                            <span>৳{rate.rate}</span>
+                            <span>{formatPrice(rate.rate)}</span>
                           </div>
                         ))}
                         {(zone.rates?.length || 0) > 2 && (
@@ -413,9 +414,9 @@ export default function Shipping() {
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              ৳{rate.rate}
-                              {rate.min_order_amount && <span className="text-xs text-muted-foreground"> (Min: ৳{rate.min_order_amount})</span>}
-                              {rate.max_order_amount && <span className="text-xs text-green-600"> (Free above ৳{rate.max_order_amount})</span>}
+                              {formatPrice(rate.rate)}
+                              {rate.min_order_amount && <span className="text-xs text-muted-foreground"> (Min: {formatPrice(rate.min_order_amount)})</span>}
+                              {rate.max_order_amount && <span className="text-xs text-green-600"> (Free above {formatPrice(rate.max_order_amount)})</span>}
                             </TableCell>
                             <TableCell>
                               {rate.min_weight ? `${rate.min_weight}kg` : '0'}-{rate.max_weight ? `${rate.max_weight}kg` : '∞'}
@@ -507,7 +508,7 @@ export default function Shipping() {
                               <p className="text-xs text-muted-foreground">{shipment.recipient_phone || '-'}</p>
                             </div>
                           </TableCell>
-                          <TableCell>৳{(shipment.cod_amount || 0).toLocaleString()}</TableCell>
+                          <TableCell>{formatPrice((shipment.cod_amount || 0))}</TableCell>
                           <TableCell>
                             <Badge className={status.color}>
                               <StatusIcon className="h-3 w-3 mr-1" />

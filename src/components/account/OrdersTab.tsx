@@ -58,6 +58,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { generateInvoicePDF } from '@/utils/generateInvoicePDF';
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
   id: string;
@@ -291,7 +292,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                       {order.items.slice(0, 3).map((item) => (
                         <div key={item.id} className="flex justify-between text-sm">
                           <span>{item.product_name} × {item.quantity}</span>
-                          <span className="font-medium">৳{item.total_price.toFixed(2)}</span>
+                          <span className="font-medium">{formatPrice(item.total_price.toFixed(2))}</span>
                         </div>
                       ))}
                       {order.items.length > 3 && (
@@ -309,7 +310,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                         <span className="capitalize">{order.payment_status}</span>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-bold text-lg mr-2">৳{order.total.toFixed(2)}</p>
+                        <p className="font-bold text-lg mr-2">{formatPrice(order.total.toFixed(2))}</p>
                         <Button
                           size="sm"
                           variant="outline"
@@ -461,9 +462,9 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                     <div key={item.id} className="p-3 flex justify-between items-center">
                       <div>
                         <p className="font-medium">{item.product_name}</p>
-                        <p className="text-sm text-muted-foreground">৳{item.unit_price.toFixed(2)} × {item.quantity}</p>
+                        <p className="text-sm text-muted-foreground">{formatPrice(item.unit_price.toFixed(2))} × {item.quantity}</p>
                       </div>
-                      <p className="font-semibold">৳{item.total_price.toFixed(2)}</p>
+                      <p className="font-semibold">{formatPrice(item.total_price.toFixed(2))}</p>
                     </div>
                   ))}
                 </div>
@@ -484,22 +485,22 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                   <Separator />
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>৳{selectedOrder.subtotal.toFixed(2)}</span>
+                    <span>{formatPrice(selectedOrder.subtotal.toFixed(2))}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>৳{selectedOrder.shipping_cost.toFixed(2)}</span>
+                    <span>{formatPrice(selectedOrder.shipping_cost.toFixed(2))}</span>
                   </div>
                   {selectedOrder.discount_amount > 0 && (
                     <div className="flex justify-between text-green-600">
                       <span>Discount</span>
-                      <span>-৳{selectedOrder.discount_amount.toFixed(2)}</span>
+                      <span>-{formatPrice(selectedOrder.discount_amount)}</span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span className="text-primary">৳{selectedOrder.total.toFixed(2)}</span>
+                    <span className="text-primary">{formatPrice(selectedOrder.total.toFixed(2))}</span>
                   </div>
                 </div>
               </div>

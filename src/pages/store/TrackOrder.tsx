@@ -11,6 +11,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderResult {
   orderNumber: string;
@@ -157,7 +158,7 @@ export default function TrackOrder() {
                           </div>
                           <div className="text-sm text-muted-foreground">
                             <p>{t('track.date')}: {formatDate(order.createdAt)}</p>
-                            <p>{t('track.total')}: ৳{order.total?.toLocaleString()}</p>
+                            <p>{t('track.total')}: {formatPrice(order.total || 0)}</p>
                           </div>
                         </div>
                       ))}

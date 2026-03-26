@@ -32,6 +32,7 @@ import { ProductVariantsManager } from "./ProductVariantsManager";
 import { ProductGroupManager } from "./ProductGroupManager";
 import { ProductVideoSection } from "./ProductVideoSection";
 import { ProductTypeSelector } from "./ProductTypeSelector";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductModalProps {
   open: boolean;
@@ -867,7 +868,7 @@ export function ProductModal({
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm truncate">{p.name}</p>
-                            <p className="text-xs text-muted-foreground">৳{p.price.toLocaleString()}</p>
+                            <p className="text-xs text-muted-foreground">{formatPrice(p.price)}</p>
                           </div>
                           {isSelected && (
                             <Badge variant="secondary" className="text-xs shrink-0">Linked</Badge>

@@ -12,6 +12,7 @@ import {
 import { Eye, Send, MoreVertical, Crown, CheckCircle2, Clock, Ban, ChevronRight, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Customer } from "@/hooks/useCustomersData";
+import { formatPrice } from "@/lib/formatPrice";
 
 const tierConfig = {
   bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
@@ -106,7 +107,7 @@ export function MobileCustomerCard({ customer, onViewDetails, onSendEmail }: Mob
             <p className="text-xs text-muted-foreground">Orders</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-foreground">৳{Number(customer.total_spent).toLocaleString()}</p>
+            <p className="text-lg font-bold text-foreground">{formatPrice(customer.total_spent)}</p>
             <p className="text-xs text-muted-foreground">Spent</p>
           </div>
           <div className="text-center">

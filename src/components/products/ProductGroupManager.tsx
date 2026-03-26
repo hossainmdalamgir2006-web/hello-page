@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2, Search, Package, Loader2 } from "lucide-react";
 import { useProductGroupItems } from "@/hooks/useProductGroupItems";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductGroupManagerProps {
   productId: string | null;
@@ -66,7 +67,7 @@ export function ProductGroupManager({ productId, productType, allProducts }: Pro
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{childProduct?.name || 'Unknown'}</p>
-                    <p className="text-xs text-muted-foreground">৳{childProduct?.price?.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">{formatPrice(childProduct?.price || 0)}</p>
                   </div>
                   {isBundle && (
                     <div className="flex items-center gap-2">
@@ -136,7 +137,7 @@ export function ProductGroupManager({ productId, productType, allProducts }: Pro
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm truncate">{p.name}</p>
-                      <p className="text-xs text-muted-foreground">৳{p.price.toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground">{formatPrice(p.price)}</p>
                     </div>
                     <Plus className="h-4 w-4 text-muted-foreground" />
                   </div>

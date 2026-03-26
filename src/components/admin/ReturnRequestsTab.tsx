@@ -30,6 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { generateRefundInvoicePDF } from "@/utils/generateRefundInvoicePDF";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/formatPrice";
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -145,7 +146,7 @@ export function ReturnRequestsTab() {
     processRefund({ orderId, ...data });
     // If refund is completed, also mark the return request as completed
     if (data.refund_status === 'refunded' && selected) {
-      updateStatus({ id: selected.id, status: 'completed', admin_notes: adminNotes || `Refund of ৳${data.refund_amount} processed` });
+      updateStatus({ id: selected.id, status: 'completed', admin_notes: adminNotes || `Refund of ${formatPrice(data.refund_amount)} processed` });
     }
     setRefundModalOpen(false);
     setRefundOrder(null);
@@ -207,7 +208,7 @@ export function ReturnRequestsTab() {
         {[
           { label: "Pending", value: counts.pending, icon: Clock, color: "bg-warning/10 text-warning" },
           { label: "Completed", value: counts.completed, icon: CheckCircle2, color: "bg-success/10 text-success" },
-          { label: "Total Refunded", value: `৳${refundStats.totalRefunded.toLocaleString()}`, icon: DollarSign, color: "bg-chart-5/10 text-chart-5" },
+          { label: "Total Refunded", value: `${formatPrice(refundStats.totalRefunded)}`, icon: DollarSign, color: "bg-chart-5/10 text-chart-5" },
         ].map((stat) => (
           <Card key={stat.label}>
             <CardContent className="flex items-center gap-4 p-4">

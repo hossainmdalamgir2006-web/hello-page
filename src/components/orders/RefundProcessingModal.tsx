@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Loader2, RotateCcw, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/formatPrice";
 
 export type RefundStatus = "none" | "requested" | "processing" | "refunded" | "rejected";
 
@@ -117,7 +118,7 @@ export function RefundProcessingModal({ open, onOpenChange, order, onProcess, is
               min={0}
             />
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Order total: ৳{order.total.toLocaleString()}</span>
+              <span>Order total: {formatPrice(order.total)}</span>
               {amount > order.total && (
                 <span className="text-destructive flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />

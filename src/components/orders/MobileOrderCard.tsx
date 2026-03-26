@@ -28,6 +28,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Order, OrderStatus } from "@/hooks/useOrdersData";
 import { format } from "date-fns";
+import { formatPrice } from "@/lib/formatPrice";
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -251,7 +252,7 @@ export function MobileOrderCard({
 
           {/* Bottom row: Total, payment, status */}
           <div className="flex items-center justify-between gap-2">
-            <p className="text-lg font-bold text-foreground">৳{order.total.toLocaleString()}</p>
+            <p className="text-lg font-bold text-foreground">{formatPrice(order.total)}</p>
             <div className="flex items-center gap-2">
               <Badge
                 variant="outline"

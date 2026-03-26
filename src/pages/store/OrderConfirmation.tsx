@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
   name: string;
@@ -55,7 +56,6 @@ export default function OrderConfirmation() {
   const codCharge = orderState?.codCharge;
   const deliveryEstimate = orderState?.deliveryEstimate || '3-5 business days';
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   const handleCopyOrderNumber = async () => {
     try {

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Crown, Search, Mail, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Customer } from "@/hooks/useCustomersData";
+import { formatPrice } from "@/lib/formatPrice";
 
 const tierConfig = {
   bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20" },
@@ -131,7 +132,7 @@ export function CustomerQuickLookup({ customers, onSelect }: CustomerQuickLookup
                   </div>
                   <div className="text-right text-xs text-muted-foreground">
                     <p className="font-medium text-foreground">{customer.total_orders} orders</p>
-                    <p>৳{Number(customer.total_spent).toLocaleString()}</p>
+                    <p>{formatPrice(customer.total_spent)}</p>
                   </div>
                 </CommandItem>
               );

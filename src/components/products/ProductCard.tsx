@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Edit, Trash2, Eye, Package, Copy, AlertTriangle, Star, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/formatPrice";
 
 export interface Product {
   id: string;
@@ -171,10 +172,10 @@ export function ProductCard({ product, onEdit, onDelete, onView, onDuplicate }: 
         </div>
 
         <div className="mb-3 flex items-center gap-2">
-          <span className="text-lg font-bold text-foreground">৳{product.price.toLocaleString()}</span>
+          <span className="text-lg font-bold text-foreground">{formatPrice(product.price)}</span>
           {product.comparePrice && (
             <span className="text-sm text-muted-foreground line-through">
-              ৳{product.comparePrice.toLocaleString()}
+              {formatPrice(product.comparePrice)}
             </span>
           )}
         </div>

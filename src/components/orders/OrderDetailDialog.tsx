@@ -41,6 +41,7 @@ import { OrderTimeline } from "@/components/orders/OrderTimeline";
 import { OrderNotesSection } from "@/components/orders/OrderNotesSection";
 import { OrderTagsEditor } from "@/components/orders/OrderTagsEditor";
 import { format } from "date-fns";
+import { formatPrice } from "@/lib/formatPrice";
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -171,10 +172,10 @@ export function OrderDetailDialog({
                     <div>
                       <p className="font-medium">{item.product_name}</p>
                       <p className="text-xs text-muted-foreground">
-                        ৳{item.unit_price.toLocaleString()} × {item.quantity}
+                        {formatPrice(item.unit_price)} × {item.quantity}
                       </p>
                     </div>
-                    <p className="font-medium">৳{item.total_price.toLocaleString()}</p>
+                    <p className="font-medium">{formatPrice(item.total_price)}</p>
                   </div>
                 ))}
               </div>
@@ -186,22 +187,22 @@ export function OrderDetailDialog({
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>৳{order.subtotal.toLocaleString()}</span>
+                <span>{formatPrice(order.subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>
-                <span>৳{order.shipping_cost.toLocaleString()}</span>
+                <span>{formatPrice(order.shipping_cost)}</span>
               </div>
               {order.discount > 0 && (
                 <div className="flex justify-between text-sm text-success">
                   <span>Discount</span>
-                  <span>-৳{order.discount.toLocaleString()}</span>
+                  <span>-{formatPrice(order.discount)}</span>
                 </div>
               )}
               <Separator />
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>৳{order.total.toLocaleString()}</span>
+                <span>{formatPrice(order.total)}</span>
               </div>
             </div>
 
@@ -257,7 +258,7 @@ export function OrderDetailDialog({
                   </Badge>
                 </div>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p>Amount: ৳{order.refund_amount.toLocaleString()}</p>
+                  <p>Amount: {formatPrice(order.refund_amount)}</p>
                   {order.refund_reason && <p>Reason: {order.refund_reason}</p>}
                 </div>
               </div>

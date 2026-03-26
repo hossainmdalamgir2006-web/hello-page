@@ -16,6 +16,7 @@ import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
 import { SEOHead } from "@/components/SEOHead";
 import { toast } from "sonner";
 import { useShippingRates } from "@/hooks/useShippingRates";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount } = useCart();
@@ -47,7 +48,6 @@ export default function Cart() {
     fetchStock();
   }, [items.length]);
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
   
   const checkoutSubtotal = selectedSubtotal;
   const autoDiscount = calculateAutoDiscount(checkoutSubtotal);
@@ -383,7 +383,7 @@ export default function Cart() {
                         <p className="text-xs text-muted-foreground">
                           {appliedCoupon.coupon.discount_type === 'percentage'
                             ? `${appliedCoupon.coupon.discount_value}% off`
-                            : `৳${appliedCoupon.coupon.discount_value} off`}
+                            : `${formatPrice(appliedCoupon.coupon.discount_value)} off`}
                         </p>
                       </div>
                     </div>

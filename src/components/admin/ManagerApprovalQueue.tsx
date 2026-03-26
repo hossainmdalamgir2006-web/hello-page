@@ -19,6 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const typeConfig: Record<
   ApprovalItemType,
@@ -167,7 +168,7 @@ export function ManagerApprovalQueue() {
                               variant="secondary"
                               className="text-[10px] px-1 py-0"
                             >
-                              ৳{item.amount.toLocaleString()}
+                              {formatPrice(item.amount)}
                             </Badge>
                           )}
                         </div>

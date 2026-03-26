@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Package, ShoppingBag, Truck, CheckCircle, Clock, TrendingUp } from 'lucide-react';
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Order {
   id: string;
@@ -40,7 +41,7 @@ export function AccountOverview({ orders, profile }: AccountOverviewProps) {
     },
     {
       label: 'Total Spent',
-      value: `৳${stats.totalSpent.toLocaleString()}`,
+      value: `${formatPrice(stats.totalSpent)}`,
       icon: TrendingUp,
       color: 'text-green-600 bg-green-100 dark:bg-green-900/30',
     },

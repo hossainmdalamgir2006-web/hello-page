@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface FlashSaleSectionProps {
   title?: string;
@@ -152,9 +153,9 @@ export function FlashSaleSection({
                   <div className="p-3">
                     <h3 className="font-medium text-sm text-white line-clamp-1 mb-1">{product.name}</h3>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-store-accent">৳{product.price.toLocaleString()}</span>
+                      <span className="font-bold text-store-accent">{formatPrice(product.price)}</span>
                       {hasDiscount && (
-                        <span className="text-xs text-white/50 line-through">৳{product.compare_at_price!.toLocaleString()}</span>
+                        <span className="text-xs text-white/50 line-through">{formatPrice(product.compare_at_price!)}</span>
                       )}
                     </div>
                   </div>

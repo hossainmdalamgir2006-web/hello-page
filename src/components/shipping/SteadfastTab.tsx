@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useSteadfastCourier, SteadfastOrder } from "@/hooks/useSteadfastCourier";
 import { useShipmentsData, Shipment } from "@/hooks/useShipmentsData";
 import { Loader2, Package, RefreshCw, Search, Send, Wallet, Clock, Truck, CheckCircle, RotateCcw } from "lucide-react";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface SteadfastTabProps {
   pendingOrders: any[];
@@ -163,7 +164,7 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="text-lg px-3 py-1">
             <Wallet className="h-4 w-4 mr-1" />
-            ৳{steadfast.balance?.toLocaleString() || 0}
+            {formatPrice(steadfast.balance || 0)}
           </Badge>
           <Button 
             variant="outline" 
@@ -292,7 +293,7 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
                         <p className="text-xs text-muted-foreground">{shipment.recipient_phone || '-'}</p>
                       </div>
                     </TableCell>
-                    <TableCell>৳{(shipment.cod_amount || 0).toLocaleString()}</TableCell>
+                    <TableCell>{formatPrice((shipment.cod_amount || 0))}</TableCell>
                     <TableCell>
                       <Badge className={status.color}>
                         <StatusIcon className="h-3 w-3 mr-1" />
@@ -352,7 +353,7 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
                         ? order.shipping_address 
                         : `${order.shipping_address?.street || ''}, ${order.shipping_address?.city || ''}`}
                     </TableCell>
-                    <TableCell>৳{order.total.toLocaleString()}</TableCell>
+                    <TableCell>{formatPrice(order.total)}</TableCell>
                     <TableCell>
                       <Badge variant={order.payment_method === 'cod' ? 'outline' : 'default'}>
                         {order.payment_method === 'cod' ? 'COD' : 'Paid'}
@@ -422,8 +423,8 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
                   <span className="text-muted-foreground">COD Amount:</span>
                   <span className="font-bold">
                     {selectedOrder.payment_method === 'cod' 
-                      ? `৳${selectedOrder.total.toLocaleString()}` 
-                      : '৳0 (Prepaid)'}
+                      ? `${formatPrice(selectedOrder.total)}` 
+                      : '0 (Prepaid)'}
                   </span>
                 </div>
               </div>

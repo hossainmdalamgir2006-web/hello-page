@@ -22,6 +22,7 @@ import type { Product } from "./ProductCard";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { SortableTableHead, type SortDirection } from "@/components/ui/sortable-table-head";
 import { useSorting } from "@/hooks/useSorting";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductTableProps {
   products: Product[];
@@ -180,10 +181,10 @@ export function ProductTable({
               <TableCell>{product.category}</TableCell>
               <TableCell className="text-right">
                 <div>
-                  <p className="font-medium">৳{product.price.toLocaleString()}</p>
+                  <p className="font-medium">{formatPrice(product.price)}</p>
                   {product.comparePrice && (
                     <p className="text-xs text-muted-foreground line-through">
-                      ৳{product.comparePrice.toLocaleString()}
+                      {formatPrice(product.comparePrice)}
                     </p>
                   )}
                 </div>

@@ -12,6 +12,7 @@ import { Package, Edit, X, Tag, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Product } from "./ProductCard";
 import { useProductVariants } from "@/hooks/useProductVariants";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ProductViewModalProps {
   open: boolean;
@@ -119,13 +120,13 @@ export function ProductViewModal({ open, onOpenChange, product, onEdit }: Produc
 
             {/* Price */}
             <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-bold text-foreground">৳{product.price.toLocaleString()}</span>
+              <span className="text-3xl font-bold text-foreground">{formatPrice(product.price)}</span>
               {product.comparePrice && (
-                <span className="text-lg text-muted-foreground line-through">৳{product.comparePrice.toLocaleString()}</span>
+                <span className="text-lg text-muted-foreground line-through">{formatPrice(product.comparePrice)}</span>
               )}
               {discount > 0 && (
                 <Badge variant="secondary" className="text-xs font-semibold">
-                  Save ৳{((product.comparePrice || 0) - product.price).toLocaleString()}
+                  Save {formatPrice(((product.comparePrice || 0) - product.price))}
                 </Badge>
               )}
             </div>
@@ -189,7 +190,7 @@ export function ProductViewModal({ open, onOpenChange, product, onEdit }: Produc
                         {v.sku && <span className="text-xs text-muted-foreground font-mono">SKU: {v.sku}</span>}
                       </div>
                       <div className="flex items-center gap-3 text-sm">
-                        {v.price != null && <span className="font-semibold text-foreground">৳{v.price.toLocaleString()}</span>}
+                        {v.price != null && <span className="font-semibold text-foreground">{formatPrice(v.price)}</span>}
                         <Badge variant="outline" className={cn("text-xs", (v.quantity || 0) === 0 ? "text-destructive" : (v.quantity || 0) <= 5 ? "text-warning" : "text-success")}>
                           {v.quantity || 0} units
                         </Badge>

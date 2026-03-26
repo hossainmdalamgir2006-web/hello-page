@@ -1,5 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface SalesDataPoint {
   name: string;
@@ -59,7 +60,7 @@ export function SalesChart({ data = [], loading = false }: SalesChartProps) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-                tickFormatter={(value) => `৳${value / 1000}k`}
+                tickFormatter={(value) => `${formatPrice(value / 1000)}k`}
                 width={45}
               />
               <Tooltip 
@@ -70,7 +71,7 @@ export function SalesChart({ data = [], loading = false }: SalesChartProps) {
                   boxShadow: "var(--shadow-md)"
                 }}
                 formatter={(value: number, name: string) => [
-                  name === 'sales' ? `৳${value.toLocaleString()}` : value,
+                  name === 'sales' ? `${formatPrice(value)}` : value,
                   name === 'sales' ? 'Sales' : 'Orders'
                 ]}
               />

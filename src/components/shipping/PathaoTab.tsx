@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { usePathaoCourier, PathaoOrder, PathaoCity, PathaoZone, PathaoArea, PathaoStore } from "@/hooks/usePathaoCourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { Loader2, Package, RefreshCw, Search, Send, MapPin, Truck, Clock, CheckCircle, RotateCcw } from "lucide-react";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface PathaoTabProps {
   pendingOrders: any[];
@@ -412,8 +413,8 @@ export const PathaoTab = forwardRef<HTMLDivElement, PathaoTabProps>(function Pat
                         <p className="text-xs text-muted-foreground">{shipment.recipient_phone || '-'}</p>
                       </div>
                     </TableCell>
-                    <TableCell>৳{(shipment.cod_amount || 0).toLocaleString()}</TableCell>
-                    <TableCell>{shipment.delivery_charge ? `৳${shipment.delivery_charge}` : '-'}</TableCell>
+                    <TableCell>{formatPrice((shipment.cod_amount || 0))}</TableCell>
+                    <TableCell>{shipment.delivery_charge ? `${formatPrice(shipment.delivery_charge)}` : '-'}</TableCell>
                     <TableCell>
                       <Badge className={status.color}>
                         <StatusIcon className="h-3 w-3 mr-1" />
@@ -473,7 +474,7 @@ export const PathaoTab = forwardRef<HTMLDivElement, PathaoTabProps>(function Pat
                         ? order.shipping_address 
                         : `${order.shipping_address?.street || ''}, ${order.shipping_address?.city || ''}`}
                     </TableCell>
-                    <TableCell>৳{order.total.toLocaleString()}</TableCell>
+                    <TableCell>{formatPrice(order.total)}</TableCell>
                     <TableCell>
                       <Badge variant={order.payment_method === 'cod' ? 'outline' : 'default'}>
                         {order.payment_method === 'cod' ? 'COD' : 'Paid'}
@@ -615,7 +616,7 @@ export const PathaoTab = forwardRef<HTMLDivElement, PathaoTabProps>(function Pat
               </Button>
               {calculatedPrice !== null && (
                 <Badge variant="secondary" className="text-lg px-3 py-1">
-                  ৳{calculatedPrice}
+                  {formatPrice(calculatedPrice)}
                 </Badge>
               )}
             </div>
@@ -632,7 +633,7 @@ export const PathaoTab = forwardRef<HTMLDivElement, PathaoTabProps>(function Pat
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">COD:</span>
-                <span>৳{selectedOrder?.payment_method === 'cod' ? selectedOrder?.total?.toLocaleString() : 0}</span>
+                <span>{formatPrice(selectedOrder?.payment_method === 'cod' ? selectedOrder?.total || 0 : 0)}</span>
               </div>
             </div>
           </div>

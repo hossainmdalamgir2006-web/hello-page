@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderReviewModalProps {
   open: boolean;
@@ -25,7 +26,6 @@ export function OrderReviewModal({
   paymentMethodName, shippingAddress, onConfirm, processing,
 }: OrderReviewModalProps) {
   const { t } = useLanguage();
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

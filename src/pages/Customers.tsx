@@ -58,6 +58,7 @@ import { MobileCustomerCard } from "@/components/admin/MobileCustomerCard";
 import { CustomerQuickLookup } from "@/components/admin/CustomerQuickLookup";
 import { CustomerSegmentTabs, segments } from "@/components/admin/CustomerSegmentTabs";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { formatPrice } from "@/lib/formatPrice";
 
 const tierConfig = {
   bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
@@ -272,7 +273,7 @@ export default function Customers() {
                 <DollarSign className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <p className="text-2xl font-bold">৳{(stats.totalRevenue / 1000).toFixed(0)}k</p>
+                <p className="text-2xl font-bold">{formatPrice((stats.totalRevenue / 1000).toFixed(0))}k</p>
                 <p className="text-sm text-muted-foreground">Total Revenue</p>
               </div>
             </CardContent>
@@ -465,11 +466,11 @@ export default function Customers() {
                             </div>
                           </TableCell>
                           <TableCell className="text-right font-medium">
-                            ৳{Number(customer.total_spent).toLocaleString()}
+                            {formatPrice(customer.total_spent)}
                           </TableCell>
                           <TableCell className="text-right text-sm text-muted-foreground">
                             {customer.total_orders > 0
-                              ? `৳${Math.round(Number(customer.total_spent) / customer.total_orders).toLocaleString()}`
+                              ? `${formatPrice(Math.round(Number(customer.total_spent) / customer.total_orders))}`
                               : '—'}
                           </TableCell>
                           <TableCell>

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function AccountInvoice() {
   const { user } = useAuth();
@@ -76,8 +77,8 @@ export default function AccountInvoice() {
       for (const item of order.items) {
         doc.text(item.product_name.substring(0, 40), 16, y);
         doc.text(String(item.quantity), 120, y);
-        doc.text(`৳${Number(item.unit_price).toFixed(0)}`, 140, y);
-        doc.text(`৳${Number(item.total_price).toFixed(0)}`, 170, y);
+        doc.text(`${formatPrice(item.unit_price).toFixed(0)}`, 140, y);
+        doc.text(`${formatPrice(item.total_price).toFixed(0)}`, 170, y);
         y += 7;
       }
       y += 5;
@@ -85,16 +86,16 @@ export default function AccountInvoice() {
       doc.line(14, y, w - 14, y);
       y += 8;
       const subtotal = order.items.reduce((s: number, i: any) => s + Number(i.total_price), 0);
-      doc.text("Subtotal:", 140, y); doc.text(`৳${subtotal.toFixed(0)}`, 170, y);
+      doc.text("Subtotal:", 140, y); doc.text(`${formatPrice(subtotal.toFixed(0))}`, 170, y);
       y += 7;
-      doc.text("Shipping:", 140, y); doc.text(`৳${Number(order.shipping_cost || 0).toFixed(0)}`, 170, y);
+      doc.text("Shipping:", 140, y); doc.text(`${formatPrice(order.shipping_cost || 0).toFixed(0)}`, 170, y);
       if (Number(order.discount_amount) > 0) {
         y += 7;
-        doc.text("Discount:", 140, y); doc.text(`-৳${Number(order.discount_amount).toFixed(0)}`, 170, y);
+        doc.text("Discount:", 140, y); doc.text(`-${formatPrice(order.discount_amount).toFixed(0)}`, 170, y);
       }
       y += 7;
       doc.setFont("helvetica", "bold");
-      doc.text("Total:", 140, y); doc.text(`৳${Number(order.total_amount).toFixed(0)}`, 170, y);
+      doc.text("Total:", 140, y); doc.text(`${formatPrice(order.total_amount).toFixed(0)}`, 170, y);
       doc.save(`Invoice-${order.order_number}.pdf`);
       toast.success(t('account.invoiceDownloaded'));
     } catch {
@@ -128,7 +129,7 @@ export default function AccountInvoice() {
                 <div>
                   <p className="font-semibold text-sm">#{order.order_number}</p>
                   <p className="text-xs text-muted-foreground">
-                    {format(new Date(order.created_at), "MMM dd, yyyy")} · ৳{Number(order.total_amount).toFixed(0)}
+                    {format(new Date(order.created_at), "MMM dd, yyyy")} · {formatPrice(order.total_amount).toFixed(0)}
                   </p>
                 </div>
               </div>

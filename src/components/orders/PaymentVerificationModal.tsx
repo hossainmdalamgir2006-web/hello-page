@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface PaymentVerificationModalProps {
   open: boolean;
@@ -103,7 +104,7 @@ export function PaymentVerificationModal({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Amount</span>
-              <span className="font-bold text-lg">৳{order.total.toLocaleString()}</span>
+              <span className="font-bold text-lg">{formatPrice(order.total)}</span>
             </div>
             <Separator />
             <div className="flex items-center gap-2">

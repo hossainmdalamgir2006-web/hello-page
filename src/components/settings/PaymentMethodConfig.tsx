@@ -11,6 +11,7 @@ import { Eye, EyeOff, Save, Loader2, Upload, X, ImageIcon, CheckCircle2, Percent
 import { PaymentMethod, PaymentMethodConfig as PaymentMethodConfigType } from "@/hooks/usePaymentMethods";
 import { toast } from "sonner";
 import { BankAccountsEditor } from "./BankAccountsEditor";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface PaymentMethodConfigProps {
   method: PaymentMethod | null;
@@ -143,7 +144,7 @@ export function PaymentMethodConfig({ method, open, onOpenChange, onSave, onUplo
       {formData.cod_charge_type === "percentage" ? (
         <><Percent className="h-3 w-3" />{formData.cod_charge_value}% charge</>
       ) : (
-        <><DollarSign className="h-3 w-3" />৳{formData.cod_charge_value} charge</>
+        <><DollarSign className="h-3 w-3" />{formatPrice(formData.cod_charge_value)} charge</>
       )}
     </Badge>
   ) : null;

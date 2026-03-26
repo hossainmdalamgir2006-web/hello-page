@@ -1,6 +1,7 @@
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { TopProduct } from "@/hooks/useDashboardData";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface TopProductsProps {
   products?: TopProduct[];
@@ -8,7 +9,6 @@ interface TopProductsProps {
 }
 
 export function TopProducts({ products = [], loading = false }: TopProductsProps) {
-  const formatCurrency = (amount: number) => `৳${amount.toLocaleString('en-BD')}`;
 
   // Calculate max stock for percentage
   const maxStock = products.length > 0 ? Math.max(...products.map(p => p.quantity)) : 100;
@@ -55,7 +55,7 @@ export function TopProducts({ products = [], loading = false }: TopProductsProps
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="font-semibold text-sm sm:text-base text-foreground">{formatCurrency(product.price)}</p>
+                  <p className="font-semibold text-sm sm:text-base text-foreground">{formatPrice(product.price)}</p>
                   <p className="text-[10px] sm:text-xs text-muted-foreground">{product.quantity} in stock</p>
                 </div>
               </div>

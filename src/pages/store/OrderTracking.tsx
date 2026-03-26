@@ -25,6 +25,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
   id: string;
@@ -273,7 +274,6 @@ export default function OrderTracking() {
     });
   };
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("en-BD")}`;
 
   if (loading) {
     return (

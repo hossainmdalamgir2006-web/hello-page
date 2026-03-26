@@ -25,6 +25,7 @@ import { GoogleAnalyticsSettings } from "./GoogleAnalyticsSettings";
 import { GoogleTagManagerSettings } from "./GoogleTagManagerSettings";
 import { MetaPixelSettings } from "./MetaPixelSettings";
 import { GoogleSearchConsoleSettings } from "./GoogleSearchConsoleSettings";
+import { formatPrice } from "@/lib/formatPrice";
 
 export function IntegrationsSettings() {
   const { settings, loading, saving, updateMultipleSettings, getSettingValue, refetch } = useStoreSettings();
@@ -82,7 +83,7 @@ export function IntegrationsSettings() {
 
       if (data?.current_balance !== undefined) {
         setConnectionStatus("success");
-        toast.success(`Connection successful! Balance: ৳${data.current_balance}`);
+        toast.success(`Connection successful! Balance: ${formatPrice(data.current_balance)}`);
       } else if (data?.error) {
         throw new Error(data.error);
       } else {

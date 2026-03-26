@@ -1,6 +1,7 @@
 import { Truck, Gift } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface FreeShippingProgressProps {
   subtotal: number;
@@ -14,7 +15,6 @@ export function FreeShippingProgress({ subtotal, threshold = 2000, className }: 
   const remaining = threshold - subtotal;
   const isFree = subtotal >= threshold;
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   return (
     <div className={`p-4 rounded-xl border ${isFree ? 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800' : 'bg-store-muted/50 border-border'} ${className}`}>

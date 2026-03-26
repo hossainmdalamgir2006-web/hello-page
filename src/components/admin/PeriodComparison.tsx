@@ -1,5 +1,6 @@
 import { ArrowUp, ArrowDown, Minus, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface ComparisonMetric {
   label: string;
@@ -24,7 +25,7 @@ export function PeriodComparison({
   const formatValue = (value: number, format: "currency" | "number" | "percent") => {
     switch (format) {
       case "currency":
-        return `৳${value.toLocaleString()}`;
+        return `${formatPrice(value)}`;
       case "percent":
         return `${value.toFixed(1)}%`;
       default:

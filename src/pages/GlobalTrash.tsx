@@ -22,6 +22,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { usePagination } from "@/hooks/usePagination";
 import { formatDistanceToNow, format } from "date-fns";
+import { formatPrice } from "@/lib/formatPrice";
 
 const ENTITY_ICONS: Record<TrashEntityType, React.ElementType> = {
   product: Package,
@@ -389,9 +390,9 @@ function EntityDetails({ item }: { item: TrashedItem }) {
   const extra = item.extra || {};
   switch (item.entity_type) {
     case 'product':
-      return <span>SKU: {extra.sku || '-'} · ৳{Number(extra.price || 0).toLocaleString()}</span>;
+      return <span>SKU: {extra.sku || '-'} · {formatPrice(extra.price || 0)}</span>;
     case 'order':
-      return <span>৳{Number(extra.total_amount || 0).toLocaleString()} · {extra.status || '-'}</span>;
+      return <span>{formatPrice(extra.total_amount || 0)} · {extra.status || '-'}</span>;
     case 'brand':
       return <span>{extra.slug || '-'}</span>;
     case 'category':

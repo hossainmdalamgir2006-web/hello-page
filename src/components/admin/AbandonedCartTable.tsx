@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AbandonedCart } from "@/hooks/useAbandonedCartsData";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface AbandonedCartTableProps {
   carts: AbandonedCart[];
@@ -211,7 +212,7 @@ export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCar
                 </TableCell>
                 <TableCell>
                   <span className="font-bold text-foreground">
-                    ৳{cart.cart_total.toLocaleString()}
+                    {formatPrice(cart.cart_total)}
                   </span>
                 </TableCell>
                 <TableCell>{getStatusBadge(cart)}</TableCell>
@@ -344,11 +345,11 @@ export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCar
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate">{item.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Qty: {item.quantity} × ৳{item.price?.toLocaleString()}
+                            Qty: {item.quantity} × {formatPrice(item.price || 0)}
                           </p>
                         </div>
                         <p className="font-bold">
-                          ৳{((item.quantity || 1) * (item.price || 0)).toLocaleString()}
+                          {formatPrice(((item.quantity || 1) * (item.price || 0)))}
                         </p>
                       </div>
                     ))}
@@ -360,7 +361,7 @@ export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCar
               <div className="flex justify-between items-center p-4 bg-primary/5 rounded-lg">
                 <span className="font-semibold">Total Cart Value</span>
                 <span className="text-xl font-bold text-primary">
-                  ৳{selectedCart.cart_total.toLocaleString()}
+                  {formatPrice(selectedCart.cart_total)}
                 </span>
               </div>
 

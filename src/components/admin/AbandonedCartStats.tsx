@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AbandonedCartStats as StatsType } from "@/hooks/useAbandonedCartsData";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface StatCardProps {
   title: string;
@@ -88,21 +89,21 @@ export function AbandonedCartStats({ stats }: AbandonedCartStatsProps) {
       />
       <StatCard
         title="Lost Revenue"
-        value={`৳${stats.totalLostRevenue.toLocaleString()}`}
+        value={`${formatPrice(stats.totalLostRevenue)}`}
         icon={AlertTriangle}
         trend="negative"
         subtitle="Potential sales lost"
       />
       <StatCard
         title="Recovered Revenue"
-        value={`৳${stats.totalRecoveredRevenue.toLocaleString()}`}
+        value={`${formatPrice(stats.totalRecoveredRevenue)}`}
         icon={DollarSign}
         trend="positive"
         subtitle="Sales recovered"
       />
       <StatCard
         title="Avg Cart Value"
-        value={`৳${stats.avgCartValue.toLocaleString()}`}
+        value={`${formatPrice(stats.avgCartValue)}`}
         icon={TrendingUp}
         trend="neutral"
         subtitle="Per abandoned cart"

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RotateCcw, Clock, CheckCircle2, XCircle, DollarSign } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface RecentReturn {
   id: string;
@@ -119,7 +120,7 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
         <div className="flex items-center gap-2 p-2.5 rounded-lg bg-chart-5/10 border border-chart-5/20">
           <DollarSign className="h-4 w-4 text-chart-5" />
           <div>
-            <p className="text-lg font-bold">৳{stats.totalRefunded.toLocaleString()}</p>
+            <p className="text-lg font-bold">{formatPrice(stats.totalRefunded)}</p>
             <p className="text-xs text-muted-foreground">Refunded</p>
           </div>
         </div>

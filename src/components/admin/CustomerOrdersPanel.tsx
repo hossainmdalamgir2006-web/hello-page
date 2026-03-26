@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingBag, Package, ChevronDown, ChevronUp } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface CustomerOrder {
   id: string;
@@ -114,7 +115,7 @@ export function CustomerOrdersPanel({ customerEmail, customerName }: CustomerOrd
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-foreground">
-                        ৳{Number(order.total_amount).toLocaleString()}
+                        {formatPrice(order.total_amount)}
                       </span>
                       <Badge className={`${statusColors[order.status] || "bg-muted text-muted-foreground"} text-[10px] px-1.5 py-0`}>
                         {order.status}

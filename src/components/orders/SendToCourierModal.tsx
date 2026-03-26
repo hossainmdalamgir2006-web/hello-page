@@ -28,6 +28,7 @@ import { usePathaoCourier, type PathaoOrder, type PathaoCity, type PathaoZone, t
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderData {
   id: string;
@@ -327,7 +328,7 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
                     </div>
                   </div>
                   <Badge variant="secondary" className="text-lg">
-                    ৳{order.total.toLocaleString()}
+                    {formatPrice(order.total)}
                   </Badge>
                 </div>
               </CardContent>

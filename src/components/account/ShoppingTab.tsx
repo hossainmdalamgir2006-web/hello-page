@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { RefreshCw, ShoppingCart, Tag, Ticket, Copy, Check, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, isAfter } from 'date-fns';
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Coupon {
   id: string;
@@ -138,7 +139,7 @@ export function ShoppingTab({ orders }: ShoppingTabProps) {
     if (coupon.discount_type === 'percentage') {
       return `${coupon.discount_value}% OFF`;
     }
-    return `৳${coupon.discount_value} OFF`;
+    return `${formatPrice(coupon.discount_value)} OFF`;
   };
 
   return (
@@ -178,7 +179,7 @@ export function ShoppingTab({ orders }: ShoppingTabProps) {
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-sm truncate">{item.product_name}</p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                      <span className="font-semibold text-foreground">৳{item.unit_price}</span>
+                      <span className="font-semibold text-foreground">{formatPrice(item.unit_price)}</span>
                       <span>•</span>
                       <span>Ordered {item.times_ordered}×</span>
                     </div>
@@ -249,10 +250,10 @@ export function ShoppingTab({ orders }: ShoppingTabProps) {
                       )}
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-2">
                         {coupon.minimum_order_amount && (
-                          <span>Min. order: ৳{coupon.minimum_order_amount}</span>
+                          <span>Min. order: {formatPrice(coupon.minimum_order_amount)}</span>
                         )}
                         {coupon.maximum_discount && (
-                          <span>Max. discount: ৳{coupon.maximum_discount}</span>
+                          <span>Max. discount: {formatPrice(coupon.maximum_discount)}</span>
                         )}
                         {coupon.expires_at && (
                           <span className="flex items-center gap-1">

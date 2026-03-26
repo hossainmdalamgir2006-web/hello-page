@@ -26,6 +26,7 @@ import { useSteadfastCourier, type SteadfastOrder } from "@/hooks/useSteadfastCo
 import { usePathaoCourier, type PathaoOrder, type PathaoCity, type PathaoZone } from "@/hooks/usePathaoCourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderData {
   id: string;
@@ -283,7 +284,7 @@ export function BulkSendToCourierModal({
                 <div>
                     <p className="font-medium">{pendingOrders.length} order(s) will be sent</p>
                   <p className="text-xs text-muted-foreground">
-                    Total COD: ৳{pendingOrders.reduce((sum, o) => sum + o.total, 0).toLocaleString()}
+                    Total COD: {formatPrice(pendingOrders.reduce((sum, o) => sum + o.total, 0))}
                   </p>
                 </div>
               </div>

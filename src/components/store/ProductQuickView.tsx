@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface QuickViewProduct {
   id: string;
@@ -282,11 +283,11 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
             <div className="flex items-baseline gap-2">
               {isGrouped && <span className="text-xs text-muted-foreground">{t('common.total')}: </span>}
               <span className="text-2xl font-bold text-foreground">
-                ৳{displayPrice.toLocaleString()}
+                {formatPrice(displayPrice)}
               </span>
               {displayComparePrice && displayComparePrice > displayPrice && (
                 <span className="text-sm text-muted-foreground line-through">
-                  ৳{displayComparePrice.toLocaleString()}
+                  {formatPrice(displayComparePrice)}
                 </span>
               )}
               {isBundle && discount > 0 && (
@@ -357,7 +358,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
                       <img src={child.images[0] || "/placeholder.svg"} alt={child.name} className="w-10 h-10 rounded object-cover" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{child.name}</p>
-                        <p className="text-xs text-muted-foreground">৳{child.price.toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground">{formatPrice(child.price)}</p>
                       </div>
                       {child.selected && (
                         <div className="flex items-center border rounded-md">
@@ -388,7 +389,7 @@ export function ProductQuickView({ product, open, onOpenChange }: ProductQuickVi
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{child.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {child.bundleQty > 1 ? `${child.bundleQty}x ` : ""}৳{child.price.toLocaleString()}
+                          {child.bundleQty > 1 ? `${child.bundleQty}x ` : ""}{formatPrice(child.price)}
                         </p>
                       </div>
                     </div>

@@ -20,6 +20,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Search, SlidersHorizontal, X, Grid3X3, List } from "lucide-react";
+import { formatPrice } from "@/lib/formatPrice";
 
 export interface FilterState {
   search: string;
@@ -217,8 +218,8 @@ export function ProductFilters({
                     className="w-full"
                   />
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>৳{filters.priceRange[0].toLocaleString()}</span>
-                    <span>৳{filters.priceRange[1].toLocaleString()}</span>
+                    <span>{formatPrice(filters.priceRange[0])}</span>
+                    <span>{formatPrice(filters.priceRange[1])}</span>
                   </div>
                 </div>
 
@@ -290,7 +291,7 @@ export function ProductFilters({
           )}
           {(filters.priceRange[0] > 0 || filters.priceRange[1] < 50000) && (
             <Badge variant="secondary" className="gap-1">
-              ৳{filters.priceRange[0].toLocaleString()} - ৳{filters.priceRange[1].toLocaleString()}
+              {formatPrice(filters.priceRange[0])} - {formatPrice(filters.priceRange[1])}
               <X
                 className="h-3 w-3 cursor-pointer"
                 onClick={() => updateFilter("priceRange", [0, 50000])}

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProfileCompletion } from "@/components/account/ProfileCompletion";
 import { format } from "date-fns";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Order {
   id: string;
@@ -111,7 +112,7 @@ export default function AccountDashboard() {
 
   const statCards = [
     { label: t('account.totalOrders'), value: orders.length, borderColor: "border-l-blue-500", textColor: "text-blue-600 dark:text-blue-400" },
-    { label: t('account.totalSpent'), value: `৳${totalSpent.toLocaleString()}`, borderColor: "border-l-green-500", textColor: "text-green-600 dark:text-green-400" },
+    { label: t('account.totalSpent'), value: `${formatPrice(totalSpent)}`, borderColor: "border-l-green-500", textColor: "text-green-600 dark:text-green-400" },
     { label: t('account.delivered'), value: deliveredCount, borderColor: "border-l-emerald-500", textColor: "text-emerald-600 dark:text-emerald-400" },
     { label: t('account.inTransit'), value: shippedCount, borderColor: "border-l-purple-500", textColor: "text-purple-600 dark:text-purple-400" },
     { label: t('account.pending'), value: pendingCount, borderColor: "border-l-amber-500", textColor: "text-amber-600 dark:text-amber-400" },
@@ -194,7 +195,7 @@ export default function AccountDashboard() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-sm">৳{order.total.toLocaleString()}</p>
+                      <p className="font-semibold text-sm">{formatPrice(order.total)}</p>
                       <Badge className={status.className} variant="secondary">
                         {status.label}
                       </Badge>

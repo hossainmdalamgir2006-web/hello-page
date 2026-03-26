@@ -11,6 +11,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function Wishlist() {
   const { items, loading, removeItem } = useWishlist();
@@ -85,8 +86,8 @@ export default function Wishlist() {
                   <p className="text-xs text-muted-foreground mb-1">{item.category}</p>
                   <Link to={`/product/${item.product_id}`}><h3 className="font-medium text-foreground hover:text-store-primary transition-colors line-clamp-1">{item.name}</h3></Link>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="font-bold text-foreground">৳{item.price.toLocaleString()}</span>
-                    {item.compare_at_price && <span className="text-sm text-muted-foreground line-through">৳{item.compare_at_price.toLocaleString()}</span>}
+                    <span className="font-bold text-foreground">{formatPrice(item.price)}</span>
+                    {item.compare_at_price && <span className="text-sm text-muted-foreground line-through">{formatPrice(item.compare_at_price)}</span>}
                   </div>
                   <div className="flex gap-2 mt-4">
                     <Button className="flex-1 bg-store-primary hover:bg-store-primary/90" onClick={() => handleAddToCart(item)} disabled={item.quantity === 0}><ShoppingBag className="h-4 w-4 mr-2" />{t('store.addToCart')}</Button>

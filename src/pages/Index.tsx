@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WelcomeBanner } from "@/components/admin/WelcomeBanner";
 import { format } from "date-fns";
+import { formatPrice } from "@/lib/formatPrice";
 
 // Lazy-loaded heavy dashboard widgets
 const SalesChart = lazy(() => import("@/components/admin/SalesChart").then(m => ({ default: m.SalesChart })));
@@ -112,14 +113,12 @@ const Index = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return `৳${amount.toLocaleString('en-BD')}`;
-  };
+
 
   const statsData = [
     { 
       title: t('dashboard.totalSales'), 
-      value: formatCurrency(stats.totalSales), 
+      value: formatPrice(stats.totalSales), 
       change: stats.salesChange, 
       icon: TrendingUp, 
       iconBg: "accent" as const 
@@ -154,7 +153,7 @@ const Index = () => {
     },
     { 
       title: "Total Refunded", 
-      value: formatCurrency(refundStats.amount), 
+      value: formatPrice(refundStats.amount), 
       change: 0, 
       icon: RotateCcw, 
       iconBg: "accent" as const 

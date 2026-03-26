@@ -16,6 +16,7 @@ import { StoreProductCard } from "@/components/store/StoreProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductGridSkeleton, FilterSkeleton } from "@/components/skeletons";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface Product {
   id: string;
@@ -129,8 +130,8 @@ function FilterPanel({
       <FilterSection title="Price Range">
         <Slider value={priceRange} onValueChange={setPriceRange} max={10000} step={100} className="mb-2" />
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>৳{priceRange[0].toLocaleString()}</span>
-          <span>৳{priceRange[1].toLocaleString()}</span>
+          <span>{formatPrice(priceRange[0])}</span>
+          <span>{formatPrice(priceRange[1])}</span>
         </div>
       </FilterSection>
 

@@ -25,6 +25,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { CartDrawer } from "./CartDrawer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { MegaMenuNav, MobileMegaMenu, useDynamicCategories } from "./MegaMenuNav";
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
@@ -147,6 +148,7 @@ export function StoreHeader() {
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <GoogleTranslateWidget />
+            <CurrencySwitcher />
             <ThemeToggle />
 
             {/* Mobile Search */}
