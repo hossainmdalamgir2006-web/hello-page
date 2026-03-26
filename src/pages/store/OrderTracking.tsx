@@ -140,11 +140,11 @@ const getDeliveryEstimate = (shippingAddress: any, orderDate: string, status: st
   };
 };
 
-const statusSteps = [
-  { key: "pending", label: "Order Placed", icon: Clock, description: "Your order has been received" },
-  { key: "processing", label: "Processing", icon: Box, description: "We're preparing your order" },
-  { key: "shipped", label: "Shipped", icon: Truck, description: "Your order is on the way" },
-  { key: "delivered", label: "Delivered", icon: CheckCircle, description: "Order delivered successfully" },
+const getStatusSteps = (t: (key: string) => string) => [
+  { key: "pending", label: t('orderTracking.orderPlaced'), icon: Clock, description: t('orderTracking.orderReceived') },
+  { key: "processing", label: t('orderTracking.processing'), icon: Box, description: t('orderTracking.preparingOrder') },
+  { key: "shipped", label: t('orderTracking.shipped'), icon: Truck, description: t('orderTracking.onTheWay') },
+  { key: "delivered", label: t('orderTracking.delivered'), icon: CheckCircle, description: t('orderTracking.deliveredSuccess') },
 ];
 
 const statusIndex: Record<string, number> = {
