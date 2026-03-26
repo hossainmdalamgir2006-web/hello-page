@@ -1,44 +1,42 @@
 
 
-# Fix: Products Not Showing — RPC Function Bug
+# Product Image — Base64 থেকে Supabase Storage URL-এ মাইগ্রেট করা
 
-## Root Cause
-The `get_featured_products_lite` database function treats `images` as `jsonb`, but the column is actually `text[]` (PostgreSQL text array). This causes the function to error silently and return no products.
+## সমস্যা
+Product Modal-এ image আপলোড করলে সেটা `FileReader.readAsDataURL()` দিয়ে **base64 string** হিসেবে সরাসরি database-এ save হচ্ছে। এটাই page slow হওয়ার মূল কারণ — প্রতিটা image 500KB-2MB text হিসেবে database response-এ আসছে।
 
-## Fix
-Replace the migration with a corrected function that uses `unnest()` for `text[]` arrays instead of `jsonb_array_elements_text()`.
+Categories page আগেই ঠিকমতো Supabase Storage ব্যবহার করছে — সেই pattern-ই product image-এ apply করবো।
 
-### Database Migration — Update `get_featured_products_lite`
-```sql
-CREATE OR REPLACE FUNCTION public.get_featured_products_lite(p_limit integer DEFAULT 8)
-RETURNS TABLE(...)
-AS $$
-BEGIN
-  RETURN QUERY
-  SELECT p.id, p.name, p.slug, p.price, p.compare_at_price, p.category, p.created_at,
-    (SELECT elem FROM unnest(p.images) AS elem
-     WHERE elem NOT LIKE 'data:%' LIMIT 1
-    ) AS first_image
-  FROM public.products p
-  WHERE p.is_active = true AND p.deleted_at IS NULL AND p.is_featured = true
-  LIMIT p_limit;
+## কী করবো
 
-  IF NOT FOUND THEN
-    RETURN QUERY
-    SELECT p.id, p.name, p.slug, p.price, p.compare_at_price, p.category, p.created_at,
-      (SELECT elem FROM unnest(p.images) AS elem
-       WHERE elem NOT LIKE 'data:%' LIMIT 1
-      ) AS first_image
-    FROM public.products p
-    WHERE p.is_active = true AND p.deleted_at IS NULL
-    ORDER BY p.created_at DESC
-    LIMIT p_limit;
-  END IF;
-END;
-$$;
-```
+### Step 1: Product Image Upload — Storage-এ পাঠাবে
+`ProductModal.tsx`-এর `handleImageUpload` ফাংশন পরিবর্তন:
+- `readAsDataURL()` বাদ দিয়ে `supabase.storage.from('product-images').upload()` ব্যবহার
+- Upload সফল হলে `getPublicUrl()` দিয়ে URL পেয়ে সেই URL array-তে রাখবে
+- Loading state দেখাবে upload চলাকালে
+
+### Step 2: Existing Base64 Images মাইগ্রেশন Script
+একটা admin-accessible button/feature যেটা:
+- Database থেকে যেসব product-এ base64 image আছে সেগুলো খুঁজবে
+- প্রতিটা base64 image decode করে Storage-এ upload করবে
+- Database-এ base64 string replace করবে URL দিয়ে
+- Edge function হিসেবে তৈরি করবো যাতে server-side এ চলে
+
+### Step 3: Image Size Validation
+- Max 5MB per image
+- Accepted formats: jpg, png, webp, gif
 
 ## Files to modify
-- **New migration**: Fix `get_featured_products_lite` to use `unnest()` instead of `jsonb_array_elements_text()`
-- No code changes needed — `useFeaturedProducts.ts` already handles the response correctly
+- `src/components/products/ProductModal.tsx` — upload to Storage instead of base64
+- New edge function: `supabase/functions/migrate-product-images/index.ts` — batch migrate existing base64 images
+- Admin UI-তে একটা "Migrate Images" button (Settings or Products page)
+
+## Expected Results
+```text
+Before: Each product image = 500KB-2MB in DB column (text)
+After:  Each product image = ~50 byte URL string in DB column
+        Actual image served from CDN via Supabase Storage
+
+Page speed improvement: 3.2MB transfer → ~10KB for product listings
+```
 
