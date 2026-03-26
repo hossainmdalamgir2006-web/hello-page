@@ -140,7 +140,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
               <ChevronDown className="hidden lg:block h-3.5 w-3.5 text-muted-foreground" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64 p-0">
+          <DropdownMenuContent align="end" className="w-auto min-w-64 p-0">
             {/* User info header */}
             <div className="flex items-center gap-3 p-3 bg-muted/30 border-b border-border">
               <Avatar className="h-10 w-10 ring-2 ring-background shadow-sm">
@@ -151,14 +151,14 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-sm font-semibold text-foreground truncate">
+                  <p className="text-sm font-semibold text-foreground">
                     {user?.user_metadata?.full_name || 'Admin'}
                   </p>
                   <span className="inline-flex items-center rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary capitalize shrink-0">
                     {role || 'admin'}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-xs text-muted-foreground break-all">
                   {user?.email || 'admin@ekta.com'}
                 </p>
               </div>
