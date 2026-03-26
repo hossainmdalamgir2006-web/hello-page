@@ -703,7 +703,7 @@ export default function Checkout() {
                                 <Input id="billingFirstName" value={billingFormData.firstName} onChange={(e) => setBillingFormData(prev => ({ ...prev, firstName: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
                               </div>
                               <div>
-                                <Label htmlFor="billingLastName">Last Name *</Label>
+                                <Label htmlFor="billingLastName">{t('checkout.lastName')} *</Label>
                                 <Input id="billingLastName" value={billingFormData.lastName} onChange={(e) => setBillingFormData(prev => ({ ...prev, lastName: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
                               </div>
                             </div>
