@@ -570,7 +570,7 @@ export default function Checkout() {
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="city">City *</Label>
+                      <Label htmlFor="city">{t('checkout.city')} *</Label>
                       <Input id="city" name="city" value={formData.city} onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required />
                       <p className="text-xs text-muted-foreground mt-1">{formData.city.length}/50</p>
                     </div>
