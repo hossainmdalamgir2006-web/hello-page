@@ -71,10 +71,10 @@ export default function SizeGuide() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Size</TableHead>
-                        <TableHead>Bust (inches)</TableHead>
-                        <TableHead>Waist (inches)</TableHead>
-                        <TableHead>Hip (inches)</TableHead>
+                        <TableHead>{t('store.size')}</TableHead>
+                        <TableHead>{t('sizeGuide.bust')}</TableHead>
+                        <TableHead>{t('sizeGuide.waist')}</TableHead>
+                        <TableHead>{t('sizeGuide.hip')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
