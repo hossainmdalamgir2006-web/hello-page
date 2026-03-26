@@ -65,6 +65,7 @@ const SettingsSecurity = lazy(() => import("./pages/settings/SecurityPage"));
 const SettingsAudit = lazy(() => import("./pages/settings/AuditPage"));
 const SettingsBackup = lazy(() => import("./pages/settings/BackupPage"));
 const SettingsIntegrations = lazy(() => import("./pages/settings/IntegrationsPage"));
+const SettingsLanguages = lazy(() => import("./pages/settings/LanguagesPage"));
 const Shipping = lazy(() => import("./pages/Shipping"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Reports = lazy(() => import("./pages/Reports"));
@@ -158,6 +159,7 @@ const App = () => (
               <Route path="audit" element={<SettingsAudit />} />
               <Route path="backup" element={<SettingsBackup />} />
               <Route path="integrations" element={<SettingsIntegrations />} />
+              <Route path="languages" element={<SettingsLanguages />} />
             </Route>
             <Route path="/admin/shipping" element={<Shipping />} />
             <Route path="/admin/messages" element={<Messages />} />

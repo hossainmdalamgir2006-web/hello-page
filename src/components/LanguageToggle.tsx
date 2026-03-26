@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguageSettings } from "@/hooks/useLanguageSettings";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +11,12 @@ import { Languages } from "lucide-react";
 
 export function LanguageToggle() {
   const { language, setLanguage } = useLanguage();
+  const { enabledLanguages, isLoading } = useLanguageSettings();
+
+  // Hide toggle if only 1 or 0 languages enabled
+  if (!isLoading && enabledLanguages.length <= 1) return null;
+
+  const currentLang = enabledLanguages.find((l) => l.language_code === language);
 
   return (
     <DropdownMenu>
@@ -23,20 +30,16 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem 
-          onClick={() => setLanguage('en')}
-          className={language === 'en' ? 'bg-accent' : ''}
-        >
-          <span className="mr-2">🇺🇸</span>
-          English
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={() => setLanguage('bn')}
-          className={language === 'bn' ? 'bg-accent' : ''}
-        >
-          <span className="mr-2">🇧🇩</span>
-          বাংলা
-        </DropdownMenuItem>
+        {enabledLanguages.map((lang) => (
+          <DropdownMenuItem
+            key={lang.language_code}
+            onClick={() => setLanguage(lang.language_code)}
+            className={language === lang.language_code ? 'bg-accent' : ''}
+          >
+            <span className="mr-2">{lang.flag_emoji}</span>
+            {lang.native_name}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1396,6 +1396,42 @@ export type Database = {
         }
         Relationships: []
       }
+      language_settings: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          flag_emoji: string
+          id: string
+          is_default: boolean
+          language_code: string
+          language_name: string
+          native_name: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          flag_emoji?: string
+          id?: string
+          is_default?: boolean
+          language_code: string
+          language_name: string
+          native_name: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          flag_emoji?: string
+          id?: string
+          is_default?: boolean
+          language_code?: string
+          language_name?: string
+          native_name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       live_chat_conversations: {
         Row: {
           assigned_to: string | null

@@ -1,11 +1,10 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-type Language = 'en' | 'bn';
+type Language = string;
 
 interface Translations {
   [key: string]: {
-    en: string;
-    bn: string;
+    [lang: string]: string;
   };
 }
 
@@ -1109,7 +1108,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       console.warn(`Translation missing for key: ${key}`);
       return key;
     }
-    return translation[language];
+    return translation[language] || translation['en'] || key;
   };
 
   return (
