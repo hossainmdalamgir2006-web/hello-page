@@ -138,7 +138,7 @@ const Index = () => {
       iconBg: "warning" as const 
     },
     { 
-      title: t('dashboard.totalCustomers'), 
+      title: 'Total Customers', 
       value: stats.totalCustomers.toString(), 
       change: stats.customersChange, 
       icon: Users, 
