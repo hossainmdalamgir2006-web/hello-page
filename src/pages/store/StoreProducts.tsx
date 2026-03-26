@@ -576,7 +576,7 @@ export default function StoreProducts() {
                     </Button>
                   </SheetTrigger>
                   <SheetContent>
-                    <SheetHeader><SheetTitle>Filters</SheetTitle></SheetHeader>
+                    <SheetHeader><SheetTitle>{t('storeProducts.filters')}</SheetTitle></SheetHeader>
                     <ScrollArea className="h-[calc(100vh-6rem)] py-6">
                       <FilterPanel {...filterPanelProps} onApply={() => setFiltersOpen(false)} />
                     </ScrollArea>
