@@ -712,8 +712,8 @@ export default function Checkout() {
                               <Input id="billingPhone" type="tel" value={billingFormData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 15); setBillingFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={15} required={!billingAddressSameAsShipping} />
                             </div>
                             <div>
-                              <Label htmlFor="billingAddress">Address *</Label>
-                              <Input id="billingAddress" value={billingFormData.address} onChange={(e) => setBillingFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder="House/Flat No, Street, Area" maxLength={200} required={!billingAddressSameAsShipping} />
+                              <Label htmlFor="billingAddress">{t('checkout.address')} *</Label>
+                              <Input id="billingAddress" value={billingFormData.address} onChange={(e) => setBillingFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder={t('checkout.houseFlatNo')} maxLength={200} required={!billingAddressSameAsShipping} />
                             </div>
                             <div className="grid sm:grid-cols-2 gap-4">
                               <div>
