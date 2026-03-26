@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { usePageContent } from "@/hooks/usePageContents";
 
 interface PromoBanner {
   badge?: string;
@@ -31,9 +30,7 @@ const defaultBanners: PromoBanner[] = [
 ];
 
 export function PromoBannerSection({ banners: propBanners }: PromoBannerSectionProps) {
-  const { data } = usePageContent("promo-banners");
-  const dbBanners = (data?.content as any)?.banners;
-  const items = propBanners && propBanners.length > 0 ? propBanners : (dbBanners && dbBanners.length > 0 ? dbBanners : defaultBanners);
+  const items = propBanners && propBanners.length > 0 ? propBanners : defaultBanners;
 
   return (
     <section className="py-16 bg-store-background">

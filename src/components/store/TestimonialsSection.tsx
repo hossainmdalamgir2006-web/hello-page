@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Star, Quote } from "lucide-react";
-import { usePageContent } from "@/hooks/usePageContents";
 
 interface Testimonial {
   name: string;
@@ -33,12 +32,9 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function TestimonialsSection({ title: propTitle, subtitle: propSubtitle, testimonials: propTestimonials }: TestimonialsSectionProps) {
-  const { data } = usePageContent("testimonials");
-  
-  const title = propTitle || data?.title || "What Our Customers Say";
-  const subtitle = propSubtitle || data?.subtitle || "Real reviews from real customers";
-  const dbTestimonials = (data?.content as any)?.testimonials;
-  const items = propTestimonials && propTestimonials.length > 0 ? propTestimonials : (dbTestimonials && dbTestimonials.length > 0 ? dbTestimonials : defaultTestimonials);
+  const title = propTitle || "What Our Customers Say";
+  const subtitle = propSubtitle || "Real reviews from real customers";
+  const items = propTestimonials && propTestimonials.length > 0 ? propTestimonials : defaultTestimonials;
 
   const [current, setCurrent] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);

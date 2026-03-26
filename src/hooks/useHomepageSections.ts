@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -18,31 +19,37 @@ export interface HomepageSection {
   updated_at: string;
 }
 
+const QUERY_KEY = ["homepage-sections"];
+
+async function fetchSections(): Promise<HomepageSection[]> {
+  const { data, error } = await supabase
+    .from("homepage_sections")
+    .select("*")
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching homepage sections:", error);
+    return [];
+  }
+  return (data as any[]) || [];
+}
+
 export function useHomepageSections() {
-  const [sections, setSections] = useState<HomepageSection[]>([]);
-  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const fetchSections = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("homepage_sections")
-      .select("*")
-      .order("sort_order", { ascending: true });
-
-    if (error) {
-      console.error("Error fetching homepage sections:", error);
-    } else {
-      setSections((data as any[]) || []);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchSections();
-  }, [fetchSections]);
+  const { data: sections = [], isLoading: loading } = useQuery({
+    queryKey: QUERY_KEY,
+    queryFn: fetchSections,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000,
+  });
 
   const getSection = (type: string) => sections.find((s) => s.section_type === type);
+
+  const refetch = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+  }, [queryClient]);
 
   const updateSection = async (id: string, updates: Partial<HomepageSection>) => {
     const { error } = await supabase
@@ -55,7 +62,7 @@ export function useHomepageSections() {
       return false;
     }
     toast({ title: "Success", description: "Section updated successfully" });
-    await fetchSections();
+    refetch();
     return true;
   };
 
@@ -69,7 +76,7 @@ export function useHomepageSections() {
       return false;
     }
     toast({ title: "Success", description: "Section created successfully" });
-    await fetchSections();
+    refetch();
     return true;
   };
 
@@ -84,7 +91,7 @@ export function useHomepageSections() {
       return false;
     }
     toast({ title: "Success", description: "Section deleted successfully" });
-    await fetchSections();
+    refetch();
     return true;
   };
 
@@ -100,6 +107,6 @@ export function useHomepageSections() {
     createSection,
     deleteSection,
     toggleSection,
-    refetch: fetchSections,
+    refetch,
   };
 }

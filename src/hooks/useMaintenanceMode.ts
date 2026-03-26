@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 
 interface MaintenanceConfig {
   enabled: boolean;
@@ -72,39 +73,29 @@ export function useMaintenanceMode() {
   return { config, loading, saving, updateConfig };
 }
 
-// Lightweight hook for store pages - only checks if maintenance is on
+// Lightweight hook — reads from shared store_settings cache (no extra DB call)
 export function useMaintenanceCheck() {
-  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
-  const [message, setMessage] = useState("");
-  const [estimatedEnd, setEstimatedEnd] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: settings, isLoading } = useStoreSettingsCache();
 
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("store_settings" as any)
-          .select("setting_value")
-          .eq("key", "MAINTENANCE_MODE")
-          .single();
+  const result = useMemo(() => {
+    if (!settings) {
+      return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
+    }
+    const raw = settings["MAINTENANCE_MODE"];
+    if (!raw) {
+      return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
+    }
+    try {
+      const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+      return {
+        isMaintenanceMode: parsed.enabled === true,
+        message: parsed.message || DEFAULT_CONFIG.message,
+        estimatedEnd: parsed.estimated_end || null,
+      };
+    } catch {
+      return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
+    }
+  }, [settings]);
 
-        if (error && error.code !== "PGRST116") throw error;
-
-        if (data && (data as any).setting_value) {
-          const val = (data as any).setting_value;
-          const parsed = typeof val === "string" ? JSON.parse(val) : val;
-          setIsMaintenanceMode(parsed.enabled === true);
-          setMessage(parsed.message || DEFAULT_CONFIG.message);
-          setEstimatedEnd(parsed.estimated_end || null);
-        }
-      } catch {
-        // If we can't check, assume not in maintenance
-      } finally {
-        setLoading(false);
-      }
-    };
-    check();
-  }, []);
-
-  return { isMaintenanceMode, message, estimatedEnd, loading };
+  return { ...result, loading: isLoading };
 }

@@ -1,16 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { useCategoriesCache, CategoryRow } from "@/hooks/useCategoriesCache";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  parent_id: string | null;
-  sort_order: number | null;
-}
 
 interface NavCategory {
   label: string;
@@ -19,11 +11,10 @@ interface NavCategory {
   subGroups: { group: string; slug: string; items: { name: string; href: string }[] }[];
 }
 
-function buildNavCategories(categories: Category[]): NavCategory[] {
+function buildNavCategories(categories: CategoryRow[]): NavCategory[] {
   const topLevel = categories.filter((c) => !c.parent_id);
   return topLevel.map((parent) => {
     const children = categories.filter((c) => c.parent_id === parent.id);
-    // Group children: if children have their own children, treat them as groups
     const grandchildren = children.filter((child) =>
       categories.some((c) => c.parent_id === child.id)
     );
@@ -44,7 +35,6 @@ function buildNavCategories(categories: Category[]): NavCategory[] {
       }
     }
 
-    // Add leaf children as a default group
     if (leafChildren.length > 0) {
       subGroups.push({
         group: leafChildren.length > 0 && grandchildren.length > 0 ? "Other" : parent.name,
@@ -66,28 +56,9 @@ function buildNavCategories(categories: Category[]): NavCategory[] {
 }
 
 export function useDynamicCategories() {
-  const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const { data, error } = await supabase
-        .from("categories")
-        .select("id, name, slug, parent_id, sort_order")
-        .eq("is_active", true)
-        .is("deleted_at", null)
-        .order("sort_order", { ascending: true })
-        .order("name", { ascending: true });
-
-      if (!error && data) {
-        setNavCategories(buildNavCategories(data));
-      }
-      setLoading(false);
-    };
-    fetchCategories();
-  }, []);
-
-  return { navCategories, loading };
+  const { data: categories = [], isLoading } = useCategoriesCache();
+  const navCategories = useMemo(() => buildNavCategories(categories), [categories]);
+  return { navCategories, loading: isLoading };
 }
 
 export function MegaMenuNav() {
@@ -184,7 +155,6 @@ export function MegaMenuNav() {
         </div>
       ))}
 
-      {/* Static Pages */}
       {staticPages.map((page) => (
         <Link
           key={page.label}
@@ -263,7 +233,6 @@ export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
         </div>
       ))}
 
-      {/* Static Pages */}
       <div className="border-t border-store-muted mt-2 pt-2">
         {[
           { label: t('store.contactUs'), href: "/contact" },

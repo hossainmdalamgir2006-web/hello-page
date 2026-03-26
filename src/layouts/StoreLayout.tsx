@@ -7,15 +7,14 @@ import { MaintenancePage } from "@/components/store/MaintenancePage";
 import { BackToTop } from "@/components/store/BackToTop";
 import { MobileBottomNav } from "@/components/store/MobileBottomNav";
 import { StoreBreadcrumb } from "@/components/store/StoreBreadcrumb";
-import { supabase } from "@/integrations/supabase/client";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
+import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { X } from "lucide-react";
 import { Suspense } from "react";
-import { useQuery } from "@tanstack/react-query";
-
-const FAVICON_CACHE_KEY = "_favicon_url";
 
 interface StoreLayoutProps {
   children?: ReactNode;
@@ -28,8 +27,9 @@ export function StoreLayout({ children }: StoreLayoutProps) {
   const { isMaintenanceMode, message, estimatedEnd, loading: maintenanceLoading } = useMaintenanceCheck();
   const { user, isStaff } = useAuth();
   const [announcementDismissed, setAnnouncementDismissed] = useState(false);
+  const { data: settings } = useStoreSettingsCache();
 
-  // Fetch only the announcement section (lightweight query instead of full useHomepageSections)
+  // Fetch only the announcement section (lightweight)
   const { data: announcement } = useQuery({
     queryKey: ["homepage-announcement"],
     queryFn: async () => {
@@ -45,31 +45,13 @@ export function StoreLayout({ children }: StoreLayoutProps) {
     staleTime: 10 * 60 * 1000,
   });
 
-  // Favicon: read from cache instantly, update in background
+  // Favicon: read from shared store settings cache
   useEffect(() => {
-    const cachedFavicon = localStorage.getItem(FAVICON_CACHE_KEY);
-    if (cachedFavicon) {
-      applyFavicon(cachedFavicon);
+    const faviconUrl = settings?.STORE_FAVICON;
+    if (faviconUrl) {
+      applyFavicon(faviconUrl);
     }
-
-    const fetchFavicon = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("store_settings" as any)
-          .select("setting_value")
-          .eq("key", "STORE_FAVICON")
-          .single();
-
-        if (!error && data && (data as any).setting_value) {
-          const url = (data as any).setting_value;
-          localStorage.setItem(FAVICON_CACHE_KEY, url);
-          applyFavicon(url);
-        }
-      } catch {}
-    };
-
-    fetchFavicon();
-  }, []);
+  }, [settings?.STORE_FAVICON]);
 
   function applyFavicon(url: string) {
     let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
