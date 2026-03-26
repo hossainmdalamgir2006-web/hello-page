@@ -34,8 +34,8 @@ export default function SizeGuide() {
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="men" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="men">Men's Sizes</TabsTrigger>
-              <TabsTrigger value="women">Women's Sizes</TabsTrigger>
+              <TabsTrigger value="men">{t('sizeGuide.mensSizes')}</TabsTrigger>
+              <TabsTrigger value="women">{t('sizeGuide.womensSizes')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="men">
