@@ -26,8 +26,8 @@ export function ManualPaymentInstructions({
   transactionId, 
   onTransactionIdChange 
 }: ManualPaymentInstructionsProps) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
-  const [showQrModal, setShowQrModal] = useState(false);
   
   // Skip if no account number configured
   if (!paymentMethod.account_number) {
