@@ -125,8 +125,8 @@ export default function AccountReturns() {
                 </Select>
               </div>
               <div>
-                <Label>{t('account.detailsOptional')}</Label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('account.describeIssue')} rows={3} />
+                <Label>Details (Optional)</Label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the issue..." rows={3} />
               </div>
               <Button onClick={handleSubmit} disabled={submitting} className="w-full">
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
