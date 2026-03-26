@@ -93,7 +93,7 @@ const RoleDashboard = () => {
                 customRange={customRange}
                 onChange={handleDateRangeChange}
               />
-              <Button variant="outline" size="sm" onClick={refetch} disabled={loading}>
+              <Button variant="outline" size="sm" onClick={() => refetch()} disabled={loading}>
                 <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
                 Refresh
               </Button>
@@ -167,7 +167,7 @@ const RoleDashboard = () => {
           <div className="lg:col-span-1">
             <div className="rounded-lg border bg-card p-4 shadow-sm">
               <h3 className="text-sm font-semibold mb-3">⚡ Quick Actions</h3>
-              <RoleQuickActions onRefresh={refetch} loading={loading} />
+              <RoleQuickActions onRefresh={() => refetch()} loading={loading} />
             </div>
           </div>
 
@@ -214,7 +214,7 @@ const RoleDashboard = () => {
               Support Dashboard — Manage customer support
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={refetch} disabled={loading}>
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
@@ -234,7 +234,7 @@ const RoleDashboard = () => {
         <div className="lg:col-span-1">
           <div className="rounded-lg border bg-card p-4 shadow-sm">
             <h3 className="text-sm font-semibold mb-3">⚡ Quick Actions</h3>
-            <RoleQuickActions onRefresh={refetch} loading={loading} />
+            <RoleQuickActions onRefresh={() => refetch()} loading={loading} />
           </div>
         </div>
 
