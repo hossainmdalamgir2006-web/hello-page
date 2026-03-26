@@ -73,7 +73,7 @@ export default function AccountReturns() {
   useEffect(() => { fetchData(); }, [user]);
 
   const handleSubmit = async () => {
-    if (!selectedOrder || !reason) { toast.error(t('account.selectOrderAndReason')); return; }
+    if (!selectedOrder || !reason) { toast.error("Please select an order and reason"); return; }
     setSubmitting(true);
     const { error } = await supabase.from("return_requests").insert({
       user_id: user!.id, order_id: selectedOrder, reason, description: description || null,
