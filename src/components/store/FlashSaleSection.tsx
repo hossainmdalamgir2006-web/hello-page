@@ -60,12 +60,16 @@ function TimerBlock({ value, label }: { value: number; label: string }) {
 }
 
 export function FlashSaleSection({
-  title = "Flash Sale",
-  subtitle = "Hurry! Offer ends soon",
-  badge = "⚡ Flash Sale",
+  title,
+  subtitle,
+  badge,
   endTime,
   count = 4,
 }: FlashSaleSectionProps) {
+  const { t } = useLanguage();
+  const displayTitle = title || t('store.flashSale');
+  const displaySubtitle = subtitle || "";
+  const displayBadge = badge || `⚡ ${t('store.flashSale')}`;
   const { products, loading } = useFeaturedProducts(count);
   const { timeLeft, expired } = useCountdown(endTime || null);
 
