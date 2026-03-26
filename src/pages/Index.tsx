@@ -397,7 +397,7 @@ const Index = () => {
               onAddWidget={addWidget}
               onResetLayout={resetLayout}
             />
-            <QuickActions onRefresh={refetch} loading={loading} />
+            <QuickActions onRefresh={() => refetch()} loading={loading} />
           </div>
         </div>
       </div>
