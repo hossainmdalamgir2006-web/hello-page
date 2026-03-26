@@ -55,7 +55,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
     content: true,
     operations: true,
     communication: true,
-    system: true,
+    'system settings': true,
     account: true,
   });
 
