@@ -80,6 +80,8 @@ export default function AccountReviews() {
   if (loading) return <DelayedLoader><GenericListSkeleton /></DelayedLoader>;
 
   return (
+    <>
+    <SEOHead title="My Reviews" noIndex />
     <div className="space-y-6">
       <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>

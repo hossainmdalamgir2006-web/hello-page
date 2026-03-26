@@ -78,6 +78,8 @@ export default function AccountPaymentMethods() {
   const getIcon = (type: string) => METHOD_TYPES.find((m) => m.value === type)?.icon || "💳";
 
   return (
+    <>
+    <SEOHead title="Payment Methods" noIndex />
     <div className="space-y-6">
       <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>

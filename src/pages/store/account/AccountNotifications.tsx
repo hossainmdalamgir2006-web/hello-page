@@ -22,6 +22,8 @@ export default function AccountNotifications() {
   }
 
   return (
+    <>
+    <SEOHead title="Notifications" noIndex />
     <div className="space-y-4">
       {unreadCount > 0 && (
         <div className="flex justify-end">
