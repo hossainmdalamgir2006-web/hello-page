@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { GoogleTranslateWidget } from "@/components/GoogleTranslateWidget";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { NotificationCenter } from "@/components/admin/NotificationCenter";
 import { AgentAvailabilityToggle } from "@/components/admin/AgentAvailabilityToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
