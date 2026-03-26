@@ -561,14 +561,6 @@ export default function ProductDetail() {
                 <Table><TableBody>{attributes.map((attr) => (<TableRow key={attr.id}><TableCell className="font-medium w-1/3">{attr.attribute_name}</TableCell><TableCell>{attr.attribute_values.join(', ')}</TableCell></TableRow>))}</TableBody></Table>
               </TabsContent>
             )}
-            <TabsContent value="details" className="py-6">
-              <ul className="space-y-2 text-muted-foreground">
-                <li><strong>{t('store.category')}:</strong> {product.category || "N/A"}</li>
-                <li><strong>SKU:</strong> {product.sku || "N/A"}</li>
-                {product.brand && <li><strong>{t('store.brand')}:</strong> {product.brand}</li>}
-                <li><strong>{t('store.type')}:</strong> {product.product_type || "Simple"}</li>
-              </ul>
-            </TabsContent>
             <TabsContent value="reviews" className="py-6"><ProductReviews productId={product.id} /></TabsContent>
           </Tabs>
         </div>
