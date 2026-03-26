@@ -56,9 +56,9 @@ const Categories = lazy(() => import("./pages/Categories"));
 const Orders = lazy(() => import("./pages/Orders"));
 const Analytics = lazy(() => import("./pages/Analytics"));
 const Customers = lazy(() => import("./pages/Customers"));
-const SettingsLayout = lazy(() => import("./layouts/SettingsLayout"));
-const SettingsStore = lazy(() => import("./pages/settings/StorePage"));
-const SettingsPayments = lazy(() => import("./pages/settings/PaymentsPage"));
+
+const SettingsStore = lazy(() => import("./pages/system-settings/StorePage"));
+const SettingsPayments = lazy(() => import("./pages/system-settings/PaymentsPage"));
 const SettingsEmails = lazy(() => import("./pages/system-settings/EmailsPage"));
 const SettingsNotifications = lazy(() => import("./pages/system-settings/NotificationsPage"));
 const SettingsSecurity = lazy(() => import("./pages/system-settings/SecurityPage"));
@@ -158,11 +158,8 @@ const App = () => (
             <Route path="/admin/orders" element={<Orders />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/customers" element={<Customers />} />
-            <Route path="/admin/settings" element={<SettingsLayout />}>
-              <Route index element={<SettingsStore />} />
-              <Route path="store" element={<SettingsStore />} />
-              <Route path="payments" element={<SettingsPayments />} />
-            </Route>
+            <Route path="/admin/settings/store" element={<SettingsStore />} />
+            <Route path="/admin/settings/payments" element={<SettingsPayments />} />
             <Route path="/admin/settings/emails" element={<SettingsEmails />} />
             <Route path="/admin/settings/notifications" element={<SettingsNotifications />} />
             <Route path="/admin/settings/security" element={<SettingsSecurity />} />
