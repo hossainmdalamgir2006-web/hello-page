@@ -54,7 +54,7 @@ const roleConfig: Record<AppRole, { label: string; icon: React.ReactNode; color:
 
 export default function RoleManagement() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const { toast } = useToast();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
