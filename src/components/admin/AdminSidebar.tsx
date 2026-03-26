@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut,
   Tag, Award, Truck, MessageSquare, FileText, Ticket, UserCog, User,
   ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Home, Star,
-  ChevronDown, ExternalLink,
+  ChevronDown, ExternalLink, HardDrive, Plug,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -128,6 +128,8 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
       items: [
         { title: t('nav.roles'), url: "/admin/role-management", icon: UserCog, roles: ['admin'] },
         { title: t('nav.settings'), url: role === 'manager' ? '/manager/settings' : role === 'support' ? '/support/settings' : '/admin/settings', icon: Settings, roles: ['admin', 'manager', 'support'] },
+        { title: "Backup", url: "/admin/settings/backup", icon: HardDrive, roles: ['admin'] },
+        { title: "Integrations", url: "/admin/settings/integrations", icon: Plug, roles: ['admin'] },
       ],
     },
   ];
