@@ -128,7 +128,6 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
       label: "System Settings",
       items: [
         { title: t('nav.roles'), url: "/admin/role-management", icon: UserCog, roles: ['admin'] },
-        { title: t('nav.settings'), url: role === 'manager' ? '/manager/settings' : role === 'support' ? '/support/settings' : '/admin/settings', icon: Settings, roles: ['admin', 'manager', 'support'] },
         { title: "Store", url: "/admin/settings/store", icon: Store, roles: ['admin'] },
         { title: "Payments", url: "/admin/settings/payments", icon: CreditCard, roles: ['admin'] },
         { title: "Security", url: "/admin/settings/security", icon: Shield, roles: ['admin'] },
