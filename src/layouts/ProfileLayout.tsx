@@ -13,7 +13,12 @@ export default function ProfileLayout() {
   const profileNav = [
     { to: `${basePath}/personal`, label: "Personal Info", icon: User },
     { to: `${basePath}/password`, label: "Password", icon: Lock },
-    { to: `${basePath}/security`, label: "Security", icon: Shield },
+  ];
+
+  const securitySubItems = [
+    { to: `${basePath}/security/2fa`, label: "Two-Factor Auth", icon: ShieldCheck },
+    { to: `${basePath}/security/recovery`, label: "Recovery Codes", icon: KeyRound },
+    { to: `${basePath}/security/devices`, label: "Trusted Devices", icon: Smartphone },
   ];
 
   const sessionsSubItems = [
@@ -21,6 +26,7 @@ export default function ProfileLayout() {
     { to: `${basePath}/sessions/activity`, label: "Login Activity", icon: History },
   ];
 
+  const isSecurityActive = location.pathname.includes(`${basePath}/security`);
   const isSessionsActive = location.pathname.includes(`${basePath}/sessions`);
 
   if (location.pathname === basePath || location.pathname === `${basePath}/`) {
