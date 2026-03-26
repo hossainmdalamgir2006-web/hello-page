@@ -14,6 +14,7 @@ const settingsNav = [
   { to: "/admin/settings/audit", label: "Audit Log", icon: ClipboardList },
   { to: "/admin/settings/backup", label: "Backup", icon: HardDrive },
   { to: "/admin/settings/integrations", label: "Integrations", icon: Plug },
+  { to: "/admin/settings/languages", label: "Languages", icon: Globe },
 ];
 
 export default function SettingsLayout() {
