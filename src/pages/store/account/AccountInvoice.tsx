@@ -77,8 +77,8 @@ export default function AccountInvoice() {
       for (const item of order.items) {
         doc.text(item.product_name.substring(0, 40), 16, y);
         doc.text(String(item.quantity), 120, y);
-        doc.text(`${formatPrice(item.unit_price).toFixed(0)}`, 140, y);
-        doc.text(`${formatPrice(item.total_price).toFixed(0)}`, 170, y);
+        doc.text(formatPrice(item.unit_price), 140, y);
+        doc.text(formatPrice(item.total_price), 170, y);
         y += 7;
       }
       y += 5;
