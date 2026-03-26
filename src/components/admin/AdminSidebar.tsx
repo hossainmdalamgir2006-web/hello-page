@@ -142,7 +142,6 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
 
   const bottomMenuItems = [
     { title: t('nav.profile'), url: `${basePath}/profile`, icon: User, roles: ['admin', 'manager', 'support'] },
-    { title: t('nav.settings'), url: role === 'manager' ? '/manager/settings' : role === 'support' ? '/support/settings' : '/admin/settings', icon: Settings, roles: ['admin', 'manager', 'support'] },
   ].filter(item => role && item.roles.includes(role));
 
   const renderNavItem = (item: MenuItem, isEnd?: boolean) => {
