@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useLanguage } from "@/contexts/LanguageContext";
+
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, RotateCcw, Plus } from "lucide-react";
@@ -25,7 +25,7 @@ const statusColors: Record<string, string> = {
 
 export default function AccountReturns() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const [requests, setRequests] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,12 +37,12 @@ export default function AccountReturns() {
   const [returnWindowDays, setReturnWindowDays] = useState(7);
 
   const REASONS = [
-    { value: "Defective/Damaged Product", label: t('account.defectiveDamaged') },
-    { value: "Wrong Item Received", label: t('account.wrongItem') },
-    { value: "Size/Color Mismatch", label: t('account.sizeMismatch') },
-    { value: "Product Not As Described", label: t('account.notAsDescribed') },
-    { value: "Changed My Mind", label: t('account.changedMind') },
-    { value: "Other", label: t('account.otherReason') },
+    { value: "Defective/Damaged Product", label: "Defective/Damaged Product" },
+    { value: "Wrong Item Received", label: "Wrong Item Received" },
+    { value: "Size/Color Mismatch", label: "Size/Color Mismatch" },
+    { value: "Product Not As Described", label: "Product Not As Described" },
+    { value: "Changed My Mind", label: "Changed My Mind" },
+    { value: "Other", label: "Other" },
   ];
 
   const fetchData = async () => {
@@ -73,14 +73,14 @@ export default function AccountReturns() {
   useEffect(() => { fetchData(); }, [user]);
 
   const handleSubmit = async () => {
-    if (!selectedOrder || !reason) { toast.error(t('account.selectOrderAndReason')); return; }
+    if (!selectedOrder || !reason) { toast.error("Please select an order and reason"); return; }
     setSubmitting(true);
     const { error } = await supabase.from("return_requests").insert({
       user_id: user!.id, order_id: selectedOrder, reason, description: description || null,
     });
-    if (error) { toast.error(t('account.failedSubmitRequest')); }
+    if (error) { toast.error("Failed to submit request"); }
     else {
-      toast.success(t('account.returnSubmitted'));
+      toast.success("Return request submitted successfully");
       setOpen(false); setSelectedOrder(""); setReason(""); setDescription("");
       fetchData();
     }
@@ -95,19 +95,19 @@ export default function AccountReturns() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <p className="text-xs text-muted-foreground">
-          {t('account.returnWindowMsg')} {returnWindowDays} {t('account.daysOfDelivery')}
+          Returns accepted within {returnWindowDays} days of delivery
         </p>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" disabled={orders.length === 0}><Plus className="h-4 w-4 mr-1.5" />{t('account.newRequest')}</Button>
+            <Button size="sm" disabled={orders.length === 0}><Plus className="h-4 w-4 mr-1.5" />New Request</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>{t('account.submitReturnRequest')}</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>Submit Return Request</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>{t('account.selectOrder')}</Label>
+                <Label>Select Order</Label>
                 <Select value={selectedOrder} onValueChange={setSelectedOrder}>
-                  <SelectTrigger><SelectValue placeholder={t('account.chooseOrder')} /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Choose an order" /></SelectTrigger>
                   <SelectContent>
                     {orders.map((o) => (
                       <SelectItem key={o.id} value={o.id}>#{o.order_number} — {format(new Date(o.created_at), "MMM dd, yyyy")}</SelectItem>
@@ -116,21 +116,21 @@ export default function AccountReturns() {
                 </Select>
               </div>
               <div>
-                <Label>{t('account.reason')}</Label>
+                <Label>Reason</Label>
                 <Select value={reason} onValueChange={setReason}>
-                  <SelectTrigger><SelectValue placeholder={t('account.selectReason')} /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select a reason" /></SelectTrigger>
                   <SelectContent>
                     {REASONS.map((r) => (<SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label>{t('account.detailsOptional')}</Label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('account.describeIssue')} rows={3} />
+                <Label>Details (Optional)</Label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the issue..." rows={3} />
               </div>
               <Button onClick={handleSubmit} disabled={submitting} className="w-full">
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
-                {t('account.submitRequest')}
+                Submit Request
               </Button>
             </div>
           </DialogContent>
@@ -141,7 +141,7 @@ export default function AccountReturns() {
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             <RotateCcw className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>{t('account.noReturnRequests')}</p>
+            <p>No return requests yet</p>
           </CardContent>
         </Card>
       ) : (
@@ -156,7 +156,7 @@ export default function AccountReturns() {
                     <p className="text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM dd, yyyy HH:mm")}</p>
                     {r.admin_notes && (
                       <p className="text-xs text-foreground mt-1 p-2 bg-muted rounded">
-                        <strong>{t('account.admin')}:</strong> {r.admin_notes}
+                        <strong>Admin:</strong> {r.admin_notes}
                       </p>
                     )}
                   </div>
