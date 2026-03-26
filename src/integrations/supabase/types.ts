@@ -3429,6 +3429,19 @@ export type Database = {
           typname: string
         }[]
       }
+      get_featured_products_lite: {
+        Args: { p_limit?: number }
+        Returns: {
+          category: string
+          compare_at_price: number
+          created_at: string
+          first_image: string
+          id: string
+          name: string
+          price: number
+          slug: string
+        }[]
+      }
       get_rls_policies: {
         Args: never
         Returns: {

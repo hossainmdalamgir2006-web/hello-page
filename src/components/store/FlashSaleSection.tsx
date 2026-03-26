@@ -71,12 +71,12 @@ export function FlashSaleSection({
   const displayTitle = title || t('store.flashSale');
   const displaySubtitle = subtitle || "";
   const displayBadge = badge || `⚡ ${t('store.flashSale')}`;
-  const { products, loading } = useFeaturedProducts(count);
+  const { products: allProducts, loading } = useFeaturedProducts(8);
   const { timeLeft, expired } = useCountdown(endTime || null);
 
   // Show products with discount
-  const saleProducts = products.filter(p => p.compare_at_price && p.compare_at_price > p.price).slice(0, count);
-  const displayProducts = saleProducts.length > 0 ? saleProducts : products.slice(0, count);
+  const saleProducts = allProducts.filter(p => p.compare_at_price && p.compare_at_price > p.price).slice(0, count);
+  const displayProducts = saleProducts.length > 0 ? saleProducts : allProducts.slice(0, count);
 
   if (expired && endTime) return null;
 

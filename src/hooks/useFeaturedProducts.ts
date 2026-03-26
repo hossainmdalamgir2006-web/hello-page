@@ -13,38 +13,22 @@ interface FeaturedProduct {
 }
 
 async function fetchFeaturedProducts(limit: number): Promise<FeaturedProduct[]> {
-  // First try featured products
-  let { data, error } = await supabase
-    .from("products")
-    .select("id, name, slug, price, compare_at_price, images, category, created_at")
-    .eq("is_active", true)
-    .is("deleted_at", null)
-    .eq("is_featured", true)
-    .limit(limit);
+  const { data, error } = await supabase.rpc("get_featured_products_lite", {
+    p_limit: limit,
+  });
 
-  // Fallback to newest
-  if (!error && (!data || data.length === 0)) {
-    const fallback = await supabase
-      .from("products")
-      .select("id, name, slug, price, compare_at_price, images, category, created_at")
-      .eq("is_active", true)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false })
-      .limit(limit);
-    data = fallback.data;
-    error = fallback.error;
+  if (error || !data) {
+    console.error("Error fetching featured products:", error);
+    return [];
   }
 
-  if (error || !data) return [];
-
-  return data.map((p) => ({
+  return (data as any[]).map((p) => ({
     id: p.id,
     name: p.name,
-    slug: (p as any).slug || "",
+    slug: p.slug || "",
     price: Number(p.price),
     compare_at_price: p.compare_at_price ? Number(p.compare_at_price) : null,
-    // Filter out base64 images to reduce memory usage; keep only URL-based images
-    images: (p.images || []).filter((img: string) => typeof img === 'string' && !img.startsWith('data:')).slice(0, 2),
+    images: p.first_image ? [p.first_image] : [],
     category: p.category,
     created_at: p.created_at,
   }));

@@ -90,11 +90,12 @@ const defaultHelpLinks = [
 ];
 
 export function StoreFooter() {
-  const { data: settings } = useStoreSettingsCache();
+  const { data: settings, isLoading: settingsLoading } = useStoreSettingsCache();
   const { data: footerContent } = usePageContent("footer");
   const { t } = useLanguage();
   const content = (footerContent?.content as any) || {};
 
+  // Use defaults immediately to prevent CLS — replace when data arrives
   const storeName = settings?.STORE_NAME || "Your Store";
   const storeLogo = settings?.STORE_LOGO || null;
   const storeDescription = settings?.STORE_DESCRIPTION || "Quality products at affordable prices.";
