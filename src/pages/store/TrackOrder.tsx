@@ -177,9 +177,7 @@ export default function TrackOrder() {
             </CardContent>
           </Card>
         </div>
-      </main>
-
-      <StoreFooter />
-    </div>
+      </div>
+    </>
   );
 }
