@@ -19,6 +19,7 @@ import { useEnabledPaymentMethods } from "@/hooks/useEnabledPaymentMethods";
 export default function AccountPaymentMethods() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { paymentMethods: enabledMethods, loading: loadingMethods } = useEnabledPaymentMethods();
   const [methods, setMethods] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
