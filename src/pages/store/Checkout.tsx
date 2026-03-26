@@ -626,8 +626,8 @@ export default function Checkout() {
                                       </div>
                                     </div>
                                     <div className="text-right">
-                                      {isFree ? <span className="text-green-600 font-medium text-sm">Free</span> : <span className="font-medium text-sm">৳{displayPrice}</span>}
-                                      {rate.max_order_amount && !isFree && <p className="text-xs text-muted-foreground">৳{rate.max_order_amount}+ free</p>}
+                                      {isFree ? <span className="text-green-600 font-medium text-sm">{t('checkout.free')}</span> : <span className="font-medium text-sm">৳{displayPrice}</span>}
+                                      {rate.max_order_amount && !isFree && <p className="text-xs text-muted-foreground">৳{rate.max_order_amount}+ {t('checkout.free').toLowerCase()}</p>}
                                     </div>
                                   </label>
                                 );
