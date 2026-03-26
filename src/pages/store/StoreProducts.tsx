@@ -562,7 +562,7 @@ export default function StoreProducts() {
             {/* Top Bar */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="flex-1">
-                <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-sm" />
+                <Input placeholder={t('storeProducts.searchProducts')} value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-sm" />
               </div>
               <div className="flex items-center gap-3">
                 <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
