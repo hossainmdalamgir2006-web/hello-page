@@ -524,7 +524,7 @@ export default function Checkout() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5 text-store-primary" /> Shipping Information
+                    <Truck className="h-5 w-5 text-store-primary" /> {t('checkout.shippingInfo')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
