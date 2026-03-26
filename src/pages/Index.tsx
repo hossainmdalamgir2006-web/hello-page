@@ -388,7 +388,7 @@ const Index = () => {
               customRange={customRange}
               onChange={handleDateRangeChange}
             />
-            <Button variant="outline" size="sm" onClick={refetch} disabled={loading}>
+            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={loading}>
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
