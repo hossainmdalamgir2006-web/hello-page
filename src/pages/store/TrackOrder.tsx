@@ -70,7 +70,7 @@ export default function TrackOrder() {
         setPhoneResults(data.orders);
         setShowPhoneResults(true);
       } else {
-        setPhoneError("No orders found for this phone number");
+        setPhoneError(t('track.noOrders'));
       }
     } catch (error: any) {
       console.error("Phone search error:", error);
