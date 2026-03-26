@@ -532,7 +532,7 @@ export default function OrderTracking() {
 
               {/* Payment Information */}
               <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">Payment Information</p>
+                <p className="text-sm text-muted-foreground">{t('orderTracking.paymentInfo')}</p>
                 <div className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
                   {paymentMethodInfo?.logo_url ? (
                     <img 
