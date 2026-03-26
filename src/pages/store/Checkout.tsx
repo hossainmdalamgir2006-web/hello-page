@@ -589,7 +589,7 @@ export default function Checkout() {
                   <Separator className="my-4" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm font-medium">
-                      <MapPin className="h-4 w-4 text-store-primary" /> Shipping Zone & Rate
+                      <MapPin className="h-4 w-4 text-store-primary" /> {t('checkout.shippingZoneRate')}
                     </div>
                     {shippingLoading ? (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading shipping options...</div>
