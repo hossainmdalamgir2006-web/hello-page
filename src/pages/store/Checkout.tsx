@@ -677,7 +677,7 @@ export default function Checkout() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-2">
                     <Checkbox id="billingAddressSameAsShipping" checked={billingAddressSameAsShipping} onCheckedChange={(checked) => setBillingAddressSameAsShipping(checked as boolean)} />
-                    <Label htmlFor="billingAddressSameAsShipping" className="text-sm font-normal cursor-pointer">Same as shipping address</Label>
+                    <Label htmlFor="billingAddressSameAsShipping" className="text-sm font-normal cursor-pointer">{t('checkout.sameAsShipping')}</Label>
                   </div>
                   {!billingAddressSameAsShipping && user && (
                     <>
