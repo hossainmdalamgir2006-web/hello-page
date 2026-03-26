@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LanguageToggle } from "@/components/LanguageToggle";
+import { GoogleTranslateWidget } from "@/components/GoogleTranslateWidget";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationCenter } from "@/components/admin/NotificationCenter";
 import { AgentAvailabilityToggle } from "@/components/admin/AgentAvailabilityToggle";
