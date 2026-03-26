@@ -158,7 +158,7 @@ export function BankTransferInstructions({
           required
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Enter the Reference Number you receive after completing the bank transfer
+          {t('bankTransfer.enterRef')}
         </p>
       </div>
     </div>

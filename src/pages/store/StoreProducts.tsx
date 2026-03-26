@@ -661,7 +661,7 @@ export default function StoreProducts() {
                   </Badge>
                 )}
                 <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={clearFilters}>
-                  Clear all
+                  {t('storeProducts.clearAllFilters')}
                 </Button>
               </div>
             )}

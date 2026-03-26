@@ -172,7 +172,7 @@ export function FlashSaleSection({
             asChild
           >
             <Link to="/products?filter=sale">
-              Shop All Sale Items <ArrowRight className="ml-2 h-5 w-5" />
+              {t('flashSale.shopAllSale')} <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </div>

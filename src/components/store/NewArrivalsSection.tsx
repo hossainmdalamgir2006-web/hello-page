@@ -121,7 +121,7 @@ export function NewArrivalsSection({
                     )}
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
                       <Badge className="bg-store-primary text-store-primary-foreground text-xs px-2 py-0.5">
-                        New
+                        {t('newArrivals.new')}
                       </Badge>
                       {hasDiscount && (
                         <Badge className="bg-destructive text-destructive-foreground text-xs px-2 py-0.5">

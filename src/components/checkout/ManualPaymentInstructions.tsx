@@ -182,7 +182,7 @@ export function ManualPaymentInstructions({
           required
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Enter the Transaction ID you receive after completing the payment
+          {t('manualPayment.enterTrxId')}
         </p>
       </div>
     </div>

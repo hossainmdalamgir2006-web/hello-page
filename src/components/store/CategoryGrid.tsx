@@ -106,7 +106,7 @@ export function CategoryGrid({ title, subtitle, categories }: CategoryGridProps)
                     {cat.name}
                   </h3>
                   <span className="inline-flex items-center gap-1 text-xs font-medium text-store-accent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
-                    Shop Now <ArrowRight className="h-3 w-3" />
+                    {t('categoryGrid.shopNow')} <ArrowRight className="h-3 w-3" />
                   </span>
                 </div>
                 <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-300" />

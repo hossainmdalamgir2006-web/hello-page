@@ -115,7 +115,7 @@ export default function SizeGuide() {
             <Card className="mt-8 bg-store-primary/5 border-store-primary/20">
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <Info className="h-5 w-5 text-store-primary" /> Sizing Tips
+                  <Info className="h-5 w-5 text-store-primary" /> {t('sizeGuide.sizingTips')}
                 </h3>
                 <ul className="text-sm text-muted-foreground space-y-2">
                   {tips.map((tip: string, i: number) => <li key={i}>• {tip}</li>)}
