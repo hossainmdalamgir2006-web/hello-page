@@ -1,19 +1,32 @@
 
 
-# MyAccount Payment Methods — Use Admin-Configured Methods
+# Remove Redundant Page Titles from MyAccount Sub-Pages
 
-## What's Changing
-Replace the hardcoded `METHOD_TYPES` array in `AccountPaymentMethods.tsx` with dynamically fetched payment methods from the database (the same ones configured in admin panel). Customers will only see payment methods that admin has enabled.
+## Problem
+Every MyAccount sub-page has a `<h1>` title and `<p>` description using `t()` keys like `account.ordersTitle` → renders as "Orders Title" and `account.ordersDesc` → renders as "Orders Desc". These look ugly because the `t()` function just auto-converts camelCase keys to spaced words.
 
-## Changes
+The layout header (`CustomerAccountLayout`) already shows the correct page title and description via `pageTitleKeys` — so these per-page titles are **redundant**.
 
-### AccountPaymentMethods.tsx
-- Remove hardcoded `METHOD_TYPES` array
-- Import and use `useEnabledPaymentMethods` hook to fetch active payment methods from DB
-- Populate the "Type" dropdown with admin-configured methods (showing name + icon, and logo_url if available)
-- Use the fetched method's `icon` and `name` for display in the saved methods list
-- Show a loading state while payment methods are being fetched
+## Fix
+Remove the title/description `<div>` block from all 7 account sub-pages:
+
+1. `AccountOrders.tsx` — remove h1/p block
+2. `AccountSecurity.tsx` — remove h1/p block
+3. `AccountWishlist.tsx` — remove h1/p block
+4. `AccountShopping.tsx` — remove h1/p block
+5. `AccountRecentlyViewed.tsx` — remove h1/p block
+6. `AccountSupport.tsx` — remove h1/p block
+7. `AccountReturns.tsx` — check and remove if present
+
+Also update `CustomerAccountLayout.tsx` `pageTitleKeys` to use hardcoded English strings instead of `t()` keys, so titles display properly (e.g., "My Orders" instead of "Orders Title").
 
 ## Files to Modify
-- `src/pages/store/account/AccountPaymentMethods.tsx` — replace hardcoded types with dynamic admin-configured methods
+- `src/pages/store/account/AccountOrders.tsx`
+- `src/pages/store/account/AccountSecurity.tsx`
+- `src/pages/store/account/AccountWishlist.tsx`
+- `src/pages/store/account/AccountShopping.tsx`
+- `src/pages/store/account/AccountRecentlyViewed.tsx`
+- `src/pages/store/account/AccountSupport.tsx`
+- `src/pages/store/account/AccountReturns.tsx`
+- `src/layouts/CustomerAccountLayout.tsx`
 
