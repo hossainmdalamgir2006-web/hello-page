@@ -155,7 +155,7 @@ export function StoreHeader() {
             </Button>
 
             {/* Wishlist */}
-            <Button variant="ghost" size="icon" className="hidden md:flex relative" onClick={() => navigate('/wishlist')}>
+            <Button variant="ghost" size="icon" className="hidden md:flex relative" onClick={() => navigate('/wishlist')} aria-label="Wishlist">
               <Heart className="h-5 w-5" />
               {wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-store-primary text-store-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
