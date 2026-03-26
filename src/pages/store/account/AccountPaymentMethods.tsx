@@ -65,7 +65,7 @@ export default function AccountPaymentMethods() {
     fetchMethods();
   };
 
-  if (loading) {
+  if (loading || loadingMethods) {
     return <DelayedLoader><GenericCardGridSkeleton count={3} /></DelayedLoader>;
   }
 
