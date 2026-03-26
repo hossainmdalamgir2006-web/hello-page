@@ -163,7 +163,7 @@ export default function RoleManagement() {
       ));
 
       toast({
-        title: t('roles.roleUpdated'),
+        title: 'Role Updated',
         description: `Role updated to ${roleConfig[newRole].label}`,
       });
       
