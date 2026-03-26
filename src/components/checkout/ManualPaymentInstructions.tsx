@@ -118,7 +118,7 @@ export function ManualPaymentInstructions({
               ) : (
                 <QrCode className="h-5 w-5" />
               )}
-              {paymentMethod.name} QR Code
+              {paymentMethod.name} {t('manualPayment.qrCode')}
             </DialogTitle>
           </DialogHeader>
           <div className="flex justify-center p-4">
