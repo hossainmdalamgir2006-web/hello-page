@@ -19,6 +19,7 @@ export function BankTransferInstructions({
   transactionId, 
   onTransactionIdChange 
 }: BankTransferInstructionsProps) {
+  const { t } = useLanguage();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   
   if (paymentMethod.bank_accounts.length === 0) {
