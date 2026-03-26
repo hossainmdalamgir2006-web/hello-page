@@ -161,6 +161,7 @@ const App = () => (
               <Route path="backup" element={<SettingsBackup />} />
               <Route path="integrations" element={<SettingsIntegrations />} />
               <Route path="languages" element={<SettingsLanguages />} />
+              <Route path="translations" element={<SettingsTranslations />} />
             </Route>
             <Route path="/admin/shipping" element={<Shipping />} />
             <Route path="/admin/messages" element={<Messages />} />
