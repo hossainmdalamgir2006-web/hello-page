@@ -77,6 +77,7 @@ import { DataExport } from "@/components/ui/data-export";
 import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
@@ -99,6 +100,7 @@ const getShippingAddressString = (address: any): string => {
   if (typeof address === 'string') return address;
   if (typeof address === 'object') {
     const parts = [address.street, address.area, address.city].filter(Boolean);
+  const { formatPrice } = useCurrency();
     return parts.length > 0 ? parts.join(', ') : 'N/A';
   }
   return 'N/A';
@@ -387,7 +389,7 @@ export default function Orders() {
                               <TableCell><p className="font-medium text-foreground">{order.order_number}</p></TableCell>
                               <TableCell><div><p className="font-medium text-foreground">{order.customer_name}</p><p className="text-xs text-muted-foreground">{order.customer_phone || order.customer_email}</p></div></TableCell>
                               <TableCell><span className="text-sm text-muted-foreground">{order.items.length} item{order.items.length !== 1 ? 's' : ''}</span></TableCell>
-                              <TableCell className="text-right font-medium">৳{order.total.toLocaleString()}</TableCell>
+                              <TableCell className="text-right font-medium">{formatPrice(order.total)}</TableCell>
                               <TableCell>
                                 <div className="flex flex-col gap-1">
                                   <div className="flex items-center gap-1">

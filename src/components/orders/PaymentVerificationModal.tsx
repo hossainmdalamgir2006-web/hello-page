@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface PaymentVerificationModalProps {
   open: boolean;
@@ -59,6 +60,7 @@ export function PaymentVerificationModal({
   const extractTrxId = (noteText: string | null): string | null => {
     if (!noteText) return null;
     const match = noteText.match(/TrxID:\s*([A-Z0-9]+)/i);
+  const { formatPrice } = useCurrency();
     return match ? match[1] : null;
   };
 
@@ -103,7 +105,7 @@ export function PaymentVerificationModal({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Amount</span>
-              <span className="font-bold text-lg">৳{order.total.toLocaleString()}</span>
+              <span className="font-bold text-lg">{formatPrice(order.total)}</span>
             </div>
             <Separator />
             <div className="flex items-center gap-2">

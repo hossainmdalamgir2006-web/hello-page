@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface FeaturedProductCardProps {
   product: {
@@ -32,6 +33,7 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
     addItem({ id: product.id, name: product.name, price: product.price, comparePrice: product.compare_at_price || undefined, image: imageUrl });
   };
 
+  const { formatPrice } = useCurrency();
   return (
     <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
       <Link to={`/product/${product.slug || product.id}`} className="relative aspect-[3/4] overflow-hidden block">
@@ -50,8 +52,8 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
           <h3 className="font-medium text-foreground hover:text-store-primary transition-colors line-clamp-1">{product.name}</h3>
         </Link>
         <div className="flex items-center gap-2 mt-2">
-          <span className="font-bold text-foreground">৳{product.price.toLocaleString()}</span>
-          {product.compare_at_price && <span className="text-sm text-muted-foreground line-through">৳{product.compare_at_price.toLocaleString()}</span>}
+          <span className="font-bold text-foreground">{formatPrice(product.price)}</span>
+          {product.compare_at_price && <span className="text-sm text-muted-foreground line-through">{formatPrice(product.compare_at_price)}</span>}
         </div>
       </CardContent>
     </Card>

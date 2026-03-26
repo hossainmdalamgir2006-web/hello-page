@@ -49,6 +49,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useAnalyticsData } from "@/hooks/useAnalyticsData";
 import { PeriodComparison } from "@/components/admin/PeriodComparison";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const StatCard = ({ 
   title, 
@@ -124,9 +125,10 @@ export default function Analytics() {
 
   const formatCurrency = (value: number) => {
     if (value >= 100000) {
-      return `৳${(value / 100000).toFixed(2)} লাখ`;
+  const { formatPrice } = useCurrency();
+      return `${formatPrice((value / 100000).toFixed(2))} লাখ`;
     }
-    return `৳${value.toLocaleString()}`;
+    return `${formatPrice(value)}`;
   };
 
   return (
@@ -265,14 +267,14 @@ export default function Analytics() {
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                         <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `৳${v/1000}k`} />
+                        <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${formatPrice(v/1000)}k`} />
                         <Tooltip 
                           contentStyle={{ 
                             backgroundColor: "hsl(var(--popover))", 
                             border: "1px solid hsl(var(--border))",
                             borderRadius: "8px"
                           }}
-                          formatter={(value: number) => [`৳${value.toLocaleString()}`, ""]}
+                          formatter={(value: number) => [`${formatPrice(value)}`, ""]}
                         />
                         <Legend />
                         <Area type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(var(--chart-1))" fillOpacity={1} fill="url(#colorRevenue)" />
@@ -470,7 +472,7 @@ export default function Analytics() {
                         <p className="text-xs text-muted-foreground">{product.sales} sold</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-sm">৳{(product.revenue / 1000).toFixed(0)}k</p>
+                        <p className="font-medium text-sm">{formatPrice((product.revenue / 1000).toFixed(0))}k</p>
                         <p className={cn(
                           "flex items-center justify-end text-xs",
                           product.growth >= 0 ? "text-success" : "text-destructive"

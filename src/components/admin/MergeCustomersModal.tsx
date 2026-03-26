@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Customer } from "@/hooks/useCustomersData";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface DuplicateGroup {
   key: string;
@@ -47,6 +48,7 @@ interface MergeCustomersModalProps {
 }
 
 const getCustomerName = (customer: Customer): string => {
+  const { formatPrice } = useCurrency();
   return customer.full_name || customer.email?.split("@")[0] || "Unknown";
 };
 
@@ -266,7 +268,7 @@ export function MergeCustomersModal({
                                 {customer.total_orders} orders
                               </p>
                               <p className="text-muted-foreground">
-                                ৳{Number(customer.total_spent).toLocaleString()}
+                                {formatPrice(customer.total_spent)}
                               </p>
                             </div>
                           </div>

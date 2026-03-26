@@ -31,6 +31,7 @@ import { ProductActions } from "@/components/product/ProductActions";
 import { ProductTrustBadges } from "@/components/product/ProductTrustBadges";
 import { RelatedProductsGrid } from "@/components/product/RelatedProductsGrid";
 import { StickyAddToCartBar } from "@/components/product/StickyAddToCartBar";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 // --- Types ---
 interface Product {
@@ -63,6 +64,7 @@ interface ProductAttribute { id: string; attribute_name: string; attribute_value
 function extractYoutubeId(url: string): string | null {
   const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/, /^([a-zA-Z0-9_-]{11})$/];
   for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
+  const { formatPrice } = useCurrency();
   return null;
 }
 
@@ -382,8 +384,8 @@ export default function ProductDetail() {
 
             <div className="flex items-center gap-3 mb-6">
               <span className="text-3xl font-bold text-foreground">{isGrouped && selectedChildren.length > 0 ? `${t('store.total')}: ` : ''}৳{displayPrice.toLocaleString()}</span>
-              {displayComparePrice && <span className="text-xl text-muted-foreground line-through">৳{displayComparePrice.toLocaleString()}</span>}
-              {discount > 0 && <Badge className="bg-store-accent text-store-accent-foreground">{t('store.save')} ৳{((displayComparePrice || 0) - displayPrice).toLocaleString()}</Badge>}
+              {displayComparePrice && <span className="text-xl text-muted-foreground line-through">{formatPrice(displayComparePrice)}</span>}
+              {discount > 0 && <Badge className="bg-store-accent text-store-accent-foreground">{t('store.save')} {formatPrice(((displayComparePrice || 0) - displayPrice))}</Badge>}
             </div>
 
             <div className="mb-6 space-y-2">
@@ -418,7 +420,7 @@ export default function ProductDetail() {
                       <CardContent className="p-3 flex items-center gap-3">
                         <Link to={`/product/${child.id}`} className="h-12 w-12 rounded bg-muted overflow-hidden shrink-0"><img src={child.images?.[0] || '/placeholder.svg'} alt={child.name} className="h-full w-full object-cover" /></Link>
                         <div className="flex-1 min-w-0"><Link to={`/product/${child.id}`} className="text-sm font-medium truncate block hover:text-store-primary transition-colors">{child.name}</Link><span className="text-xs text-muted-foreground">{t('store.qty')}: {child.bundleQty}</span></div>
-                        <span className="text-sm font-bold">৳{child.price.toLocaleString()}</span>
+                        <span className="text-sm font-bold">{formatPrice(child.price)}</span>
                       </CardContent>
                     </Card>
                   ))}
@@ -439,7 +441,7 @@ export default function ProductDetail() {
                           <Link to={`/product/${child.id}`} className="h-12 w-12 rounded bg-muted overflow-hidden shrink-0"><img src={child.images?.[0] || '/placeholder.svg'} alt={child.name} className="h-full w-full object-cover" /></Link>
                           <div className="flex-1 min-w-0">
                             <Link to={`/product/${child.id}`} className="text-sm font-medium truncate block hover:text-store-primary transition-colors">{child.name}</Link>
-                            <div className="flex items-center gap-2"><span className="text-sm font-bold">৳{child.price.toLocaleString()}</span>{child.compare_at_price && <span className="text-xs text-muted-foreground line-through">৳{child.compare_at_price.toLocaleString()}</span>}{childDiscount > 0 && <Badge variant="secondary" className="text-xs">{childDiscount}% {t('store.off')}</Badge>}</div>
+                            <div className="flex items-center gap-2"><span className="text-sm font-bold">{formatPrice(child.price)}</span>{child.compare_at_price && <span className="text-xs text-muted-foreground line-through">{formatPrice(child.compare_at_price)}</span>}{childDiscount > 0 && <Badge variant="secondary" className="text-xs">{childDiscount}% {t('store.off')}</Badge>}</div>
                           </div>
                           {child.selected && child.quantity > 0 && (
                             <div className="flex items-center border rounded-lg">
@@ -466,7 +468,7 @@ export default function ProductDetail() {
                 <div className="flex flex-wrap gap-2">
                   {variants.filter(v => v.is_active).map((variant) => (
                     <Button key={variant.id} variant={selectedVariant === variant.id ? "default" : "outline"} className={cn(selectedVariant === variant.id ? "bg-store-primary hover:bg-store-primary/90" : "", (variant.quantity || 0) === 0 && "opacity-50")} onClick={() => setSelectedVariant(variant.id)} disabled={(variant.quantity || 0) === 0}>
-                      <span>{variant.name}</span>{variant.price != null && <span className="ml-1 text-xs opacity-75">৳{variant.price.toLocaleString()}</span>}
+                      <span>{variant.name}</span>{variant.price != null && <span className="ml-1 text-xs opacity-75">{formatPrice(variant.price)}</span>}
                     </Button>
                   ))}
                 </div>
@@ -516,7 +518,7 @@ export default function ProductDetail() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow><TableCell className="font-medium">{t('store.price')}</TableCell><TableCell className="text-center font-bold">৳{product.price.toLocaleString()}</TableCell>{relatedProducts.slice(0, 3).map(rp => (<TableCell key={rp.id} className="text-center">৳{rp.price.toLocaleString()}</TableCell>))}</TableRow>
+                  <TableRow><TableCell className="font-medium">{t('store.price')}</TableCell><TableCell className="text-center font-bold">{formatPrice(product.price)}</TableCell>{relatedProducts.slice(0, 3).map(rp => (<TableCell key={rp.id} className="text-center">{formatPrice(rp.price)}</TableCell>))}</TableRow>
                   <TableRow><TableCell className="font-medium">{t('store.category')}</TableCell><TableCell className="text-center">{product.category || 'N/A'}</TableCell>{relatedProducts.slice(0, 3).map(rp => (<TableCell key={rp.id} className="text-center">{rp.category || 'N/A'}</TableCell>))}</TableRow>
                   <TableRow><TableCell className="font-medium">{t('store.brand')}</TableCell><TableCell className="text-center">{product.brand || 'N/A'}</TableCell>{relatedProducts.slice(0, 3).map(rp => (<TableCell key={rp.id} className="text-center">—</TableCell>))}</TableRow>
                   <TableRow><TableCell className="font-medium">{t('common.stock')}</TableCell><TableCell className="text-center"><Badge variant={displayQuantity > 0 ? "outline" : "destructive"} className="text-xs">{displayQuantity > 0 ? t('store.inStock') : t('store.outOfStock')}</Badge></TableCell>{relatedProducts.slice(0, 3).map(rp => (<TableCell key={rp.id} className="text-center"><Badge variant="outline" className="text-xs">{t('store.available')}</Badge></TableCell>))}</TableRow>

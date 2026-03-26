@@ -22,6 +22,7 @@ import type { Product } from "./ProductCard";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { SortableTableHead, type SortDirection } from "@/components/ui/sortable-table-head";
 import { useSorting } from "@/hooks/useSorting";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ProductTableProps {
   products: Product[];
@@ -61,6 +62,7 @@ export function ProductTable({
   const getStatusColor = (status: Product["status"]) => {
     switch (status) {
       case "active":
+  const { formatPrice } = useCurrency();
         return "bg-success/10 text-success border-success/20";
       case "draft":
         return "bg-warning/10 text-warning border-warning/20";
@@ -180,10 +182,10 @@ export function ProductTable({
               <TableCell>{product.category}</TableCell>
               <TableCell className="text-right">
                 <div>
-                  <p className="font-medium">৳{product.price.toLocaleString()}</p>
+                  <p className="font-medium">{formatPrice(product.price)}</p>
                   {product.comparePrice && (
                     <p className="text-xs text-muted-foreground line-through">
-                      ৳{product.comparePrice.toLocaleString()}
+                      {formatPrice(product.comparePrice)}
                     </p>
                   )}
                 </div>

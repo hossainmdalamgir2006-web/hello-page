@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Edit, Trash2, Eye, Package, Copy, AlertTriangle, Star, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export interface Product {
   id: string;
@@ -52,6 +53,7 @@ export function ProductCard({ product, onEdit, onDelete, onView, onDuplicate }: 
   const getStatusColor = (status: Product["status"]) => {
     switch (status) {
       case "active":
+  const { formatPrice } = useCurrency();
         return "bg-success/10 text-success border-success/20";
       case "draft":
         return "bg-warning/10 text-warning border-warning/20";
@@ -171,10 +173,10 @@ export function ProductCard({ product, onEdit, onDelete, onView, onDuplicate }: 
         </div>
 
         <div className="mb-3 flex items-center gap-2">
-          <span className="text-lg font-bold text-foreground">৳{product.price.toLocaleString()}</span>
+          <span className="text-lg font-bold text-foreground">{formatPrice(product.price)}</span>
           {product.comparePrice && (
             <span className="text-sm text-muted-foreground line-through">
-              ৳{product.comparePrice.toLocaleString()}
+              {formatPrice(product.comparePrice)}
             </span>
           )}
         </div>

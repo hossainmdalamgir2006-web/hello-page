@@ -25,6 +25,7 @@ import { GoogleAnalyticsSettings } from "./GoogleAnalyticsSettings";
 import { GoogleTagManagerSettings } from "./GoogleTagManagerSettings";
 import { MetaPixelSettings } from "./MetaPixelSettings";
 import { GoogleSearchConsoleSettings } from "./GoogleSearchConsoleSettings";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function IntegrationsSettings() {
   const { settings, loading, saving, updateMultipleSettings, getSettingValue, refetch } = useStoreSettings();
@@ -57,6 +58,7 @@ export function IntegrationsSettings() {
   const testConnection = async () => {
     if (!apiKey || !secretKey) {
       toast.error("Please enter both API Key and Secret Key");
+  const { formatPrice } = useCurrency();
       return;
     }
 
@@ -82,7 +84,7 @@ export function IntegrationsSettings() {
 
       if (data?.current_balance !== undefined) {
         setConnectionStatus("success");
-        toast.success(`Connection successful! Balance: ৳${data.current_balance}`);
+        toast.success(`Connection successful! Balance: ${formatPrice(data.current_balance)}`);
       } else if (data?.error) {
         throw new Error(data.error);
       } else {

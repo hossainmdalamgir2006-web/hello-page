@@ -11,6 +11,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface OrderResult {
   orderNumber: string;
@@ -40,6 +41,7 @@ export default function TrackOrder() {
     const orderNumberRegex = /^ORD-\d{8}-\d{4}$/;
     if (!orderNumberRegex.test(trimmedOrder)) {
       setOrderError(t('track.invalidOrder'));
+  const { formatPrice } = useCurrency();
       return;
     }
     navigate(`/track/${trimmedOrder}`);
@@ -157,7 +159,7 @@ export default function TrackOrder() {
                           </div>
                           <div className="text-sm text-muted-foreground">
                             <p>{t('track.date')}: {formatDate(order.createdAt)}</p>
-                            <p>{t('track.total')}: ৳{order.total?.toLocaleString()}</p>
+                            <p>{t('track.total')}: {formatPrice(order.total?)}</p>
                           </div>
                         </div>
                       ))}

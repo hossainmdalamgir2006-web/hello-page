@@ -50,6 +50,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 // Updated interface to match DB schema
 interface Coupon {
@@ -109,6 +110,7 @@ const getCouponStatus = (coupon: Coupon): 'active' | 'scheduled' | 'expired' | '
   if (startDate && startDate > now) return 'scheduled';
   if (endDate && endDate < now) return 'expired';
   
+  const { formatPrice } = useCurrency();
   return 'active';
 };
 
@@ -600,7 +602,7 @@ export default function Coupons() {
                   <TrendingUp className="h-5 w-5 text-amber-500" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">৳{stats.totalSavings.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">{formatPrice(stats.totalSavings)}</p>
                   <p className="text-xs text-muted-foreground">Total Savings</p>
                 </div>
               </div>
@@ -701,12 +703,12 @@ export default function Coupons() {
                                 <span className="font-medium">
                                   {coupon.discount_type === 'percentage' 
                                     ? `${coupon.discount_value}%` 
-                                    : `৳${coupon.discount_value}`}
+                                    : `${formatPrice(coupon.discount_value)}`}
                                 </span>
                               </div>
                               {coupon.minimum_order_amount && coupon.minimum_order_amount > 0 && (
                                 <p className="text-xs text-muted-foreground">
-                                  Min: ৳{coupon.minimum_order_amount}
+                                  Min: {formatPrice(coupon.minimum_order_amount)}
                                 </p>
                               )}
                             </TableCell>
@@ -805,7 +807,7 @@ export default function Coupons() {
                             <span className="font-medium">
                               {rule.discount_type === 'percentage' 
                                 ? `${rule.discount_value}%` 
-                                : `৳${rule.discount_value}`}
+                                : `${formatPrice(rule.discount_value)}`}
                             </span>
                           </TableCell>
                           <TableCell>

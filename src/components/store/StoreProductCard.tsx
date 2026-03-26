@@ -9,6 +9,7 @@ import { useWishlist } from "@/contexts/WishlistContext";
 import { ProductQuickView } from "@/components/store/ProductQuickView";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface Product {
   id: string;
@@ -74,6 +75,7 @@ export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCar
   const needsVariantSelection = isVariable || isGrouped;
 
   if (viewMode === "list") {
+  const { formatPrice } = useCurrency();
     return (
       <Card className="overflow-hidden">
         <div className="flex">
@@ -101,7 +103,7 @@ export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCar
                   {showFromPrice ? `${t('store.from')} ` : ''}৳{product.price.toLocaleString()}
                 </span>
                 {product.compare_price && (
-                  <span className="text-sm text-muted-foreground line-through">৳{product.compare_price.toLocaleString()}</span>
+                  <span className="text-sm text-muted-foreground line-through">{formatPrice(product.compare_price)}</span>
                 )}
               </div>
             </div>
@@ -196,7 +198,7 @@ export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCar
             {showFromPrice ? `${t('store.from')} ` : ''}৳{product.price.toLocaleString()}
           </span>
           {product.compare_price && (
-            <span className="text-sm text-muted-foreground line-through">৳{product.compare_price.toLocaleString()}</span>
+            <span className="text-sm text-muted-foreground line-through">{formatPrice(product.compare_price)}</span>
           )}
         </div>
       </CardContent>

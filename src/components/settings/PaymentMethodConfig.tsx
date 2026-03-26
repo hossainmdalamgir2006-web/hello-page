@@ -11,6 +11,7 @@ import { Eye, EyeOff, Save, Loader2, Upload, X, ImageIcon, CheckCircle2, Percent
 import { PaymentMethod, PaymentMethodConfig as PaymentMethodConfigType } from "@/hooks/usePaymentMethods";
 import { toast } from "sonner";
 import { BankAccountsEditor } from "./BankAccountsEditor";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface PaymentMethodConfigProps {
   method: PaymentMethod | null;
@@ -25,6 +26,7 @@ function shouldShowField(field: { dependsOn?: string; dependsOnValue?: string },
   if (!field.dependsOn) return true;
   const val = formData[field.dependsOn];
   if (field.dependsOnValue) {
+  const { formatPrice } = useCurrency();
     return val === field.dependsOnValue;
   }
   // Default: show if truthy
@@ -143,7 +145,7 @@ export function PaymentMethodConfig({ method, open, onOpenChange, onSave, onUplo
       {formData.cod_charge_type === "percentage" ? (
         <><Percent className="h-3 w-3" />{formData.cod_charge_value}% charge</>
       ) : (
-        <><DollarSign className="h-3 w-3" />৳{formData.cod_charge_value} charge</>
+        <><DollarSign className="h-3 w-3" />{formatPrice(formData.cod_charge_value)} charge</>
       )}
     </Badge>
   ) : null;

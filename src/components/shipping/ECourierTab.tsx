@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useECourier, ECourierOrder } from "@/hooks/useECourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { Loader2, Package, RefreshCw, Search, Send, Truck, Clock, CheckCircle, RotateCcw } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ECourierTabProps {
   pendingOrders: any[];
@@ -110,6 +111,7 @@ export const ECourierTab = forwardRef<HTMLDivElement, ECourierTabProps>(function
     const existingShipment = ecourierShipments.find(s => s.order_id === order.id);
     if (existingShipment) {
       toast.error(`Already sent. Tracking: ${existingShipment.tracking_number}`);
+  const { formatPrice } = useCurrency();
       return;
     }
     setSelectedOrder(order);
@@ -263,7 +265,7 @@ export const ECourierTab = forwardRef<HTMLDivElement, ECourierTabProps>(function
                         <p className="text-xs text-muted-foreground">{shipment.recipient_phone || '-'}</p>
                       </div>
                     </TableCell>
-                    <TableCell>৳{(shipment.cod_amount || 0).toLocaleString()}</TableCell>
+                    <TableCell>{formatPrice((shipment.cod_amount || 0))}</TableCell>
                     <TableCell>
                       <Badge className={status.color}>
                         <StatusIcon className="h-3 w-3 mr-1" />{status.label}
@@ -309,7 +311,7 @@ export const ECourierTab = forwardRef<HTMLDivElement, ECourierTabProps>(function
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">COD Amount:</span>
                   <span className="font-medium">
-                    {selectedOrder.payment_method === 'cod' ? `৳${selectedOrder.total.toLocaleString()}` : 'Already Paid'}
+                    {selectedOrder.payment_method === 'cod' ? `${formatPrice(selectedOrder.total)}` : 'Already Paid'}
                   </span>
                 </div>
                 <div className="flex justify-between">

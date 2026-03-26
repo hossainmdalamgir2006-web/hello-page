@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { SEOHead } from "@/components/SEOHead";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface OrderItem {
   name: string;
@@ -55,7 +56,6 @@ export default function OrderConfirmation() {
   const codCharge = orderState?.codCharge;
   const deliveryEstimate = orderState?.deliveryEstimate || '3-5 business days';
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   const handleCopyOrderNumber = async () => {
     try {
@@ -70,6 +70,7 @@ export default function OrderConfirmation() {
   const getPaymentStatusMessage = () => {
     if (paymentMethod?.method_id === 'cod') return t('store.paymentOnDelivery');
     if (['bkash', 'nagad', 'rocket', 'upay'].includes(paymentMethod?.method_id || '')) {
+  const { formatPrice } = useCurrency();
       return transactionId ? `TrxID: ${transactionId} - ${t('store.paymentVerificationPending')}` : t('store.paymentVerificationPending');
     }
     return t('store.processing');

@@ -20,6 +20,7 @@ import { useOrdersData, type Order } from "@/hooks/useOrdersData";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const priorityWeight: Record<string, number> = {
   urgent: 4,
@@ -93,7 +94,7 @@ export function PriorityQueue() {
         items.push({
           id: o.id,
           type: "order",
-          title: `${o.order_number} - ৳${o.total.toLocaleString()}`,
+          title: `${o.order_number} - ${formatPrice(o.total)}`,
           subtitle: `${o.customer_name} • ${o.payment_method}`,
           priority: inferredPriority,
           status: o.status,
@@ -106,6 +107,7 @@ export function PriorityQueue() {
     // Sort by urgency score descending
     items.sort((a, b) => b.urgencyScore - a.urgencyScore);
 
+  const { formatPrice } = useCurrency();
     return items;
   }, [tickets, orders]);
 

@@ -16,6 +16,7 @@ import { StoreProductCard } from "@/components/store/StoreProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductGridSkeleton, FilterSkeleton } from "@/components/skeletons";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface Product {
   id: string;
@@ -40,6 +41,7 @@ interface Product {
 /* ─── Collapsible Filter Section ─── */
 function FilterSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(defaultOpen);
+  const { formatPrice } = useCurrency();
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex items-center justify-between w-full group">
@@ -129,8 +131,8 @@ function FilterPanel({
       <FilterSection title="Price Range">
         <Slider value={priceRange} onValueChange={setPriceRange} max={10000} step={100} className="mb-2" />
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>৳{priceRange[0].toLocaleString()}</span>
-          <span>৳{priceRange[1].toLocaleString()}</span>
+          <span>{formatPrice(priceRange[0])}</span>
+          <span>{formatPrice(priceRange[1])}</span>
         </div>
       </FilterSection>
 

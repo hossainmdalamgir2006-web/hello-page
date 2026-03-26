@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Loader2, RotateCcw, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export type RefundStatus = "none" | "requested" | "processing" | "refunded" | "rejected";
 
@@ -65,6 +66,7 @@ export function RefundProcessingModal({ open, onOpenChange, order, onProcess, is
   const amount = parseFloat(refundAmount) || 0;
   const isValid = amount > 0 && amount <= order.total && refundReason.trim().length > 0;
 
+  const { formatPrice } = useCurrency();
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogContent className="max-w-md bg-card">
@@ -117,7 +119,7 @@ export function RefundProcessingModal({ open, onOpenChange, order, onProcess, is
               min={0}
             />
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Order total: ৳{order.total.toLocaleString()}</span>
+              <span>Order total: {formatPrice(order.total)}</span>
               {amount > order.total && (
                 <span className="text-destructive flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" />

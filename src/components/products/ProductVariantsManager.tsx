@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Trash2, Package, DollarSign, Hash, Loader2, Pencil, X, Palette } from "lucide-react";
 import { useProductVariants, ProductVariant } from "@/hooks/useProductVariants";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ProductVariantsManagerProps {
   productId: string | null;
@@ -55,6 +56,7 @@ export function ProductVariantsManager({ productId }: ProductVariantsManagerProp
   });
 
   if (!productId) {
+  const { formatPrice } = useCurrency();
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <Package className="h-10 w-10 text-muted-foreground mb-3" />
@@ -496,9 +498,9 @@ function VariantRow({
             {variant.price != null && (
               <span className="flex items-center gap-1">
                 <DollarSign className="h-3 w-3" />
-                ৳{variant.price.toLocaleString()}
+                {formatPrice(variant.price)}
                 {variant.compare_at_price && (
-                  <span className="line-through ml-1">৳{variant.compare_at_price.toLocaleString()}</span>
+                  <span className="line-through ml-1">{formatPrice(variant.compare_at_price)}</span>
                 )}
               </span>
             )}

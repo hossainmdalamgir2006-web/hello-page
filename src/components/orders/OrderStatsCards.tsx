@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingBag, Clock, Package, Truck, TrendingUp } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface OrderStats {
   total: number;
@@ -19,9 +20,10 @@ export function OrderStatsCards({ stats }: OrderStatsCardsProps) {
     { label: "Pending", value: stats.pending.toString(), icon: Clock, color: "bg-warning/10 text-warning" },
     { label: "Processing", value: stats.processing.toString(), icon: Package, color: "bg-accent/10 text-accent" },
     { label: "Shipped", value: stats.shipped.toString(), icon: Truck, color: "bg-chart-5/10 text-chart-5" },
-    { label: "Revenue", value: `৳${(stats.revenue / 1000).toFixed(1)}k`, icon: TrendingUp, color: "bg-success/10 text-success" },
+    { label: "Revenue", value: `${formatPrice((stats.revenue / 1000).toFixed(1))}k`, icon: TrendingUp, color: "bg-success/10 text-success" },
   ];
 
+  const { formatPrice } = useCurrency();
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
       {cards.map((card) => (

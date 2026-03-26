@@ -1,5 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface SalesDataPoint {
   name: string;
@@ -14,6 +15,7 @@ interface SalesChartProps {
 
 export function SalesChart({ data = [], loading = false }: SalesChartProps) {
   if (loading) {
+  const { formatPrice } = useCurrency();
     return (
       <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-fade-in">
         <div className="mb-4 sm:mb-6">
@@ -59,7 +61,7 @@ export function SalesChart({ data = [], loading = false }: SalesChartProps) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-                tickFormatter={(value) => `৳${value / 1000}k`}
+                tickFormatter={(value) => `${formatPrice(value / 1000)}k`}
                 width={45}
               />
               <Tooltip 
@@ -70,7 +72,7 @@ export function SalesChart({ data = [], loading = false }: SalesChartProps) {
                   boxShadow: "var(--shadow-md)"
                 }}
                 formatter={(value: number, name: string) => [
-                  name === 'sales' ? `৳${value.toLocaleString()}` : value,
+                  name === 'sales' ? `${formatPrice(value)}` : value,
                   name === 'sales' ? 'Sales' : 'Orders'
                 ]}
               />

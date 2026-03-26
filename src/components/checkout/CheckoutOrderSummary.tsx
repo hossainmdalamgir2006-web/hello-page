@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { ShieldCheck, Tag, X, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface CartItem {
   id: string;
@@ -49,6 +50,7 @@ export function CheckoutOrderSummary({
 }: CheckoutOrderSummaryProps) {
   const { t } = useLanguage();
 
+  const { formatPrice } = useCurrency();
   return (
     <div className="lg:col-span-1">
       <Card className="sticky top-24">
@@ -116,7 +118,7 @@ export function CheckoutOrderSummary({
               </div>
             )}
             {selectedRateMaxOrderAmount && subtotal < selectedRateMaxOrderAmount && (
-              <p className="text-xs text-muted-foreground">৳{(selectedRateMaxOrderAmount - subtotal).toLocaleString()} {t('store.orderMoreForFree')}</p>
+              <p className="text-xs text-muted-foreground">{formatPrice((selectedRateMaxOrderAmount - subtotal))} {t('store.orderMoreForFree')}</p>
             )}
           </div>
 

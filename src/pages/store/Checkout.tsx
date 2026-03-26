@@ -28,6 +28,7 @@ import { GiftOptions } from "@/components/checkout/GiftOptions";
 import { OrderReviewModal } from "@/components/checkout/OrderReviewModal";
 import { CheckoutContactSection } from "@/components/checkout/CheckoutContactSection";
 import { CheckoutOrderSummary } from "@/components/checkout/CheckoutOrderSummary";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface CouponState {
   couponId?: string;
@@ -122,6 +123,7 @@ export default function Checkout() {
     if (!formData.firstName || !formData.phone || !formData.address || !formData.city) return 0;
     if (!selectedZoneId || !selectedRateId) return 1;
     if (!paymentMethod) return 2;
+  const { formatPrice } = useCurrency();
     return 3;
   }, [formData, selectedZoneId, selectedRateId, paymentMethod]);
 
@@ -186,7 +188,6 @@ export default function Checkout() {
   
   const total = subtotal - discount + shippingCost + codCharge;
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -626,8 +627,8 @@ export default function Checkout() {
                                       </div>
                                     </div>
                                     <div className="text-right">
-                                      {isFree ? <span className="text-green-600 font-medium text-sm">{t('checkout.free')}</span> : <span className="font-medium text-sm">৳{displayPrice}</span>}
-                                      {rate.max_order_amount && !isFree && <p className="text-xs text-muted-foreground">৳{rate.max_order_amount}+ {t('checkout.free').toLowerCase()}</p>}
+                                      {isFree ? <span className="text-green-600 font-medium text-sm">{t('checkout.free')}</span> : <span className="font-medium text-sm">{formatPrice(displayPrice)}</span>}
+                                      {rate.max_order_amount && !isFree && <p className="text-xs text-muted-foreground">{formatPrice(rate.max_order_amount)}+ {t('checkout.free').toLowerCase()}</p>}
                                     </div>
                                   </label>
                                 );

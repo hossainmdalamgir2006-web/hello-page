@@ -25,6 +25,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface OrderItem {
   id: string;
@@ -65,6 +66,7 @@ const getAddressString = (addr: any): string => {
   if (typeof addr === 'string') return addr;
   if (typeof addr === 'object') {
     const parts = [addr.street, addr.area, addr.city].filter(Boolean);
+  const { formatPrice } = useCurrency();
     return parts.length > 0 ? parts.join(', ') : 'N/A';
   }
   return 'N/A';
@@ -273,7 +275,6 @@ export default function OrderTracking() {
     });
   };
 
-  const formatPrice = (price: number) => `৳${price.toLocaleString("en-BD")}`;
 
   if (loading) {
     return (

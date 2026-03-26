@@ -15,6 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ActivityItem {
   id: string;
@@ -93,7 +94,7 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
           status = "info";
           description += " has been shipped";
         } else {
-          description += ` placed - ৳${Number(order.total_amount).toLocaleString()}`;
+          description += ` placed - ${formatPrice(order.total_amount)}`;
         }
 
         activityItems.push({
@@ -160,6 +161,7 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, fetchActivities)
       .subscribe();
 
+  const { formatPrice } = useCurrency();
     return () => {
       supabase.removeChannel(ordersChannel);
       supabase.removeChannel(customersChannel);

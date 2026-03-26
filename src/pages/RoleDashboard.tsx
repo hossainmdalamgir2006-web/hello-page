@@ -35,6 +35,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatsCard } from "@/components/admin/StatsCard";
 import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const RoleDashboard = () => {
   const { role, user } = useAuth();
@@ -57,7 +58,6 @@ const RoleDashboard = () => {
     if (range) setCustomRange(range);
   };
 
-  const formatCurrency = (amount: number) => `৳${amount.toLocaleString("en-BD")}`;
 
   const greetingName = user?.user_metadata?.full_name?.split(" ")[0] || "User";
   const roleLabel = role === "manager" ? "Manager" : "Support Agent";

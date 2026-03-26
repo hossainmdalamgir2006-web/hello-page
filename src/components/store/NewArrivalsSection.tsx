@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface NewArrivalsSectionProps {
   title?: string;
@@ -34,6 +35,7 @@ export function NewArrivalsSection({
   // Use latest products (sorted by created_at desc)
   const newProducts = [...products].slice(0, count);
 
+  const { formatPrice } = useCurrency();
   return (
     <section className="py-16 bg-store-card">
       <div className="container mx-auto px-4">
@@ -136,9 +138,9 @@ export function NewArrivalsSection({
                       {product.name}
                     </h3>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-store-primary">৳{product.price.toLocaleString()}</span>
+                      <span className="font-bold text-store-primary">{formatPrice(product.price)}</span>
                       {hasDiscount && (
-                        <span className="text-xs text-muted-foreground line-through">৳{product.compare_at_price!.toLocaleString()}</span>
+                        <span className="text-xs text-muted-foreground line-through">{formatPrice(product.compare_at_price!)}</span>
                       )}
                     </div>
                   </div>

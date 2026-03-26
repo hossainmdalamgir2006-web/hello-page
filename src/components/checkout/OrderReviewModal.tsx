@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface OrderReviewModalProps {
   open: boolean;
@@ -25,8 +26,8 @@ export function OrderReviewModal({
   paymentMethodName, shippingAddress, onConfirm, processing,
 }: OrderReviewModalProps) {
   const { t } = useLanguage();
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
+  const { formatPrice } = useCurrency();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">

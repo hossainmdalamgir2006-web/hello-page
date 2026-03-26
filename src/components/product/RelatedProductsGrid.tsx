@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface RelatedProduct {
   id: string;
@@ -20,6 +21,7 @@ export function RelatedProductsGrid({ products }: RelatedProductsGridProps) {
   const { t } = useLanguage();
   if (products.length === 0) return null;
 
+  const { formatPrice } = useCurrency();
   return (
     <div className="mt-12">
       <h2 className="font-display text-2xl font-bold mb-6">{t('store.relatedProducts')}</h2>
@@ -37,8 +39,8 @@ export function RelatedProductsGrid({ products }: RelatedProductsGridProps) {
                   <p className="text-xs text-muted-foreground mb-1">{rp.category}</p>
                   <h3 className="font-medium text-foreground line-clamp-1">{rp.name}</h3>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="font-bold">৳{rp.price.toLocaleString()}</span>
-                    {rp.compare_at_price && <span className="text-sm text-muted-foreground line-through">৳{rp.compare_at_price.toLocaleString()}</span>}
+                    <span className="font-bold">{formatPrice(rp.price)}</span>
+                    {rp.compare_at_price && <span className="text-sm text-muted-foreground line-through">{formatPrice(rp.compare_at_price)}</span>}
                   </div>
                 </CardContent>
               </Card>

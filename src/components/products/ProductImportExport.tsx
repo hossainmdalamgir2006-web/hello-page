@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { Product } from "./ProductCard";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ProductImportExportProps {
   products: Product[];
@@ -99,6 +100,7 @@ export function ProductImportExport({ products, onImport }: ProductImportExportP
     if (value === null || value === undefined) return "";
     const str = String(value);
     if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+  const { formatPrice } = useCurrency();
       return `"${str.replace(/"/g, '""')}"`;
     }
     return str;
@@ -546,7 +548,7 @@ export function ProductImportExport({ products, onImport }: ProductImportExportP
                             <div className="flex-1 min-w-0">
                               <p className="truncate font-medium text-sm">{product.name}</p>
                               <p className="text-xs text-muted-foreground">
-                                {product.sku} • ৳{product.price}
+                                {product.sku} • {formatPrice(product.price)}
                               </p>
                             </div>
                             <div className="flex flex-col items-end gap-1">

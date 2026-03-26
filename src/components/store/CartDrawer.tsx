@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
 import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function CartDrawer() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, subtotal, itemCount } = useCart();
@@ -18,7 +19,6 @@ export function CartDrawer() {
     rule.rule_type === "cart_total" && rule.min_purchase && subtotal >= rule.min_purchase
   );
   
-  const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD')}`;
 
   const handleQuantityInput = (item: typeof items[0], value: string) => {
     const num = parseInt(value, 10);
@@ -27,6 +27,7 @@ export function CartDrawer() {
     }
   };
 
+  const { formatPrice } = useCurrency();
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetContent className="w-full sm:max-w-md flex flex-col">

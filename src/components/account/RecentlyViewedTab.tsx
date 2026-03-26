@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, ShoppingCart, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function RecentlyViewedTab() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export function RecentlyViewedTab() {
     toast.success(`${item.name} added to cart`);
   };
 
+  const { formatPrice } = useCurrency();
   return (
     <Card>
       <CardHeader>
@@ -88,11 +90,11 @@ export function RecentlyViewedTab() {
                       {item.name}
                     </h4>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="font-bold text-sm">৳{item.price}</span>
+                      <span className="font-bold text-sm">{formatPrice(item.price)}</span>
                       {hasDiscount && (
                         <>
                           <span className="text-xs line-through text-muted-foreground">
-                            ৳{item.compare_at_price}
+                            {formatPrice(item.compare_at_price)}
                           </span>
                           <Badge variant="secondary" className="text-xs px-1">
                             -{discountPercent}%

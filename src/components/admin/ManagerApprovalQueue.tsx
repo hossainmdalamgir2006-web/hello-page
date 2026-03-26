@@ -19,6 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const typeConfig: Record<
   ApprovalItemType,
@@ -64,6 +65,7 @@ export function ManagerApprovalQueue() {
   };
 
   if (isLoading) {
+  const { formatPrice } = useCurrency();
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
@@ -167,7 +169,7 @@ export function ManagerApprovalQueue() {
                               variant="secondary"
                               className="text-[10px] px-1 py-0"
                             >
-                              ৳{item.amount.toLocaleString()}
+                              {formatPrice(item.amount)}
                             </Badge>
                           )}
                         </div>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Heart, ShoppingCart, Trash2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 export function WishlistTab() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export function WishlistTab() {
     await removeItem(productId);
   };
 
+  const { formatPrice } = useCurrency();
   return (
     <Card>
       <CardHeader>
@@ -90,11 +92,11 @@ export function WishlistTab() {
                       <p className="text-xs text-muted-foreground">{item.category}</p>
                     )}
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="font-bold text-sm">৳{item.price}</span>
+                      <span className="font-bold text-sm">{formatPrice(item.price)}</span>
                       {hasDiscount && (
                         <>
                           <span className="text-xs line-through text-muted-foreground">
-                            ৳{item.compare_at_price}
+                            {formatPrice(item.compare_at_price)}
                           </span>
                           <Badge variant="secondary" className="text-xs">
                             -{discountPercent}%

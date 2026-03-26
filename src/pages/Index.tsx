@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WelcomeBanner } from "@/components/admin/WelcomeBanner";
 import { format } from "date-fns";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 // Lazy-loaded heavy dashboard widgets
 const SalesChart = lazy(() => import("@/components/admin/SalesChart").then(m => ({ default: m.SalesChart })));
@@ -113,7 +114,8 @@ const Index = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return `৳${amount.toLocaleString('en-BD')}`;
+  const { formatPrice } = useCurrency();
+    return `${formatPrice(amount)}`;
   };
 
   const statsData = [
