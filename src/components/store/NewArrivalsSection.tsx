@@ -14,11 +14,15 @@ interface NewArrivalsSectionProps {
 }
 
 export function NewArrivalsSection({
-  title = "New Arrivals",
-  subtitle = "Fresh styles just added to our collection",
-  badge = "Just In",
+  title,
+  subtitle,
+  badge,
   count = 8,
 }: NewArrivalsSectionProps) {
+  const { t } = useLanguage();
+  const displayTitle = title || t('store.newArrivals');
+  const displaySubtitle = subtitle || "";
+  const displayBadge = badge || t('newArrivals.new');
   const { products, loading } = useFeaturedProducts(count);
   const scrollRef = useRef<HTMLDivElement>(null);
 
