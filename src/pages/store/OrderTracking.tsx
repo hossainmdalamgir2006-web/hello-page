@@ -342,11 +342,11 @@ export default function OrderTracking() {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-store-primary" />
-                Order Status
+                {t('orderTracking.orderStatus')}
               </CardTitle>
               <Button variant="ghost" size="sm" onClick={fetchOrder}>
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
+                {t('orderTracking.refresh')}
               </Button>
             </CardHeader>
             <CardContent>
