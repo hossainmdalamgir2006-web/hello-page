@@ -620,7 +620,7 @@ export default function Checkout() {
                                       <div>
                                         <p className="font-medium text-sm">{rate.name}</p>
                                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                          <Clock className="h-3 w-3" /> {rate.min_days ?? 1}-{rate.max_days ?? 3} days
+                                          <Clock className="h-3 w-3" /> {rate.min_days ?? 1}-{rate.max_days ?? 3} {t('checkout.days')}
                                           {rate.min_weight && rate.max_weight ? ` • ${rate.min_weight}-${rate.max_weight}kg` : ''}
                                         </p>
                                       </div>
