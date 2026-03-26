@@ -98,7 +98,7 @@ export function ManualPaymentInstructions({
               className="mt-2"
               onClick={() => setShowQrModal(true)}
             >
-              View Larger
+              {t('manualPayment.viewLarger')}
             </Button>
           </div>
         </div>
