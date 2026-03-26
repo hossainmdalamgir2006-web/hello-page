@@ -421,7 +421,7 @@ export default function Profile() {
                     )}
                   />
                   <div className="space-y-2">
-                    <FormLabel>{t('email')}</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input className="pl-10" disabled value={user?.email || ''} />
