@@ -472,8 +472,8 @@ export default function OrderTracking() {
                     {/* Delivery Progress */}
                     <div className="space-y-2">
                       <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Order Placed</span>
-                        <span>Estimated Delivery</span>
+                        <span>{t('orderTracking.orderPlaced')}</span>
+                        <span>{t('orderTracking.estimatedDelivery')}</span>
                       </div>
                       <Progress value={estimate.progressPercent} className="h-2" />
                     </div>
