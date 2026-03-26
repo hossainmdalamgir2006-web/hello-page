@@ -76,7 +76,7 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen transition-all duration-300 lg:translate-x-0",
+          "fixed left-0 top-0 z-40 h-screen transition-transform lg:translate-x-0",
           collapsed ? "w-[68px]" : "w-64",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
