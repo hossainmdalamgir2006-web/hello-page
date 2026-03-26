@@ -124,9 +124,12 @@ export default function PersonalInfoPage() {
   return (
     <div className="space-y-6">
       {/* Avatar Card */}
-      <Card>
+      <Card className="border-l-4 border-l-primary/20 hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Camera className="h-5 w-5" />Avatar</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2"><Camera className="h-5 w-5 text-primary" /></div>
+            Avatar
+          </CardTitle>
           <CardDescription>Upload a profile photo</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
