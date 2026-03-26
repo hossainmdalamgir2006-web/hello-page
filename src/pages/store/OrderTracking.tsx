@@ -453,7 +453,7 @@ export default function OrderTracking() {
                           </Badge>
                         ) : estimate.daysUntilMax === 0 ? (
                           <Badge className="bg-store-primary text-store-primary-foreground">
-                            Arriving Today
+                            {t('orderTracking.arrivingToday')}
                           </Badge>
                         ) : estimate.daysUntilMin === 0 ? (
                           <Badge className="bg-store-accent text-store-accent-foreground">
