@@ -763,7 +763,7 @@ export default function Checkout() {
               {/* Payment Method */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5 text-store-primary" /> Payment Method</CardTitle>
+                  <CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5 text-store-primary" /> {t('checkout.paymentMethod')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {paymentMethodsLoading ? (
