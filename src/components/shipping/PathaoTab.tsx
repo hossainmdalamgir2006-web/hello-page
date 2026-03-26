@@ -634,7 +634,7 @@ export const PathaoTab = forwardRef<HTMLDivElement, PathaoTabProps>(function Pat
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">COD:</span>
-                <span>{formatPrice(selectedOrder?.payment_method === 'cod' ? selectedOrder?.total? : 0)}</span>
+                <span>{formatPrice(selectedOrder?.payment_method === 'cod' ? selectedOrder?.total || 0 : 0)}</span>
               </div>
             </div>
           </div>
