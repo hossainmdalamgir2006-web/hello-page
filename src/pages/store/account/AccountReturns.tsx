@@ -105,9 +105,9 @@ export default function AccountReturns() {
             <DialogHeader><DialogTitle>Submit Return Request</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>{t('account.selectOrder')}</Label>
+                <Label>Select Order</Label>
                 <Select value={selectedOrder} onValueChange={setSelectedOrder}>
-                  <SelectTrigger><SelectValue placeholder={t('account.chooseOrder')} /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Choose an order" /></SelectTrigger>
                   <SelectContent>
                     {orders.map((o) => (
                       <SelectItem key={o.id} value={o.id}>#{o.order_number} — {format(new Date(o.created_at), "MMM dd, yyyy")}</SelectItem>
