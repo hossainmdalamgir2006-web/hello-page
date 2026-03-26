@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 // This component loads theme settings from DB and injects them as CSS custom properties
 // ONLY for light mode. Dark mode uses the CSS .dark {} tokens from index.css.
+// Non-blocking: children render immediately, theme applies async.
 export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
@@ -17,8 +17,6 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
 
         const settings = (data as any[]) || [];
 
-        // Instead of applying to :root directly (which overrides dark mode),
-        // we create a style block that only applies in :root:not(.dark)
         const cssVarMap: Record<string, string> = {
           primary_color: '--primary',
           secondary_color: '--secondary',
@@ -48,7 +46,6 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
           input_focus_color: '--ring',
         };
 
-        // Build CSS rules for light mode only
         let lightCssRules = '';
         for (const setting of settings) {
           const cssVar = cssVarMap[setting.setting_key];
@@ -57,7 +54,6 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
           }
         }
 
-        // Inject as scoped style
         let styleEl = document.getElementById('site-theme-light') as HTMLStyleElement;
         if (!styleEl) {
           styleEl = document.createElement('style');
@@ -68,7 +64,6 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
           styleEl.textContent = `:root:not(.dark) {\n${lightCssRules}}`;
         }
 
-        // Handle typography (applies to both modes)
         const root = document.documentElement;
         const headingFont = settings.find(s => s.setting_key === 'heading_font')?.setting_value;
         const bodyFont = settings.find(s => s.setting_key === 'body_font')?.setting_value;
@@ -95,13 +90,11 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
           }
         }
 
-        // Handle radius (applies to both modes)
         const globalRadius = settings.find(s => s.setting_key === 'global_radius')?.setting_value;
         if (globalRadius) {
           root.style.setProperty('--radius', globalRadius);
         }
 
-        // Custom CSS injection
         const customCss = settings.find(s => s.setting_key === 'custom_css')?.setting_value;
         if (customCss) {
           let customStyleEl = document.getElementById('custom-theme-css') as HTMLStyleElement;
@@ -113,7 +106,6 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
           customStyleEl.textContent = customCss;
         }
 
-        // Brand name
         const brandName = settings.find(s => s.setting_key === 'brand_name')?.setting_value;
         if (brandName) {
           root.style.setProperty('--brand-name', `'${brandName}'`);
@@ -121,13 +113,12 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
 
       } catch (error) {
         console.error("Failed to load theme settings:", error);
-      } finally {
-        setLoaded(true);
       }
     };
 
     loadTheme();
   }, []);
 
+  // Non-blocking: render children immediately
   return <>{children}</>;
 }

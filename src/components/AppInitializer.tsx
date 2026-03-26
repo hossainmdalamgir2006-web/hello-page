@@ -1,10 +1,12 @@
-import { useEffect, useState, useCallback, ReactNode } from "react";
+import { useEffect, useState, useCallback, ReactNode, useRef } from "react";
 import { initAnalyticsSession, getSavedLicense, saveLicense } from "@/lib/analytics";
 import { Loader2, ShieldAlert, RefreshCw, Globe, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const LK_STORAGE_KEY = "_lk";
+const LK_CACHE_KEY = "_lk_verified";
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 interface AppInitializerProps {
   children: ReactNode;
@@ -12,8 +14,25 @@ interface AppInitializerProps {
 
 type AppState = "no_key" | "checking" | "valid" | "invalid";
 
+function getCachedValidity(): boolean {
+  try {
+    const raw = localStorage.getItem(LK_CACHE_KEY);
+    if (!raw) return false;
+    const { ts } = JSON.parse(raw);
+    return Date.now() - ts < CACHE_TTL;
+  } catch {
+    return false;
+  }
+}
+
+function setCachedValidity() {
+  localStorage.setItem(LK_CACHE_KEY, JSON.stringify({ ts: Date.now() }));
+}
+
 export const AppInitializer = ({ children }: AppInitializerProps) => {
-  const [state, setState] = useState<AppState>("checking");
+  // If we have a cached valid result, skip blocking entirely
+  const hasCachedValid = useRef(getCachedValidity() && !!localStorage.getItem(LK_STORAGE_KEY));
+  const [state, setState] = useState<AppState>(hasCachedValid.current ? "valid" : "checking");
   const [errorMsg, setErrorMsg] = useState("");
   const [licenseInput, setLicenseInput] = useState("");
   const [activating, setActivating] = useState(false);
@@ -21,24 +40,46 @@ export const AppInitializer = ({ children }: AppInitializerProps) => {
   const domain = window.location.hostname;
 
   const verifyAndLoad = useCallback(async (key: string, saveToDb: boolean) => {
-    setState("checking");
-    setErrorMsg("");
     const result = await initAnalyticsSession(key);
     if (result.valid) {
       localStorage.setItem(LK_STORAGE_KEY, key);
+      setCachedValidity();
       if (saveToDb) {
         await saveLicense(domain, key);
       }
       setState("valid");
     } else {
       localStorage.removeItem(LK_STORAGE_KEY);
+      localStorage.removeItem(LK_CACHE_KEY);
       setState("invalid");
       setErrorMsg(result.error || "License verification failed.");
     }
   }, [domain]);
 
   useEffect(() => {
+    // If cached valid, do background re-verify without blocking
+    if (hasCachedValid.current) {
+      const key = localStorage.getItem(LK_STORAGE_KEY);
+      if (key) {
+        // Background verify - don't block render
+        initAnalyticsSession(key).then(result => {
+          if (result.valid) {
+            setCachedValidity();
+          } else {
+            localStorage.removeItem(LK_STORAGE_KEY);
+            localStorage.removeItem(LK_CACHE_KEY);
+            setState("invalid");
+            setErrorMsg(result.error || "License expired.");
+          }
+        }).catch(() => {
+          // Network error during bg check — keep cached state
+        });
+      }
+      return;
+    }
+
     const init = async () => {
+      setState("checking");
       // 1. Check DB first
       const dbKey = await getSavedLicense(domain);
       if (dbKey) {
@@ -49,7 +90,7 @@ export const AppInitializer = ({ children }: AppInitializerProps) => {
       // 2. Fallback to localStorage
       const localKey = localStorage.getItem(LK_STORAGE_KEY);
       if (localKey) {
-        await verifyAndLoad(localKey, true); // save to DB if valid
+        await verifyAndLoad(localKey, true);
         return;
       }
 
@@ -67,6 +108,7 @@ export const AppInitializer = ({ children }: AppInitializerProps) => {
     setActivating(false);
     if (result.valid) {
       localStorage.setItem(LK_STORAGE_KEY, key);
+      setCachedValidity();
       await saveLicense(domain, key);
       setState("valid");
     } else {
@@ -77,6 +119,7 @@ export const AppInitializer = ({ children }: AppInitializerProps) => {
   const handleRetry = () => {
     setRetryCount((c) => c + 1);
     const init = async () => {
+      setState("checking");
       const dbKey = await getSavedLicense(domain);
       if (dbKey) {
         await verifyAndLoad(dbKey, false);
@@ -94,6 +137,7 @@ export const AppInitializer = ({ children }: AppInitializerProps) => {
 
   const handleEnterNewKey = () => {
     localStorage.removeItem(LK_STORAGE_KEY);
+    localStorage.removeItem(LK_CACHE_KEY);
     setErrorMsg("");
     setLicenseInput("");
     setState("no_key");
