@@ -575,7 +575,7 @@ export default function Checkout() {
                       <p className="text-xs text-muted-foreground mt-1">{formData.city.length}/50</p>
                     </div>
                     <div>
-                      <Label htmlFor="postalCode">Postal Code</Label>
+                      <Label htmlFor="postalCode">{t('checkout.postalCode')}</Label>
                       <Input id="postalCode" name="postalCode" value={formData.postalCode} onChange={(e) => { const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10); setFormData(prev => ({ ...prev, postalCode: value })); }} maxLength={10} placeholder="1205" />
                     </div>
                   </div>
