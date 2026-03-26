@@ -1,6 +1,6 @@
 import { NavLink, Outlet, Navigate, useLocation } from "react-router-dom";
 import {
-  Store, CreditCard, Mail, Bell, Shield, ClipboardList, HardDrive, Plug, Globe, Languages,
+  Store, CreditCard, Mail, Bell, Shield, ClipboardList, HardDrive, Plug, Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
