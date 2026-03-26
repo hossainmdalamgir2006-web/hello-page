@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
+
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -54,7 +54,7 @@ const roleConfig: Record<AppRole, { label: string; icon: React.ReactNode; color:
 
 export default function RoleManagement() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const { toast } = useToast();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,7 +114,7 @@ export default function RoleManagement() {
       console.error('Error fetching users:', error);
       toast({
         variant: 'destructive',
-        title: t('roles.fetchFailed'),
+        title: 'Failed to fetch users',
         description: error.message,
       });
     } finally {
@@ -163,7 +163,7 @@ export default function RoleManagement() {
       ));
 
       toast({
-        title: t('roles.roleUpdated'),
+        title: 'Role Updated',
         description: `Role updated to ${roleConfig[newRole].label}`,
       });
       
@@ -171,7 +171,7 @@ export default function RoleManagement() {
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('roles.updateFailed'),
+        title: 'Update Failed',
         description: error.message,
       });
     } finally {
@@ -195,9 +195,9 @@ export default function RoleManagement() {
       <>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
           <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
-          <h1 className="text-2xl font-bold mb-2">{t('roles.accessDenied')}</h1>
+          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
           <p className="text-muted-foreground max-w-md">
-            {t('roles.accessDeniedDesc')}
+            You don't have permission to access this page. Only admins can manage roles.
           </p>
         </div>
       </>
@@ -208,8 +208,8 @@ export default function RoleManagement() {
     <>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{t('roles.title')}</h1>
-          <p className="text-muted-foreground">{t('roles.subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Role Management</h1>
+          <p className="text-muted-foreground">Manage user roles and permissions</p>
         </div>
 
         {/* Stats */}
@@ -224,7 +224,7 @@ export default function RoleManagement() {
                   <p className="text-2xl font-bold">
                     {users.filter((u) => u.role === 'user').length}
                   </p>
-                  <p className="text-sm text-muted-foreground">{t('roles.users')}</p>
+                  <p className="text-sm text-muted-foreground">Users</p>
                 </div>
               </div>
             </CardContent>
@@ -254,7 +254,7 @@ export default function RoleManagement() {
                   <p className="text-2xl font-bold">
                     {users.filter((u) => u.role === 'admin').length}
                   </p>
-                  <p className="text-sm text-muted-foreground">{t('roles.admins')}</p>
+                  <p className="text-sm text-muted-foreground">Admins</p>
                 </div>
               </div>
             </CardContent>
@@ -266,16 +266,16 @@ export default function RoleManagement() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              {t('roles.usersList')}
+              Users List
             </CardTitle>
-            <CardDescription>{t('roles.usersListDesc')}</CardDescription>
+            <CardDescription>Manage roles for all registered users</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
               <div className="relative max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder={t('roles.searchUsers')}
+                  placeholder="Search users..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -292,16 +292,16 @@ export default function RoleManagement() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t('roles.user')}</TableHead>
-                      <TableHead>{t('roles.role')}</TableHead>
-                      <TableHead>{t('common.actions')}</TableHead>
+                      <TableHead>User</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredUsers.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                          {t('roles.noUsers')}
+                          No users found
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -316,7 +316,7 @@ export default function RoleManagement() {
                                 </AvatarFallback>
                               </Avatar>
                               <span className="font-medium">
-                                {userItem.full_name || t('roles.unnamed')}
+                                {userItem.full_name || 'Unnamed User'}
                               </span>
                             </div>
                           </TableCell>
@@ -333,7 +333,7 @@ export default function RoleManagement() {
                               onClick={() => handleRoleChange(userItem)}
                               disabled={userItem.user_id === user?.id}
                             >
-                              {t('roles.changeRole')}
+                              Change Role
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -351,9 +351,9 @@ export default function RoleManagement() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('roles.changeRoleTitle')}</DialogTitle>
+            <DialogTitle>Change User Role</DialogTitle>
             <DialogDescription>
-              {t('roles.changeRoleDesc')} <strong>{selectedUser?.full_name}</strong>
+              Select a new role for <strong>{selectedUser?.full_name}</strong>
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -391,11 +391,11 @@ export default function RoleManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              {t('common.cancel')}
+              Cancel
             </Button>
             <Button onClick={confirmRoleChange} disabled={updating}>
               {updating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('common.confirm')}
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>

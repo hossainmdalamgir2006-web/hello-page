@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
+
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,7 +40,7 @@ const passwordSchema = z.object({
 
 export default function Profile() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const { toast } = useToast();
   const { calculateStrength, checkLeakedPassword, leakCheck, resetLeakCheck } = usePasswordSecurity();
   
@@ -122,7 +122,7 @@ export default function Profile() {
     if (!ALLOWED_TYPES.includes(file.type)) {
       toast({
         variant: 'destructive',
-        title: t('profile.uploadFailed'),
+        title: 'Upload Failed',
         description: 'Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.',
       });
       return;
@@ -131,7 +131,7 @@ export default function Profile() {
     if (file.size > MAX_SIZE) {
       toast({
         variant: 'destructive',
-        title: t('profile.uploadFailed'),
+        title: 'Upload Failed',
         description: 'File too large. Maximum size is 5MB.',
       });
       return;
@@ -174,13 +174,13 @@ export default function Profile() {
 
       setAvatarUrl(publicUrl);
       toast({
-        title: t('profile.avatarUpdated'),
-        description: t('profile.avatarUpdatedDesc'),
+        title: 'Avatar Updated',
+        description: 'Your profile photo has been updated.',
       });
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('profile.uploadFailed'),
+        title: 'Upload Failed',
         description: error.message,
       });
     } finally {
@@ -209,13 +209,13 @@ export default function Profile() {
       if (profileError) throw profileError;
 
       toast({
-        title: t('profile.profileUpdated'),
-        description: t('profile.profileUpdatedDesc'),
+        title: 'Profile Updated',
+        description: 'Your profile information has been saved.',
       });
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('profile.updateFailed'),
+        title: 'Update Failed',
         description: error.message,
       });
     } finally {
@@ -306,13 +306,13 @@ export default function Profile() {
       setShowNewPassword(false);
       setShowConfirmPassword(false);
       toast({
-        title: t('profile.passwordChanged'),
-        description: t('profile.passwordChangedDesc'),
+        title: 'Password Changed',
+        description: 'Your password has been updated successfully.',
       });
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: t('profile.passwordFailed'),
+        title: 'Password Change Failed',
         description: error.message,
       });
     } finally {
@@ -336,8 +336,8 @@ export default function Profile() {
     <>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{t('profile.title')}</h1>
-          <p className="text-muted-foreground">{t('profile.subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">My Profile</h1>
+          <p className="text-muted-foreground">Manage your account settings and preferences</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -346,9 +346,9 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="h-5 w-5" />
-                {t('profile.avatar')}
+                Avatar
               </CardTitle>
-              <CardDescription>{t('profile.avatarDesc')}</CardDescription>
+              <CardDescription>Upload a profile photo</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4">
               <div className="relative">
@@ -378,12 +378,12 @@ export default function Profile() {
                     {uploading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('profile.uploading')}
+                        Uploading...
                       </>
                     ) : (
                       <>
                         <Camera className="mr-2 h-4 w-4" />
-                        {t('profile.changeAvatar')}
+                        Change Avatar
                       </>
                     )}
                   </label>
@@ -397,9 +397,9 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                {t('profile.personalInfo')}
+                Personal Information
               </CardTitle>
-              <CardDescription>{t('profile.personalInfoDesc')}</CardDescription>
+              <CardDescription>Update your personal details</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...profileForm}>
@@ -409,7 +409,7 @@ export default function Profile() {
                     name="fullName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('fullName')}</FormLabel>
+                        <FormLabel>Full Name</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -421,7 +421,7 @@ export default function Profile() {
                     )}
                   />
                   <div className="space-y-2">
-                    <FormLabel>{t('email')}</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input className="pl-10" disabled value={user?.email || ''} />
@@ -432,7 +432,7 @@ export default function Profile() {
                   </div>
                   <Button type="submit" disabled={isLoading}>
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {t('common.save')}
+                    Save
                   </Button>
                 </form>
               </Form>
@@ -494,9 +494,9 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lock className="h-5 w-5" />
-                {t('profile.changePassword')}
+                Change Password
               </CardTitle>
-              <CardDescription>{t('profile.changePasswordDesc')}</CardDescription>
+              <CardDescription>Update your password for security</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...passwordForm}>
@@ -506,7 +506,7 @@ export default function Profile() {
                     name="currentPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('profile.currentPassword')}</FormLabel>
+                        <FormLabel>Current Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -539,7 +539,7 @@ export default function Profile() {
                     name="newPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('newPassword')}</FormLabel>
+                        <FormLabel>New Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -581,7 +581,7 @@ export default function Profile() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('confirmPassword')}</FormLabel>
+                        <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -611,7 +611,7 @@ export default function Profile() {
                   />
                   <Button type="submit" disabled={isPasswordLoading}>
                     {isPasswordLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {t('profile.updatePassword')}
+                    Update Password
                   </Button>
                 </form>
               </Form>

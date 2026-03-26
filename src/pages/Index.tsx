@@ -23,7 +23,7 @@ import { DashboardWidget } from "@/components/admin/DashboardWidget";
 import { DashboardWidgetPicker } from "@/components/admin/DashboardWidgetPicker";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useDashboardLayout } from "@/hooks/useDashboardLayout";
-import { useLanguage } from "@/contexts/LanguageContext";
+
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WelcomeBanner } from "@/components/admin/WelcomeBanner";
@@ -86,7 +86,7 @@ const Index = () => {
     resetLayout,
   } = useDashboardLayout();
   
-  const { t } = useLanguage();
+  
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -117,28 +117,28 @@ const Index = () => {
 
   const statsData = [
     { 
-      title: t('dashboard.totalSales'), 
+      title: 'Total Sales', 
       value: formatPrice(stats.totalSales), 
       change: stats.salesChange, 
       icon: TrendingUp, 
       iconBg: "accent" as const 
     },
     { 
-      title: t('dashboard.totalOrders'), 
+      title: 'Total Orders', 
       value: stats.totalOrders.toString(), 
       change: stats.ordersChange, 
       icon: ShoppingCart, 
       iconBg: "primary" as const 
     },
     { 
-      title: t('dashboard.totalProducts'), 
+      title: 'Total Products', 
       value: stats.totalProducts.toString(), 
       change: stats.productsChange, 
       icon: Package, 
       iconBg: "warning" as const 
     },
     { 
-      title: t('dashboard.totalCustomers'), 
+      title: 'Total Customers', 
       value: stats.totalCustomers.toString(), 
       change: stats.customersChange, 
       icon: Users, 
@@ -379,8 +379,8 @@ const Index = () => {
       <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('dashboard.title')}</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">{t('dashboard.welcome')}! Drag widgets to rearrange your dashboard.</p>
+            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Welcome! Drag widgets to rearrange your dashboard.</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <DateRangeSelector
