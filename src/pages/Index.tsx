@@ -124,7 +124,7 @@ const Index = () => {
       iconBg: "accent" as const 
     },
     { 
-      title: t('dashboard.totalOrders'), 
+      title: 'Total Orders', 
       value: stats.totalOrders.toString(), 
       change: stats.ordersChange, 
       icon: ShoppingCart, 
