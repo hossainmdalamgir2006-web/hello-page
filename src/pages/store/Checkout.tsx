@@ -580,8 +580,8 @@ export default function Checkout() {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="notes">Order Notes (Optional)</Label>
-                    <Input id="notes" name="notes" value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value.slice(0, 500) }))} placeholder="Special instructions for delivery" maxLength={500} />
+                    <Label htmlFor="notes">{t('checkout.orderNotes')}</Label>
+                    <Input id="notes" name="notes" value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value.slice(0, 500) }))} placeholder={t('checkout.specialInstructions')} maxLength={500} />
                     <p className="text-xs text-muted-foreground mt-1">{formData.notes.length}/500</p>
                   </div>
 
