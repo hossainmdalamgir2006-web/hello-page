@@ -346,7 +346,7 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="h-5 w-5" />
-                {t('profile.avatar')}
+                Avatar
               </CardTitle>
               <CardDescription>{t('profile.avatarDesc')}</CardDescription>
             </CardHeader>
