@@ -68,7 +68,7 @@ export function CategoryGrid({ title, subtitle, categories }: CategoryGridProps)
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-3 relative inline-block">
-            {title}
+            {displayTitle}
             <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-16 h-1 rounded-full bg-store-primary" />
           </h2>
           {subtitle && (
