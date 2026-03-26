@@ -656,9 +656,9 @@ export default function Checkout() {
                             <Select value={shippingAddressLabel} onValueChange={setShippingAddressLabel}>
                               <SelectTrigger className="w-full mt-1"><SelectValue /></SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="Home">Home</SelectItem>
-                                <SelectItem value="Office">Office</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
+                                <SelectItem value="Home">{t('checkout.home')}</SelectItem>
+                                <SelectItem value="Office">{t('checkout.office')}</SelectItem>
+                                <SelectItem value="Other">{t('checkout.other')}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
