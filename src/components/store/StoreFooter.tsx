@@ -188,7 +188,7 @@ export function StoreFooter() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.contact')}</h4>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.contact')}</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
                 <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
