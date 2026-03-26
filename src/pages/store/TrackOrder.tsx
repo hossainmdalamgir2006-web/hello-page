@@ -129,7 +129,7 @@ export default function TrackOrder() {
                     </div>
                     {orderError && <p className="text-sm text-destructive">{orderError}</p>}
                     <Button type="submit" className="w-full h-12 bg-store-primary hover:bg-store-primary/90" disabled={!orderNumber.trim()}>
-                      Track Order<ArrowRight className="ml-2 h-4 w-4" />
+                      {t('track.trackOrder')}<ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </form>
                 </TabsContent>
