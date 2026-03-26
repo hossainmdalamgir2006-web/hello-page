@@ -489,7 +489,7 @@ export default function Checkout() {
 
   return (
     <>
-      <SEOHead title="Checkout" description="Complete your order securely." noIndex={true} />
+      <SEOHead title={t('checkout.title')} description={t('checkout.title')} noIndex={true} />
       {/* Page Header */}
       <section className="bg-gradient-to-r from-store-primary to-store-secondary py-6">
         <div className="container mx-auto px-4">
@@ -497,7 +497,7 @@ export default function Checkout() {
             <Button variant="ghost" size="icon" className="text-store-primary-foreground" asChild>
               <Link to="/cart"><ChevronLeft className="h-5 w-5" /></Link>
             </Button>
-            <h1 className="font-display text-2xl font-bold text-store-primary-foreground">Checkout</h1>
+            <h1 className="font-display text-2xl font-bold text-store-primary-foreground">{t('checkout.title')}</h1>
           </div>
         </div>
       </section>
