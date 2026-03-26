@@ -1,5 +1,4 @@
 import { createContext, useContext, ReactNode } from 'react';
-import { useTranslations } from '@/hooks/useTranslations';
 
 interface LanguageContextType {
   language: string;
@@ -10,13 +9,8 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // Always English — Google Translate handles other languages in the browser
-  const { data: translationMap } = useTranslations('en');
-
-  const t = (key: string): string => {
-    if (!translationMap) return key;
-    return translationMap[key] || key;
-  };
+  // Pass-through: t() just returns the key itself (no DB translation fetch)
+  const t = (key: string): string => key;
 
   return (
     <LanguageContext.Provider value={{ language: 'en', setLanguage: () => {}, t }}>
