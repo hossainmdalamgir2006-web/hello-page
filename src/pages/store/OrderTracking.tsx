@@ -401,7 +401,7 @@ export default function OrderTracking() {
                             <p className="text-sm text-muted-foreground">{step.description}</p>
                             {isCurrent && order.updated_at && (
                               <p className="text-xs text-store-primary mt-1">
-                                Last updated: {formatDate(order.updated_at)}
+                                {t('orderTracking.lastUpdated')}: {formatDate(order.updated_at)}
                               </p>
                             )}
                           </div>
