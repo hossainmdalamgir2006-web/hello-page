@@ -167,7 +167,7 @@ const RoleDashboard = () => {
           <div className="lg:col-span-1">
             <div className="rounded-lg border bg-card p-4 shadow-sm">
               <h3 className="text-sm font-semibold mb-3">⚡ Quick Actions</h3>
-              <RoleQuickActions onRefresh={refetch} loading={loading} />
+              <RoleQuickActions onRefresh={() => refetch()} loading={loading} />
             </div>
           </div>
 
