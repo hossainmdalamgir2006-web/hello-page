@@ -1,38 +1,74 @@
 
 
-# Add Hindi & Italian Languages + How to Add New Languages
+# Translation কে Database-তে নিয়ে যাওয়া
 
-## What will be done
+## সমস্যা
+বর্তমানে `LanguageContext.tsx` ফাইলে ~১,১০০ লাইনে ~৫০০+ translation key হার্ডকোড করা আছে। নতুন ভাষা (Hindi, Italian ইত্যাদি) যোগ করলে ফাইল আরও বড় হবে এবং কোড maintain করা কঠিন হবে। Database-তে রাখলে Admin panel থেকেই translation manage করা যাবে — কোড পরিবর্তন লাগবে না।
 
-### 1. Insert Hindi and Italian into the database
-- **Hindi**: code `hi`, flag 🇮🇳, native name हिन्दी
-- **Italian**: code `it`, flag 🇮🇹, native name Italiano
-- Both will be added as `enabled: true` so they appear in the language toggle immediately
+## Architecture
 
-### 2. Important note about translations
-These languages will appear in the toggle, but since only English (`en`) and Bengali (`bn`) translations exist in `LanguageContext.tsx`, selecting Hindi or Italian will **fall back to English** for all text. To add actual Hindi/Italian translations, each translation key would need `hi` and `it` values added to the context — that's a separate large task.
+```text
+┌──────────────────────┐
+│ DB: translations     │  (key, language_code, value)
+│ ~500+ rows per lang  │
+└──────────┬───────────┘
+           │
+    ┌──────▼──────────┐
+    │ useTranslations  │  Fetch all translations for current language
+    │ hook (cached)    │  React Query with staleTime
+    └──────┬──────────┘
+           │
+    ┌──────▼──────────┐
+    │ LanguageContext   │  t() reads from DB cache instead of hardcoded object
+    └──────────────────┘
+           │
+    ┌──────▼──────────┐
+    │ Admin Panel      │  Translation Manager page — search, edit, bulk import
+    └──────────────────┘
+```
 
-## How YOU can add new languages yourself (no code needed!)
+## Steps
 
-1. Go to **Admin Panel → Settings → Languages**
-2. Click the **"Add Language"** button (top right)
-3. Fill in the form:
-   - **Language Code**: e.g. `fr`, `ar`, `es` (2-letter ISO code)
-   - **Flag Emoji**: e.g. 🇫🇷, 🇸🇦, 🇪🇸
-   - **Language Name**: e.g. French, Arabic, Spanish
-   - **Native Name**: e.g. Français, العربية, Español
-4. Click **Add Language** — done!
+### 1. Database — `translations` table
+- Columns: `id`, `key` (text), `language_code` (text), `value` (text), `created_at`, `updated_at`
+- Unique constraint on (`key`, `language_code`)
+- RLS: public read, admin-only write
+- **Seed**: Migrate all existing ~500 keys × 2 languages (en, bn) from `LanguageContext.tsx` into the table (~1000 rows)
+- Also seed `hi` and `it` rows with English fallback values (admin can edit later)
 
-You can also:
-- **Toggle** any language on/off with the switch
-- **Set Default** language for your store
-- **Delete** non-default languages
+### 2. Hook — `useTranslations`
+- Fetch all translations for the current language from DB
+- Cache with React Query (`staleTime: 10 minutes`)
+- Returns a `Record<string, string>` lookup map
+- Prefetch English as fallback
 
-## Does it work?
-The language will appear in the toggle dropdown across all panels. However, **actual translations** for new languages (beyond English and Bengali) need to be added to the codebase separately. Without translations, the site will show English text as fallback.
+### 3. Update `LanguageContext.tsx`
+- Remove the massive hardcoded `translations` object (~1,050 lines gone!)
+- `t()` function reads from the cached DB data
+- Falls back to English if key missing in current language
+- Falls back to key itself if not found at all
+- File goes from ~1,127 lines → ~80 lines
 
-## Technical details
-- 1 data insert operation (2 rows into `language_settings`)
-- No schema changes needed
-- No code changes needed
+### 4. Admin Translation Manager Page
+- New page: `/admin/settings/translations`
+- Searchable table of all translation keys
+- Inline edit values for each language
+- Filter by language, search by key or value
+- Bulk import/export (optional, can add later)
+- Add new key with values for all enabled languages
+
+## Benefits
+- কোড ~1,050 লাইন কমবে
+- নতুন ভাষার translation Admin panel থেকে যোগ করা যাবে
+- কোড deploy ছাড়াই translation update করা যাবে
+- Performance: ~500 key × 4 lang = ~2000 rows, একটি query-তেই আসবে, cached থাকবে
+
+## Files
+- **New migration**: `translations` table + seed data
+- **New**: `src/hooks/useTranslations.ts`
+- **New**: `src/components/settings/TranslationManager.tsx`
+- **New**: `src/pages/settings/TranslationsPage.tsx`
+- **Modify**: `src/contexts/LanguageContext.tsx` — remove hardcoded translations, use DB
+- **Modify**: `src/layouts/SettingsLayout.tsx` — add Translations tab
+- **Modify**: `src/App.tsx` — add route
 
