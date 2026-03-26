@@ -15,6 +15,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { StoreProductCard } from "@/components/store/StoreProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductGridSkeleton, FilterSkeleton } from "@/components/skeletons";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Product {
   id: string;
