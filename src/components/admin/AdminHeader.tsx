@@ -158,7 +158,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
                     {role || 'admin'}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-xs text-muted-foreground break-all">
                   {user?.email || 'admin@ekta.com'}
                 </p>
               </div>
