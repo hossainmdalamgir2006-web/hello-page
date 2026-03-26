@@ -203,7 +203,7 @@ export default function OrderTracking() {
       .maybeSingle();
 
     if (orderError) {
-      setError("Order not found. Please check your order number.");
+      setError(t('orderTracking.couldntFind'));
       setLoading(false);
       return;
     }
