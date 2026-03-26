@@ -346,7 +346,7 @@ export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCar
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate">{item.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Qty: {item.quantity} × {formatPrice(item.price?)}
+                            Qty: {item.quantity} × {formatPrice(item.price || 0)}
                           </p>
                         </div>
                         <p className="font-bold">

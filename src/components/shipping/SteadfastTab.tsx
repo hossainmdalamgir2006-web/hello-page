@@ -165,7 +165,7 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="text-lg px-3 py-1">
             <Wallet className="h-4 w-4 mr-1" />
-            {formatPrice(steadfast.balance? || 0)}
+            {formatPrice(steadfast.balance || 0)}
           </Badge>
           <Button 
             variant="outline" 

@@ -68,7 +68,7 @@ export function ProductGroupManager({ productId, productType, allProducts }: Pro
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{childProduct?.name || 'Unknown'}</p>
-                    <p className="text-xs text-muted-foreground">{formatPrice(childProduct?.price?)}</p>
+                    <p className="text-xs text-muted-foreground">{formatPrice(childProduct?.price || 0)}</p>
                   </div>
                   {isBundle && (
                     <div className="flex items-center gap-2">
