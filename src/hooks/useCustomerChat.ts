@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useIsAdminOnline } from "./useAdminPresence";
-import { useAutoReplySettings } from "./useAutoReplySettings";
+import { useStoreSettingsCache } from "./useStoreSettingsCache";
+import { AutoReplySettings } from "./useAutoReplySettings";
 
 export interface ChatAttachment {
   url: string;
@@ -52,9 +53,17 @@ export function useCustomerChat() {
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const autoReplySentRef = useRef<Set<string>>(new Set());
 
-  // Admin presence and auto-reply settings
+  // Admin presence and auto-reply from shared cache
   const { hasOnlineAdmin, isChecking: isCheckingAdmin } = useIsAdminOnline();
-  const { settings: autoReplySettings } = useAutoReplySettings();
+  const { data: storeSettings } = useStoreSettingsCache();
+  
+  const autoReplySettings: AutoReplySettings = (() => {
+    const raw = storeSettings?.live_chat_auto_reply;
+    if (raw) {
+      try { return JSON.parse(raw); } catch { /* fallback */ }
+    }
+    return { enabled: true, message: "Thank you for contacting us! Our team is currently offline. We will get back to you shortly.", delaySeconds: 5 };
+  })();
 
   // Load existing session from localStorage
   useEffect(() => {

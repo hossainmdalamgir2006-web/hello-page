@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext, useContext, ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 
 const STORE_NAME_CACHE_KEY = "_store_name";
 
@@ -18,44 +18,30 @@ export function useSiteTitle() {
 }
 
 export function DynamicTitleProvider({ children }: { children: ReactNode }) {
-  // Read cached store name instantly
   const cachedName = localStorage.getItem(STORE_NAME_CACHE_KEY) || "Store";
   const [storeName, setStoreName] = useState(cachedName);
+  const { data: settings } = useStoreSettingsCache();
 
   useEffect(() => {
-    // Set title immediately from cache
     if (cachedName !== "Store") {
       document.title = cachedName;
     }
-    fetchStoreName();
   }, []);
 
-  const fetchStoreName = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("store_settings" as any)
-        .select("setting_value")
-        .eq("key", "STORE_NAME")
-        .single();
-
-      if (!error && data) {
-        const settingValue = (data as any)?.setting_value;
-        if (settingValue) {
-          setStoreName(settingValue);
-          document.title = settingValue;
-          localStorage.setItem(STORE_NAME_CACHE_KEY, settingValue);
-          updateMetaTags(settingValue);
-        }
-      }
-    } catch (error) {
-      console.debug("Error fetching store name:", error);
+  // Update from shared cache when available
+  useEffect(() => {
+    const name = settings?.STORE_NAME;
+    if (name && name !== storeName) {
+      setStoreName(name);
+      document.title = name;
+      localStorage.setItem(STORE_NAME_CACHE_KEY, name);
+      updateMetaTags(name);
     }
-  };
+  }, [settings?.STORE_NAME]);
 
   const updateMetaTags = (name: string) => {
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute('content', name);
-    
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) twitterTitle.setAttribute('content', name);
   };

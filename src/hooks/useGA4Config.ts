@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 
 interface TrackingConfig {
   measurementId: string | null;
@@ -13,53 +12,29 @@ interface TrackingConfig {
 }
 
 export function useGA4Config(): TrackingConfig {
-  const [config, setConfig] = useState<TrackingConfig>({
-    measurementId: null,
-    isEnabled: false,
-    isLoading: true,
-    gtmContainerId: null,
-    gtmEnabled: false,
-    metaPixelId: null,
-    metaPixelEnabled: false,
-    googleSiteVerification: null,
-  });
+  const { data: settings, isLoading } = useStoreSettingsCache();
 
-  useEffect(() => {
-    fetchConfig();
-  }, []);
+  if (!settings) {
+    return {
+      measurementId: null,
+      isEnabled: false,
+      isLoading,
+      gtmContainerId: null,
+      gtmEnabled: false,
+      metaPixelId: null,
+      metaPixelEnabled: false,
+      googleSiteVerification: null,
+    };
+  }
 
-  const fetchConfig = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("store_settings" as any)
-        .select("key, setting_value")
-        .in("key", [
-          "GA4_MEASUREMENT_ID", "GA4_ENABLED",
-          "GTM_CONTAINER_ID", "GTM_ENABLED",
-          "META_PIXEL_ID", "META_PIXEL_ENABLED",
-          "GOOGLE_SITE_VERIFICATION",
-        ]);
-
-      if (error) throw error;
-
-      const settings = (data as any[]) || [];
-      const get = (k: string) => settings.find(s => s.key === k)?.setting_value || null;
-
-      setConfig({
-        measurementId: get("GA4_MEASUREMENT_ID"),
-        isEnabled: get("GA4_ENABLED") === "true",
-        isLoading: false,
-        gtmContainerId: get("GTM_CONTAINER_ID"),
-        gtmEnabled: get("GTM_ENABLED") === "true",
-        metaPixelId: get("META_PIXEL_ID"),
-        metaPixelEnabled: get("META_PIXEL_ENABLED") === "true",
-        googleSiteVerification: get("GOOGLE_SITE_VERIFICATION"),
-      });
-    } catch (error) {
-      console.error("Error fetching tracking config:", error);
-      setConfig(prev => ({ ...prev, isLoading: false }));
-    }
+  return {
+    measurementId: settings.GA4_MEASUREMENT_ID || null,
+    isEnabled: settings.GA4_ENABLED === "true",
+    isLoading: false,
+    gtmContainerId: settings.GTM_CONTAINER_ID || null,
+    gtmEnabled: settings.GTM_ENABLED === "true",
+    metaPixelId: settings.META_PIXEL_ID || null,
+    metaPixelEnabled: settings.META_PIXEL_ENABLED === "true",
+    googleSiteVerification: settings.GOOGLE_SITE_VERIFICATION || null,
   };
-
-  return config;
 }

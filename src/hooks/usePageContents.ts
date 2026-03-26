@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -59,24 +60,21 @@ export function usePageContents() {
 
 // Hook for individual page content (used by store pages)
 export function usePageContent(slug: string) {
-  const [data, setData] = useState<PageContent | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetch = async () => {
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ["page-content", slug],
+    queryFn: async () => {
       const { data: row, error } = await supabase
         .from("page_contents" as any)
         .select("*")
         .eq("page_slug", slug)
         .maybeSingle();
 
-      if (!error && row) {
-        setData(row as any);
-      }
-      setLoading(false);
-    };
-    fetch();
-  }, [slug]);
+      if (error || !row) return null;
+      return row as unknown as PageContent;
+    },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
 
-  return { data, loading };
+  return { data: data ?? null, loading };
 }

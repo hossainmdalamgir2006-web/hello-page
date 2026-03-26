@@ -11,8 +11,8 @@ import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { HomepageSection } from "@/hooks/useHomepageSections";
 import { X } from "lucide-react";
 import { Suspense } from "react";
 
@@ -29,21 +29,12 @@ export function StoreLayout({ children }: StoreLayoutProps) {
   const [announcementDismissed, setAnnouncementDismissed] = useState(false);
   const { data: settings } = useStoreSettingsCache();
 
-  // Fetch only the announcement section (lightweight)
-  const { data: announcement } = useQuery({
-    queryKey: ["homepage-announcement"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("homepage_sections")
-        .select("title, content, is_enabled")
-        .eq("section_type", "announcement")
-        .eq("is_enabled", true)
-        .maybeSingle();
-      if (error || !data) return null;
-      return data as { title: string | null; content: any; is_enabled: boolean };
-    },
-    staleTime: 10 * 60 * 1000,
-  });
+  // Read announcement from cached homepage-sections (no extra API call)
+  const queryClient = useQueryClient();
+  const cachedSections = queryClient.getQueryData<HomepageSection[]>(["homepage-sections"]);
+  const announcement = cachedSections?.find(
+    (s) => s.section_type === "announcement" && s.is_enabled
+  ) || null;
 
   // Favicon: read from shared store settings cache
   useEffect(() => {
