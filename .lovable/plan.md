@@ -1,36 +1,60 @@
 
 
-# Product Description — Image Size Fix & Video Support Check
+# Website Loading Speed Optimization
 
-## সমস্যা
-1. **Description-এ image অনেক বড় দেখাচ্ছে** — prose classes আছে কিন্তু `max-width` constraint যথেষ্ট না
-2. **Description-এ video দেখা যাচ্ছে না** — Rich text editor-এ video insert feature আছে (YouTube/URL), কিন্তু user হয়তো ব্যবহার করছে না অথবা rendering-এ সমস্যা
+## বর্তমান সমস্যা
+
+Page load হতে দেরি হচ্ছে কারণ অনেকগুলো API call **একটার পর একটা (waterfall)** হচ্ছে — সব শেষ না হওয়া পর্যন্ত কিছুই দেখায় না:
+
+```text
+AppInitializer (license verify - EXTERNAL API call with 3 retries)
+  └─ SiteThemeProvider (DB: site_theme_settings)
+       └─ LanguageProvider (DB: translations - ~120 rows)
+            └─ AuthProvider (DB: user_roles, profiles)
+                 └─ GA4Provider (DB: store_settings x4)
+                      └─ DynamicTitleProvider (DB: store_settings)
+                           └─ StoreLayout (DB: favicon, homepage_sections, maintenance)
+                                └─ StoreHome (DB: featured products, homepage_sections AGAIN)
+```
+
+প্রতিটি step আগেরটা শেষ হওয়ার জন্য wait করছে। Total ~10-15 sequential DB calls + 1 external API call।
 
 ## Plan
 
-### 1. Description-এর image size সুন্দর ও standard করা
-`src/pages/store/ProductDetail.tsx` — line 540-553 এর prose classes update:
-- Image max-width `max-w-2xl` (672px) সেট করা — centered
-- Image `object-contain` দিয়ে aspect ratio রক্ষা
-- Better spacing ও rounded corners
-- ছোট images ছোটই থাকবে, বড় images max-width-এ clip হবে
+### 1. AppInitializer — License check non-blocking করা
+- License verify result **localStorage-এ cache** করা (24hr TTL)
+- Cache valid থাকলে সাথে সাথে children render, background-এ re-verify
+- প্রথমবার ছাড়া কোনো blocking wait নেই
 
-### 2. Video rendering নিশ্চিত করা
-- Rich text editor ইতিমধ্যে video embed করে `<iframe>` দিয়ে (YouTube) এবং responsive wrapper (`padding-bottom: 56.25%`) দিয়ে
-- Description render-এ `[&_iframe]` CSS rules আছে, কিন্তু inline style wrapper (`position:relative;padding-bottom:56.25%`) কে সঠিকভাবে handle করা দরকার
-- `[&_div[style]]` CSS rule যোগ করে inline-style video containers ঠিক করা
+### 2. Translations — localStorage cache
+- `useTranslations` hook-এ translations localStorage-এ cache করা
+- প্রথমে cached data দিয়ে render, তারপর background-এ fresh fetch
+- ~120 rows মাত্র, localStorage-এ ভালো fit করবে
 
-### Technical detail
-**File**: `src/pages/store/ProductDetail.tsx` (line ~541-552)
+### 3. SiteThemeProvider — non-blocking করা
+- `loaded` state সরানো, children সাথে সাথে render
+- Theme apply হবে background-এ (CSS injection async)
 
-Image CSS changes:
-- Add `prose-img:max-w-2xl` (max 672px width)
-- Keep `prose-img:mx-auto prose-img:block` for centering
-- Add `prose-img:object-contain` for proper scaling
+### 4. Duplicate query সরানো
+- `useHomepageSections()` **StoreLayout** এবং **StoreHome** দুইবার call হচ্ছে — StoreLayout থেকে সরাবো (শুধু announcement bar-এর জন্য আলাদা query)
 
-Video CSS changes:  
-- Ensure `[&_div]:has(iframe)` or the existing inline-style video wrappers render properly
-- Keep existing `[&_iframe]` rules, add `[&_div[style*="padding-bottom"]]:max-w-2xl [&_div[style*="padding-bottom"]]:mx-auto` for video container centering
+### 5. DynamicTitleProvider — cache
+- Store name localStorage-এ cache করা, instant render
 
-**Also update** `src/components/products/ProductViewModal.tsx` — same prose classes for admin preview consistency
+### 6. StoreLayout favicon — cache
+- Favicon URL localStorage-এ cache
+
+## Technical detail
+
+### Files to modify:
+- **`src/components/AppInitializer.tsx`** — add 24hr localStorage cache for license, render children immediately if cached, verify in background
+- **`src/hooks/useTranslations.ts`** — add `initialData` from localStorage, save to localStorage on fetch
+- **`src/components/SiteThemeProvider.tsx`** — remove `loaded` state gate, just render children immediately
+- **`src/components/DynamicTitleProvider.tsx`** — read storeName from localStorage first, update on fetch
+- **`src/layouts/StoreLayout.tsx`** — remove `useHomepageSections()` call, fetch only announcement separately or get it from StoreHome's data
+- **`src/layouts/StoreLayout.tsx`** — cache favicon URL in localStorage
+
+### Expected improvement:
+- First paint: from ~3-5s to **<1s** (cached data renders instantly)
+- Full interactive: from ~5-8s to **~2s** (background fetches complete)
 
