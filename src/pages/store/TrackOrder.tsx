@@ -111,8 +111,8 @@ export default function TrackOrder() {
 
           <Card className="border-store-primary/20">
             <CardHeader>
-              <CardTitle className="text-lg">Find Your Order</CardTitle>
-              <CardDescription>Search by order number or phone number</CardDescription>
+              <CardTitle className="text-lg">{t('track.findOrder')}</CardTitle>
+              <CardDescription>{t('track.searchBy')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="order" className="w-full">
