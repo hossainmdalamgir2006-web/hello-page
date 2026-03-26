@@ -391,7 +391,7 @@ export default function RoleManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              {t('common.cancel')}
+              Cancel
             </Button>
             <Button onClick={confirmRoleChange} disabled={updating}>
               {updating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
