@@ -194,7 +194,7 @@ export default function Checkout() {
 
   const validateForm = (): boolean => {
     if (!formData.firstName || !formData.lastName || !formData.phone || !formData.address || !formData.city) {
-      toast.error("Please fill in all required fields"); return false;
+      toast.error(t('checkout.fillRequired')); return false;
     }
     const phoneRegex = /^(\+?880|0)?1[3-9]\d{8}$/;
     if (!phoneRegex.test(formData.phone.replace(/[\s-]/g, ''))) {
