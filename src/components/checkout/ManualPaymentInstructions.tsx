@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { EnabledPaymentMethod } from "@/hooks/useEnabledPaymentMethods";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ManualPaymentInstructionsProps {
   paymentMethod: EnabledPaymentMethod;
