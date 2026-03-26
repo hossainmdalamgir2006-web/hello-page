@@ -3,18 +3,21 @@ import { User, Lock, Shield, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-const profileNav = [
-  { to: "/admin/profile/personal", label: "Personal Info", icon: User },
-  { to: "/admin/profile/password", label: "Password", icon: Lock },
-  { to: "/admin/profile/security", label: "Security", icon: Shield },
-  { to: "/admin/profile/sessions", label: "Sessions", icon: Monitor },
-];
-
 export default function ProfileLayout() {
   const location = useLocation();
 
-  if (location.pathname === "/admin/profile" || location.pathname === "/admin/profile/") {
-    return <Navigate to="/admin/profile/personal" replace />;
+  // Detect base path (admin/manager/support)
+  const basePath = location.pathname.match(/^\/(admin|manager|support)\/profile/)?.[0] || "/admin/profile";
+
+  const profileNav = [
+    { to: `${basePath}/personal`, label: "Personal Info", icon: User },
+    { to: `${basePath}/password`, label: "Password", icon: Lock },
+    { to: `${basePath}/security`, label: "Security", icon: Shield },
+    { to: `${basePath}/sessions`, label: "Sessions", icon: Monitor },
+  ];
+
+  if (location.pathname === basePath || location.pathname === `${basePath}/`) {
+    return <Navigate to={`${basePath}/personal`} replace />;
   }
 
   return (
