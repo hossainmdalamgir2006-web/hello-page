@@ -569,7 +569,7 @@ export default function StoreProducts() {
                   <SheetTrigger asChild>
                     <Button variant="outline" className="gap-2 lg:hidden">
                       <SlidersHorizontal className="h-4 w-4" />
-                      Filters
+                      {t('storeProducts.filters')}
                       {activeFilterCount > 0 && (
                         <Badge className="bg-store-primary text-store-primary-foreground ml-1">{activeFilterCount}</Badge>
                       )}
