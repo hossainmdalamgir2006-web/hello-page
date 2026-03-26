@@ -442,7 +442,7 @@ export default function OrderTracking() {
                           {formatDeliveryDate(estimate.minDate)} - {formatDeliveryDate(estimate.maxDate)}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          Shipping to: <span className="font-medium">{estimate.zone}</span>
+                          {t('orderTracking.shippingTo')}: <span className="font-medium">{estimate.zone}</span>
                         </p>
                       </div>
                       <div className="text-right">
