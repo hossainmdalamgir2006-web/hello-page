@@ -69,7 +69,8 @@ export default function AccountPaymentMethods() {
     return <DelayedLoader><GenericCardGridSkeleton count={3} /></DelayedLoader>;
   }
 
-  const getIcon = (type: string) => METHOD_TYPES.find((m) => m.value === type)?.icon || "💳";
+  const getIcon = (type: string) => enabledMethods.find((m) => m.code === type || m.method_id === type)?.icon || "💳";
+  const getMethodName = (type: string) => enabledMethods.find((m) => m.code === type || m.method_id === type)?.name || type;
 
   return (
     <>
