@@ -592,7 +592,7 @@ export default function Checkout() {
                       <MapPin className="h-4 w-4 text-store-primary" /> {t('checkout.shippingZoneRate')}
                     </div>
                     {shippingLoading ? (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading shipping options...</div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> {t('checkout.loadingShipping')}</div>
                     ) : (
                       <>
                         <div>
