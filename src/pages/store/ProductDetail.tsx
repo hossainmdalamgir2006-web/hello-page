@@ -539,8 +539,8 @@ export default function ProductDetail() {
               {product.description ? (
                 <div
                   className="prose prose-sm sm:prose-base max-w-none dark:prose-invert text-foreground
-                    prose-img:rounded-xl prose-img:shadow-md prose-img:mx-auto prose-img:max-w-full prose-img:h-auto prose-img:block prose-img:my-6
-                    prose-video:rounded-xl prose-video:shadow-md prose-video:mx-auto prose-video:max-w-full prose-video:block prose-video:my-6
+                    prose-img:rounded-xl prose-img:shadow-md prose-img:mx-auto prose-img:max-w-2xl prose-img:h-auto prose-img:block prose-img:my-6 prose-img:object-contain
+                    prose-video:rounded-xl prose-video:shadow-md prose-video:mx-auto prose-video:max-w-2xl prose-video:block prose-video:my-6
                     prose-table:border prose-table:border-border prose-table:rounded-lg prose-table:overflow-hidden
                     prose-th:bg-muted prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:border prose-th:border-border
                     prose-td:p-3 prose-td:border prose-td:border-border
@@ -549,7 +549,8 @@ export default function ProductDetail() {
                     prose-headings:font-display prose-headings:text-foreground
                     [&_iframe]:w-full [&_iframe]:max-w-2xl [&_iframe]:mx-auto [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:shadow-md [&_iframe]:my-6 [&_iframe]:block
                     [&_video]:w-full [&_video]:max-w-2xl [&_video]:mx-auto [&_video]:rounded-xl [&_video]:shadow-md [&_video]:my-6
-                    [&_.ql-video]:w-full [&_.ql-video]:aspect-video [&_.ql-video]:rounded-xl"
+                    [&_.ql-video]:w-full [&_.ql-video]:aspect-video [&_.ql-video]:rounded-xl
+                    [&_div[style*='padding-bottom']]:relative [&_div[style*='padding-bottom']]:max-w-2xl [&_div[style*='padding-bottom']]:mx-auto [&_div[style*='padding-bottom']]:my-6 [&_div[style*='padding-bottom']]:rounded-xl [&_div[style*='padding-bottom']]:overflow-hidden"
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
               ) : (
