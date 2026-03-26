@@ -888,9 +888,9 @@ export default function Checkout() {
                                   <CreditCard className="h-5 w-5 text-primary" />
                                 </div>
                                 <div>
-                                  <p className="font-medium">Pay with {selectedMethod.name}</p>
+                                  <p className="font-medium">{t('checkout.payWith')} {selectedMethod.name}</p>
                                   <p className="text-sm text-muted-foreground">
-                                    You will be securely redirected to {selectedMethod.name} to complete your payment.
+                                    {t('checkout.redirectToGateway')} {selectedMethod.name} {t('checkout.toCompletePayment')}
                                   </p>
                                 </div>
                               </div>
