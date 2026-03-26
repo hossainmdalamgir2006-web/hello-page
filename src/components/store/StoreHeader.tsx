@@ -150,7 +150,7 @@ export function StoreHeader() {
             <ThemeToggle />
 
             {/* Mobile Search */}
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => navigate('/products')}>
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => navigate('/products')} aria-label="Search products">
               <Search className="h-5 w-5" />
             </Button>
 
