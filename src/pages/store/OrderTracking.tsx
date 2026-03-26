@@ -353,9 +353,9 @@ export default function OrderTracking() {
               {isCancelled ? (
                 <div className="text-center py-8">
                   <XCircle className="h-16 w-16 mx-auto text-destructive mb-4" />
-                  <h3 className="text-xl font-semibold text-destructive mb-2">Order Cancelled</h3>
+                  <h3 className="text-xl font-semibold text-destructive mb-2">{t('orderTracking.cancelled')}</h3>
                   <p className="text-muted-foreground">
-                    This order has been cancelled. If you have any questions, please contact support.
+                    {t('orderTracking.cancelledMsg')}
                   </p>
                 </div>
               ) : (
