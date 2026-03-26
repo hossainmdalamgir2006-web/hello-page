@@ -37,12 +37,12 @@ export default function AccountReturns() {
   const [returnWindowDays, setReturnWindowDays] = useState(7);
 
   const REASONS = [
-    { value: "Defective/Damaged Product", label: t('account.defectiveDamaged') },
-    { value: "Wrong Item Received", label: t('account.wrongItem') },
-    { value: "Size/Color Mismatch", label: t('account.sizeMismatch') },
-    { value: "Product Not As Described", label: t('account.notAsDescribed') },
-    { value: "Changed My Mind", label: t('account.changedMind') },
-    { value: "Other", label: t('account.otherReason') },
+    { value: "Defective/Damaged Product", label: "Defective/Damaged Product" },
+    { value: "Wrong Item Received", label: "Wrong Item Received" },
+    { value: "Size/Color Mismatch", label: "Size/Color Mismatch" },
+    { value: "Product Not As Described", label: "Product Not As Described" },
+    { value: "Changed My Mind", label: "Changed My Mind" },
+    { value: "Other", label: "Other" },
   ];
 
   const fetchData = async () => {
