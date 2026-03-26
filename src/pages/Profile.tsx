@@ -131,7 +131,7 @@ export default function Profile() {
     if (file.size > MAX_SIZE) {
       toast({
         variant: 'destructive',
-        title: t('profile.uploadFailed'),
+        title: 'Upload Failed',
         description: 'File too large. Maximum size is 5MB.',
       });
       return;
