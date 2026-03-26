@@ -1,7 +1,8 @@
 import { NavLink, Outlet, Navigate, useLocation } from "react-router-dom";
-import { User, Lock, Shield, Monitor } from "lucide-react";
+import { User, Lock, Shield, Monitor, ChevronDown, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function ProfileLayout() {
   const location = useLocation();
