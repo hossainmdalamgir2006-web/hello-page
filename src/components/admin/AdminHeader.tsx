@@ -140,7 +140,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
               <ChevronDown className="hidden lg:block h-3.5 w-3.5 text-muted-foreground" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64 p-0">
+          <DropdownMenuContent align="end" className="w-auto min-w-64 p-0">
             {/* User info header */}
             <div className="flex items-center gap-3 p-3 bg-muted/30 border-b border-border">
               <Avatar className="h-10 w-10 ring-2 ring-background shadow-sm">
