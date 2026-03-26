@@ -209,8 +209,8 @@ export default function Profile() {
       if (profileError) throw profileError;
 
       toast({
-        title: t('profile.profileUpdated'),
-        description: t('profile.profileUpdatedDesc'),
+        title: 'Profile Updated',
+        description: 'Your profile information has been saved.',
       });
     } catch (error: any) {
       toast({
