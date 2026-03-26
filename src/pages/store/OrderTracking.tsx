@@ -501,9 +501,9 @@ export default function OrderTracking() {
                     <CheckCircle className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-green-800 dark:text-green-200">Delivered Successfully!</h4>
+                    <h4 className="font-semibold text-green-800 dark:text-green-200">{t('orderTracking.deliveredSuccessMsg')}</h4>
                     <p className="text-sm text-green-600 dark:text-green-400">
-                      Your order was delivered on {formatDate(order.updated_at)}
+                      {t('orderTracking.deliveredOn')} {formatDate(order.updated_at)}
                     </p>
                   </div>
                 </div>
