@@ -292,9 +292,9 @@ export default function RoleManagement() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t('roles.user')}</TableHead>
-                      <TableHead>{t('roles.role')}</TableHead>
-                      <TableHead>{t('common.actions')}</TableHead>
+                      <TableHead>User</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
