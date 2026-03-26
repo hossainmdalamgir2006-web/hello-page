@@ -75,6 +75,8 @@ const ProfilePersonal = lazy(() => import("./pages/profile/PersonalInfoPage"));
 const ProfilePassword = lazy(() => import("./pages/profile/PasswordPage"));
 const ProfileSecurity = lazy(() => import("./pages/profile/SecurityPage"));
 const ProfileSessions = lazy(() => import("./pages/profile/SessionsPage"));
+const ProfileSessionsActive = lazy(() => import("./pages/profile/SessionsActivePage"));
+const ProfileSessionsActivity = lazy(() => import("./pages/profile/SessionsActivityPage"));
 const Brands = lazy(() => import("./pages/Brands"));
 const Login = lazy(() => import("./pages/Login"));
 
@@ -174,7 +176,11 @@ const App = () => (
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
-              <Route path="sessions" element={<ProfileSessions />} />
+              <Route path="sessions" element={<ProfileSessions />}>
+                <Route index element={<ProfileSessionsActive />} />
+                <Route path="active" element={<ProfileSessionsActive />} />
+                <Route path="activity" element={<ProfileSessionsActivity />} />
+              </Route>
             </Route>
             
             <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
@@ -205,7 +211,11 @@ const App = () => (
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
-              <Route path="sessions" element={<ProfileSessions />} />
+              <Route path="sessions" element={<ProfileSessions />}>
+                <Route index element={<ProfileSessionsActive />} />
+                <Route path="active" element={<ProfileSessionsActive />} />
+                <Route path="activity" element={<ProfileSessionsActivity />} />
+              </Route>
             </Route>
           </Route>
 
@@ -221,7 +231,11 @@ const App = () => (
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
-              <Route path="sessions" element={<ProfileSessions />} />
+              <Route path="sessions" element={<ProfileSessions />}>
+                <Route index element={<ProfileSessionsActive />} />
+                <Route path="active" element={<ProfileSessionsActive />} />
+                <Route path="activity" element={<ProfileSessionsActivity />} />
+              </Route>
             </Route>
           </Route>
 

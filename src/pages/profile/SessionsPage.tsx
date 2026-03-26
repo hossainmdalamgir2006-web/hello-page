@@ -1,11 +1,12 @@
-import { SessionManagement } from '@/components/profile/SessionManagement';
-import { LoginActivity } from '@/components/profile/LoginActivity';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 
 export default function SessionsPage() {
-  return (
-    <div className="space-y-6">
-      <SessionManagement />
-      <LoginActivity />
-    </div>
-  );
+  const location = useLocation();
+  const basePath = location.pathname.match(/^\/(admin|manager|support)\/profile\/sessions/)?.[0];
+  
+  if (basePath && (location.pathname === basePath || location.pathname === `${basePath}/`)) {
+    return <Navigate to={`${basePath}/active`} replace />;
+  }
+
+  return <Outlet />;
 }

@@ -1,7 +1,8 @@
 import { NavLink, Outlet, Navigate, useLocation } from "react-router-dom";
-import { User, Lock, Shield, Monitor } from "lucide-react";
+import { User, Lock, Shield, Monitor, ChevronDown, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function ProfileLayout() {
   const location = useLocation();
@@ -13,8 +14,14 @@ export default function ProfileLayout() {
     { to: `${basePath}/personal`, label: "Personal Info", icon: User },
     { to: `${basePath}/password`, label: "Password", icon: Lock },
     { to: `${basePath}/security`, label: "Security", icon: Shield },
-    { to: `${basePath}/sessions`, label: "Sessions", icon: Monitor },
   ];
+
+  const sessionsSubItems = [
+    { to: `${basePath}/sessions/active`, label: "Active Sessions", icon: Monitor },
+    { to: `${basePath}/sessions/activity`, label: "Login Activity", icon: History },
+  ];
+
+  const isSessionsActive = location.pathname.includes(`${basePath}/sessions`);
 
   if (location.pathname === basePath || location.pathname === `${basePath}/`) {
     return <Navigate to={`${basePath}/personal`} replace />;
@@ -32,6 +39,23 @@ export default function ProfileLayout() {
           <ScrollArea className="lg:hidden w-full">
             <div className="flex gap-1 pb-2">
               {profileNav.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    cn(
+                      "flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )
+                  }
+                >
+                  <item.icon className="h-4 w-4 shrink-0" />
+                  {item.label}
+                </NavLink>
+              ))}
+              {sessionsSubItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
@@ -70,6 +94,42 @@ export default function ProfileLayout() {
                 {item.label}
               </NavLink>
             ))}
+
+            <Collapsible defaultOpen={isSessionsActive}>
+              <CollapsibleTrigger className={cn(
+                "flex items-center justify-between w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                isSessionsActive
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}>
+                <span className="flex items-center gap-3">
+                  <Monitor className="h-4 w-4 shrink-0" />
+                  Sessions
+                </span>
+                <ChevronDown className="h-4 w-4 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="ml-4 flex flex-col gap-0.5 mt-0.5">
+                  {sessionsSubItems.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                          isActive
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )
+                      }
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </nav>
         </div>
 
