@@ -559,9 +559,9 @@ export default function Checkout() {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone">{t('checkout.phoneNumber')} *</Label>
                     <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 15); setFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={15} required />
-                    <p className="text-xs text-muted-foreground mt-1">Format: +880 1XXX-XXXXXX or 01XXX-XXXXXX</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('checkout.phoneFormat')}</p>
                   </div>
                   <div>
                     <Label htmlFor="address">Address *</Label>
