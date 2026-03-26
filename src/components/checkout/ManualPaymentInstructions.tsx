@@ -34,7 +34,7 @@ export function ManualPaymentInstructions({
     return (
       <div className="mt-4 p-4 bg-warning/10 rounded-lg border border-warning/20">
         <p className="text-sm text-warning">
-          ⚠️ This payment method has not been configured yet. Please use a different method.
+          ⚠️ {t('manualPayment.notConfigured')}
         </p>
       </div>
     );
