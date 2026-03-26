@@ -43,7 +43,7 @@ export function ManualPaymentInstructions({
   const copyNumber = () => {
     navigator.clipboard.writeText(paymentMethod.account_number!);
     setCopied(true);
-    toast.success("Number copied!");
+    toast.success(t('manualPayment.numberCopied'));
     setTimeout(() => setCopied(false), 2000);
   };
 
