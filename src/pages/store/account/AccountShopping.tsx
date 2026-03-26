@@ -60,13 +60,7 @@ export default function AccountShopping() {
   return (
     <>
       <SEOHead title="Shopping History" noIndex />
-      <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.shoppingPageTitle')}</h1>
-          <p className="text-sm text-muted-foreground">{t('account.shoppingPageDesc')}</p>
-        </div>
-        <ShoppingTab orders={orders} />
-      </div>
+      <ShoppingTab orders={orders} />
     </>
   );
 }

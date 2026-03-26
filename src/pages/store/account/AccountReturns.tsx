@@ -156,7 +156,7 @@ export default function AccountReturns() {
                     <p className="text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM dd, yyyy HH:mm")}</p>
                     {r.admin_notes && (
                       <p className="text-xs text-foreground mt-1 p-2 bg-muted rounded">
-                        <strong>{t('account.admin')}:</strong> {r.admin_notes}
+                        <strong>Admin:</strong> {r.admin_notes}
                       </p>
                     )}
                   </div>

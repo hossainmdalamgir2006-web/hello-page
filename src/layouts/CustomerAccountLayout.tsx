@@ -30,7 +30,7 @@ interface CustomerAccountLayoutProps {
 
 export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {

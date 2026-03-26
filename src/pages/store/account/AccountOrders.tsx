@@ -9,7 +9,7 @@ import { SEOHead } from "@/components/SEOHead";
 
 export default function AccountOrders() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
