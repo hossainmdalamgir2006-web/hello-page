@@ -333,7 +333,7 @@ export default function RoleManagement() {
                               onClick={() => handleRoleChange(userItem)}
                               disabled={userItem.user_id === user?.id}
                             >
-                              {t('roles.changeRole')}
+                              Change Role
                             </Button>
                           </TableCell>
                         </TableRow>
