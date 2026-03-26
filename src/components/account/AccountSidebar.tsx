@@ -1,16 +1,24 @@
+import { useState } from "react";
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
   HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  RotateCcw, Star, Bell, CreditCard, MessageCircle,
+  RotateCcw, Star, Bell, CreditCard, MessageCircle, ChevronDown,
 } from "lucide-react";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
+import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface AccountSidebarProps {
   collapsed?: boolean;
@@ -21,56 +29,41 @@ interface AccountSidebarProps {
   onCloseMobile?: () => void;
 }
 
-// Menu sections with translation keys
-const menuSectionsConfig = [
-  {
-    labelKey: "account.overview",
-    items: [
-      { titleKey: "account.dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
-      { titleKey: "account.notifications", url: "/myaccount/notifications", icon: Bell },
-    ],
-  },
-  {
-    labelKey: "account.orders",
-    items: [
-      { titleKey: "account.myOrders", url: "/myaccount/orders", icon: Package },
-      { titleKey: "account.returns", url: "/myaccount/returns", icon: RotateCcw },
-    ],
-  },
-  {
-    labelKey: "account.shopping",
-    items: [
-      { titleKey: "account.wishlist", url: "/myaccount/wishlist", icon: Heart },
-      { titleKey: "account.shoppingLink", url: "/myaccount/shopping", icon: ShoppingBag },
-      { titleKey: "account.recentlyViewed", url: "/myaccount/recently-viewed", icon: Clock },
-      { titleKey: "account.myReviews", url: "/myaccount/reviews", icon: Star },
-    ],
-  },
-  {
-    labelKey: "account.accountSection",
-    items: [
-      { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
-      { titleKey: "account.paymentMethods", url: "/myaccount/payment-methods", icon: CreditCard },
-      { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
-      { titleKey: "account.settings", url: "/myaccount/settings", icon: Settings },
-    ],
-  },
-  {
-    labelKey: "account.help",
-    items: [
-      { titleKey: "account.support", url: "/myaccount/support", icon: HelpCircle },
-      { titleKey: "account.liveChat", url: "/myaccount/chat", icon: MessageCircle },
-    ],
-  },
-];
+interface MenuItem {
+  titleKey: string;
+  url: string;
+  icon: React.ElementType;
+  end?: boolean;
+  badge?: number;
+}
 
-export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl, fullName, email, onCloseMobile }: AccountSidebarProps) {
+interface MenuGroup {
+  labelKey: string;
+  groupKey: string;
+  items: MenuItem[];
+}
+
+export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMobile }: AccountSidebarProps) {
   const { signOut } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
   const { unreadCount } = useRealtimeNotifications();
+  const { getSettingValue } = useStoreSettings();
+  const storeLogo = getSettingValue('STORE_LOGO');
+  const storeName = getSettingValue('STORE_NAME') || 'Ekta';
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    overview: true,
+    orders: true,
+    shopping: true,
+    account: true,
+    help: true,
+  });
+
+  const toggleGroup = (key: string) => {
+    setOpenGroups(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const handleLogout = async () => {
     await signOut();
@@ -78,67 +71,113 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
     navigate("/");
   };
 
-  const isActive = (url: string) => location.pathname === url;
+  const menuGroups: MenuGroup[] = [
+    {
+      labelKey: "account.overview",
+      groupKey: "overview",
+      items: [
+        { titleKey: "account.dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
+        { titleKey: "account.notifications", url: "/myaccount/notifications", icon: Bell, badge: unreadCount },
+      ],
+    },
+    {
+      labelKey: "account.orders",
+      groupKey: "orders",
+      items: [
+        { titleKey: "account.myOrders", url: "/myaccount/orders", icon: Package },
+        { titleKey: "account.returns", url: "/myaccount/returns", icon: RotateCcw },
+      ],
+    },
+    {
+      labelKey: "account.shopping",
+      groupKey: "shopping",
+      items: [
+        { titleKey: "account.wishlist", url: "/myaccount/wishlist", icon: Heart },
+        { titleKey: "account.shoppingLink", url: "/myaccount/shopping", icon: ShoppingBag },
+        { titleKey: "account.recentlyViewed", url: "/myaccount/recently-viewed", icon: Clock },
+        { titleKey: "account.myReviews", url: "/myaccount/reviews", icon: Star },
+      ],
+    },
+    {
+      labelKey: "account.accountSection",
+      groupKey: "account",
+      items: [
+        { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
+        { titleKey: "account.paymentMethods", url: "/myaccount/payment-methods", icon: CreditCard },
+        { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
+        { titleKey: "account.settings", url: "/myaccount/settings", icon: Settings },
+      ],
+    },
+    {
+      labelKey: "account.help",
+      groupKey: "help",
+      items: [
+        { titleKey: "account.support", url: "/myaccount/support", icon: HelpCircle },
+        { titleKey: "account.liveChat", url: "/myaccount/chat", icon: MessageCircle },
+      ],
+    },
+  ];
 
-  const handleNav = (url: string) => {
-    navigate(url);
-    onCloseMobile?.();
-  };
-
-  const renderNavItem = (item: { titleKey: string; url: string; icon: React.ElementType; end?: boolean }) => {
-    const active = isActive(item.url);
+  const renderNavItem = (item: MenuItem) => {
     const title = t(item.titleKey);
-    const showBadge = item.url === "/myaccount/notifications" && unreadCount > 0;
-    const content = (
-      <button
+    const showBadge = (item.badge || 0) > 0;
+
+    const linkContent = (
+      <NavLink
         key={item.url}
-        onClick={() => handleNav(item.url)}
+        to={item.url}
+        end={item.end}
         className={cn(
-          "group relative flex w-full items-center gap-3 rounded-r-lg py-2.5 text-sm font-medium transition-all",
-          collapsed ? "justify-center px-2 rounded-lg" : "px-3",
-          active
-            ? "bg-sidebar-accent text-sidebar-primary-foreground border-l-[3px] border-sidebar-primary"
-            : "text-sidebar-muted hover:bg-sidebar-accent/50 hover:text-sidebar-foreground border-l-[3px] border-transparent"
+          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground relative",
+          collapsed && "justify-center px-2"
         )}
+        activeClassName="bg-sidebar-accent text-sidebar-foreground"
       >
-        <item.icon className={cn("h-[18px] w-[18px] shrink-0", active && "text-sidebar-primary")} />
-        {!collapsed && <span className="flex-1 text-left">{title}</span>}
+        <item.icon className="h-5 w-5 shrink-0" />
+        {!collapsed && <span>{title}</span>}
         {!collapsed && showBadge && (
-          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground text-[10px] font-bold px-1">
-            {unreadCount}
+          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1">
+            {item.badge}
           </span>
         )}
         {collapsed && showBadge && (
-          <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-sidebar-primary" />
+          <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-primary" />
         )}
-      </button>
+      </NavLink>
     );
 
     if (collapsed) {
       return (
         <Tooltip key={item.url} delayDuration={0}>
-          <TooltipTrigger asChild>{content}</TooltipTrigger>
+          <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
           <TooltipContent side="right" className="font-medium">{title}</TooltipContent>
         </Tooltip>
       );
     }
-    return content;
+    return linkContent;
   };
 
   return (
     <aside className={cn(
-      "fixed left-0 top-0 z-40 h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300",
+      "fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300",
       collapsed ? "w-[68px]" : "w-64"
     )}>
-      <div className="flex h-full flex-col overflow-y-auto px-3 py-5">
+      <div className="flex h-full flex-col overflow-y-auto px-3 py-6">
         {/* Logo / Brand */}
-        <div className={cn("flex items-center gap-3 px-2", collapsed && "justify-center px-0")}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
-            <span className="font-display text-base font-bold text-sidebar-primary-foreground">E</span>
-          </div>
+        <div className={cn("mb-8 flex items-center gap-3 px-2", collapsed && "justify-center px-0")}>
+          {storeLogo ? (
+            <img src={storeLogo} alt={storeName} className="h-10 w-10 rounded-lg object-contain shrink-0" />
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
+              <span className="font-display text-lg font-bold text-sidebar-primary-foreground">
+                {storeName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <h1 className="font-display text-base font-bold text-sidebar-foreground leading-tight">Ekta</h1>
+              <h1 className="font-display text-lg font-bold text-sidebar-foreground">{storeName}</h1>
+              <p className="text-xs text-sidebar-muted">My Account</p>
             </div>
           )}
           {onCloseMobile && !collapsed && (
@@ -148,56 +187,76 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
           )}
         </div>
 
-        {/* Spacer */}
-        <div className="mt-5 mb-6" />
-
         {/* Navigation */}
-        <nav className="flex-1 space-y-5">
-          {menuSectionsConfig.map((section, idx) => (
-            <div key={section.labelKey}>
-              {!collapsed && (
-                <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-sidebar-muted/70">
-                  {t(section.labelKey)}
-                </p>
-              )}
-              {collapsed && idx > 0 && <div className="my-3 border-t border-sidebar-border" />}
-              <div className="space-y-0.5">{section.items.map(renderNavItem)}</div>
+        <nav className="flex-1 space-y-4">
+          {collapsed ? (
+            // Collapsed: flat list with separators
+            <div className="space-y-1">
+              {menuGroups.map((group, idx) => (
+                <div key={group.groupKey}>
+                  {idx > 0 && <div className="my-3 border-t border-sidebar-border" />}
+                  {group.items.map(renderNavItem)}
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            // Expanded: collapsible groups
+            menuGroups.map((group) => (
+              <Collapsible
+                key={group.groupKey}
+                open={openGroups[group.groupKey]}
+                onOpenChange={() => toggleGroup(group.groupKey)}
+              >
+                <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
+                  <span>{t(group.labelKey)}</span>
+                  <ChevronDown className={cn(
+                    "h-3.5 w-3.5 transition-transform",
+                    openGroups[group.groupKey] && "rotate-180"
+                  )} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-1 pt-1">
+                  {group.items.map(renderNavItem)}
+                </CollapsibleContent>
+              </Collapsible>
+            ))
+          )}
         </nav>
 
         {/* Bottom Actions */}
-        <div className="mt-auto space-y-0.5 border-t border-sidebar-border pt-4">
+        <div className="mt-auto space-y-1 border-t border-sidebar-border pt-4">
+          {/* Back to Store */}
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <button onClick={() => handleNav("/")} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-                  <Store className="h-[18px] w-[18px]" />
+                <button onClick={() => { navigate("/"); onCloseMobile?.(); }} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
+                  <Store className="h-5 w-5 shrink-0" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-medium">{t('account.backToStore')}</TooltipContent>
             </Tooltip>
           ) : (
-            <button onClick={() => handleNav("/")} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-              <Store className="h-[18px] w-[18px]" /><span>{t('account.backToStore')}</span>
+            <button onClick={() => { navigate("/"); onCloseMobile?.(); }} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
+              <Store className="h-5 w-5 shrink-0" /><span>{t('account.backToStore')}</span>
             </button>
           )}
 
+          {/* Logout */}
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <button onClick={handleLogout} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-                  <LogOut className="h-[18px] w-[18px]" />
+                  <LogOut className="h-5 w-5 shrink-0" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-medium">{t('account.signOut')}</TooltipContent>
             </Tooltip>
           ) : (
             <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-              <LogOut className="h-[18px] w-[18px]" /><span>{t('account.signOut')}</span>
+              <LogOut className="h-5 w-5" /><span>{t('account.signOut')}</span>
             </button>
           )}
 
+          {/* Collapse toggle */}
           {onToggleCollapse && (
             <Button
               variant="ghost"
@@ -208,7 +267,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, avatarUrl,
                 collapsed ? "justify-center px-2" : "justify-start px-3 gap-3"
               )}
             >
-              {collapsed ? <ChevronsRight className="h-4 w-4" /> : <><ChevronsLeft className="h-4 w-4" /><span className="text-xs">{t('account.collapse')}</span></>}
+              {collapsed ? <ChevronsRight className="h-4 w-4" /> : <><ChevronsLeft className="h-4 w-4" /><span className="text-xs">Collapse Sidebar</span></>}
             </Button>
           )}
         </div>
