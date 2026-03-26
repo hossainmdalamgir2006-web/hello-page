@@ -39,7 +39,7 @@ export default function TrackOrder() {
     const trimmedOrder = orderNumber.trim().toUpperCase();
     const orderNumberRegex = /^ORD-\d{8}-\d{4}$/;
     if (!orderNumberRegex.test(trimmedOrder)) {
-      setOrderError("Invalid order number. Correct format: ORD-YYYYMMDD-XXXX");
+      setOrderError(t('track.invalidOrder'));
       return;
     }
     navigate(`/track/${trimmedOrder}`);
