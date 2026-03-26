@@ -140,7 +140,7 @@ export function FlashSaleSection({
                       />
                     ) : (
                       <div className="w-full h-full bg-white/10 flex items-center justify-center text-white/50 text-sm">
-                        No Image
+                        {t('flashSale.noImage')}
                       </div>
                     )}
                     {hasDiscount && (
