@@ -399,7 +399,7 @@ export default function Profile() {
                 <User className="h-5 w-5" />
                 Personal Information
               </CardTitle>
-              <CardDescription>{t('profile.personalInfoDesc')}</CardDescription>
+              <CardDescription>Update your personal details</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...profileForm}>
