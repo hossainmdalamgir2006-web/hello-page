@@ -43,7 +43,8 @@ async function fetchFeaturedProducts(limit: number): Promise<FeaturedProduct[]> 
     slug: (p as any).slug || "",
     price: Number(p.price),
     compare_at_price: p.compare_at_price ? Number(p.compare_at_price) : null,
-    images: p.images || [],
+    // Filter out base64 images to reduce memory usage; keep only URL-based images
+    images: (p.images || []).filter((img: string) => typeof img === 'string' && !img.startsWith('data:')).slice(0, 2),
     category: p.category,
     created_at: p.created_at,
   }));

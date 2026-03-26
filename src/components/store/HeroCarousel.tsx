@@ -118,19 +118,38 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
   }, [autoplay, autoplayDelay, next, slides.length]);
 
   if (isLoading) {
+    const fallbackSlide = defaultSlides[0];
     return (
-      <section className="relative w-full overflow-hidden bg-muted" style={{ height: "80vh", minHeight: "500px" }}>
-        <div className="absolute inset-0 flex items-center justify-center">
+      <section className="relative w-full overflow-hidden" style={{ height: "80vh", minHeight: "500px" }}>
+        <div className="absolute inset-0">
+          <img
+            src={fallbackSlide.image_url!}
+            alt={fallbackSlide.title || ""}
+            className="w-full h-full object-cover"
+            fetchPriority="high"
+            loading="eager"
+            decoding="sync"
+          />
+          <div className="absolute inset-0" style={{ background: fallbackSlide.overlay_color || "rgba(0,0,0,0.45)" }} />
+        </div>
+        <div className="relative z-10 h-full flex items-center">
           <div className="container mx-auto px-6 md:px-8">
-            <div className="max-w-2xl space-y-5">
-              <div className="h-6 w-32 rounded-full bg-muted-foreground/10 animate-pulse" />
-              <div className="h-14 w-3/4 rounded-lg bg-muted-foreground/10 animate-pulse" />
-              <div className="h-14 w-1/2 rounded-lg bg-muted-foreground/10 animate-pulse" />
-              <div className="h-5 w-2/3 rounded bg-muted-foreground/10 animate-pulse" />
-              <div className="flex gap-4 pt-2">
-                <div className="h-12 w-36 rounded-lg bg-muted-foreground/10 animate-pulse" />
-                <div className="h-12 w-36 rounded-lg bg-muted-foreground/10 animate-pulse" />
-              </div>
+            <div className="max-w-2xl text-white">
+              {fallbackSlide.badge_text && (
+                <Badge className="mb-5 bg-store-accent text-store-accent-foreground px-4 py-1.5 text-sm font-semibold">
+                  {fallbackSlide.badge_text}
+                </Badge>
+              )}
+              {fallbackSlide.title && (
+                <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-5 leading-tight">
+                  {fallbackSlide.title}
+                </h1>
+              )}
+              {fallbackSlide.subtitle && (
+                <p className="text-lg md:text-xl mb-8 text-white/85 max-w-lg leading-relaxed">
+                  {fallbackSlide.subtitle}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -170,6 +189,8 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
             src={slide.image_url || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop"}
             alt={slide.title || ""}
             className="w-full h-full object-cover"
+            fetchPriority={current === 0 ? "high" : undefined}
+            loading={current === 0 ? "eager" : "lazy"}
           />
         )}
         {/* Overlay */}
@@ -238,9 +259,11 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
             <button
               key={i}
               onClick={() => { goTo(i); resetTimer(); }}
-              className={`transition-all rounded-full ${i === current ? "w-8 h-2.5 bg-store-accent" : "w-2.5 h-2.5 bg-white/50 hover:bg-white/80"}`}
+              className={`transition-all rounded-full p-1 ${i === current ? "w-10 h-6 bg-store-accent" : "w-6 h-6 bg-white/50 hover:bg-white/80"}`}
               aria-label={`Go to slide ${i + 1}`}
-            />
+            >
+              <span className={`block rounded-full ${i === current ? "w-full h-full bg-store-accent" : "w-2.5 h-2.5 bg-white/80 mx-auto"}`} />
+            </button>
           ))}
         </div>
       )}

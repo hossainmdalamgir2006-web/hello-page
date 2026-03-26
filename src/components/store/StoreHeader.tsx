@@ -77,7 +77,7 @@ export function StoreHeader() {
           {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild className="lg:hidden">
-              <Button variant="ghost" size="icon" className="shrink-0">
+              <Button variant="ghost" size="icon" className="shrink-0" aria-label="Open menu">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -141,6 +141,7 @@ export function StoreHeader() {
                 className="rounded-none bg-store-primary hover:bg-store-primary/90 text-store-primary-foreground shrink-0"
               >
                 <Search className="h-5 w-5" />
+                <span className="sr-only">Search</span>
               </Button>
             </div>
           </form>
@@ -150,12 +151,12 @@ export function StoreHeader() {
             <ThemeToggle />
 
             {/* Mobile Search */}
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => navigate('/products')}>
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => navigate('/products')} aria-label="Search products">
               <Search className="h-5 w-5" />
             </Button>
 
             {/* Wishlist */}
-            <Button variant="ghost" size="icon" className="hidden md:flex relative" onClick={() => navigate('/wishlist')}>
+            <Button variant="ghost" size="icon" className="hidden md:flex relative" onClick={() => navigate('/wishlist')} aria-label="Wishlist">
               <Heart className="h-5 w-5" />
               {wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-store-primary text-store-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
@@ -168,7 +169,7 @@ export function StoreHeader() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" aria-label="Account menu">
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -201,13 +202,13 @@ export function StoreHeader() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="ghost" size="icon" onClick={() => navigate('/login')}>
+              <Button variant="ghost" size="icon" onClick={() => navigate('/login')} aria-label="Sign in">
                 <User className="h-5 w-5" />
               </Button>
             )}
 
             {/* Cart */}
-            <Button variant="ghost" size="icon" className="relative" onClick={() => setCartOpen(true)}>
+            <Button variant="ghost" size="icon" className="relative" onClick={() => setCartOpen(true)} aria-label="Shopping cart">
               <ShoppingBag className="h-5 w-5" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-store-secondary text-store-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">

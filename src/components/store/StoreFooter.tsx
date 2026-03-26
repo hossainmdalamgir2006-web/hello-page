@@ -118,14 +118,14 @@ export function StoreFooter() {
   const newsletterButton = content.newsletter_button || "Subscribe";
   const copyrightText = content.copyright_text || "All rights reserved.";
 
-  const SocialIcon = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 hover:bg-store-primary flex items-center justify-center transition-colors">
+  const SocialIcon = ({ href, label, children }: { href: string; label: string; children: React.ReactNode }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="w-9 h-9 rounded-full bg-white/10 hover:bg-store-primary flex items-center justify-center transition-colors">
       {children}
     </a>
   );
 
   return (
-    <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]">
+    <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]" style={{ minHeight: "380px" }}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -146,10 +146,10 @@ export function StoreFooter() {
             <div className="flex gap-3">
               {hasSocial ? (
                 <>
-                  {socialLinks.facebook && <SocialIcon href={socialLinks.facebook}><Facebook className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.instagram && <SocialIcon href={socialLinks.instagram}><Instagram className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.twitter && <SocialIcon href={socialLinks.twitter}><Twitter className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.youtube && <SocialIcon href={socialLinks.youtube}><Youtube className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.facebook && <SocialIcon href={socialLinks.facebook} label="Facebook"><Facebook className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.instagram && <SocialIcon href={socialLinks.instagram} label="Instagram"><Instagram className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.twitter && <SocialIcon href={socialLinks.twitter} label="Twitter"><Twitter className="h-4 w-4" /></SocialIcon>}
+                  {socialLinks.youtube && <SocialIcon href={socialLinks.youtube} label="YouTube"><Youtube className="h-4 w-4" /></SocialIcon>}
                 </>
               ) : (
                 <>
@@ -164,7 +164,7 @@ export function StoreFooter() {
 
           {/* Shop Links */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.shopFooter')}</h4>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.shopFooter')}</h3>
             <ul className="space-y-2 text-sm">
               {shopLinks.map((link: any, i: number) => (
                 <li key={i}>
@@ -176,7 +176,7 @@ export function StoreFooter() {
 
           {/* Help Links */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.helpFooter')}</h4>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.helpFooter')}</h3>
             <ul className="space-y-2 text-sm">
               {helpLinks.map((link: any, i: number) => (
                 <li key={i}>
@@ -188,20 +188,26 @@ export function StoreFooter() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.contact')}</h4>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.contact')}</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
-                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>{storeAddress}</span>
-              </li>
-              <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
-                <Phone className="h-4 w-4 flex-shrink-0" />
-                <span>{storePhone}</span>
-              </li>
-              <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
-                <Mail className="h-4 w-4 flex-shrink-0" />
-                <span>{storeEmail}</span>
-              </li>
+              {storeAddress && (
+                <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" aria-hidden="true" />
+                  <span>{storeAddress}</span>
+                </li>
+              )}
+              {storePhone && (
+                <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
+                  <Phone className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                  <span>{storePhone}</span>
+                </li>
+              )}
+              {storeEmail && (
+                <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
+                  <Mail className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                  <span>{storeEmail}</span>
+                </li>
+              )}
             </ul>
           </div>
         </div>
