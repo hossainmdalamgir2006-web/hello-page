@@ -147,7 +147,7 @@ export function ManualPaymentInstructions({
       )}
 
       <div className="bg-background p-3 rounded-lg border">
-        <p className="text-sm text-muted-foreground mb-1">Account Number:</p>
+        <p className="text-sm text-muted-foreground mb-1">{t('manualPayment.accountNumber')}</p>
         <div className="flex items-center gap-2">
           <code className="text-xl font-bold tracking-wider flex-1">{paymentMethod.account_number}</code>
           <Button 
