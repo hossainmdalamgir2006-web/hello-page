@@ -159,7 +159,7 @@ export default function TrackOrder() {
                           </div>
                           <div className="text-sm text-muted-foreground">
                             <p>{t('track.date')}: {formatDate(order.createdAt)}</p>
-                            <p>{t('track.total')}: {formatPrice(order.total?)}</p>
+                            <p>{t('track.total')}: {formatPrice(order.total || 0)}</p>
                           </div>
                         </div>
                       ))}
