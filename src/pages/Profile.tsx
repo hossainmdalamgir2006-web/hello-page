@@ -409,7 +409,7 @@ export default function Profile() {
                     name="fullName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('fullName')}</FormLabel>
+                        <FormLabel>Full Name</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
