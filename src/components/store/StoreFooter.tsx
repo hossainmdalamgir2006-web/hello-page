@@ -118,8 +118,8 @@ export function StoreFooter() {
   const newsletterButton = content.newsletter_button || "Subscribe";
   const copyrightText = content.copyright_text || "All rights reserved.";
 
-  const SocialIcon = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 hover:bg-store-primary flex items-center justify-center transition-colors">
+  const SocialIcon = ({ href, label, children }: { href: string; label: string; children: React.ReactNode }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="w-9 h-9 rounded-full bg-white/10 hover:bg-store-primary flex items-center justify-center transition-colors">
       {children}
     </a>
   );
