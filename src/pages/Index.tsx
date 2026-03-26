@@ -86,7 +86,7 @@ const Index = () => {
     resetLayout,
   } = useDashboardLayout();
   
-  const { t } = useLanguage();
+  
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
