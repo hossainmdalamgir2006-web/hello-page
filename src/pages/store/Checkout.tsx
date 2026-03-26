@@ -858,8 +858,8 @@ export default function Checkout() {
                               <div className="flex items-center gap-2">
                                 <FileText className="h-5 w-5 text-store-primary" />
                                 <div>
-                                  <p className="font-semibold">Cheque Payment</p>
-                                  <p className="text-xs text-muted-foreground">Your order will be processed after cheque clearance</p>
+                                  <p className="font-semibold">{t('checkout.chequePayment')}</p>
+                                  <p className="text-xs text-muted-foreground">{t('checkout.chequeCleared')}</p>
                                 </div>
                               </div>
                               <div className="text-sm bg-background p-3 rounded-lg border space-y-2">
