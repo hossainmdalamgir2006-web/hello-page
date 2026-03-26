@@ -134,7 +134,7 @@ const App = () => (
             <Route path="returns" element={<AccountReturns />} />
             <Route path="reviews" element={<AccountReviews />} />
             <Route path="notifications" element={<AccountNotifications />} />
-            <Route path="payment-methods" element={<AccountPaymentMethods />} />
+            
             <Route path="chat" element={<AccountChat />} />
           </Route>
 
