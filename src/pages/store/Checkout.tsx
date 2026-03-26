@@ -647,7 +647,7 @@ export default function Checkout() {
                         <div className="flex items-center gap-2">
                           <Checkbox id="saveShippingAddress" checked={saveShippingAddress} onCheckedChange={(checked) => setSaveShippingAddress(checked as boolean)} />
                           <Label htmlFor="saveShippingAddress" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                            <Save className="h-4 w-4 text-store-primary" /> Save this address for future orders
+                            <Save className="h-4 w-4 text-store-primary" /> {t('checkout.saveAddress')}
                           </Label>
                         </div>
                         {saveShippingAddress && (
