@@ -220,7 +220,7 @@ export function ProductViewModal({ open, onOpenChange, product, onEdit }: Produc
               <div>
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Description</p>
                 <div
-                  className="prose prose-sm max-w-none dark:prose-invert text-foreground prose-img:rounded-lg prose-img:max-w-full prose-video:rounded-lg prose-table:border prose-table:border-border prose-th:bg-muted prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-border prose-th:border prose-th:border-border"
+                  className="prose prose-sm max-w-none dark:prose-invert text-foreground prose-img:rounded-lg prose-img:max-w-2xl prose-img:mx-auto prose-img:block prose-img:object-contain prose-video:rounded-lg prose-video:max-w-2xl prose-video:mx-auto prose-table:border prose-table:border-border prose-th:bg-muted prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-border prose-th:border prose-th:border-border [&_iframe]:w-full [&_iframe]:max-w-2xl [&_iframe]:mx-auto [&_iframe]:aspect-video [&_iframe]:rounded-lg [&_iframe]:my-4 [&_iframe]:block [&_div[style*='padding-bottom']]:relative [&_div[style*='padding-bottom']]:max-w-2xl [&_div[style*='padding-bottom']]:mx-auto [&_div[style*='padding-bottom']]:rounded-lg [&_div[style*='padding-bottom']]:overflow-hidden"
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
               </div>
