@@ -477,9 +477,9 @@ export default function Checkout() {
     return (
       <>
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="font-display text-2xl font-bold mb-3">Your cart is empty</h1>
-          <p className="text-muted-foreground mb-8">Add some products before checking out.</p>
-          <Button asChild><Link to="/products">Shop Now</Link></Button>
+          <h1 className="font-display text-2xl font-bold mb-3">{t('checkout.emptyCart')}</h1>
+          <p className="text-muted-foreground mb-8">{t('checkout.addProductsFirst')}</p>
+          <Button asChild><Link to="/products">{t('checkout.shopNow')}</Link></Button>
         </div>
       </>
     );
