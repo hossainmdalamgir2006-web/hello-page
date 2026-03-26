@@ -196,9 +196,12 @@ export default function PersonalInfoPage() {
       </Card>
 
       {/* Change Email Card */}
-      <Card>
+      <Card className="border-l-4 border-l-primary/20 hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" />Change Email</CardTitle>
+          <CardTitle className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2"><Mail className="h-5 w-5 text-primary" /></div>
+            Change Email
+          </CardTitle>
           <CardDescription>Update your email address. A confirmation link will be sent to the new email.</CardDescription>
         </CardHeader>
         <CardContent>

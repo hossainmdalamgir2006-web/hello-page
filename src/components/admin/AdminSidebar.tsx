@@ -56,6 +56,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
     operations: true,
     communication: true,
     system: true,
+    account: true,
   });
 
   const toggleGroup = (key: string) => {

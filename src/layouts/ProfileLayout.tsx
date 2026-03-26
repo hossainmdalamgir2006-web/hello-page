@@ -101,6 +101,7 @@ export default function ProfileLayout() {
           </ScrollArea>
 
           <nav className="hidden lg:flex flex-col gap-1">
+            <ProfileCompletionProgress />
             {profileNav.map((item) => (
               <NavLink
                 key={item.to}
