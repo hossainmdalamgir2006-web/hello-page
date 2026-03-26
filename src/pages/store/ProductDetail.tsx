@@ -532,7 +532,7 @@ export default function ProductDetail() {
             <TabsList className="w-full justify-start border-b rounded-none bg-transparent h-auto p-0 flex-wrap">
               <TabsTrigger value="description" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.description')}</TabsTrigger>
               {attributes.length > 0 && <TabsTrigger value="specifications" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.specifications')}</TabsTrigger>}
-              <TabsTrigger value="details" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.details')}</TabsTrigger>
+              
               <TabsTrigger value="reviews" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.reviews')} ({reviewSummary.totalReviews})</TabsTrigger>
             </TabsList>
             <TabsContent value="description" className="py-6">
