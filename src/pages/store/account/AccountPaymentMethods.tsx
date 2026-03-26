@@ -14,18 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-
-const METHOD_TYPES = [
-  { value: "bkash", label: "bKash", icon: "📱" },
-  { value: "nagad", label: "Nagad", icon: "📱" },
-  { value: "rocket", label: "Rocket", icon: "📱" },
-  { value: "bank", label: "Bank Account", icon: "🏦" },
-  { value: "card", label: "Card", icon: "💳" },
-];
+import { useEnabledPaymentMethods } from "@/hooks/useEnabledPaymentMethods";
 
 export default function AccountPaymentMethods() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { paymentMethods: enabledMethods, loading: loadingMethods } = useEnabledPaymentMethods();
   const [methods, setMethods] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -71,11 +65,12 @@ export default function AccountPaymentMethods() {
     fetchMethods();
   };
 
-  if (loading) {
+  if (loading || loadingMethods) {
     return <DelayedLoader><GenericCardGridSkeleton count={3} /></DelayedLoader>;
   }
 
-  const getIcon = (type: string) => METHOD_TYPES.find((m) => m.value === type)?.icon || "💳";
+  const getIcon = (type: string) => enabledMethods.find((m) => m.code === type || m.method_id === type)?.icon || "💳";
+  const getMethodName = (type: string) => enabledMethods.find((m) => m.code === type || m.method_id === type)?.name || type;
 
   return (
     <>
@@ -94,8 +89,8 @@ export default function AccountPaymentMethods() {
                 <Select value={methodType} onValueChange={setMethodType}>
                   <SelectTrigger><SelectValue placeholder={t('account.selectType')} /></SelectTrigger>
                   <SelectContent>
-                    {METHOD_TYPES.map((m) => (
-                      <SelectItem key={m.value} value={m.value}>{m.icon} {m.label}</SelectItem>
+                    {enabledMethods.map((m) => (
+                      <SelectItem key={m.code} value={m.code}>{m.icon} {m.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -136,8 +131,8 @@ export default function AccountPaymentMethods() {
                       {m.label}
                       {m.is_default && <Badge variant="default" className="text-[10px]">{t('account.default')}</Badge>}
                     </p>
-                    <p className="text-xs text-muted-foreground capitalize">
-                      {m.method_type}{m.last_four && ` · •••• ${m.last_four}`}
+                    <p className="text-xs text-muted-foreground">
+                      {getMethodName(m.method_type)}{m.last_four && ` · •••• ${m.last_four}`}
                     </p>
                   </div>
                 </div>
