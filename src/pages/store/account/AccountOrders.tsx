@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { OrdersListSkeleton } from "@/components/skeletons";
 import { OrdersTab } from "@/components/account/OrdersTab";
-import { useLanguage } from "@/contexts/LanguageContext";
+
 import { SEOHead } from "@/components/SEOHead";
 
 export default function AccountOrders() {
