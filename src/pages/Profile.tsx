@@ -397,7 +397,7 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                {t('profile.personalInfo')}
+                Personal Information
               </CardTitle>
               <CardDescription>{t('profile.personalInfoDesc')}</CardDescription>
             </CardHeader>
