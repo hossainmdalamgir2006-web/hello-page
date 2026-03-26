@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -41,20 +41,17 @@ const getDeviceInfo = () => {
   let os = 'Unknown';
   let device = 'Desktop';
   
-  // Browser detection
   if (ua.includes('Firefox')) browser = 'Firefox';
   else if (ua.includes('Chrome')) browser = 'Chrome';
   else if (ua.includes('Safari')) browser = 'Safari';
   else if (ua.includes('Edge')) browser = 'Edge';
   
-  // OS detection
   if (ua.includes('Windows')) os = 'Windows';
   else if (ua.includes('Mac')) os = 'macOS';
   else if (ua.includes('Linux')) os = 'Linux';
   else if (ua.includes('Android')) os = 'Android';
   else if (ua.includes('iOS')) os = 'iOS';
   
-  // Device type
   if (/Mobile|Android|iPhone|iPad/i.test(ua)) {
     device = /iPad|Tablet/i.test(ua) ? 'Tablet' : 'Mobile';
   }
@@ -62,19 +59,81 @@ const getDeviceInfo = () => {
   return { browser, os, device, isMobile: device !== 'Desktop' };
 };
 
+// Cache helpers
+const ROLE_CACHE_KEY = 'auth_role_cache';
+const PROFILE_CHECKED_KEY = 'auth_profile_checked';
+
+function getCachedRole(userId: string): AppRole | null {
+  try {
+    const cached = sessionStorage.getItem(ROLE_CACHE_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed.userId === userId) return parsed.role as AppRole;
+    }
+  } catch {}
+  return null;
+}
+
+function setCachedRole(userId: string, role: AppRole) {
+  try {
+    sessionStorage.setItem(ROLE_CACHE_KEY, JSON.stringify({ userId, role }));
+  } catch {}
+}
+
+function isProfileChecked(userId: string): boolean {
+  try {
+    return sessionStorage.getItem(PROFILE_CHECKED_KEY) === userId;
+  } catch {}
+  return false;
+}
+
+function setProfileChecked(userId: string) {
+  try {
+    sessionStorage.setItem(PROFILE_CHECKED_KEY, userId);
+  } catch {}
+}
+
+function clearAuthCache() {
+  try {
+    sessionStorage.removeItem(ROLE_CACHE_KEY);
+    sessionStorage.removeItem(PROFILE_CHECKED_KEY);
+  } catch {}
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
   const [roleLoading, setRoleLoading] = useState(true);
+  const initDone = useRef(false);
 
   // Fetch user role from database
-  const fetchUserRole = async (userId: string, skipLoadingState = false) => {
-    try {
-      if (!skipLoadingState) {
-        setRoleLoading(true);
+  const fetchUserRole = async (userId: string, useCache = false) => {
+    // Try cache first
+    if (useCache) {
+      const cached = getCachedRole(userId);
+      if (cached) {
+        setRole(cached);
+        setRoleLoading(false);
+        // Background re-verify
+        supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId)
+          .single()
+          .then(({ data }) => {
+            if (data?.role && data.role !== cached) {
+              setRole(data.role as AppRole);
+              setCachedRole(userId, data.role as AppRole);
+            }
+          });
+        return;
       }
+    }
+
+    try {
+      setRoleLoading(true);
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
@@ -82,13 +141,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
       
       if (error) {
-        console.error('Error fetching role:', error);
-        setRole('user'); // Default to user role
+        setRole('user');
+        setCachedRole(userId, 'user');
       } else {
-        setRole(data?.role as AppRole || 'user');
+        const r = (data?.role as AppRole) || 'user';
+        setRole(r);
+        setCachedRole(userId, r);
       }
-    } catch (error) {
-      console.error('Role fetch error:', error);
+    } catch {
       setRole('user');
     } finally {
       setRoleLoading(false);
@@ -97,6 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Ensure profile exists for user
   const ensureProfile = async (userId: string, email: string, fullName?: string) => {
+    // Skip if already checked this session
+    if (isProfileChecked(userId)) return;
+    
     try {
       const { data: existing } = await supabase
         .from('profiles')
@@ -113,13 +176,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             full_name: fullName || email.split('@')[0],
           });
       }
+      setProfileChecked(userId);
     } catch (error) {
-      // Profile may already exist, ignore
       console.log('Profile check:', error);
     }
   };
 
-  // Log login activity
+  // Log login activity - only called from actual signIn/signInWithGoogle
   const logLoginActivity = async (userId: string, email: string, status: 'success' | 'failed', failureReason?: string) => {
     const deviceInfo = getDeviceInfo();
     try {
@@ -139,53 +202,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+      async (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
         setLoading(false);
         
-        if (session?.user) {
+        if (currentSession?.user) {
+          const userId = currentSession.user.id;
+          
+          // On TOKEN_REFRESHED, skip all DB calls if role is already loaded
+          if (event === 'TOKEN_REFRESHED' && role !== null) {
+            return;
+          }
+          
           // Use setTimeout to avoid Supabase deadlock
           setTimeout(() => {
-            // On token refresh, don't reset loading state to avoid UI flicker
-            const isTokenRefresh = event === 'TOKEN_REFRESHED';
-            fetchUserRole(session.user.id, isTokenRefresh && role !== null);
-            ensureProfile(session.user.id, session.user.email || '', session.user.user_metadata?.full_name);
-            
-            // Log successful login on SIGNED_IN event
-            if (event === 'SIGNED_IN') {
-              logLoginActivity(session.user.id, session.user.email || '', 'success');
-            }
+            // INITIAL_SESSION or SIGNED_IN — use cache for fast render
+            const useCache = event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED';
+            fetchUserRole(userId, useCache);
+            ensureProfile(userId, currentSession.user.email || '', currentSession.user.user_metadata?.full_name);
           }, 0);
         } else {
           setRole(null);
           setRoleLoading(false);
+          if (event === 'SIGNED_OUT') {
+            clearAuthCache();
+          }
         }
+        
+        initDone.current = true;
       }
     );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-      
-      if (session?.user) {
-        fetchUserRole(session.user.id);
-        ensureProfile(session.user.id, session.user.email || '', session.user.user_metadata?.full_name);
-      } else {
-        setRoleLoading(false);
-      }
-    });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const checkAccountLockout = async (email: string): Promise<LockoutInfo> => {
     try {
-      // Check if there are active lockouts for this email
       const { data, error } = await supabase
         .from('account_lockouts')
         .select('*')
@@ -203,8 +257,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         locked_until: data.unlock_at,
         message: `Account locked after ${data.failed_attempts} failed attempts`
       };
-    } catch (error) {
-      console.error('Lockout check error:', error);
+    } catch {
       return { locked: false };
     }
   };
@@ -212,14 +265,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sendLockoutAlert = async (email: string, failedAttempts: number, lockedUntil: string, deviceInfo: any) => {
     try {
       await supabase.functions.invoke('send-lockout-alert', {
-        body: {
-          email,
-          failedAttempts,
-          lockedUntil,
-          deviceInfo,
-        },
+        body: { email, failedAttempts, lockedUntil, deviceInfo },
       });
-      console.log('Lockout alert email sent');
     } catch (error) {
       console.error('Failed to send lockout alert:', error);
     }
@@ -229,16 +276,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const deviceInfo = getDeviceInfo();
       
-      // Insert failed login attempt
       await supabase
         .from('failed_login_attempts')
-        .insert({
-          email,
-          reason,
-          user_agent: navigator.userAgent,
-        });
+        .insert({ email, reason, user_agent: navigator.userAgent });
       
-      // Count recent failed attempts
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
       const { count } = await supabase
         .from('failed_login_attempts')
@@ -249,45 +290,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const failedAttempts = count || 0;
       const maxAttempts = 5;
       
-      // If too many failed attempts, create lockout
       if (failedAttempts >= maxAttempts) {
-        const lockoutDuration = 30 * 60 * 1000; // 30 minutes
+        const lockoutDuration = 30 * 60 * 1000;
         const unlockAt = new Date(Date.now() + lockoutDuration).toISOString();
         
         await supabase
           .from('account_lockouts')
-          .insert({
-            email,
-            reason: 'Too many failed login attempts',
-            unlock_at: unlockAt,
-          });
+          .insert({ email, reason: 'Too many failed login attempts', unlock_at: unlockAt });
         
-        // Send lockout alert email
         sendLockoutAlert(email, failedAttempts, unlockAt, deviceInfo);
         
-        return { 
-          locked: true, 
-          locked_until: unlockAt,
-          failed_attempts: failedAttempts
-        };
+        return { locked: true, locked_until: unlockAt, failed_attempts: failedAttempts };
       }
       
-      return { 
-        locked: false,
-        remaining_attempts: maxAttempts - failedAttempts
-      };
-    } catch (error) {
-      console.error('Record failed login error:', error);
+      return { locked: false, remaining_attempts: maxAttempts - failedAttempts };
+    } catch {
       return null;
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    // First check if account is locked
     const lockoutStatus = await checkAccountLockout(email);
     
     if (lockoutStatus.locked) {
-      // Log failed attempt due to lockout
       logLoginActivity('', email, 'failed', 'Account locked');
       return { 
         error: new Error(`Account is locked until ${new Date(lockoutStatus.locked_until!).toLocaleString()}. Too many failed login attempts.`),
@@ -295,16 +320,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
     }
 
-    const { error, data } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
     
     if (error) {
-      // Log failed login attempt
       logLoginActivity('', email, 'failed', error.message);
       
-      // Record failed attempt (this will also send lockout email if account gets locked)
       const lockoutResult = await recordFailedLogin(email, error.message);
       
       if (lockoutResult?.locked) {
@@ -314,16 +334,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
       }
       
-      // Add remaining attempts info to error
       if (lockoutResult?.remaining_attempts !== undefined) {
         const remainingMsg = lockoutResult.remaining_attempts > 0 
           ? ` (${lockoutResult.remaining_attempts} attempts remaining before lockout)`
           : '';
-        return { 
-          error: new Error(error.message + remainingMsg),
-          lockout: lockoutResult 
-        };
+        return { error: new Error(error.message + remainingMsg), lockout: lockoutResult };
       }
+    } else if (data?.user) {
+      // Log successful login only on actual sign-in action
+      logLoginActivity(data.user.id, email, 'success');
     }
     
     return { error: error as Error | null };
@@ -337,15 +356,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
-        },
+        data: { full_name: fullName },
       },
     });
     return { error: error as Error | null };
   };
 
   const signOut = async () => {
+    clearAuthCache();
     await supabase.auth.signOut();
     setRole(null);
   };
@@ -355,9 +373,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: redirectUrl,
-      },
+      options: { redirectTo: redirectUrl },
     });
     return { error: error as Error | null };
   };
@@ -372,13 +388,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updatePassword = async (newPassword: string) => {
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
     return { error: error as Error | null };
   };
 
-  // Computed role checks
   const isAdmin = role === 'admin';
   const isManager = role === 'manager';
   const isSupport = role === 'support';
@@ -388,23 +401,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user,
-        session,
-        loading,
-        role,
-        roleLoading,
-        signIn,
-        signUp,
-        signInWithGoogle,
-        signOut,
-        resetPassword,
-        updatePassword,
-        checkAccountLockout,
-        isAdmin,
-        isManager,
-        isSupport,
-        isCustomer,
-        isStaff,
+        user, session, loading, role, roleLoading,
+        signIn, signUp, signInWithGoogle, signOut,
+        resetPassword, updatePassword, checkAccountLockout,
+        isAdmin, isManager, isSupport, isCustomer, isStaff,
       }}
     >
       {children}
