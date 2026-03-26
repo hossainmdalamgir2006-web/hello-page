@@ -123,12 +123,8 @@ export default function Analytics() {
     refetch,
   } = useAnalyticsData(period);
 
-    if (value >= 100000) {
   const { formatPrice } = useCurrency();
-      return `${formatPrice((value / 100000).toFixed(2))} লাখ`;
-    }
-    return `${formatPrice(value)}`;
-  };
+
 
   return (
     <>
