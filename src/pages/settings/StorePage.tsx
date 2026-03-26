@@ -138,10 +138,6 @@ export default function StorePage() {
           <p className="text-sm text-muted-foreground">Basic store information, branding and social links</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => { generateSchemaPDF(storeSettings.storeName || undefined); toast.success("Database schema PDF downloaded!"); }} className="gap-2">
-            <Database className="h-4 w-4" />
-            <span className="hidden sm:inline">DB Schema</span>
-          </Button>
           <Button size="sm" onClick={handleSave} disabled={saving || loading} className="gap-2">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Saving..." : "Save Changes"}

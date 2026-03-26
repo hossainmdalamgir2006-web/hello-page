@@ -30,7 +30,7 @@ import { StoreSettingsTab } from "@/components/settings/StoreSettingsTab";
 import { EmailTemplatesTab } from "@/components/settings/EmailTemplatesTab";
 import { toast } from "sonner";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { generateSchemaPDF } from "@/utils/generateSchemaPDF";
+
 import { useEmailTemplates } from "@/hooks/useEmailTemplates";
 
 interface StoreSettings {
