@@ -11,7 +11,6 @@ const routeLabels: Record<string, string> = {
   categories: "Categories",
   analytics: "Analytics",
   shipping: "Shipping",
-  
   coupons: "Coupons",
   messages: "Messages",
   reports: "Reports",
@@ -19,6 +18,31 @@ const routeLabels: Record<string, string> = {
   profile: "Profile",
   settings: "Settings",
   "abandoned-carts": "Abandoned Carts",
+  "role-management": "Role Management",
+  brands: "Brands",
+  homepage: "Homepage",
+  "page-content": "Page Content",
+  appearance: "Appearance",
+  reviews: "Reviews",
+  trash: "Trash",
+  // Settings sub-pages
+  store: "Store",
+  payments: "Payments",
+  emails: "Email Templates",
+  notifications: "Alerts & Email",
+  security: "Security",
+  audit: "Audit Log",
+  backup: "Backup & Restore",
+  integrations: "Integrations",
+  // Profile sub-pages
+  personal: "Personal Info",
+  password: "Password",
+  sessions: "Sessions",
+  active: "Active Sessions",
+  activity: "Login Activity",
+  "2fa": "Two-Factor Auth",
+  recovery: "Recovery Codes",
+  devices: "Trusted Devices",
 };
 
 export function AdminBreadcrumb() {
