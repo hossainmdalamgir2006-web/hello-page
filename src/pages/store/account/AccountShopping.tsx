@@ -5,7 +5,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericCardGridSkeleton } from "@/components/skeletons";
 import { ShoppingTab } from "@/components/account/ShoppingTab";
-import { useLanguage } from "@/contexts/LanguageContext";
+
 
 export default function AccountShopping() {
   const { user } = useAuth();
