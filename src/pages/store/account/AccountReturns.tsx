@@ -78,9 +78,9 @@ export default function AccountReturns() {
     const { error } = await supabase.from("return_requests").insert({
       user_id: user!.id, order_id: selectedOrder, reason, description: description || null,
     });
-    if (error) { toast.error(t('account.failedSubmitRequest')); }
+    if (error) { toast.error("Failed to submit request"); }
     else {
-      toast.success(t('account.returnSubmitted'));
+      toast.success("Return request submitted successfully");
       setOpen(false); setSelectedOrder(""); setReason(""); setDescription("");
       fetchData();
     }
