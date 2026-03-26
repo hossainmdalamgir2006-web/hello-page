@@ -1,7 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useLanguage } from "@/contexts/LanguageContext";
+
 import { supabase } from "@/integrations/supabase/client";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { AccountHeader } from "@/components/account/AccountHeader";
