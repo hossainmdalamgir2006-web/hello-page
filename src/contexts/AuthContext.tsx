@@ -217,8 +217,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (currentSession?.user) {
           const userId = currentSession.user.id;
           
-          // On TOKEN_REFRESHED, skip all DB calls if role is already loaded
-          if (event === 'TOKEN_REFRESHED' && roleRef.current !== null) {
+          // Skip redundant DB calls if role is already loaded (TOKEN_REFRESHED or duplicate SIGNED_IN)
+          if (roleRef.current !== null && (event === 'TOKEN_REFRESHED' || (event === 'SIGNED_IN' && initDone.current))) {
             return;
           }
           
