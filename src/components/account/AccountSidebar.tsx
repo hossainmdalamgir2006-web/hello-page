@@ -2,9 +2,9 @@ import { useState } from "react";
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
   HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  RotateCcw, Star, Bell, CreditCard, MessageCircle, ChevronDown,
+  RotateCcw, Star, CreditCard, MessageCircle, ChevronDown,
 } from "lucide-react";
-import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
+import { useNavigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
