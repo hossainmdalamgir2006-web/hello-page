@@ -519,10 +519,17 @@ export default function StoreProducts() {
     showSale, setShowSale, showNew, setShowNew, clearFilters,
   };
 
+  const sortOptions = [
+    { value: "newest", label: t('storeProducts.newest') },
+    { value: "price-asc", label: t('storeProducts.priceLowHigh') },
+    { value: "price-desc", label: t('storeProducts.priceHighLow') },
+    { value: "name", label: t('storeProducts.nameAZ') },
+  ];
+
   return (
     <>
       <SEOHead
-        title={showSale ? "Sale Items" : showNew ? "New Arrivals" : "All Products"}
+        title={showSale ? t('storeProducts.saleItems') : showNew ? t('storeProducts.newArrivals') : t('storeProducts.allProducts')}
         description="Browse our collection of fashion, clothing and accessories. Filter by category, price and more."
         canonicalPath="/products"
       />
@@ -530,10 +537,10 @@ export default function StoreProducts() {
       <section className="bg-gradient-to-r from-store-primary to-store-secondary py-12">
         <div className="container mx-auto px-4 text-center">
           <h1 className="font-display text-3xl md:text-4xl font-bold text-store-primary-foreground mb-2">
-            {showSale ? "Sale Items" : showNew ? "New Arrivals" : "All Products"}
+            {showSale ? t('storeProducts.saleItems') : showNew ? t('storeProducts.newArrivals') : t('storeProducts.allProducts')}
           </h1>
           <p className="text-store-primary-foreground/80">
-            {filteredProducts.length} products available
+            {filteredProducts.length} {t('storeProducts.productsAvailable')}
           </p>
         </div>
       </section>
