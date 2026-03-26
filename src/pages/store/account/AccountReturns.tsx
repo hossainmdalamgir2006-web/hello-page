@@ -99,7 +99,7 @@ export default function AccountReturns() {
         </p>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" disabled={orders.length === 0}><Plus className="h-4 w-4 mr-1.5" />{t('account.newRequest')}</Button>
+            <Button size="sm" disabled={orders.length === 0}><Plus className="h-4 w-4 mr-1.5" />New Request</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>{t('account.submitReturnRequest')}</DialogTitle></DialogHeader>
