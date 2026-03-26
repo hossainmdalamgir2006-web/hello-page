@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut,
   Tag, Award, Truck, MessageSquare, FileText, Ticket, UserCog, User,
   ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Home, Star,
-  ChevronDown, ExternalLink,
+  ChevronDown, ExternalLink, HardDrive, Plug,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
