@@ -1,108 +1,73 @@
 
 
-# PageSpeed 90+ Optimization Plan
+# Performance Score Optimization Plan
 
-## Current Scores
-- **Performance: 36** | Accessibility: 83 | Best Practices: 96 | SEO: 100
+## Current Scores (Mobile)
+- **Performance: 39** | LCP: 8.0s | CLS: 0.526 | FCP: 3.8s | SI: 8.2s
 
-## Critical Issues Found
+## Root Causes
 
-### 1. HUGE Product API Responses (1,607 KiB each!)
-Products table has base64-encoded images stored in `images` column. Two product queries (NewArrivals limit=4, BestSellers limit=8) both return **1.6MB each** because `images` contains full base64 data. This is the #1 bottleneck.
+### 1. MASSIVE Product API Response — 1,607 KiB per call (THE #1 KILLER)
+The `images` column in `products` table stores **base64-encoded images** inline. The `useFeaturedProducts` hook selects `images` — even though we filter base64 client-side, the **1.6MB is already transferred**. Two separate product queries fire (limit=8 and limit=4), totaling **3.2MB** of wasted transfer.
 
-**Fix:** NewArrivalsSection calls `useFeaturedProducts(count)` which already uses the same queryKey as StoreHome's `useFeaturedProducts(8)`. But the fallback query fetches newest products with full image data. Need to truncate image data — only fetch the first image URL, not base64 blobs. Also need a DB-level fix for categories (Sunglasses category has massive base64 `image_url`).
+### 2. Duplicate Product Queries
+- `StoreHome` calls `useFeaturedProducts(8)` → queryKey `["featured-products", 8]`
+- `NewArrivalsSection` calls `useFeaturedProducts(8)` → same key (shared)
+- `FlashSaleSection` calls `useFeaturedProducts(4)` → queryKey `["featured-products", 4]` → **separate API call**
 
-### 2. LCP = 24.2s (Hero Image)
-- Hero image loads after JS renders → massive delay
-- Missing `fetchpriority="high"` 
-- No `<link rel="preload">` for above-fold image
+### 3. CLS 0.526 — Footer Layout Shift
+Footer has `minHeight: 380px` but the **inner content** re-renders when `useStoreSettingsCache` and `usePageContent("footer")` data arrives, causing 0.471 shift. The skeleton structure doesn't match the final layout.
 
-**Fix:** Add `fetchpriority="high"` to hero image, add preload link in `<head>` via SEOHead/Helmet for hero image.
+### 4. LCP 8.0s — Hero Image Chain
+Critical path: `index.js` → `homepage_carousel_slides` API (5s) → then image loads. The fallback slide renders immediately but the API response takes 5s before the real slide appears. PageSpeed also reports `fetchpriority=high` is NOT applied on the final rendered image.
 
-### 3. CLS = 0.544 (Footer shift)
-- Footer causes 0.496 layout shift — it renders late after data loads
-- Hero section causes 0.049 shift
+## Fix Plan
 
-**Fix:** Set `min-height` on footer container to reserve space. Ensure hero section always has fixed height.
+### Step 1: Create DB function to return products WITHOUT base64 images
+Create a database function `get_featured_products_lite(p_limit int)` that:
+- Selects products with `is_featured = true`, falls back to newest
+- Returns `id, name, slug, price, compare_at_price, category, created_at`
+- For `images`: uses a SQL expression to extract only the first URL-based image (filter out `data:` prefix strings)
+- This cuts transfer from **1,607 KiB → ~2 KiB**
 
-### 4. Accessibility = 83
-- **11 buttons** without accessible names (carousel dots, header buttons, BackToTop)
-- **1 link** without discernible name (Facebook social link)
-- **14+ contrast failures** (badges, muted text, bottom nav labels)
-- **Touch targets too small** (carousel dot buttons 8x8px, need 24x24px min)
-- Heading order skip (`<h4>` in footer after `<h2>`)
+### Step 2: Update `useFeaturedProducts` to use the DB function
+- Call `supabase.rpc('get_featured_products_lite', { p_limit: limit })` instead of `.from('products').select(...)`
+- Remove client-side base64 filtering (no longer needed)
 
-### 5. Duplicate Font Loading
-Two Google Fonts CSS requests loading — one from `index.html` (preload), another from SiteThemeProvider dynamically loading the same fonts.
+### Step 3: Eliminate duplicate product query
+- Change `FlashSaleSection` to use `useFeaturedProducts(8)` instead of `useFeaturedProducts(4)`, then `.slice(0, count)` in the component
+- This makes all 3 components share the same React Query cache key
 
-### 6. Preconnect Mismatch
-Supabase preconnect has `crossorigin=""` but API calls don't use CORS → preconnect is unused.
+### Step 4: Fix CLS — Render footer with defaults immediately
+- In `StoreFooter`, render the full layout structure with default/fallback values **before** data loads
+- Don't conditionally render sections based on data — always render the structure, replace content when data arrives
+- This eliminates the 0.471 layout shift
 
----
+### Step 5: Fix LCP — Ensure fetchpriority on hero image
+- The loaded state image at line 192 uses `fetchPriority={current === 0 ? "high" : undefined}` but JSX prop needs to be the exact string
+- Also add `<link rel="preload">` in `index.html` for the default hero image with `fetchpriority="high"`
+- Ensure the fallback hero (loading state) and the real hero don't cause a re-render shift
 
-## Implementation Steps
-
-### Step 1: Fix product image data bloat
-**File:** `src/hooks/useFeaturedProducts.ts`
-- Products with base64 images in `images[]` array cause 1.6MB responses
-- After fetching, if any image string starts with `data:`, skip it from the response (can't fix DB data, but can avoid sending it)
-- Actually the real fix: the `images` column stores URLs AND base64 — filter on client side is too late, data already transferred
-- **Better approach:** Create a DB function or just accept this and add pagination. OR: select only first image with a transform
-
-**Alternative (practical):** In `useFeaturedProducts`, after fetching, only keep the first image URL (not base64). But this doesn't fix transfer size. The real fix is to **not store base64 in the images column** — that's a data issue. For now, we can't fix stored data, but we can:
-- Reduce product limits (already minimal)
-- Ensure no duplicate product calls
-
-### Step 2: Fix Hero LCP
-**Files:** `src/components/store/HeroCarousel.tsx`, `src/pages/store/StoreHome.tsx`
-- Add `fetchpriority="high"` and `loading="eager"` to the first hero image
-- Add `<link rel="preload" as="image">` via Helmet for the default hero image
-- Remove skeleton loading state that delays rendering — show default slide immediately
-
-### Step 3: Fix CLS (Footer + Hero)
-**Files:** `src/components/store/StoreFooter.tsx`, `src/layouts/StoreLayout.tsx`
-- Add `min-height: 400px` to footer wrapper so it reserves space before content loads
-- Ensure hero section has explicit height (already has `80vh`)
-
-### Step 4: Fix Accessibility (83 → 90+)
-**Files to modify:**
-- `src/components/store/StoreHeader.tsx` — add `aria-label` to mobile menu, search, cart, wishlist, theme toggle buttons
-- `src/components/store/HeroCarousel.tsx` — carousel dot buttons: increase size to 24x24px with padding, add `aria-label`
-- `src/components/store/MobileBottomNav.tsx` — ensure labels meet contrast (use `text-foreground` for active)
-- `src/components/store/StoreFooter.tsx` — change `<h4>` to `<h3>`, add `aria-label` to social links
-- `src/components/store/BackToTop.tsx` — already has aria-label ✓
-- `src/components/store/CategoryGrid.tsx` — fix contrast on subtitle text
-- `src/components/store/NewArrivalsSection.tsx` — fix badge contrast
-- `src/components/store/TestimonialsSection.tsx` — fix muted text contrast
-
-### Step 5: Fix duplicate font loading
-**File:** `index.html`
-- The SiteThemeProvider likely loads fonts dynamically. Remove the duplicate `<link>` for Poppins in `index.html` since it's already loaded via the combined Inter+Poppins link.
-- Fix: remove the second font link that loads only Poppins
-
-### Step 6: Fix preconnect
-**File:** `index.html`  
-- Remove `crossorigin` from supabase preconnect (REST API calls don't use CORS mode with crossorigin)
-
----
-
-## Expected Results
-```
-Performance:   36 → 80-90+ (LCP fix + payload reduction)
-Accessibility: 83 → 95+ (aria-labels, contrast, touch targets)
-Best Practices: 96 → 96 (already good)
-SEO:           100 → 100 (already perfect)
-```
+### Step 6: Fix categories base64 image
+- The `Sunglasses` category has a massive base64 `image_url` (visible in network response)
+- In `useCategoriesCache`, filter out base64 image_urls client-side (already transferred but prevents re-render bloat)
+- Long-term: clean the DB data
 
 ## Files to modify
-- `src/components/store/HeroCarousel.tsx` — fetchpriority, eager loading, preload
-- `src/components/store/StoreHeader.tsx` — aria-labels on buttons
-- `src/components/store/StoreFooter.tsx` — min-height, heading order, social aria-labels
-- `src/components/store/MobileBottomNav.tsx` — contrast fix
-- `src/components/store/CategoryGrid.tsx` — contrast fix
-- `src/components/store/NewArrivalsSection.tsx` — contrast fix
-- `src/components/store/TestimonialsSection.tsx` — contrast fix
-- `src/pages/store/StoreHome.tsx` — preload hero image
-- `index.html` — fix preconnect, remove duplicate font
-- `src/hooks/useFeaturedProducts.ts` — optimize image data handling
+- **New migration**: Create `get_featured_products_lite` DB function
+- `src/hooks/useFeaturedProducts.ts` — use RPC function
+- `src/components/store/FlashSaleSection.tsx` — use limit=8, slice locally
+- `src/components/store/StoreFooter.tsx` — render structure with defaults immediately
+- `src/components/store/HeroCarousel.tsx` — ensure fetchpriority applied correctly
+- `index.html` — add preload for hero image
+- `src/hooks/useCategoriesCache.ts` — filter base64 image_urls
+
+## Expected Results
+```text
+Transfer size:  3.2MB → ~10KB (products)
+API calls:      2 product queries → 1 shared query
+CLS:            0.526 → <0.1
+LCP:            8.0s → ~3-4s  
+Performance:    39 → 70-85+
+```
 
