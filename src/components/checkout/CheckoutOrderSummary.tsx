@@ -37,7 +37,6 @@ interface CheckoutOrderSummaryProps {
   selectedZoneName?: string;
   selectedRateName?: string;
   selectedRateMaxOrderAmount?: number | null;
-  formatPrice: (price: number) => string;
 }
 
 export function CheckoutOrderSummary({
@@ -46,10 +45,8 @@ export function CheckoutOrderSummary({
   onApplyCoupon, onRemoveCoupon, couponLoading, processing,
   selectedZoneId, selectedRateId, acceptedTerms,
   selectedZoneName, selectedRateName, selectedRateMaxOrderAmount,
-  formatPrice,
 }: CheckoutOrderSummaryProps) {
   const { t } = useLanguage();
-
   const { formatPrice } = useCurrency();
   return (
     <div className="lg:col-span-1">
