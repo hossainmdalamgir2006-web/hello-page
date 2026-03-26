@@ -652,7 +652,7 @@ export default function Checkout() {
                         </div>
                         {saveShippingAddress && (
                           <div className="ml-6">
-                            <Label htmlFor="addressLabel" className="text-xs text-muted-foreground">Address Label</Label>
+                            <Label htmlFor="addressLabel" className="text-xs text-muted-foreground">{t('checkout.addressLabel')}</Label>
                             <Select value={shippingAddressLabel} onValueChange={setShippingAddressLabel}>
                               <SelectTrigger className="w-full mt-1"><SelectValue /></SelectTrigger>
                               <SelectContent>
