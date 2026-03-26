@@ -40,16 +40,18 @@ export function Providers({ children }: { children: ReactNode }) {
                 <AuthProvider>
                   <CartProvider>
                     <WishlistProvider>
-                      <GA4Provider>
-                        <DynamicTitleProvider>
-                          <TooltipProvider>
-                            <Toaster />
-                            <Sonner />
-                            <OfflineIndicator />
-                            {children}
-                          </TooltipProvider>
-                        </DynamicTitleProvider>
-                      </GA4Provider>
+                      <CurrencyProvider>
+                        <GA4Provider>
+                          <DynamicTitleProvider>
+                            <TooltipProvider>
+                              <Toaster />
+                              <Sonner />
+                              <OfflineIndicator />
+                              {children}
+                            </TooltipProvider>
+                          </DynamicTitleProvider>
+                        </GA4Provider>
+                      </CurrencyProvider>
                     </WishlistProvider>
                   </CartProvider>
                 </AuthProvider>

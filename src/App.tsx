@@ -162,6 +162,7 @@ const App = () => (
               <Route path="backup" element={<SettingsBackup />} />
               <Route path="integrations" element={<SettingsIntegrations />} />
               <Route path="languages" element={<SettingsLanguages />} />
+              <Route path="currencies" element={<SettingsCurrencies />} />
               
             </Route>
             <Route path="/admin/shipping" element={<Shipping />} />

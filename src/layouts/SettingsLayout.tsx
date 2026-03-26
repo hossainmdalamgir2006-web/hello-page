@@ -15,6 +15,7 @@ const settingsNav = [
   { to: "/admin/settings/backup", label: "Backup", icon: HardDrive },
   { to: "/admin/settings/integrations", label: "Integrations", icon: Plug },
   { to: "/admin/settings/languages", label: "Languages", icon: Globe },
+  { to: "/admin/settings/currencies", label: "Currencies", icon: Coins },
 ];
 
 export default function SettingsLayout() {

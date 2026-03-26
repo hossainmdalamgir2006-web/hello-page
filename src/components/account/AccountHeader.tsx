@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { GoogleTranslateWidget } from "@/components/GoogleTranslateWidget";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
