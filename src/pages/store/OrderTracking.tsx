@@ -462,8 +462,8 @@ export default function OrderTracking() {
                         ) : (
                           <p className="text-sm text-muted-foreground">
                             {estimate.daysUntilMin === estimate.daysUntilMax
-                              ? `${estimate.daysUntilMax} day${estimate.daysUntilMax !== 1 ? "s" : ""} remaining`
-                              : `${estimate.daysUntilMin}-${estimate.daysUntilMax} days remaining`}
+                              ? `${estimate.daysUntilMax} ${estimate.daysUntilMax !== 1 ? t('orderTracking.daysRemaining') : t('orderTracking.dayRemaining')}`
+                              : `${estimate.daysUntilMin}-${estimate.daysUntilMax} ${t('orderTracking.daysRemaining')}`}
                           </p>
                         )}
                       </div>
