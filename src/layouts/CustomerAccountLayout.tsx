@@ -22,7 +22,7 @@ const pageTitleKeys: Record<string, { titleKey: string; descKey: string }> = {
   "/myaccount/security": { titleKey: "account.securityTitle", descKey: "account.securityDesc" },
   "/myaccount/support": { titleKey: "account.supportTitle", descKey: "account.supportDesc" },
   "/myaccount/chat": { titleKey: "account.chatTitle", descKey: "account.chatDesc" },
-  "/myaccount/notifications": { titleKey: "account.notificationsTitle", descKey: "account.notificationsDesc" },
+  
   "/myaccount/settings": { titleKey: "account.settingsTitle", descKey: "account.settingsDesc" },
 };
 

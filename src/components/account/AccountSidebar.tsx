@@ -2,9 +2,8 @@ import { useState } from "react";
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
   HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  RotateCcw, Star, Bell, CreditCard, MessageCircle, ChevronDown,
+  RotateCcw, Star, CreditCard, MessageCircle, ChevronDown,
 } from "lucide-react";
-import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,7 +47,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { unreadCount } = useRealtimeNotifications();
+  
   const { getSettingValue } = useStoreSettings();
   const storeLogo = getSettingValue('STORE_LOGO');
   const storeName = getSettingValue('STORE_NAME') || 'Ekta';
@@ -77,7 +76,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
       groupKey: "overview",
       items: [
         { titleKey: "account.dashboard", url: "/myaccount", icon: LayoutDashboard, end: true },
-        { titleKey: "account.notifications", url: "/myaccount/notifications", icon: Bell, badge: unreadCount },
+        
       ],
     },
     {
