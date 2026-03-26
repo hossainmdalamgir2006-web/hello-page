@@ -489,7 +489,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>{formatPrice(selectedOrder.shipping_cost.toFixed(2))}</span>
+                    <span>{formatPrice(selectedOrder.shipping_cost)}</span>
                   </div>
                   {selectedOrder.discount_amount > 0 && (
                     <div className="flex justify-between text-green-600">
