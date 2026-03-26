@@ -672,7 +672,7 @@ export default function Checkout() {
               {/* Billing Address */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5 text-store-primary" /> Billing Address</CardTitle>
+                  <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5 text-store-primary" /> {t('checkout.billingAddress')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-2">
