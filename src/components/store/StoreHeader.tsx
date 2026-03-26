@@ -201,7 +201,7 @@ export function StoreHeader() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="ghost" size="icon" onClick={() => navigate('/login')}>
+              <Button variant="ghost" size="icon" onClick={() => navigate('/login')} aria-label="Sign in">
                 <User className="h-5 w-5" />
               </Button>
             )}
