@@ -42,12 +42,12 @@ export function NewArrivalsSection({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-5 w-5 text-store-accent" />
-              <span className="text-sm font-semibold text-store-primary uppercase tracking-widest">{badge}</span>
+              <span className="text-sm font-semibold text-store-primary uppercase tracking-widest">{displayBadge}</span>
             </div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-              {title}
+              {displayTitle}
             </h2>
-            {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
+            {displaySubtitle && <p className="text-muted-foreground mt-1">{displaySubtitle}</p>}
           </div>
           <div className="flex items-center gap-3">
             <Button
