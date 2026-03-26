@@ -198,7 +198,7 @@ export default function Checkout() {
     }
     const phoneRegex = /^(\+?880|0)?1[3-9]\d{8}$/;
     if (!phoneRegex.test(formData.phone.replace(/[\s-]/g, ''))) {
-      toast.error("Please enter a valid Bangladeshi phone number"); return false;
+      toast.error(t('checkout.validPhone')); return false;
     }
     if (formData.firstName.length > 50) { toast.error("First name must be less than 50 characters"); return false; }
     if (formData.lastName.length > 50) { toast.error("Last name must be less than 50 characters"); return false; }
