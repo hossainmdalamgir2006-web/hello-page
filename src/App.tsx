@@ -169,7 +169,13 @@ const App = () => (
             <Route path="/admin/messages" element={<Messages />} />
             <Route path="/admin/reports" element={<Reports />} />
             <Route path="/admin/coupons" element={<Coupons />} />
-            <Route path="/admin/profile" element={<Profile />} />
+            <Route path="/admin/profile" element={<ProfileLayout />}>
+              <Route index element={<ProfilePersonal />} />
+              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="password" element={<ProfilePassword />} />
+              <Route path="security" element={<ProfileSecurity />} />
+              <Route path="sessions" element={<ProfileSessions />} />
+            </Route>
             
             <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
             <Route path="/admin/role-management" element={<RoleManagement />} />
