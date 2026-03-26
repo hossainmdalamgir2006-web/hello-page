@@ -86,7 +86,7 @@ export default function AccountInvoice() {
       doc.line(14, y, w - 14, y);
       y += 8;
       const subtotal = order.items.reduce((s: number, i: any) => s + Number(i.total_price), 0);
-      doc.text("Subtotal:", 140, y); doc.text(`${formatPrice(subtotal.toFixed(0))}`, 170, y);
+      doc.text("Subtotal:", 140, y); doc.text(formatPrice(subtotal), 170, y);
       y += 7;
       doc.text("Shipping:", 140, y); doc.text(`${formatPrice(order.shipping_cost || 0).toFixed(0)}`, 170, y);
       if (Number(order.discount_amount) > 0) {
