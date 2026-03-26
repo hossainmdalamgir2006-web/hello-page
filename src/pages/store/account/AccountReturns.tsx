@@ -130,7 +130,7 @@ export default function AccountReturns() {
               </div>
               <Button onClick={handleSubmit} disabled={submitting} className="w-full">
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
-                {t('account.submitRequest')}
+                Submit Request
               </Button>
             </div>
           </DialogContent>
