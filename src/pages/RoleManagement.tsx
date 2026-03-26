@@ -266,7 +266,7 @@ export default function RoleManagement() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              {t('roles.usersList')}
+              Users List
             </CardTitle>
             <CardDescription>{t('roles.usersListDesc')}</CardDescription>
           </CardHeader>
