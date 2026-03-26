@@ -930,10 +930,10 @@ export default function Checkout() {
                   <div className="flex items-start gap-2">
                     <Checkbox id="acceptTerms" checked={acceptedTerms} onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)} className="mt-0.5" />
                     <Label htmlFor="acceptTerms" className="text-sm font-normal cursor-pointer leading-relaxed">
-                      I agree to the{' '}
-                      <Link to="/terms" className="text-store-primary hover:underline" target="_blank">Terms & Conditions</Link>
-                      {' '}and{' '}
-                      <Link to="/privacy" className="text-store-primary hover:underline" target="_blank">Privacy Policy</Link>
+                      {t('checkout.termsAgree')}{' '}
+                      <Link to="/terms" className="text-store-primary hover:underline" target="_blank">{t('checkout.termsAndConditions')}</Link>
+                      {' '}{t('checkout.and')}{' '}
+                      <Link to="/privacy" className="text-store-primary hover:underline" target="_blank">{t('checkout.privacyPolicy')}</Link>
                       {' '}*
                     </Label>
                   </div>
