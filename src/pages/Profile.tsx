@@ -336,8 +336,8 @@ export default function Profile() {
     <>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{t('profile.title')}</h1>
-          <p className="text-muted-foreground">{t('profile.subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">My Profile</h1>
+          <p className="text-muted-foreground">Manage your account settings and preferences</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
