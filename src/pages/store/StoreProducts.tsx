@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductGridSkeleton, FilterSkeleton } from "@/components/skeletons";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPrice } from "@/lib/formatPrice";
+import { useCategoriesCache } from "@/hooks/useCategoriesCache";
 
 interface Product {
   id: string;
