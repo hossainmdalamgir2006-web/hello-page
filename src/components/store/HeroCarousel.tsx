@@ -170,6 +170,8 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
             src={slide.image_url || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop"}
             alt={slide.title || ""}
             className="w-full h-full object-cover"
+            fetchPriority={current === 0 ? "high" : undefined}
+            loading={current === 0 ? "eager" : "lazy"}
           />
         )}
         {/* Overlay */}
