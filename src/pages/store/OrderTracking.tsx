@@ -157,11 +157,13 @@ const statusIndex: Record<string, number> = {
 
 export default function OrderTracking() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
+  const { t } = useLanguage();
   const [order, setOrder] = useState<Order | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState<PaymentMethodInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const statusSteps = getStatusSteps(t);
 
   useEffect(() => {
     if (orderNumber) {
