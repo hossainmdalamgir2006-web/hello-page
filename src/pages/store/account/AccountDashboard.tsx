@@ -120,6 +120,8 @@ export default function AccountDashboard() {
   ];
 
   return (
+    <>
+    <SEOHead title="My Account" noIndex />
     <div className="space-y-6">
       <div className="rounded-xl bg-gradient-to-r from-primary/5 via-accent/5 to-transparent p-5 sm:p-6 border border-border">
         <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
