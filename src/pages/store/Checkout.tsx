@@ -359,7 +359,7 @@ export default function Checkout() {
         });
       } catch (emailError) { console.error("Failed to send confirmation email:", emailError); }
 
-      toast.success("Order placed successfully!");
+      toast.success(t('checkout.orderPlaced'));
 
       if (user && saveShippingAddress && !useSavedShippingAddress) {
         try {
