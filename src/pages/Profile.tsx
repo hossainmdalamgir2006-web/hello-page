@@ -174,8 +174,8 @@ export default function Profile() {
 
       setAvatarUrl(publicUrl);
       toast({
-        title: t('profile.avatarUpdated'),
-        description: t('profile.avatarUpdatedDesc'),
+        title: 'Avatar Updated',
+        description: 'Your profile photo has been updated.',
       });
     } catch (error: any) {
       toast({
