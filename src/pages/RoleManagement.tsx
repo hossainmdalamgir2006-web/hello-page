@@ -268,7 +268,7 @@ export default function RoleManagement() {
               <Shield className="h-5 w-5" />
               Users List
             </CardTitle>
-            <CardDescription>{t('roles.usersListDesc')}</CardDescription>
+            <CardDescription>Manage roles for all registered users</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
