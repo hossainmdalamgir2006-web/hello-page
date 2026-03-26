@@ -129,7 +129,7 @@ export function ManualPaymentInstructions({
             />
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            Scan with {paymentMethod.name} App
+            {t('manualPayment.scanWithApp')} {paymentMethod.name}
           </p>
         </DialogContent>
       </Dialog>
