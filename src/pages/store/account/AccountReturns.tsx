@@ -141,7 +141,7 @@ export default function AccountReturns() {
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             <RotateCcw className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>{t('account.noReturnRequests')}</p>
+            <p>No return requests yet</p>
           </CardContent>
         </Card>
       ) : (
