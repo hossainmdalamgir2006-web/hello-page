@@ -48,7 +48,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { unreadCount } = useRealtimeNotifications();
+  
   const { getSettingValue } = useStoreSettings();
   const storeLogo = getSettingValue('STORE_LOGO');
   const storeName = getSettingValue('STORE_NAME') || 'Ekta';
