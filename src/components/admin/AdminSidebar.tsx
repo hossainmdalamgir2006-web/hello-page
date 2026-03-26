@@ -263,7 +263,31 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
             </a>
           )}
 
-          {bottomMenuItems.map((item) => renderNavItem(item))}
+          {/* Account Group */}
+          {collapsed ? (
+            <>
+              {bottomMenuItems.map((item) => renderNavItem(item))}
+            </>
+          ) : (
+            <Collapsible
+              open={openGroups['account']}
+              onOpenChange={() => toggleGroup('account')}
+            >
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
+                <span className="flex items-center gap-3">
+                  <User className="h-4 w-4 shrink-0" />
+                  Account
+                </span>
+                <ChevronDown className={cn(
+                  "h-3.5 w-3.5 transition-transform",
+                  openGroups['account'] && "rotate-180"
+                )} />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-1 pt-1">
+                {bottomMenuItems.map((item) => renderNavItem(item))}
+              </CollapsibleContent>
+            </Collapsible>
+          )}
           
           {/* Logout */}
           {collapsed ? (
