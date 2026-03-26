@@ -114,7 +114,7 @@ export default function RoleManagement() {
       console.error('Error fetching users:', error);
       toast({
         variant: 'destructive',
-        title: t('roles.fetchFailed'),
+        title: 'Failed to fetch users',
         description: error.message,
       });
     } finally {
