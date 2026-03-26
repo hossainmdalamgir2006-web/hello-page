@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useMemo } from "react";
+import { useCategoriesCache } from "@/hooks/useCategoriesCache";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -23,50 +23,27 @@ const defaultImage = "https://images.unsplash.com/photo-1441986300917-64674bd600
 export function CategoryGrid({ title, subtitle, categories }: CategoryGridProps) {
   const { t } = useLanguage();
   const displayTitle = title || t('categoryGrid.shopByCategory');
-  const [dbCategories, setDbCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: allCategories, isLoading } = useCategoriesCache();
 
-  useEffect(() => {
-    if (categories && categories.length > 0) {
-      setLoading(false);
-      return;
-    }
+  const dbCategories = useMemo(() => {
+    if (categories && categories.length > 0) return [];
+    if (!allCategories) return [];
+    return allCategories
+      .filter((c) => !c.parent_id)
+      .map((cat) => ({
+        name: cat.name,
+        slug: cat.slug,
+        image: cat.image_url || defaultImage,
+        href: `/products?category=${cat.slug}`,
+      }));
+  }, [allCategories, categories]);
 
-    const fetchCategories = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('categories')
-          .select('name, slug, image_url')
-          .eq('is_active', true)
-          .is('deleted_at', null)
-          .is('parent_id', null)
-          .order('sort_order', { ascending: true });
-
-        if (error) throw error;
-
-        const mapped = ((data as any[]) || []).map((cat) => ({
-          name: cat.name,
-          slug: cat.slug,
-          image: cat.image_url || defaultImage,
-          href: `/products?category=${cat.slug}`,
-        }));
-        setDbCategories(mapped);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, [categories]);
-
+  const loading = !categories?.length && isLoading;
   const cats = categories && categories.length > 0 ? categories : dbCategories;
 
   return (
     <section className="py-16 bg-store-background">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-3 relative inline-block">
             {displayTitle}
