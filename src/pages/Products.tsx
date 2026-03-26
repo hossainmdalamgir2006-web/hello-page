@@ -16,8 +16,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, Package, Trash2, ChevronDown, Eye, EyeOff } from "lucide-react";
+import { Plus, Package, Trash2, ChevronDown, Eye, EyeOff, ImageIcon, Loader2 } from "lucide-react";
 import { useProductsData, type Product } from "@/hooks/useProductsData";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { useCategoriesData } from "@/hooks/useCategoriesData";
 import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
