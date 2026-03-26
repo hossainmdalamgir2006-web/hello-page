@@ -56,7 +56,7 @@ export function BankTransferInstructions({
         <div>
           <p className="font-semibold">{paymentMethod.name}</p>
           <p className="text-xs text-muted-foreground">
-            {paymentMethod.bank_accounts.length} bank account(s)
+            {paymentMethod.bank_accounts.length} {t('bankTransfer.bankAccounts')}
           </p>
         </div>
       </div>
