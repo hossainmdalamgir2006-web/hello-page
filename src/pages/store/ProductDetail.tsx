@@ -532,7 +532,7 @@ export default function ProductDetail() {
             <TabsList className="w-full justify-start border-b rounded-none bg-transparent h-auto p-0 flex-wrap">
               <TabsTrigger value="description" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.description')}</TabsTrigger>
               {attributes.length > 0 && <TabsTrigger value="specifications" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.specifications')}</TabsTrigger>}
-              <TabsTrigger value="details" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.details')}</TabsTrigger>
+              
               <TabsTrigger value="reviews" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.reviews')} ({reviewSummary.totalReviews})</TabsTrigger>
             </TabsList>
             <TabsContent value="description" className="py-6">
@@ -561,14 +561,6 @@ export default function ProductDetail() {
                 <Table><TableBody>{attributes.map((attr) => (<TableRow key={attr.id}><TableCell className="font-medium w-1/3">{attr.attribute_name}</TableCell><TableCell>{attr.attribute_values.join(', ')}</TableCell></TableRow>))}</TableBody></Table>
               </TabsContent>
             )}
-            <TabsContent value="details" className="py-6">
-              <ul className="space-y-2 text-muted-foreground">
-                <li><strong>{t('store.category')}:</strong> {product.category || "N/A"}</li>
-                <li><strong>SKU:</strong> {product.sku || "N/A"}</li>
-                {product.brand && <li><strong>{t('store.brand')}:</strong> {product.brand}</li>}
-                <li><strong>{t('store.type')}:</strong> {product.product_type || "Simple"}</li>
-              </ul>
-            </TabsContent>
             <TabsContent value="reviews" className="py-6"><ProductReviews productId={product.id} /></TabsContent>
           </Tabs>
         </div>

@@ -20,7 +20,7 @@ export function OrderStatsCards({ stats }: OrderStatsCardsProps) {
     { label: "Pending", value: stats.pending.toString(), icon: Clock, color: "bg-warning/10 text-warning" },
     { label: "Processing", value: stats.processing.toString(), icon: Package, color: "bg-accent/10 text-accent" },
     { label: "Shipped", value: stats.shipped.toString(), icon: Truck, color: "bg-chart-5/10 text-chart-5" },
-    { label: "Revenue", value: `${formatPrice((stats.revenue / 1000).toFixed(1))}k`, icon: TrendingUp, color: "bg-success/10 text-success" },
+    { label: "Revenue", value: `${formatPrice(stats.revenue / 1000)}k`, icon: TrendingUp, color: "bg-success/10 text-success" },
   ];
 
   return (

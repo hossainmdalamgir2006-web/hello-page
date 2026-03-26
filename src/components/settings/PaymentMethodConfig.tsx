@@ -144,7 +144,7 @@ export function PaymentMethodConfig({ method, open, onOpenChange, onSave, onUplo
       {formData.cod_charge_type === "percentage" ? (
         <><Percent className="h-3 w-3" />{formData.cod_charge_value}% charge</>
       ) : (
-        <><DollarSign className="h-3 w-3" />{formatPrice(formData.cod_charge_value)} charge</>
+        <><DollarSign className="h-3 w-3" />{formatPrice(Number(formData.cod_charge_value))} charge</>
       )}
     </Badge>
   ) : null;

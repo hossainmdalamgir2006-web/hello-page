@@ -273,7 +273,7 @@ export default function Customers() {
                 <DollarSign className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{formatPrice((stats.totalRevenue / 1000).toFixed(0))}k</p>
+                <p className="text-2xl font-bold">{formatPrice(stats.totalRevenue / 1000)}k</p>
                 <p className="text-sm text-muted-foreground">Total Revenue</p>
               </div>
             </CardContent>

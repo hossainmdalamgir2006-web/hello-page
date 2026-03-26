@@ -466,7 +466,7 @@ export default function Analytics() {
                         <p className="text-xs text-muted-foreground">{product.sales} sold</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-sm">{formatPrice((product.revenue / 1000).toFixed(0))}k</p>
+                        <p className="font-medium text-sm">{formatPrice(product.revenue / 1000)}k</p>
                         <p className={cn(
                           "flex items-center justify-end text-xs",
                           product.growth >= 0 ? "text-success" : "text-destructive"
