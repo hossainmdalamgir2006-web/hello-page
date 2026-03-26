@@ -53,6 +53,34 @@ interface ProductCardData {
   video_thumbnail?: string | null;
 }
 
+function MigrateImagesButton() {
+  const [migrating, setMigrating] = useState(false);
+
+  const handleMigrate = async () => {
+    setMigrating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('migrate-product-images');
+      if (error) throw error;
+      if (data?.success) {
+        toast.success(`Migrated ${data.migratedImages} images from ${data.migratedProducts} products to Storage`);
+      } else {
+        toast.error(data?.error || 'Migration failed');
+      }
+    } catch (err: any) {
+      toast.error('Migration failed: ' + (err.message || 'Unknown error'));
+    } finally {
+      setMigrating(false);
+    }
+  };
+
+  return (
+    <Button variant="outline" size="sm" onClick={handleMigrate} disabled={migrating} className="gap-2">
+      {migrating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+      {migrating ? 'Migrating...' : 'Migrate Images'}
+    </Button>
+  );
+}
+
 export default function Products() {
   const { products, loading, createProduct, updateProduct, deleteProduct, duplicateProduct, bulkDelete, bulkImport, trashProduct, bulkTrash, bulkPublish, bulkUnpublish } = useProductsData();
   const { categories: dbCategories, loading: categoriesLoading } = useCategoriesData();
