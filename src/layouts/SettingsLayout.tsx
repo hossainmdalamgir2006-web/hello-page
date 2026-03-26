@@ -1,6 +1,6 @@
 import { NavLink, Outlet, Navigate, useLocation } from "react-router-dom";
 import {
-  Store, CreditCard, Mail, Bell, Shield, ClipboardList, HardDrive, Plug, Globe, Languages,
+  Store, CreditCard, Mail, Bell, Shield, ClipboardList, HardDrive, Plug, Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -15,7 +15,6 @@ const settingsNav = [
   { to: "/admin/settings/backup", label: "Backup", icon: HardDrive },
   { to: "/admin/settings/integrations", label: "Integrations", icon: Plug },
   { to: "/admin/settings/languages", label: "Languages", icon: Globe },
-  { to: "/admin/settings/translations", label: "Translations", icon: Languages },
 ];
 
 export default function SettingsLayout() {

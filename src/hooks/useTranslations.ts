@@ -7,40 +7,24 @@ interface TranslationRow {
   value: string;
 }
 
-export function useTranslations(languageCode: string) {
+export function useTranslations(languageCode: string = 'en') {
   return useQuery({
-    queryKey: ['translations', languageCode],
+    queryKey: ['translations', 'en'],
     queryFn: async () => {
-      // Fetch current language + English fallback in one query
       const { data, error } = await supabase
         .from('translations')
-        .select('key, language_code, value')
-        .in('language_code', languageCode === 'en' ? ['en'] : [languageCode, 'en']);
+        .select('key, value')
+        .eq('language_code', 'en');
 
       if (error) throw error;
 
       const map: Record<string, string> = {};
-      const rows = (data || []) as TranslationRow[];
-
-      // First pass: set English as fallback
-      for (const row of rows) {
-        if (row.language_code === 'en') {
-          map[row.key] = row.value;
-        }
+      for (const row of (data || []) as { key: string; value: string }[]) {
+        map[row.key] = row.value;
       }
-
-      // Second pass: override with current language
-      if (languageCode !== 'en') {
-        for (const row of rows) {
-          if (row.language_code === languageCode) {
-            map[row.key] = row.value;
-          }
-        }
-      }
-
       return map;
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 30 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingBag, Search, Menu, User, Heart, LogOut, LayoutDashboard } from "lucide-react";
-import { LanguageToggle } from "@/components/LanguageToggle";
+import { GoogleTranslateWidget } from "@/components/GoogleTranslateWidget";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -146,7 +146,7 @@ export function StoreHeader() {
 
           {/* Actions */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <LanguageToggle />
+            <GoogleTranslateWidget />
             <ThemeToggle />
 
             {/* Mobile Search */}
