@@ -65,6 +65,13 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
   };
 
+  const maskEmail = (email: string) => {
+    const [local, domain] = email.split('@');
+    if (!domain) return email;
+    const visible = local.slice(0, 3);
+    return `${visible}***@${domain}`;
+  };
+
   const getInitials = () => {
     if (user?.user_metadata?.full_name) {
       return user.user_metadata.full_name
