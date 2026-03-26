@@ -96,11 +96,10 @@ export default function TrackOrder() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <>
       <SEOHead title="Track Order" description="Track your order status using your order number or phone number." canonicalPath="/track-order" />
-      <StoreHeader />
       
-      <main className="flex-1 container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12">
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-store-primary/10 flex items-center justify-center">
