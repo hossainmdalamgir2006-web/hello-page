@@ -208,8 +208,8 @@ export default function RoleManagement() {
     <>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{t('roles.title')}</h1>
-          <p className="text-muted-foreground">{t('roles.subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Role Management</h1>
+          <p className="text-muted-foreground">Manage user roles and permissions</p>
         </div>
 
         {/* Stats */}
