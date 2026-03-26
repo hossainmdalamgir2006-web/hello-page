@@ -71,7 +71,7 @@ export function FlashSaleSection({
   const displayTitle = title || t('store.flashSale');
   const displaySubtitle = subtitle || "";
   const displayBadge = badge || `⚡ ${t('store.flashSale')}`;
-  const { products, loading } = useFeaturedProducts(count);
+  const { products: allProducts, loading } = useFeaturedProducts(8);
   const { timeLeft, expired } = useCountdown(endTime || null);
 
   // Show products with discount
