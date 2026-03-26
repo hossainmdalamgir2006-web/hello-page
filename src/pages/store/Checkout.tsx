@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { CreditCard, Truck, Mail, ChevronLeft, ShieldCheck, Tag, X, Smartphone, MapPin, Loader2, Building, Save, Clock, Sparkles, Building2, AlertCircle, FileText } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +56,7 @@ export default function Checkout() {
   const items = selectedItems.length > 0 ? selectedItems : allItems;
   const subtotal = selectedItems.length > 0 ? selectedSubtotal : cartSubtotal;
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { appliedCoupon, validateCoupon, removeCoupon, incrementCouponUsage, loading: couponLoading } = useCoupon();
   const { zonesWithRates, loading: shippingLoading } = useShippingData();
   const { paymentMethods: enabledPaymentMethods, loading: paymentMethodsLoading } = useEnabledPaymentMethods();
@@ -192,11 +194,11 @@ export default function Checkout() {
 
   const validateForm = (): boolean => {
     if (!formData.firstName || !formData.lastName || !formData.phone || !formData.address || !formData.city) {
-      toast.error("Please fill in all required fields"); return false;
+      toast.error(t('checkout.fillRequired')); return false;
     }
     const phoneRegex = /^(\+?880|0)?1[3-9]\d{8}$/;
     if (!phoneRegex.test(formData.phone.replace(/[\s-]/g, ''))) {
-      toast.error("Please enter a valid Bangladeshi phone number"); return false;
+      toast.error(t('checkout.validPhone')); return false;
     }
     if (formData.firstName.length > 50) { toast.error("First name must be less than 50 characters"); return false; }
     if (formData.lastName.length > 50) { toast.error("Last name must be less than 50 characters"); return false; }
@@ -204,11 +206,11 @@ export default function Checkout() {
     if (formData.city.length > 50) { toast.error("City must be less than 50 characters"); return false; }
     if (formData.postalCode && formData.postalCode.length > 10) { toast.error("Postal code must be less than 10 characters"); return false; }
     if (!formData.email) { toast.error("Please provide an email address"); return false; }
-    if (!selectedZoneId || !selectedRateId) { toast.error("Please select a shipping zone and delivery option"); return false; }
+    if (!selectedZoneId || !selectedRateId) { toast.error(t('checkout.selectShipping')); return false; }
     
     if (!billingAddressSameAsShipping && !useSavedBillingAddress) {
       if (!billingFormData.firstName || !billingFormData.lastName || !billingFormData.phone || !billingFormData.address || !billingFormData.city) {
-        toast.error("Please fill in all required billing address fields"); return false;
+        toast.error(t('checkout.fillBilling')); return false;
       }
       const phoneRegex2 = /^(\+?880|0)?1[3-9]\d{8}$/;
       if (!phoneRegex2.test(billingFormData.phone.replace(/[\s-]/g, ''))) {
@@ -223,7 +225,7 @@ export default function Checkout() {
     }
 
     if (!acceptedTerms) {
-      toast.error("Please accept the Terms & Conditions"); return false;
+      toast.error(t('checkout.acceptTerms')); return false;
     }
 
     return true;
@@ -357,7 +359,7 @@ export default function Checkout() {
         });
       } catch (emailError) { console.error("Failed to send confirmation email:", emailError); }
 
-      toast.success("Order placed successfully!");
+      toast.success(t('checkout.orderPlaced'));
 
       if (user && saveShippingAddress && !useSavedShippingAddress) {
         try {
@@ -475,9 +477,9 @@ export default function Checkout() {
     return (
       <>
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="font-display text-2xl font-bold mb-3">Your cart is empty</h1>
-          <p className="text-muted-foreground mb-8">Add some products before checking out.</p>
-          <Button asChild><Link to="/products">Shop Now</Link></Button>
+          <h1 className="font-display text-2xl font-bold mb-3">{t('checkout.emptyCart')}</h1>
+          <p className="text-muted-foreground mb-8">{t('checkout.addProductsFirst')}</p>
+          <Button asChild><Link to="/products">{t('checkout.shopNow')}</Link></Button>
         </div>
       </>
     );
@@ -487,7 +489,7 @@ export default function Checkout() {
 
   return (
     <>
-      <SEOHead title="Checkout" description="Complete your order securely." noIndex={true} />
+      <SEOHead title={t('checkout.title')} description={t('checkout.title')} noIndex={true} />
       {/* Page Header */}
       <section className="bg-gradient-to-r from-store-primary to-store-secondary py-6">
         <div className="container mx-auto px-4">
@@ -495,7 +497,7 @@ export default function Checkout() {
             <Button variant="ghost" size="icon" className="text-store-primary-foreground" asChild>
               <Link to="/cart"><ChevronLeft className="h-5 w-5" /></Link>
             </Button>
-            <h1 className="font-display text-2xl font-bold text-store-primary-foreground">Checkout</h1>
+            <h1 className="font-display text-2xl font-bold text-store-primary-foreground">{t('checkout.title')}</h1>
           </div>
         </div>
       </section>
@@ -522,7 +524,7 @@ export default function Checkout() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5 text-store-primary" /> Shipping Information
+                    <Truck className="h-5 w-5 text-store-primary" /> {t('checkout.shippingInfo')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -546,40 +548,40 @@ export default function Checkout() {
 
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="firstName">First Name *</Label>
+                      <Label htmlFor="firstName">{t('checkout.firstName')} *</Label>
                       <Input id="firstName" name="firstName" value={formData.firstName} onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value.slice(0, 50) }))} maxLength={50} required />
                       <p className="text-xs text-muted-foreground mt-1">{formData.firstName.length}/50</p>
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Label htmlFor="lastName">{t('checkout.lastName')} *</Label>
                       <Input id="lastName" name="lastName" value={formData.lastName} onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value.slice(0, 50) }))} maxLength={50} required />
                       <p className="text-xs text-muted-foreground mt-1">{formData.lastName.length}/50</p>
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone">{t('checkout.phoneNumber')} *</Label>
                     <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 15); setFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={15} required />
-                    <p className="text-xs text-muted-foreground mt-1">Format: +880 1XXX-XXXXXX or 01XXX-XXXXXX</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('checkout.phoneFormat')}</p>
                   </div>
                   <div>
-                    <Label htmlFor="address">Address *</Label>
-                    <Input id="address" name="address" value={formData.address} onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder="House/Flat No, Street, Area" maxLength={200} required />
+                    <Label htmlFor="address">{t('checkout.address')} *</Label>
+                    <Input id="address" name="address" value={formData.address} onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder={t('checkout.houseFlatNo')} maxLength={200} required />
                     <p className="text-xs text-muted-foreground mt-1">{formData.address.length}/200</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="city">City *</Label>
+                      <Label htmlFor="city">{t('checkout.city')} *</Label>
                       <Input id="city" name="city" value={formData.city} onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required />
                       <p className="text-xs text-muted-foreground mt-1">{formData.city.length}/50</p>
                     </div>
                     <div>
-                      <Label htmlFor="postalCode">Postal Code</Label>
+                      <Label htmlFor="postalCode">{t('checkout.postalCode')}</Label>
                       <Input id="postalCode" name="postalCode" value={formData.postalCode} onChange={(e) => { const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10); setFormData(prev => ({ ...prev, postalCode: value })); }} maxLength={10} placeholder="1205" />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="notes">Order Notes (Optional)</Label>
-                    <Input id="notes" name="notes" value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value.slice(0, 500) }))} placeholder="Special instructions for delivery" maxLength={500} />
+                    <Label htmlFor="notes">{t('checkout.orderNotes')}</Label>
+                    <Input id="notes" name="notes" value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value.slice(0, 500) }))} placeholder={t('checkout.specialInstructions')} maxLength={500} />
                     <p className="text-xs text-muted-foreground mt-1">{formData.notes.length}/500</p>
                   </div>
 
@@ -587,16 +589,16 @@ export default function Checkout() {
                   <Separator className="my-4" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm font-medium">
-                      <MapPin className="h-4 w-4 text-store-primary" /> Shipping Zone & Rate
+                      <MapPin className="h-4 w-4 text-store-primary" /> {t('checkout.shippingZoneRate')}
                     </div>
                     {shippingLoading ? (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading shipping options...</div>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> {t('checkout.loadingShipping')}</div>
                     ) : (
                       <>
                         <div>
-                          <Label htmlFor="shippingZone">Shipping Zone *</Label>
+                          <Label htmlFor="shippingZone">{t('checkout.shippingZone')} *</Label>
                           <Select value={selectedZoneId} onValueChange={setSelectedZoneId}>
-                            <SelectTrigger><SelectValue placeholder="Select your area" /></SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={t('checkout.selectArea')} /></SelectTrigger>
                             <SelectContent>
                               {zonesWithRates.filter(z => z.is_active).map((zone) => (
                                 <SelectItem key={zone.id} value={zone.id}>{zone.name} ({zone.regions.join(', ')})</SelectItem>
@@ -606,7 +608,7 @@ export default function Checkout() {
                         </div>
                         {selectedZone && availableRates.length > 0 && (
                           <div>
-                            <Label>Delivery Option *</Label>
+                            <Label>{t('checkout.deliveryOption')} *</Label>
                             <RadioGroup value={selectedRateId} onValueChange={setSelectedRateId} className="mt-2">
                               {availableRates.map((rate) => {
                                 const isFree = rate.max_order_amount && subtotal >= rate.max_order_amount;
@@ -618,14 +620,14 @@ export default function Checkout() {
                                       <div>
                                         <p className="font-medium text-sm">{rate.name}</p>
                                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                          <Clock className="h-3 w-3" /> {rate.min_days ?? 1}-{rate.max_days ?? 3} days
+                                          <Clock className="h-3 w-3" /> {rate.min_days ?? 1}-{rate.max_days ?? 3} {t('checkout.days')}
                                           {rate.min_weight && rate.max_weight ? ` • ${rate.min_weight}-${rate.max_weight}kg` : ''}
                                         </p>
                                       </div>
                                     </div>
                                     <div className="text-right">
-                                      {isFree ? <span className="text-green-600 font-medium text-sm">Free</span> : <span className="font-medium text-sm">৳{displayPrice}</span>}
-                                      {rate.max_order_amount && !isFree && <p className="text-xs text-muted-foreground">৳{rate.max_order_amount}+ free</p>}
+                                      {isFree ? <span className="text-green-600 font-medium text-sm">{t('checkout.free')}</span> : <span className="font-medium text-sm">৳{displayPrice}</span>}
+                                      {rate.max_order_amount && !isFree && <p className="text-xs text-muted-foreground">৳{rate.max_order_amount}+ {t('checkout.free').toLowerCase()}</p>}
                                     </div>
                                   </label>
                                 );
@@ -633,7 +635,7 @@ export default function Checkout() {
                             </RadioGroup>
                           </div>
                         )}
-                        {selectedZone && availableRates.length === 0 && <p className="text-sm text-muted-foreground">No shipping options available for this zone</p>}
+                        {selectedZone && availableRates.length === 0 && <p className="text-sm text-muted-foreground">{t('checkout.noShippingOptions')}</p>}
                       </>
                     )}
                   </div>
@@ -645,18 +647,18 @@ export default function Checkout() {
                         <div className="flex items-center gap-2">
                           <Checkbox id="saveShippingAddress" checked={saveShippingAddress} onCheckedChange={(checked) => setSaveShippingAddress(checked as boolean)} />
                           <Label htmlFor="saveShippingAddress" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                            <Save className="h-4 w-4 text-store-primary" /> Save this address for future orders
+                            <Save className="h-4 w-4 text-store-primary" /> {t('checkout.saveAddress')}
                           </Label>
                         </div>
                         {saveShippingAddress && (
                           <div className="ml-6">
-                            <Label htmlFor="addressLabel" className="text-xs text-muted-foreground">Address Label</Label>
+                            <Label htmlFor="addressLabel" className="text-xs text-muted-foreground">{t('checkout.addressLabel')}</Label>
                             <Select value={shippingAddressLabel} onValueChange={setShippingAddressLabel}>
                               <SelectTrigger className="w-full mt-1"><SelectValue /></SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="Home">Home</SelectItem>
-                                <SelectItem value="Office">Office</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
+                                <SelectItem value="Home">{t('checkout.home')}</SelectItem>
+                                <SelectItem value="Office">{t('checkout.office')}</SelectItem>
+                                <SelectItem value="Other">{t('checkout.other')}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -670,12 +672,12 @@ export default function Checkout() {
               {/* Billing Address */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5 text-store-primary" /> Billing Address</CardTitle>
+                  <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5 text-store-primary" /> {t('checkout.billingAddress')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-2">
                     <Checkbox id="billingAddressSameAsShipping" checked={billingAddressSameAsShipping} onCheckedChange={(checked) => setBillingAddressSameAsShipping(checked as boolean)} />
-                    <Label htmlFor="billingAddressSameAsShipping" className="text-sm font-normal cursor-pointer">Same as shipping address</Label>
+                    <Label htmlFor="billingAddressSameAsShipping" className="text-sm font-normal cursor-pointer">{t('checkout.sameAsShipping')}</Label>
                   </div>
                   {!billingAddressSameAsShipping && user && (
                     <>
@@ -697,29 +699,29 @@ export default function Checkout() {
                           <div className="space-y-4">
                             <div className="grid sm:grid-cols-2 gap-4">
                               <div>
-                                <Label htmlFor="billingFirstName">First Name *</Label>
+                                <Label htmlFor="billingFirstName">{t('checkout.firstName')} *</Label>
                                 <Input id="billingFirstName" value={billingFormData.firstName} onChange={(e) => setBillingFormData(prev => ({ ...prev, firstName: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
                               </div>
                               <div>
-                                <Label htmlFor="billingLastName">Last Name *</Label>
+                                <Label htmlFor="billingLastName">{t('checkout.lastName')} *</Label>
                                 <Input id="billingLastName" value={billingFormData.lastName} onChange={(e) => setBillingFormData(prev => ({ ...prev, lastName: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
                               </div>
                             </div>
                             <div>
-                              <Label htmlFor="billingPhone">Phone Number *</Label>
+                              <Label htmlFor="billingPhone">{t('checkout.phoneNumber')} *</Label>
                               <Input id="billingPhone" type="tel" value={billingFormData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 15); setBillingFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={15} required={!billingAddressSameAsShipping} />
                             </div>
                             <div>
-                              <Label htmlFor="billingAddress">Address *</Label>
-                              <Input id="billingAddress" value={billingFormData.address} onChange={(e) => setBillingFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder="House/Flat No, Street, Area" maxLength={200} required={!billingAddressSameAsShipping} />
+                              <Label htmlFor="billingAddress">{t('checkout.address')} *</Label>
+                              <Input id="billingAddress" value={billingFormData.address} onChange={(e) => setBillingFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder={t('checkout.houseFlatNo')} maxLength={200} required={!billingAddressSameAsShipping} />
                             </div>
                             <div className="grid sm:grid-cols-2 gap-4">
                               <div>
-                                <Label htmlFor="billingCity">City *</Label>
+                                <Label htmlFor="billingCity">{t('checkout.city')} *</Label>
                                 <Input id="billingCity" value={billingFormData.city} onChange={(e) => setBillingFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
                               </div>
                               <div>
-                                <Label htmlFor="billingPostalCode">Postal Code</Label>
+                                <Label htmlFor="billingPostalCode">{t('checkout.postalCode')}</Label>
                                 <Input id="billingPostalCode" value={billingFormData.postalCode} onChange={(e) => { const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10); setBillingFormData(prev => ({ ...prev, postalCode: value })); }} maxLength={10} placeholder="1205" />
                               </div>
                             </div>
@@ -728,7 +730,7 @@ export default function Checkout() {
                               <div className="flex items-center gap-2">
                                 <Checkbox id="saveBillingAddress" checked={saveBillingAddress} onCheckedChange={(checked) => setSaveBillingAddress(checked as boolean)} />
                                 <Label htmlFor="saveBillingAddress" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                                  <Save className="h-4 w-4 text-store-primary" /> Save this billing address
+                                  <Save className="h-4 w-4 text-store-primary" /> {t('checkout.saveBillingAddr')}
                                 </Label>
                               </div>
                               {saveBillingAddress && (
@@ -737,9 +739,9 @@ export default function Checkout() {
                                   <Select value={billingAddressLabel} onValueChange={setBillingAddressLabel}>
                                     <SelectTrigger className="w-full mt-1"><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="Home">Home</SelectItem>
-                                      <SelectItem value="Office">Office</SelectItem>
-                                      <SelectItem value="Other">Other</SelectItem>
+                                      <SelectItem value="Home">{t('checkout.home')}</SelectItem>
+                                      <SelectItem value="Office">{t('checkout.office')}</SelectItem>
+                                      <SelectItem value="Other">{t('checkout.other')}</SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
@@ -752,7 +754,7 @@ export default function Checkout() {
                   )}
                   {!billingAddressSameAsShipping && !user && (
                     <p className="text-sm text-muted-foreground">
-                      <Link to="/login" className="text-store-primary hover:underline">Log in</Link> to use saved billing addresses.
+                      <Link to="/login" className="text-store-primary hover:underline">{t('nav.logout') === 'লগআউট' ? 'লগ ইন' : 'Log in'}</Link> {t('checkout.loginForSavedAddr')}
                     </p>
                   )}
                 </CardContent>
@@ -761,13 +763,13 @@ export default function Checkout() {
               {/* Payment Method */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5 text-store-primary" /> Payment Method</CardTitle>
+                  <CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5 text-store-primary" /> {t('checkout.paymentMethod')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {paymentMethodsLoading ? (
                     <div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
                   ) : enabledPaymentMethods.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-4">No payment methods available</p>
+                    <p className="text-sm text-muted-foreground text-center py-4">{t('checkout.noPaymentMethods')}</p>
                   ) : (
                     <>
                       <RadioGroup value={paymentMethod} onValueChange={(value) => { setPaymentMethod(value); setTransactionId(""); }}>
@@ -830,15 +832,15 @@ export default function Checkout() {
                               <div className="flex items-start gap-2">
                                 <Truck className="h-5 w-5 text-store-primary shrink-0 mt-0.5" />
                                 <div>
-                                  <p className="font-medium">Cash on Delivery</p>
+                                  <p className="font-medium">{t('checkout.cashOnDelivery')}</p>
                                   <p className="text-sm text-muted-foreground mt-1">
-                                    Pay with cash when your order is delivered to your doorstep.
+                                    {t('checkout.codDescription')}
                                   </p>
                                   {selectedMethod.cod_charge_enabled && codCharge > 0 && (
                                     <div className="mt-2 p-2 bg-warning/10 rounded border border-warning/20">
                                       <p className="text-sm text-warning flex items-center gap-1">
                                         <AlertCircle className="h-4 w-4" />
-                                        Additional {formatPrice(codCharge)} COD charge
+                                        {t('checkout.additionalCodCharge')} {formatPrice(codCharge)}
                                         {selectedMethod.cod_charge_type === 'percentage' && ` (${selectedMethod.cod_charge_value}%)`}
                                       </p>
                                     </div>
@@ -856,12 +858,12 @@ export default function Checkout() {
                               <div className="flex items-center gap-2">
                                 <FileText className="h-5 w-5 text-store-primary" />
                                 <div>
-                                  <p className="font-semibold">Cheque Payment</p>
-                                  <p className="text-xs text-muted-foreground">Your order will be processed after cheque clearance</p>
+                                  <p className="font-semibold">{t('checkout.chequePayment')}</p>
+                                  <p className="text-xs text-muted-foreground">{t('checkout.chequeCleared')}</p>
                                 </div>
                               </div>
                               <div className="text-sm bg-background p-3 rounded-lg border space-y-2">
-                                <p className="font-medium">Instructions:</p>
+                                <p className="font-medium">{t('checkout.instructions')}</p>
                                 <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
                                   <li>Write the cheque for the exact order amount: <strong className="text-foreground">{formatPrice(total)}</strong></li>
                                   <li>Make it payable to: <strong className="text-foreground">{selectedMethod.payable_to || 'Our Store'}</strong></li>
@@ -870,7 +872,7 @@ export default function Checkout() {
                                 </ol>
                               </div>
                               <div>
-                                <Label htmlFor="transactionId" className="text-sm font-medium">Cheque Number *</Label>
+                                <Label htmlFor="transactionId" className="text-sm font-medium">{t('checkout.chequeNumber')} *</Label>
                                 <Input id="transactionId" value={transactionId} onChange={(e) => setTransactionId(e.target.value.toUpperCase())} placeholder="e.g. CHQ-123456" className="mt-1 font-mono" required />
                               </div>
                             </div>
@@ -886,15 +888,15 @@ export default function Checkout() {
                                   <CreditCard className="h-5 w-5 text-primary" />
                                 </div>
                                 <div>
-                                  <p className="font-medium">Pay with {selectedMethod.name}</p>
+                                  <p className="font-medium">{t('checkout.payWith')} {selectedMethod.name}</p>
                                   <p className="text-sm text-muted-foreground">
-                                    You will be securely redirected to {selectedMethod.name} to complete your payment.
+                                    {t('checkout.redirectToGateway')} {selectedMethod.name} {t('checkout.toCompletePayment')}
                                   </p>
                                 </div>
                               </div>
                               <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
                                 <ShieldCheck className="h-4 w-4 text-green-500" />
-                                <span>Your payment information is encrypted and secure</span>
+                                <span>{t('checkout.paymentSecure')}</span>
                               </div>
                             </div>
                           );
@@ -928,10 +930,10 @@ export default function Checkout() {
                   <div className="flex items-start gap-2">
                     <Checkbox id="acceptTerms" checked={acceptedTerms} onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)} className="mt-0.5" />
                     <Label htmlFor="acceptTerms" className="text-sm font-normal cursor-pointer leading-relaxed">
-                      I agree to the{' '}
-                      <Link to="/terms" className="text-store-primary hover:underline" target="_blank">Terms & Conditions</Link>
-                      {' '}and{' '}
-                      <Link to="/privacy" className="text-store-primary hover:underline" target="_blank">Privacy Policy</Link>
+                      {t('checkout.termsAgree')}{' '}
+                      <Link to="/terms" className="text-store-primary hover:underline" target="_blank">{t('checkout.termsAndConditions')}</Link>
+                      {' '}{t('checkout.and')}{' '}
+                      <Link to="/privacy" className="text-store-primary hover:underline" target="_blank">{t('checkout.privacyPolicy')}</Link>
                       {' '}*
                     </Label>
                   </div>
