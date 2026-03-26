@@ -379,8 +379,8 @@ const Index = () => {
       <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('dashboard.title')}</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">{t('dashboard.welcome')}! Drag widgets to rearrange your dashboard.</p>
+            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Welcome! Drag widgets to rearrange your dashboard.</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <DateRangeSelector

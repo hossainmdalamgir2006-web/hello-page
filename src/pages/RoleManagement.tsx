@@ -395,7 +395,7 @@ export default function RoleManagement() {
             </Button>
             <Button onClick={confirmRoleChange} disabled={updating}>
               {updating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('common.confirm')}
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>

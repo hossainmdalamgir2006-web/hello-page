@@ -611,7 +611,7 @@ export default function Profile() {
                   />
                   <Button type="submit" disabled={isPasswordLoading}>
                     {isPasswordLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {t('profile.updatePassword')}
+                    Update Password
                   </Button>
                 </form>
               </Form>
