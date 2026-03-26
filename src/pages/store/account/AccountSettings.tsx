@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
@@ -135,6 +136,8 @@ export default function AccountSettings() {
   if (loading) return <div className="flex items-center justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
+    <>
+    <SEOHead title="Account Settings" noIndex />
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.settings')}</h1>
@@ -257,5 +260,6 @@ export default function AccountSettings() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }

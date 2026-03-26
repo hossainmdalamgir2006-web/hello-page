@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, CreditCard, Plus, Trash2, Star } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
@@ -77,6 +78,8 @@ export default function AccountPaymentMethods() {
   const getIcon = (type: string) => METHOD_TYPES.find((m) => m.value === type)?.icon || "💳";
 
   return (
+    <>
+    <SEOHead title="Payment Methods" noIndex />
     <div className="space-y-6">
       <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
@@ -154,5 +157,6 @@ export default function AccountPaymentMethods() {
         </div>
       )}
     </div>
+    </>
   );
 }

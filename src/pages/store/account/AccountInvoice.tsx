@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Download, FileText, Receipt } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -110,6 +111,8 @@ export default function AccountInvoice() {
   }
 
   return (
+    <>
+    <SEOHead title="Invoices" noIndex />
     <div className="space-y-4">
       {orders.length === 0 ? (
         <Card>
@@ -147,5 +150,6 @@ export default function AccountInvoice() {
         ))
       )}
     </div>
+    </>
   );
 }

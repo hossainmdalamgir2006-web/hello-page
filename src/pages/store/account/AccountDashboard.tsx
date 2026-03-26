@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Package, TrendingUp, CheckCircle, Truck, Clock, ArrowRight, ShoppingBag, User, HelpCircle } from "lucide-react";
@@ -119,6 +120,8 @@ export default function AccountDashboard() {
   ];
 
   return (
+    <>
+    <SEOHead title="My Account" noIndex />
     <div className="space-y-6">
       <div className="rounded-xl bg-gradient-to-r from-primary/5 via-accent/5 to-transparent p-5 sm:p-6 border border-border">
         <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
@@ -208,5 +211,6 @@ export default function AccountDashboard() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }

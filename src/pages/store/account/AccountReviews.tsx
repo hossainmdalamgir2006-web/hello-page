@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Star, MessageSquare, Plus } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
@@ -79,6 +80,8 @@ export default function AccountReviews() {
   if (loading) return <DelayedLoader><GenericListSkeleton /></DelayedLoader>;
 
   return (
+    <>
+    <SEOHead title="My Reviews" noIndex />
     <div className="space-y-6">
       <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
@@ -160,5 +163,6 @@ export default function AccountReviews() {
         </div>
       )}
     </div>
+    </>
   );
 }

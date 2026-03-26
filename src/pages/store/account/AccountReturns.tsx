@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, RotateCcw, Plus } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
@@ -89,6 +90,8 @@ export default function AccountReturns() {
   if (loading) return <DelayedLoader><GenericListSkeleton /></DelayedLoader>;
 
   return (
+    <>
+    <SEOHead title="Returns" noIndex />
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <p className="text-xs text-muted-foreground">
@@ -165,5 +168,6 @@ export default function AccountReturns() {
         </div>
       )}
     </div>
+    </>
   );
 }

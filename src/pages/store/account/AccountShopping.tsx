@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { SEOHead } from "@/components/SEOHead";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericCardGridSkeleton } from "@/components/skeletons";
 import { ShoppingTab } from "@/components/account/ShoppingTab";
@@ -57,12 +58,15 @@ export default function AccountShopping() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.shoppingPageTitle')}</h1>
-        <p className="text-sm text-muted-foreground">{t('account.shoppingPageDesc')}</p>
+    <>
+      <SEOHead title="Shopping History" noIndex />
+      <div className="space-y-6">
+        <div>
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.shoppingPageTitle')}</h1>
+          <p className="text-sm text-muted-foreground">{t('account.shoppingPageDesc')}</p>
+        </div>
+        <ShoppingTab orders={orders} />
       </div>
-      <ShoppingTab orders={orders} />
-    </div>
+    </>
   );
 }

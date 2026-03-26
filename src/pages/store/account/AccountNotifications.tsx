@@ -1,5 +1,6 @@
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { BellOff, CheckCheck } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericListSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,6 +22,8 @@ export default function AccountNotifications() {
   }
 
   return (
+    <>
+    <SEOHead title="Notifications" noIndex />
     <div className="space-y-4">
       {unreadCount > 0 && (
         <div className="flex justify-end">
@@ -63,5 +66,6 @@ export default function AccountNotifications() {
         </div>
       )}
     </div>
+    </>
   );
 }
