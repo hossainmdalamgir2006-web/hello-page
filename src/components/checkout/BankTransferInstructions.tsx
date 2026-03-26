@@ -139,9 +139,9 @@ export function BankTransferInstructions({
       </div>
 
       <div className="text-sm text-muted-foreground bg-warning/10 p-3 rounded-lg border border-warning/20">
-        <p className="font-medium text-warning mb-1">🏦 How to pay:</p>
+        <p className="font-medium text-warning mb-1">🏦 {t('bankTransfer.howToPay')}</p>
         <p className="text-warning/80">
-          Transfer to any of the bank accounts above → Save the Transaction Reference number
+          {t('bankTransfer.transferInstruction')}
         </p>
       </div>
 
