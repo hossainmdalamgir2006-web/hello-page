@@ -18,7 +18,7 @@ const pageTitleKeys: Record<string, { titleKey: string; descKey: string }> = {
   "/myaccount/recently-viewed": { titleKey: "account.recentlyViewedTitle", descKey: "account.recentlyViewedDesc" },
   "/myaccount/reviews": { titleKey: "account.reviewsTitle", descKey: "account.reviewsDesc" },
   "/myaccount/addresses": { titleKey: "account.addressesTitle", descKey: "account.addressesDesc" },
-  "/myaccount/payment-methods": { titleKey: "account.paymentTitle", descKey: "account.paymentDesc" },
+  
   "/myaccount/security": { titleKey: "account.securityTitle", descKey: "account.securityDesc" },
   "/myaccount/support": { titleKey: "account.supportTitle", descKey: "account.supportDesc" },
   "/myaccount/chat": { titleKey: "account.chatTitle", descKey: "account.chatDesc" },
