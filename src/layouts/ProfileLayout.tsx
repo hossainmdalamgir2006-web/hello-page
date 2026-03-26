@@ -3,6 +3,7 @@ import { User, Lock, Shield, Monitor, ChevronDown, History, ShieldCheck, KeyRoun
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ProfileCompletionProgress } from "@/components/profile/ProfileCompletionProgress";
 
 export default function ProfileLayout() {
   const location = useLocation();
