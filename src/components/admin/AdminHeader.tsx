@@ -65,6 +65,13 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
   };
 
+  const maskEmail = (email: string) => {
+    const [local, domain] = email.split('@');
+    if (!domain) return email;
+    const visible = local.slice(0, 3);
+    return `${visible}***@${domain}`;
+  };
+
   const getInitials = () => {
     if (user?.user_metadata?.full_name) {
       return user.user_metadata.full_name
@@ -134,7 +141,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                  {user?.email || 'admin@ekta.com'}
+                  {maskEmail(user?.email || 'admin@ekta.com')}
                 </p>
               </div>
               <ChevronDown className="hidden lg:block h-3.5 w-3.5 text-muted-foreground" />
