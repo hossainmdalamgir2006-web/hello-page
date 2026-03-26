@@ -621,11 +621,11 @@ export default function OrderTracking() {
               {/* Totals */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t('orderTracking.subtotal')}</span>
                   <span>{formatPrice(order.subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="text-muted-foreground">{t('orderTracking.shipping')}</span>
                   <span>{formatPrice(order.shipping_cost)}</span>
                 </div>
                 {order.discount > 0 && (
