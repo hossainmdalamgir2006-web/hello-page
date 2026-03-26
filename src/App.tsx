@@ -162,14 +162,13 @@ const App = () => (
               <Route index element={<SettingsStore />} />
               <Route path="store" element={<SettingsStore />} />
               <Route path="payments" element={<SettingsPayments />} />
-              <Route path="emails" element={<SettingsEmails />} />
-              <Route path="notifications" element={<SettingsNotifications />} />
-              <Route path="security" element={<SettingsSecurity />} />
-              <Route path="audit" element={<SettingsAudit />} />
-              <Route path="backup" element={<SettingsBackup />} />
-              <Route path="integrations" element={<SettingsIntegrations />} />
-              
             </Route>
+            <Route path="/admin/settings/emails" element={<SettingsEmails />} />
+            <Route path="/admin/settings/notifications" element={<SettingsNotifications />} />
+            <Route path="/admin/settings/security" element={<SettingsSecurity />} />
+            <Route path="/admin/settings/audit" element={<SettingsAudit />} />
+            <Route path="/admin/settings/backup" element={<SettingsBackup />} />
+            <Route path="/admin/settings/integrations" element={<SettingsIntegrations />} />
             <Route path="/admin/shipping" element={<Shipping />} />
             <Route path="/admin/messages" element={<Messages />} />
             <Route path="/admin/reports" element={<Reports />} />
