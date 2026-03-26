@@ -6,11 +6,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Ruler, Info } from "lucide-react";
 import { usePageContent } from "@/hooks/usePageContents";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SizeGuide() {
+  const { t } = useLanguage();
   const { data, loading } = usePageContent("size-guide");
-  const title = data?.title || "Size Guide";
-  const subtitle = data?.subtitle || "Find your perfect fit with our comprehensive size guide. All measurements are in inches.";
+  const title = data?.title || t('sizeGuide.title');
+  const subtitle = data?.subtitle || t('sizeGuide.subtitle');
   const c = (data?.content || {}) as any;
 
   const mensSizes = c.mens_sizes || [];
@@ -32,8 +34,8 @@ export default function SizeGuide() {
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="men" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="men">Men's Sizes</TabsTrigger>
-              <TabsTrigger value="women">Women's Sizes</TabsTrigger>
+              <TabsTrigger value="men">{t('sizeGuide.mensSizes')}</TabsTrigger>
+              <TabsTrigger value="women">{t('sizeGuide.womensSizes')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="men">
@@ -42,10 +44,10 @@ export default function SizeGuide() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Size</TableHead>
-                        <TableHead>Chest (inches)</TableHead>
-                        <TableHead>Waist (inches)</TableHead>
-                        <TableHead>Hip (inches)</TableHead>
+                        <TableHead>{t('store.size')}</TableHead>
+                        <TableHead>{t('sizeGuide.chest')}</TableHead>
+                        <TableHead>{t('sizeGuide.waist')}</TableHead>
+                        <TableHead>{t('sizeGuide.hip')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -69,10 +71,10 @@ export default function SizeGuide() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Size</TableHead>
-                        <TableHead>Bust (inches)</TableHead>
-                        <TableHead>Waist (inches)</TableHead>
-                        <TableHead>Hip (inches)</TableHead>
+                        <TableHead>{t('store.size')}</TableHead>
+                        <TableHead>{t('sizeGuide.bust')}</TableHead>
+                        <TableHead>{t('sizeGuide.waist')}</TableHead>
+                        <TableHead>{t('sizeGuide.hip')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -94,7 +96,7 @@ export default function SizeGuide() {
           {howToMeasure.length > 0 && (
             <div className="mt-12">
               <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
-                <Ruler className="h-6 w-6 text-store-primary" /> How to Measure
+                <Ruler className="h-6 w-6 text-store-primary" /> {t('sizeGuide.howToMeasure')}
               </h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {howToMeasure.map((item: any, i: number) => (
@@ -113,7 +115,7 @@ export default function SizeGuide() {
             <Card className="mt-8 bg-store-primary/5 border-store-primary/20">
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <Info className="h-5 w-5 text-store-primary" /> Sizing Tips
+                  <Info className="h-5 w-5 text-store-primary" /> {t('sizeGuide.sizingTips')}
                 </h3>
                 <ul className="text-sm text-muted-foreground space-y-2">
                   {tips.map((tip: string, i: number) => <li key={i}>• {tip}</li>)}

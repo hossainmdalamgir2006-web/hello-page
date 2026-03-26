@@ -10,6 +10,7 @@ import { StoreFooter } from "@/components/store/StoreFooter";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface OrderResult {
   orderNumber: string;
@@ -23,6 +24,7 @@ interface OrderResult {
 
 export default function TrackOrder() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [orderNumber, setOrderNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [orderError, setOrderError] = useState("");
@@ -37,7 +39,7 @@ export default function TrackOrder() {
     const trimmedOrder = orderNumber.trim().toUpperCase();
     const orderNumberRegex = /^ORD-\d{8}-\d{4}$/;
     if (!orderNumberRegex.test(trimmedOrder)) {
-      setOrderError("Invalid order number. Correct format: ORD-YYYYMMDD-XXXX");
+      setOrderError(t('track.invalidOrder'));
       return;
     }
     navigate(`/track/${trimmedOrder}`);
@@ -50,11 +52,11 @@ export default function TrackOrder() {
     setShowPhoneResults(false);
     const cleanPhone = phoneNumber.replace(/[\s\-\(\)]/g, "");
     if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-      setPhoneError("Please enter a valid phone number");
+      setPhoneError(t('track.validPhone'));
       return;
     }
     if (!/^[\d+]+$/.test(cleanPhone)) {
-      setPhoneError("Phone number can only contain digits and + sign");
+      setPhoneError(t('track.validPhone'));
       return;
     }
     setIsLoading(true);
@@ -68,11 +70,11 @@ export default function TrackOrder() {
         setPhoneResults(data.orders);
         setShowPhoneResults(true);
       } else {
-        setPhoneError("No orders found for this phone number");
+        setPhoneError(t('track.noOrders'));
       }
     } catch (error: any) {
       console.error("Phone search error:", error);
-      setPhoneError("Error searching for orders. Please try again.");
+      setPhoneError(t('track.searchError'));
     } finally {
       setIsLoading(false);
     }
@@ -103,20 +105,20 @@ export default function TrackOrder() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-store-primary/10 flex items-center justify-center">
               <Package className="h-8 w-8 text-store-primary" />
             </div>
-            <h1 className="font-display text-3xl font-bold text-foreground mb-2">Track Your Order</h1>
-            <p className="text-muted-foreground">Check your order status using order number or phone number</p>
+            <h1 className="font-display text-3xl font-bold text-foreground mb-2">{t('track.title')}</h1>
+            <p className="text-muted-foreground">{t('track.subtitle')}</p>
           </div>
 
           <Card className="border-store-primary/20">
             <CardHeader>
-              <CardTitle className="text-lg">Find Your Order</CardTitle>
-              <CardDescription>Search by order number or phone number</CardDescription>
+              <CardTitle className="text-lg">{t('track.findOrder')}</CardTitle>
+              <CardDescription>{t('track.searchBy')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="order" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="order" className="flex items-center gap-2"><Hash className="h-4 w-4" />Order Number</TabsTrigger>
-                  <TabsTrigger value="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />Phone Number</TabsTrigger>
+                  <TabsTrigger value="order" className="flex items-center gap-2"><Hash className="h-4 w-4" />{t('track.orderNumber')}</TabsTrigger>
+                  <TabsTrigger value="phone" className="flex items-center gap-2"><Phone className="h-4 w-4" />{t('track.phoneNumber')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="order">
@@ -127,7 +129,7 @@ export default function TrackOrder() {
                     </div>
                     {orderError && <p className="text-sm text-destructive">{orderError}</p>}
                     <Button type="submit" className="w-full h-12 bg-store-primary hover:bg-store-primary/90" disabled={!orderNumber.trim()}>
-                      Track Order<ArrowRight className="ml-2 h-4 w-4" />
+                      {t('track.trackOrder')}<ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </form>
                 </TabsContent>
@@ -140,13 +142,13 @@ export default function TrackOrder() {
                     </div>
                     {phoneError && <p className="text-sm text-destructive">{phoneError}</p>}
                     <Button type="submit" className="w-full h-12 bg-store-primary hover:bg-store-primary/90" disabled={!phoneNumber.trim() || isLoading}>
-                      {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Searching...</>) : (<>Find Orders<ArrowRight className="ml-2 h-4 w-4" /></>)}
+                      {isLoading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('track.searching')}</>) : (<>{t('track.findOrders')}<ArrowRight className="ml-2 h-4 w-4" /></>)}
                     </Button>
                   </form>
 
                   {showPhoneResults && phoneResults.length > 0 && (
                     <div className="mt-6 space-y-3">
-                      <h3 className="font-medium text-sm text-foreground">Found {phoneResults.length} order(s):</h3>
+                      <h3 className="font-medium text-sm text-foreground">{t('track.foundOrders')} {phoneResults.length} {t('track.orders')}:</h3>
                       {phoneResults.map((order) => (
                         <div key={order.orderNumber} className="p-4 border rounded-lg hover:border-store-primary/50 cursor-pointer transition-colors" onClick={() => navigate(`/track/${order.orderNumber}`)}>
                           <div className="flex items-center justify-between mb-2">
@@ -154,8 +156,8 @@ export default function TrackOrder() {
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(order.status)}`}>{order.status}</span>
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            <p>Date: {formatDate(order.createdAt)}</p>
-                            <p>Total: ৳{order.total?.toLocaleString()}</p>
+                            <p>{t('track.date')}: {formatDate(order.createdAt)}</p>
+                            <p>{t('track.total')}: ৳{order.total?.toLocaleString()}</p>
                           </div>
                         </div>
                       ))}
@@ -165,11 +167,11 @@ export default function TrackOrder() {
               </Tabs>
 
               <div className="mt-6 pt-6 border-t">
-                <h3 className="font-medium text-sm text-foreground mb-3">Where to find your order number?</h3>
+                <h3 className="font-medium text-sm text-foreground mb-3">{t('track.whereToFind')}</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>In your order confirmation email</li>
-                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>In your SMS notification</li>
-                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>In your account order history</li>
+                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>{t('track.inEmail')}</li>
+                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>{t('track.inSms')}</li>
+                  <li className="flex items-start gap-2"><span className="text-store-primary">•</span>{t('track.inAccount')}</li>
                 </ul>
               </div>
             </CardContent>

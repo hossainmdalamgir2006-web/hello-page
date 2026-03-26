@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { EnabledPaymentMethod } from "@/hooks/useEnabledPaymentMethods";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BankTransferInstructionsProps {
   paymentMethod: EnabledPaymentMethod;
@@ -18,13 +19,14 @@ export function BankTransferInstructions({
   transactionId, 
   onTransactionIdChange 
 }: BankTransferInstructionsProps) {
+  const { t } = useLanguage();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   
   if (paymentMethod.bank_accounts.length === 0) {
     return (
       <div className="mt-4 p-4 bg-warning/10 rounded-lg border border-warning/20">
         <p className="text-sm text-warning">
-          ⚠️ No bank account has been configured. Please use a different payment method.
+          ⚠️ {t('bankTransfer.noBankConfig')}
         </p>
       </div>
     );
@@ -33,7 +35,7 @@ export function BankTransferInstructions({
   const copyToClipboard = (text: string, fieldName: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(fieldName);
-    toast.success("Copied!");
+    toast.success(t('bankTransfer.copied'));
     setTimeout(() => setCopiedField(null), 2000);
   };
 
@@ -54,7 +56,7 @@ export function BankTransferInstructions({
         <div>
           <p className="font-semibold">{paymentMethod.name}</p>
           <p className="text-xs text-muted-foreground">
-            {paymentMethod.bank_accounts.length} bank account(s)
+            {paymentMethod.bank_accounts.length} {t('bankTransfer.bankAccounts')}
           </p>
         </div>
       </div>
@@ -78,7 +80,7 @@ export function BankTransferInstructions({
               <div className="grid gap-2 text-sm">
                 <div className="flex items-center justify-between p-2 bg-background rounded border">
                   <div>
-                    <p className="text-xs text-muted-foreground">Account Name</p>
+                    <p className="text-xs text-muted-foreground">{t('bankTransfer.accountName')}</p>
                     <p className="font-medium">{account.account_name}</p>
                   </div>
                   <Button
@@ -97,7 +99,7 @@ export function BankTransferInstructions({
                 
                 <div className="flex items-center justify-between p-2 bg-background rounded border">
                   <div>
-                    <p className="text-xs text-muted-foreground">Account Number</p>
+                    <p className="text-xs text-muted-foreground">{t('bankTransfer.accountNumber')}</p>
                     <p className="font-mono font-medium">{account.account_number}</p>
                   </div>
                   <Button
@@ -137,15 +139,15 @@ export function BankTransferInstructions({
       </div>
 
       <div className="text-sm text-muted-foreground bg-warning/10 p-3 rounded-lg border border-warning/20">
-        <p className="font-medium text-warning mb-1">🏦 How to pay:</p>
+        <p className="font-medium text-warning mb-1">🏦 {t('bankTransfer.howToPay')}</p>
         <p className="text-warning/80">
-          Transfer to any of the bank accounts above → Save the Transaction Reference number
+          {t('bankTransfer.transferInstruction')}
         </p>
       </div>
 
       <div>
         <Label htmlFor="transactionId" className="text-sm font-medium">
-          Transaction Reference / Receipt No. *
+          {t('bankTransfer.transactionRef')} *
         </Label>
         <Input
           id="transactionId"
@@ -156,7 +158,7 @@ export function BankTransferInstructions({
           required
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Enter the Reference Number you receive after completing the bank transfer
+          {t('bankTransfer.enterRef')}
         </p>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NewArrivalsSectionProps {
   title?: string;
@@ -13,11 +14,15 @@ interface NewArrivalsSectionProps {
 }
 
 export function NewArrivalsSection({
-  title = "New Arrivals",
-  subtitle = "Fresh styles just added to our collection",
-  badge = "Just In",
+  title,
+  subtitle,
+  badge,
   count = 8,
 }: NewArrivalsSectionProps) {
+  const { t } = useLanguage();
+  const displayTitle = title || t('store.newArrivals');
+  const displaySubtitle = subtitle || "";
+  const displayBadge = badge || t('newArrivals.new');
   const { products, loading } = useFeaturedProducts(count);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -37,12 +42,12 @@ export function NewArrivalsSection({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-5 w-5 text-store-accent" />
-              <span className="text-sm font-semibold text-store-primary uppercase tracking-widest">{badge}</span>
+              <span className="text-sm font-semibold text-store-primary uppercase tracking-widest">{displayBadge}</span>
             </div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-              {title}
+              {displayTitle}
             </h2>
-            {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
+            {displaySubtitle && <p className="text-muted-foreground mt-1">{displaySubtitle}</p>}
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -65,7 +70,7 @@ export function NewArrivalsSection({
             </Button>
             <Button variant="outline" asChild>
               <Link to="/products?filter=new">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
+                {t('newArrivals.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -80,7 +85,7 @@ export function NewArrivalsSection({
           </div>
         ) : newProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">New products coming soon!</p>
+            <p className="text-muted-foreground">{t('newArrivals.comingSoon')}</p>
           </div>
         ) : (
           <div
@@ -111,12 +116,12 @@ export function NewArrivalsSection({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-                        No Image
+                        {t('newArrivals.noImage')}
                       </div>
                     )}
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
                       <Badge className="bg-store-primary text-store-primary-foreground text-xs px-2 py-0.5">
-                        New
+                        {t('newArrivals.new')}
                       </Badge>
                       {hasDiscount && (
                         <Badge className="bg-destructive text-destructive-foreground text-xs px-2 py-0.5">

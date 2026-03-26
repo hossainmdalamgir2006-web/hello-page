@@ -24,6 +24,7 @@ import { Progress } from "@/components/ui/progress";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface OrderItem {
   id: string;
@@ -139,11 +140,11 @@ const getDeliveryEstimate = (shippingAddress: any, orderDate: string, status: st
   };
 };
 
-const statusSteps = [
-  { key: "pending", label: "Order Placed", icon: Clock, description: "Your order has been received" },
-  { key: "processing", label: "Processing", icon: Box, description: "We're preparing your order" },
-  { key: "shipped", label: "Shipped", icon: Truck, description: "Your order is on the way" },
-  { key: "delivered", label: "Delivered", icon: CheckCircle, description: "Order delivered successfully" },
+const getStatusSteps = (t: (key: string) => string) => [
+  { key: "pending", label: t('orderTracking.orderPlaced'), icon: Clock, description: t('orderTracking.orderReceived') },
+  { key: "processing", label: t('orderTracking.processing'), icon: Box, description: t('orderTracking.preparingOrder') },
+  { key: "shipped", label: t('orderTracking.shipped'), icon: Truck, description: t('orderTracking.onTheWay') },
+  { key: "delivered", label: t('orderTracking.delivered'), icon: CheckCircle, description: t('orderTracking.deliveredSuccess') },
 ];
 
 const statusIndex: Record<string, number> = {
@@ -156,11 +157,13 @@ const statusIndex: Record<string, number> = {
 
 export default function OrderTracking() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
+  const { t } = useLanguage();
   const [order, setOrder] = useState<Order | null>(null);
   const [items, setItems] = useState<OrderItem[]>([]);
   const [paymentMethodInfo, setPaymentMethodInfo] = useState<PaymentMethodInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const statusSteps = getStatusSteps(t);
 
   useEffect(() => {
     if (orderNumber) {
@@ -200,13 +203,13 @@ export default function OrderTracking() {
       .maybeSingle();
 
     if (orderError) {
-      setError("Order not found. Please check your order number.");
+      setError(t('orderTracking.couldntFind'));
       setLoading(false);
       return;
     }
 
     if (!orderData) {
-      setError("Order not found. Please check your order number.");
+      setError(t('orderTracking.couldntFind'));
       setLoading(false);
       return;
     }
@@ -291,10 +294,10 @@ export default function OrderTracking() {
       <>
         <div className="container mx-auto px-4 py-16 text-center">
           <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h1 className="font-display text-2xl font-bold mb-2">Order Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error || "We couldn't find this order."}</p>
+          <h1 className="font-display text-2xl font-bold mb-2">{t('orderTracking.orderNotFound')}</h1>
+          <p className="text-muted-foreground mb-6">{error || t('orderTracking.couldntFind')}</p>
           <Button asChild>
-            <Link to="/">Back to Store</Link>
+            <Link to="/">{t('orderTracking.backToStore')}</Link>
           </Button>
         </div>
       </>
@@ -322,7 +325,7 @@ export default function OrderTracking() {
             </Button>
             <div>
               <h1 className="font-display text-2xl font-bold text-store-primary-foreground">
-                Track Order
+                {t('orderTracking.orderStatus')}
               </h1>
               <p className="text-store-primary-foreground/80 text-sm">
                 {order.order_number}
@@ -339,20 +342,20 @@ export default function OrderTracking() {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-store-primary" />
-                Order Status
+                {t('orderTracking.orderStatus')}
               </CardTitle>
               <Button variant="ghost" size="sm" onClick={fetchOrder}>
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
+                {t('orderTracking.refresh')}
               </Button>
             </CardHeader>
             <CardContent>
               {isCancelled ? (
                 <div className="text-center py-8">
                   <XCircle className="h-16 w-16 mx-auto text-destructive mb-4" />
-                  <h3 className="text-xl font-semibold text-destructive mb-2">Order Cancelled</h3>
+                  <h3 className="text-xl font-semibold text-destructive mb-2">{t('orderTracking.cancelled')}</h3>
                   <p className="text-muted-foreground">
-                    This order has been cancelled. If you have any questions, please contact support.
+                    {t('orderTracking.cancelledMsg')}
                   </p>
                 </div>
               ) : (
@@ -398,7 +401,7 @@ export default function OrderTracking() {
                             <p className="text-sm text-muted-foreground">{step.description}</p>
                             {isCurrent && order.updated_at && (
                               <p className="text-xs text-store-primary mt-1">
-                                Last updated: {formatDate(order.updated_at)}
+                                {t('orderTracking.lastUpdated')}: {formatDate(order.updated_at)}
                               </p>
                             )}
                           </div>
@@ -429,7 +432,7 @@ export default function OrderTracking() {
                   <CardHeader className="pb-2">
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <Calendar className="h-5 w-5 text-store-primary" />
-                      Estimated Delivery
+                      {t('orderTracking.estimatedDelivery')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -439,28 +442,28 @@ export default function OrderTracking() {
                           {formatDeliveryDate(estimate.minDate)} - {formatDeliveryDate(estimate.maxDate)}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          Shipping to: <span className="font-medium">{estimate.zone}</span>
+                          {t('orderTracking.shippingTo')}: <span className="font-medium">{estimate.zone}</span>
                         </p>
                       </div>
                       <div className="text-right">
                         {estimate.isOverdue ? (
                           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
                             <AlertCircle className="h-3 w-3 mr-1" />
-                            Delayed
+                            {t('orderTracking.delayed')}
                           </Badge>
                         ) : estimate.daysUntilMax === 0 ? (
                           <Badge className="bg-store-primary text-store-primary-foreground">
-                            Arriving Today
+                            {t('orderTracking.arrivingToday')}
                           </Badge>
                         ) : estimate.daysUntilMin === 0 ? (
                           <Badge className="bg-store-accent text-store-accent-foreground">
-                            Arriving Soon
+                            {t('orderTracking.arrivingSoon')}
                           </Badge>
                         ) : (
                           <p className="text-sm text-muted-foreground">
                             {estimate.daysUntilMin === estimate.daysUntilMax
-                              ? `${estimate.daysUntilMax} day${estimate.daysUntilMax !== 1 ? "s" : ""} remaining`
-                              : `${estimate.daysUntilMin}-${estimate.daysUntilMax} days remaining`}
+                              ? `${estimate.daysUntilMax} ${estimate.daysUntilMax !== 1 ? t('orderTracking.daysRemaining') : t('orderTracking.dayRemaining')}`
+                              : `${estimate.daysUntilMin}-${estimate.daysUntilMax} ${t('orderTracking.daysRemaining')}`}
                           </p>
                         )}
                       </div>
@@ -469,8 +472,8 @@ export default function OrderTracking() {
                     {/* Delivery Progress */}
                     <div className="space-y-2">
                       <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Order Placed</span>
-                        <span>Estimated Delivery</span>
+                        <span>{t('orderTracking.orderPlaced')}</span>
+                        <span>{t('orderTracking.estimatedDelivery')}</span>
                       </div>
                       <Progress value={estimate.progressPercent} className="h-2" />
                     </div>
@@ -478,10 +481,9 @@ export default function OrderTracking() {
                     {estimate.isOverdue && (
                       <div className="flex items-start gap-2 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                         <AlertCircle className="h-4 w-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                          Your order is taking longer than expected. We're working to get it to you as soon as possible. 
-                          Please contact support if you need assistance.
-                        </p>
+                         <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                           {t('orderTracking.deliveryOverdue')}
+                         </p>
                       </div>
                     )}
                   </CardContent>
@@ -499,9 +501,9 @@ export default function OrderTracking() {
                     <CheckCircle className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-green-800 dark:text-green-200">Delivered Successfully!</h4>
+                    <h4 className="font-semibold text-green-800 dark:text-green-200">{t('orderTracking.deliveredSuccessMsg')}</h4>
                     <p className="text-sm text-green-600 dark:text-green-400">
-                      Your order was delivered on {formatDate(order.updated_at)}
+                      {t('orderTracking.deliveredOn')} {formatDate(order.updated_at)}
                     </p>
                   </div>
                 </div>
@@ -512,16 +514,16 @@ export default function OrderTracking() {
           {/* Order Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Details</CardTitle>
+              <CardTitle>{t('orderTracking.orderDetails')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Order Number</p>
+                  <p className="text-sm text-muted-foreground">{t('orderTracking.orderDetails').split(' ')[0]} {t('track.orderNumber')}</p>
                   <p className="font-medium">{order.order_number}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Order Date</p>
+                  <p className="text-sm text-muted-foreground">{t('orderTracking.orderDate')}</p>
                   <p className="font-medium">{formatDate(order.created_at)}</p>
                 </div>
               </div>
@@ -530,7 +532,7 @@ export default function OrderTracking() {
 
               {/* Payment Information */}
               <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">Payment Information</p>
+                <p className="text-sm text-muted-foreground">{t('orderTracking.paymentInfo')}</p>
                 <div className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
                   {paymentMethodInfo?.logo_url ? (
                     <img 
@@ -575,7 +577,7 @@ export default function OrderTracking() {
                     {/* Extract Transaction ID from notes if present */}
                     {order.notes && order.notes.includes('TrxID:') && (
                       <p className="text-sm text-muted-foreground mt-2">
-                        Transaction ID: <span className="font-mono font-medium text-foreground">
+                        {t('orderTracking.transactionId')}: <span className="font-mono font-medium text-foreground">
                           {order.notes.match(/TrxID:\s*(\S+)/)?.[1] || 'N/A'}
                         </span>
                       </p>
@@ -587,7 +589,7 @@ export default function OrderTracking() {
               <Separator />
 
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Shipping Address</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('orderTracking.shippingAddress')}</p>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                   <p className="font-medium">{shippingAddr}</p>
@@ -598,7 +600,7 @@ export default function OrderTracking() {
 
               {/* Items */}
               <div>
-                <p className="text-sm text-muted-foreground mb-3">Items</p>
+                <p className="text-sm text-muted-foreground mb-3">{t('orderTracking.items')}</p>
                 <div className="space-y-2">
                   {items.map((item) => (
                     <div key={item.id} className="flex justify-between items-center py-2 border-b last:border-0">
@@ -619,22 +621,22 @@ export default function OrderTracking() {
               {/* Totals */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t('orderTracking.subtotal')}</span>
                   <span>{formatPrice(order.subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="text-muted-foreground">{t('orderTracking.shipping')}</span>
                   <span>{formatPrice(order.shipping_cost)}</span>
                 </div>
                 {order.discount > 0 && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Discount</span>
+                    <span>{t('orderTracking.discount')}</span>
                     <span>-{formatPrice(order.discount)}</span>
                   </div>
                 )}
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
+                  <span>{t('store.total')}</span>
                   <span>{formatPrice(order.total)}</span>
                 </div>
               </div>

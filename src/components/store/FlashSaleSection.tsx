@@ -4,6 +4,7 @@ import { Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface FlashSaleSectionProps {
   title?: string;
@@ -59,12 +60,16 @@ function TimerBlock({ value, label }: { value: number; label: string }) {
 }
 
 export function FlashSaleSection({
-  title = "Flash Sale",
-  subtitle = "Hurry! Offer ends soon",
-  badge = "⚡ Flash Sale",
+  title,
+  subtitle,
+  badge,
   endTime,
   count = 4,
 }: FlashSaleSectionProps) {
+  const { t } = useLanguage();
+  const displayTitle = title || t('store.flashSale');
+  const displaySubtitle = subtitle || "";
+  const displayBadge = badge || `⚡ ${t('store.flashSale')}`;
   const { products, loading } = useFeaturedProducts(count);
   const { timeLeft, expired } = useCountdown(endTime || null);
 
@@ -83,23 +88,23 @@ export function FlashSaleSection({
             <div className="flex items-center gap-2 mb-2">
               <Zap className="h-6 w-6 text-store-accent fill-current" />
               <Badge className="bg-store-accent text-store-accent-foreground text-sm px-3">
-                {badge}
+                {displayBadge}
               </Badge>
             </div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold">{title}</h2>
-            {subtitle && <p className="text-white/75 mt-1">{subtitle}</p>}
+            <h2 className="font-display text-3xl md:text-4xl font-bold">{displayTitle}</h2>
+            {displaySubtitle && <p className="text-white/75 mt-1">{displaySubtitle}</p>}
           </div>
 
           {/* Countdown */}
           {endTime && !expired && (
             <div className="flex items-center gap-3">
-              <TimerBlock value={timeLeft.days} label="Days" />
+              <TimerBlock value={timeLeft.days} label={t('flashSale.days')} />
               <span className="text-white/60 text-2xl font-bold mb-4">:</span>
-              <TimerBlock value={timeLeft.hours} label="Hours" />
+              <TimerBlock value={timeLeft.hours} label={t('flashSale.hours')} />
               <span className="text-white/60 text-2xl font-bold mb-4">:</span>
-              <TimerBlock value={timeLeft.minutes} label="Mins" />
+              <TimerBlock value={timeLeft.minutes} label={t('flashSale.mins')} />
               <span className="text-white/60 text-2xl font-bold mb-4">:</span>
-              <TimerBlock value={timeLeft.seconds} label="Secs" />
+              <TimerBlock value={timeLeft.seconds} label={t('flashSale.secs')} />
             </div>
           )}
         </div>
@@ -135,7 +140,7 @@ export function FlashSaleSection({
                       />
                     ) : (
                       <div className="w-full h-full bg-white/10 flex items-center justify-center text-white/50 text-sm">
-                        No Image
+                        {t('flashSale.noImage')}
                       </div>
                     )}
                     {hasDiscount && (
@@ -167,7 +172,7 @@ export function FlashSaleSection({
             asChild
           >
             <Link to="/products?filter=sale">
-              Shop All Sale Items <ArrowRight className="ml-2 h-5 w-5" />
+              {t('flashSale.shopAllSale')} <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </div>

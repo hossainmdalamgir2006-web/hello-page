@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { EnabledPaymentMethod } from "@/hooks/useEnabledPaymentMethods";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ManualPaymentInstructionsProps {
   paymentMethod: EnabledPaymentMethod;
@@ -25,6 +26,7 @@ export function ManualPaymentInstructions({
   transactionId, 
   onTransactionIdChange 
 }: ManualPaymentInstructionsProps) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   
@@ -33,7 +35,7 @@ export function ManualPaymentInstructions({
     return (
       <div className="mt-4 p-4 bg-warning/10 rounded-lg border border-warning/20">
         <p className="text-sm text-warning">
-          ⚠️ This payment method has not been configured yet. Please use a different method.
+          ⚠️ {t('manualPayment.notConfigured')}
         </p>
       </div>
     );
@@ -42,13 +44,13 @@ export function ManualPaymentInstructions({
   const copyNumber = () => {
     navigator.clipboard.writeText(paymentMethod.account_number!);
     setCopied(true);
-    toast.success("Number copied!");
+    toast.success(t('manualPayment.numberCopied'));
     setTimeout(() => setCopied(false), 2000);
   };
 
   const colorClass = METHOD_COLORS[paymentMethod.method_id] || "bg-primary";
-  const accountTypeLabel = paymentMethod.account_type === "merchant" ? "Merchant" 
-    : paymentMethod.account_type === "agent" ? "Agent" : "Personal";
+  const accountTypeLabel = paymentMethod.account_type === "merchant" ? t('manualPayment.merchant') 
+    : paymentMethod.account_type === "agent" ? t('manualPayment.agent') : t('manualPayment.personal');
 
   return (
     <div className="space-y-4 mt-4 p-4 bg-muted/50 rounded-lg border">
@@ -65,8 +67,8 @@ export function ManualPaymentInstructions({
           </div>
         )}
         <div>
-          <p className="font-semibold">{paymentMethod.name} Payment</p>
-          <p className="text-xs text-muted-foreground">{accountTypeLabel} Account</p>
+          <p className="font-semibold">{paymentMethod.name} {t('manualPayment.payment')}</p>
+          <p className="text-xs text-muted-foreground">{accountTypeLabel} {t('manualPayment.account')}</p>
         </div>
       </div>
 
@@ -84,10 +86,10 @@ export function ManualPaymentInstructions({
           <div className="text-center sm:text-left">
             <p className="text-sm font-medium flex items-center gap-1 justify-center sm:justify-start">
               <QrCode className="h-4 w-4" />
-              Scan QR Code
+              {t('manualPayment.scanQR')}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Scan with {paymentMethod.name} App to pay directly
+              {t('manualPayment.scanWith')} {paymentMethod.name} {t('manualPayment.appToPay')}
             </p>
             <Button 
               type="button"
@@ -96,7 +98,7 @@ export function ManualPaymentInstructions({
               className="mt-2"
               onClick={() => setShowQrModal(true)}
             >
-              View Larger
+              {t('manualPayment.viewLarger')}
             </Button>
           </div>
         </div>
@@ -116,7 +118,7 @@ export function ManualPaymentInstructions({
               ) : (
                 <QrCode className="h-5 w-5" />
               )}
-              {paymentMethod.name} QR Code
+              {paymentMethod.name} {t('manualPayment.qrCode')}
             </DialogTitle>
           </DialogHeader>
           <div className="flex justify-center p-4">
@@ -127,7 +129,7 @@ export function ManualPaymentInstructions({
             />
           </div>
           <p className="text-center text-sm text-muted-foreground">
-            Scan with {paymentMethod.name} App
+            {t('manualPayment.scanWithApp')} {paymentMethod.name}
           </p>
         </DialogContent>
       </Dialog>
@@ -139,13 +141,13 @@ export function ManualPaymentInstructions({
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-muted/50 px-2 text-muted-foreground">or</span>
+            <span className="bg-muted/50 px-2 text-muted-foreground">{t('manualPayment.or')}</span>
           </div>
         </div>
       )}
 
       <div className="bg-background p-3 rounded-lg border">
-        <p className="text-sm text-muted-foreground mb-1">Account Number:</p>
+        <p className="text-sm text-muted-foreground mb-1">{t('manualPayment.accountNumber')}</p>
         <div className="flex items-center gap-2">
           <code className="text-xl font-bold tracking-wider flex-1">{paymentMethod.account_number}</code>
           <Button 
@@ -161,18 +163,15 @@ export function ManualPaymentInstructions({
       </div>
 
       <div className="text-sm text-muted-foreground bg-warning/10 p-3 rounded-lg border border-warning/20">
-        <p className="font-medium text-warning mb-1">📱 How to pay:</p>
+        <p className="font-medium text-warning mb-1">📱 {t('manualPayment.howToPay')}</p>
         <p className="text-warning/80">
-          {paymentMethod.qr_code_url 
-            ? `${paymentMethod.name} App → Scan QR / Send Money → Send to number → Copy Transaction ID`
-            : `Open ${paymentMethod.name} App → Send Money → Send to number → Copy Transaction ID`
-          }
+          {paymentMethod.name} → {t('manualPayment.scanQR')} / Send Money → {t('manualPayment.transactionId')}
         </p>
       </div>
 
       <div>
         <Label htmlFor="transactionId" className="text-sm font-medium">
-          Transaction ID / TrxID *
+          {t('manualPayment.transactionId')} *
         </Label>
         <Input
           id="transactionId"
@@ -183,7 +182,7 @@ export function ManualPaymentInstructions({
           required
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Enter the Transaction ID you receive after completing the payment
+          {t('manualPayment.enterTrxId')}
         </p>
       </div>
     </div>

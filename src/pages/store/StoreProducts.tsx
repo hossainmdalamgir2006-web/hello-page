@@ -15,6 +15,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { StoreProductCard } from "@/components/store/StoreProductCard";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductGridSkeleton, FilterSkeleton } from "@/components/skeletons";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Product {
   id: string;
@@ -34,12 +35,7 @@ interface Product {
   variantSizes?: string[];
 }
 
-const sortOptions = [
-  { value: "newest", label: "Newest" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "name", label: "Name A-Z" },
-];
+// Sort options will be created inside the component to use t()
 
 /* ─── Collapsible Filter Section ─── */
 function FilterSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
@@ -265,6 +261,7 @@ function FilterPanel({
 }
 
 export default function StoreProducts() {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -522,10 +519,17 @@ export default function StoreProducts() {
     showSale, setShowSale, showNew, setShowNew, clearFilters,
   };
 
+  const sortOptions = [
+    { value: "newest", label: t('storeProducts.newest') },
+    { value: "price-asc", label: t('storeProducts.priceLowHigh') },
+    { value: "price-desc", label: t('storeProducts.priceHighLow') },
+    { value: "name", label: t('storeProducts.nameAZ') },
+  ];
+
   return (
     <>
       <SEOHead
-        title={showSale ? "Sale Items" : showNew ? "New Arrivals" : "All Products"}
+        title={showSale ? t('storeProducts.saleItems') : showNew ? t('storeProducts.newArrivals') : t('storeProducts.allProducts')}
         description="Browse our collection of fashion, clothing and accessories. Filter by category, price and more."
         canonicalPath="/products"
       />
@@ -533,10 +537,10 @@ export default function StoreProducts() {
       <section className="bg-gradient-to-r from-store-primary to-store-secondary py-12">
         <div className="container mx-auto px-4 text-center">
           <h1 className="font-display text-3xl md:text-4xl font-bold text-store-primary-foreground mb-2">
-            {showSale ? "Sale Items" : showNew ? "New Arrivals" : "All Products"}
+            {showSale ? t('storeProducts.saleItems') : showNew ? t('storeProducts.newArrivals') : t('storeProducts.allProducts')}
           </h1>
           <p className="text-store-primary-foreground/80">
-            {filteredProducts.length} products available
+            {filteredProducts.length} {t('storeProducts.productsAvailable')}
           </p>
         </div>
       </section>
@@ -547,7 +551,7 @@ export default function StoreProducts() {
           <aside className="hidden lg:block w-[260px] shrink-0">
             <div className="sticky top-20">
               <ScrollArea className="max-h-[calc(100vh-6rem)] pr-3">
-                <h3 className="font-semibold text-base mb-4">Filters</h3>
+                <h3 className="font-semibold text-base mb-4">{t('storeProducts.filters')}</h3>
                 {loading ? <FilterSkeleton /> : <FilterPanel {...filterPanelProps} />}
               </ScrollArea>
             </div>
@@ -558,21 +562,21 @@ export default function StoreProducts() {
             {/* Top Bar */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="flex-1">
-                <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-sm" />
+                <Input placeholder={t('storeProducts.searchProducts')} value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-sm" />
               </div>
               <div className="flex items-center gap-3">
                 <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
                   <SheetTrigger asChild>
                     <Button variant="outline" className="gap-2 lg:hidden">
                       <SlidersHorizontal className="h-4 w-4" />
-                      Filters
+                      {t('storeProducts.filters')}
                       {activeFilterCount > 0 && (
                         <Badge className="bg-store-primary text-store-primary-foreground ml-1">{activeFilterCount}</Badge>
                       )}
                     </Button>
                   </SheetTrigger>
                   <SheetContent>
-                    <SheetHeader><SheetTitle>Filters</SheetTitle></SheetHeader>
+                    <SheetHeader><SheetTitle>{t('storeProducts.filters')}</SheetTitle></SheetHeader>
                     <ScrollArea className="h-[calc(100vh-6rem)] py-6">
                       <FilterPanel {...filterPanelProps} onApply={() => setFiltersOpen(false)} />
                     </ScrollArea>
@@ -657,7 +661,7 @@ export default function StoreProducts() {
                   </Badge>
                 )}
                 <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={clearFilters}>
-                  Clear all
+                  {t('storeProducts.clearAllFilters')}
                 </Button>
               </div>
             )}
@@ -670,9 +674,9 @@ export default function StoreProducts() {
                 <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-store-muted flex items-center justify-center">
                   <Filter className="w-10 h-10 text-muted-foreground" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">No products found</h3>
-                <p className="text-muted-foreground mb-4">Try adjusting your filters or search terms</p>
-                <Button variant="outline" onClick={clearFilters}>Clear Filters</Button>
+                <h3 className="font-display text-xl font-semibold mb-2">{t('storeProducts.noProducts')}</h3>
+                <p className="text-muted-foreground mb-4">{t('storeProducts.adjustFilters')}</p>
+                <Button variant="outline" onClick={clearFilters}>{t('storeProducts.clearFilters')}</Button>
               </div>
             ) : (
               <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6" : "space-y-4"}>
