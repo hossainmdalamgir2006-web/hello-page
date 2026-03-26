@@ -1,28 +1,17 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useTranslations } from '@/hooks/useTranslations';
 
-type Language = string;
-
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: string;
+  setLanguage: (lang: string) => void;
   t: (key: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem('language');
-    return saved || 'en';
-  });
-
-  const { data: translationMap } = useTranslations(language);
-
-  useEffect(() => {
-    localStorage.setItem('language', language);
-    document.documentElement.lang = language;
-  }, [language]);
+  // Always English — Google Translate handles other languages in the browser
+  const { data: translationMap } = useTranslations('en');
 
   const t = (key: string): string => {
     if (!translationMap) return key;
@@ -30,7 +19,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language: 'en', setLanguage: () => {}, t }}>
       {children}
     </LanguageContext.Provider>
   );
