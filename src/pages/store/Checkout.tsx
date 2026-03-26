@@ -564,8 +564,8 @@ export default function Checkout() {
                     <p className="text-xs text-muted-foreground mt-1">{t('checkout.phoneFormat')}</p>
                   </div>
                   <div>
-                    <Label htmlFor="address">Address *</Label>
-                    <Input id="address" name="address" value={formData.address} onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder="House/Flat No, Street, Area" maxLength={200} required />
+                    <Label htmlFor="address">{t('checkout.address')} *</Label>
+                    <Input id="address" name="address" value={formData.address} onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder={t('checkout.houseFlatNo')} maxLength={200} required />
                     <p className="text-xs text-muted-foreground mt-1">{formData.address.length}/200</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
