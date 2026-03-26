@@ -485,7 +485,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                   <Separator />
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>{formatPrice(selectedOrder.subtotal.toFixed(2))}</span>
+                    <span>{formatPrice(selectedOrder.subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
