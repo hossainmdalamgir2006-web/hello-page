@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 import { ProductCard } from "@/components/products/ProductCard";
 import { ProductFilters, type FilterState } from "@/components/products/ProductFilters";
