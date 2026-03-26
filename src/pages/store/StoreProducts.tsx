@@ -674,9 +674,9 @@ export default function StoreProducts() {
                 <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-store-muted flex items-center justify-center">
                   <Filter className="w-10 h-10 text-muted-foreground" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2">No products found</h3>
-                <p className="text-muted-foreground mb-4">Try adjusting your filters or search terms</p>
-                <Button variant="outline" onClick={clearFilters}>Clear Filters</Button>
+                <h3 className="font-display text-xl font-semibold mb-2">{t('storeProducts.noProducts')}</h3>
+                <p className="text-muted-foreground mb-4">{t('storeProducts.adjustFilters')}</p>
+                <Button variant="outline" onClick={clearFilters}>{t('storeProducts.clearFilters')}</Button>
               </div>
             ) : (
               <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6" : "space-y-4"}>
