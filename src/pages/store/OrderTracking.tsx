@@ -457,7 +457,7 @@ export default function OrderTracking() {
                           </Badge>
                         ) : estimate.daysUntilMin === 0 ? (
                           <Badge className="bg-store-accent text-store-accent-foreground">
-                            Arriving Soon
+                            {t('orderTracking.arrivingSoon')}
                           </Badge>
                         ) : (
                           <p className="text-sm text-muted-foreground">
