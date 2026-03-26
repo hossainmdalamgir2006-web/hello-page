@@ -98,13 +98,13 @@ export function FlashSaleSection({
           {/* Countdown */}
           {endTime && !expired && (
             <div className="flex items-center gap-3">
-              <TimerBlock value={timeLeft.days} label="Days" />
+              <TimerBlock value={timeLeft.days} label={t('flashSale.days')} />
               <span className="text-white/60 text-2xl font-bold mb-4">:</span>
-              <TimerBlock value={timeLeft.hours} label="Hours" />
+              <TimerBlock value={timeLeft.hours} label={t('flashSale.hours')} />
               <span className="text-white/60 text-2xl font-bold mb-4">:</span>
-              <TimerBlock value={timeLeft.minutes} label="Mins" />
+              <TimerBlock value={timeLeft.minutes} label={t('flashSale.mins')} />
               <span className="text-white/60 text-2xl font-bold mb-4">:</span>
-              <TimerBlock value={timeLeft.seconds} label="Secs" />
+              <TimerBlock value={timeLeft.seconds} label={t('flashSale.secs')} />
             </div>
           )}
         </div>
