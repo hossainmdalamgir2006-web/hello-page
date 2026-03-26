@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut,
   Tag, Award, Truck, MessageSquare, FileText, Ticket, UserCog, User,
   ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Home, Star,
-  ChevronDown, ExternalLink, HardDrive, Plug,
+  ChevronDown, ExternalLink, HardDrive, Plug, Shield, ClipboardList, Mail, Bell,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -128,6 +128,10 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
       items: [
         { title: t('nav.roles'), url: "/admin/role-management", icon: UserCog, roles: ['admin'] },
         { title: t('nav.settings'), url: role === 'manager' ? '/manager/settings' : role === 'support' ? '/support/settings' : '/admin/settings', icon: Settings, roles: ['admin', 'manager', 'support'] },
+        { title: "Security", url: "/admin/settings/security", icon: Shield, roles: ['admin'] },
+        { title: "Audit Log", url: "/admin/settings/audit", icon: ClipboardList, roles: ['admin'] },
+        { title: "Email Templates", url: "/admin/settings/emails", icon: Mail, roles: ['admin'] },
+        { title: "Alerts & Email", url: "/admin/settings/notifications", icon: Bell, roles: ['admin'] },
         { title: "Backup", url: "/admin/settings/backup", icon: HardDrive, roles: ['admin'] },
         { title: "Integrations", url: "/admin/settings/integrations", icon: Plug, roles: ['admin'] },
       ],
