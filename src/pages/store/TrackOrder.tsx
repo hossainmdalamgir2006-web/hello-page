@@ -148,7 +148,7 @@ export default function TrackOrder() {
 
                   {showPhoneResults && phoneResults.length > 0 && (
                     <div className="mt-6 space-y-3">
-                      <h3 className="font-medium text-sm text-foreground">Found {phoneResults.length} order(s):</h3>
+                      <h3 className="font-medium text-sm text-foreground">{t('track.foundOrders')} {phoneResults.length} {t('track.orders')}:</h3>
                       {phoneResults.map((order) => (
                         <div key={order.orderNumber} className="p-4 border rounded-lg hover:border-store-primary/50 cursor-pointer transition-colors" onClick={() => navigate(`/track/${order.orderNumber}`)}>
                           <div className="flex items-center justify-between mb-2">
