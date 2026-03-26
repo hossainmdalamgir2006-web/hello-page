@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { CreditCard, Truck, Mail, ChevronLeft, ShieldCheck, Tag, X, Smartphone, MapPin, Loader2, Building, Save, Clock, Sparkles, Building2, AlertCircle, FileText } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
