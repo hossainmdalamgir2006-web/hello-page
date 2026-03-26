@@ -519,7 +519,7 @@ export default function OrderTracking() {
             <CardContent className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Order Number</p>
+                  <p className="text-sm text-muted-foreground">{t('orderTracking.orderDetails').split(' ')[0]} {t('track.orderNumber')}</p>
                   <p className="font-medium">{order.order_number}</p>
                 </div>
                 <div>
