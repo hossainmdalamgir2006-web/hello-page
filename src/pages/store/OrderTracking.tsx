@@ -24,6 +24,7 @@ import { Progress } from "@/components/ui/progress";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface OrderItem {
   id: string;
