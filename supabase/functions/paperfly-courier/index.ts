@@ -39,7 +39,7 @@ serve(async (req) => {
     const environment = dbCredentials?.environment || "production";
 
     if (!apiToken) {
-      throw new Error("Paperfly API token not configured. Please set it in Settings > Integrations.");
+      throw new Error("Paperfly API token not configured. Please set it in System Settings > Integrations.");
     }
 
     const BASE_URL = environment === "sandbox"
