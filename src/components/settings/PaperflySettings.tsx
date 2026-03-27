@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { Truck, Eye, EyeOff, Save, CheckCircle2, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,38 +12,43 @@ import { toast } from "sonner";
 export function PaperflySettings() {
   const { settings, loading, saving, updateMultipleSettings, getSettingValue } = useStoreSettings();
 
-  const [apiToken, setApiToken] = useState("");
-  const [environment, setEnvironment] = useState<"sandbox" | "production">("production");
-  const [showToken, setShowToken] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [paperflyKey, setPaperflyKey] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<"idle" | "success" | "error">("idle");
 
   useEffect(() => {
     if (!loading && settings.length > 0) {
-      setApiToken(getSettingValue("PAPERFLY_API_TOKEN"));
-      setEnvironment((getSettingValue("PAPERFLY_ENVIRONMENT") || "production") as "sandbox" | "production");
+      setUsername(getSettingValue("PAPERFLY_USERNAME"));
+      setPassword(getSettingValue("PAPERFLY_PASSWORD"));
+      setPaperflyKey(getSettingValue("PAPERFLY_KEY"));
     }
   }, [loading, settings]);
 
   const handleSave = async () => {
     await updateMultipleSettings([
-      { key: "PAPERFLY_API_TOKEN", value: apiToken },
-      { key: "PAPERFLY_ENVIRONMENT", value: environment },
+      { key: "PAPERFLY_USERNAME", value: username },
+      { key: "PAPERFLY_PASSWORD", value: password },
+      { key: "PAPERFLY_KEY", value: paperflyKey },
     ]);
     setConnectionStatus("idle");
   };
 
   const testConnection = async () => {
-    if (!apiToken) {
-      toast.error("Please enter your API Token");
+    if (!username || !password || !paperflyKey) {
+      toast.error("Please fill in all credentials");
       return;
     }
     setTesting(true);
     setConnectionStatus("idle");
     try {
       await updateMultipleSettings([
-        { key: "PAPERFLY_API_TOKEN", value: apiToken },
-        { key: "PAPERFLY_ENVIRONMENT", value: environment },
+        { key: "PAPERFLY_USERNAME", value: username },
+        { key: "PAPERFLY_PASSWORD", value: password },
+        { key: "PAPERFLY_KEY", value: paperflyKey },
       ]);
       await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -74,7 +78,7 @@ export function PaperflySettings() {
     );
   }
 
-  const isConfigured = Boolean(apiToken);
+  const isConfigured = Boolean(username && password && paperflyKey);
 
   return (
     <Card>
@@ -109,14 +113,23 @@ export function PaperflySettings() {
       <CardContent className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="paperfly-api-token">API Token *</Label>
+            <Label htmlFor="paperfly-username">Merchant Username *</Label>
+            <Input
+              id="paperfly-username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your Paperfly username"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="paperfly-password">Password *</Label>
             <div className="relative">
               <Input
-                id="paperfly-api-token"
-                type={showToken ? "text" : "password"}
-                value={apiToken}
-                onChange={(e) => setApiToken(e.target.value)}
-                placeholder="Enter your Paperfly API Token"
+                id="paperfly-password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your Paperfly password"
                 className="pr-10"
               />
               <Button
@@ -124,23 +137,33 @@ export function PaperflySettings() {
                 variant="ghost"
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                onClick={() => setShowToken(!showToken)}
+                onClick={() => setShowPassword(!showPassword)}
               >
-                {showToken ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
               </Button>
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="paperfly-environment">Environment</Label>
-            <Select value={environment} onValueChange={(v) => setEnvironment(v as "sandbox" | "production")}>
-              <SelectTrigger id="paperfly-environment">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="sandbox">Sandbox (Testing)</SelectItem>
-                <SelectItem value="production">Production (Live)</SelectItem>
-              </SelectContent>
-            </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="paperfly-key">Paperfly Key *</Label>
+          <div className="relative">
+            <Input
+              id="paperfly-key"
+              type={showKey ? "text" : "password"}
+              value={paperflyKey}
+              onChange={(e) => setPaperflyKey(e.target.value)}
+              placeholder="e.g. Paperfly_~La?Rj73FcLm"
+              className="pr-10"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+              onClick={() => setShowKey(!showKey)}
+            >
+              {showKey ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+            </Button>
           </div>
         </div>
 
@@ -149,19 +172,19 @@ export function PaperflySettings() {
             <Save className="h-4 w-4" />
             {saving ? "Saving..." : "Save Credentials"}
           </Button>
-          <Button variant="outline" onClick={testConnection} disabled={testing || !apiToken} className="gap-2">
+          <Button variant="outline" onClick={testConnection} disabled={testing || !isConfigured} className="gap-2">
             {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             Test Connection
           </Button>
         </div>
 
         <div className="rounded-lg bg-muted/50 p-4">
-          <h4 className="font-medium mb-2">How to get your API Token:</h4>
+          <h4 className="font-medium mb-2">How to get your credentials:</h4>
           <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
             <li>Log in to your Paperfly merchant portal at merchant.paperfly.com.bd</li>
             <li>Go to Settings → API Integration</li>
-            <li>Copy your API Token</li>
-            <li>Paste it here, select the environment and click Save</li>
+            <li>Copy your <strong>Username</strong>, <strong>Password</strong>, and <strong>Paperfly Key</strong></li>
+            <li>Paste them here and click Save</li>
           </ol>
         </div>
       </CardContent>
