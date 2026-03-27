@@ -64,7 +64,7 @@ export function GoogleSearchConsoleSettings() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white border overflow-hidden">
-              <img src="/logos/google-search-console.svg" alt="Google Search Console" className="h-8 w-8 object-contain" />
+              <img src="/logos/google-search-console.png" alt="Google Search Console" className="h-8 w-8 object-contain" />
             </div>
             <div>
               <CardTitle className="flex items-center gap-2">
