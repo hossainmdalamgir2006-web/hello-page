@@ -84,8 +84,8 @@ export function PaperflySettings() {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
-            <Truck className="h-5 w-5 text-blue-500" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white border overflow-hidden">
+            <img src="/logos/paperfly.svg" alt="Paperfly" className="h-8 w-8 object-contain" />
           </div>
           <div>
             <CardTitle className="flex items-center gap-2">
