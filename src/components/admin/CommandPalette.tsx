@@ -75,7 +75,7 @@ export function CommandPalette() {
       { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage", roles: ["admin"], keywords: ["home", "banner", "carousel"] },
       { label: "Role Management", icon: UserCog, path: "/admin/roles", roles: ["admin"] },
       { label: "Profile", icon: User, path: `${basePath}/profile`, roles: ["admin", "manager", "support"] },
-      { label: "Settings", icon: Settings, path: "/admin/settings", roles: ["admin"] },
+      { label: "System Settings", icon: Settings, path: "/admin/system-settings", roles: ["admin"] },
     ],
     [basePath, role]
   );

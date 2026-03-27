@@ -158,15 +158,16 @@ const App = () => (
             <Route path="/admin/orders" element={<Orders />} />
             <Route path="/admin/analytics" element={<Analytics />} />
             <Route path="/admin/customers" element={<Customers />} />
-            <Route path="/admin/settings" element={<Navigate to="/admin/settings/store" replace />} />
-            <Route path="/admin/settings/store" element={<SettingsStore />} />
-            <Route path="/admin/settings/payments" element={<SettingsPayments />} />
-            <Route path="/admin/settings/emails" element={<SettingsEmails />} />
-            <Route path="/admin/settings/notifications" element={<SettingsNotifications />} />
-            <Route path="/admin/settings/security" element={<SettingsSecurity />} />
-            <Route path="/admin/settings/audit" element={<SettingsAudit />} />
-            <Route path="/admin/settings/backup" element={<SettingsBackup />} />
-            <Route path="/admin/settings/integrations" element={<SettingsIntegrations />} />
+            <Route path="/admin/settings" element={<Navigate to="/admin/system-settings/store" replace />} />
+            <Route path="/admin/system-settings" element={<Navigate to="/admin/system-settings/store" replace />} />
+            <Route path="/admin/system-settings/store" element={<SettingsStore />} />
+            <Route path="/admin/system-settings/payments" element={<SettingsPayments />} />
+            <Route path="/admin/system-settings/emails" element={<SettingsEmails />} />
+            <Route path="/admin/system-settings/notifications" element={<SettingsNotifications />} />
+            <Route path="/admin/system-settings/security" element={<SettingsSecurity />} />
+            <Route path="/admin/system-settings/audit" element={<SettingsAudit />} />
+            <Route path="/admin/system-settings/backup" element={<SettingsBackup />} />
+            <Route path="/admin/system-settings/integrations" element={<SettingsIntegrations />} />
             <Route path="/admin/shipping" element={<Shipping />} />
             <Route path="/admin/messages" element={<Messages />} />
             <Route path="/admin/reports" element={<Reports />} />
