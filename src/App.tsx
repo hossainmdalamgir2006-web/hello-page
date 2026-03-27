@@ -167,9 +167,9 @@ const App = () => (
             <Route path="/admin/messages" element={<Messages />} />
             <Route path="/admin/reports" element={<Reports />} />
             <Route path="/admin/coupons" element={<Coupons />} />
-            <Route path="/admin/profile" element={<ProfileLayout />}>
+            <Route path="/admin/account-settings" element={<ProfileLayout />}>
               <Route index element={<ProfilePersonal />} />
-              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="personal-info" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
               <Route path="login-activity" element={<ProfileSessions />} />
