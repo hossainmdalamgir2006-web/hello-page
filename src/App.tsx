@@ -75,8 +75,6 @@ const ProfilePersonal = lazy(() => import("./pages/profile/PersonalInfoPage"));
 const ProfilePassword = lazy(() => import("./pages/profile/PasswordPage"));
 const ProfileSecurity = lazy(() => import("./pages/profile/SecurityPage"));
 const ProfileSessions = lazy(() => import("./pages/profile/SessionsPage"));
-const ProfileSessionsActive = lazy(() => import("./pages/profile/SessionsActivePage"));
-const ProfileSessionsActivity = lazy(() => import("./pages/profile/SessionsActivityPage"));
 const Brands = lazy(() => import("./pages/Brands"));
 const Login = lazy(() => import("./pages/Login"));
 
