@@ -177,7 +177,7 @@ serve(async (req) => {
 
     const credentials = await getCredentialsFromDB(supabaseClient);
     if (!credentials || !credentials.clientId || !credentials.clientSecret) {
-      throw new Error("Pathao API credentials not configured. Please set them in Settings > Integrations.");
+      throw new Error("Pathao API credentials not configured. Please set them in System Settings > Integrations.");
     }
 
     const baseUrl = getBaseUrl(credentials.environment);

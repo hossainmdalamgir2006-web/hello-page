@@ -39,7 +39,7 @@ serve(async (req) => {
     const apiToken = dbCredentials?.apiToken || Deno.env.get("REDX_API_TOKEN");
 
     if (!apiToken) {
-      throw new Error("RedX API token not configured. Please set it in Settings > Integrations.");
+      throw new Error("RedX API token not configured. Please set it in System Settings > Integrations.");
     }
 
     const headers = {

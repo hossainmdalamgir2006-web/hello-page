@@ -43,7 +43,7 @@ serve(async (req) => {
     const userId = dbCredentials?.userId || Deno.env.get("ECOURIER_USER_ID") || "";
 
     if (!apiKey || !apiSecret) {
-      throw new Error("eCourier credentials not configured. Please set them in Settings > Integrations.");
+      throw new Error("eCourier credentials not configured. Please set them in System Settings > Integrations.");
     }
 
     const headers = {
