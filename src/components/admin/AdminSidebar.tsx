@@ -151,12 +151,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
   const profileItems: MenuItem[] = [
     { title: "Personal Info", url: `${basePath}/profile/personal`, icon: User, roles: ['admin', 'manager', 'support'] },
     { title: "Password", url: `${basePath}/profile/password`, icon: Lock, roles: ['admin', 'manager', 'support'] },
-  ].filter(item => role && item.roles.includes(role));
-
-  const securitySubItems: MenuItem[] = [
-    { title: "Two-Factor Auth", url: `${basePath}/profile/security/2fa`, icon: ShieldCheck, roles: ['admin', 'manager', 'support'] },
-    { title: "Recovery Codes", url: `${basePath}/profile/security/recovery`, icon: KeyRound, roles: ['admin', 'manager', 'support'] },
-    { title: "Trusted Devices", url: `${basePath}/profile/security/devices`, icon: Smartphone, roles: ['admin', 'manager', 'support'] },
+    { title: "Security", url: `${basePath}/profile/security`, icon: Shield, roles: ['admin', 'manager', 'support'] },
   ].filter(item => role && item.roles.includes(role));
 
   const sessionsSubItems: MenuItem[] = [

@@ -228,12 +228,7 @@ const App = () => (
               <Route index element={<ProfilePersonal />} />
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
-              <Route path="security" element={<ProfileSecurity />}>
-                <Route index element={<ProfileSecurity2FA />} />
-                <Route path="2fa" element={<ProfileSecurity2FA />} />
-                <Route path="recovery" element={<ProfileSecurityRecovery />} />
-                <Route path="devices" element={<ProfileSecurityDevices />} />
-              </Route>
+              <Route path="security" element={<ProfileSecurity />} />
               <Route path="sessions" element={<ProfileSessions />}>
                 <Route index element={<ProfileSessionsActive />} />
                 <Route path="active" element={<ProfileSessionsActive />} />
