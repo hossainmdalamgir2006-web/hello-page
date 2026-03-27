@@ -1,12 +1,13 @@
-import { Outlet, Navigate, useLocation } from 'react-router-dom';
+import { TwoFactorSetup } from '@/components/profile/TwoFactorSetup';
+import { RecoveryCodes } from '@/components/profile/RecoveryCodes';
+import { TrustedDevices } from '@/components/profile/TrustedDevices';
 
 export default function SecurityPage() {
-  const location = useLocation();
-  const basePath = location.pathname.match(/^\/(admin|manager|support)\/profile\/security/)?.[0];
-  
-  if (basePath && (location.pathname === basePath || location.pathname === `${basePath}/`)) {
-    return <Navigate to={`${basePath}/2fa`} replace />;
-  }
-
-  return <Outlet />;
+  return (
+    <div className="space-y-6">
+      <TwoFactorSetup />
+      <RecoveryCodes />
+      <TrustedDevices />
+    </div>
+  );
 }
