@@ -172,11 +172,7 @@ const App = () => (
               <Route path="personal" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
-              <Route path="sessions" element={<ProfileSessions />}>
-                <Route index element={<ProfileSessionsActive />} />
-                <Route path="active" element={<ProfileSessionsActive />} />
-                <Route path="activity" element={<ProfileSessionsActivity />} />
-              </Route>
+              <Route path="sessions" element={<ProfileSessions />} />
             </Route>
             
             <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
