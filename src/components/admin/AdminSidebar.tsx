@@ -149,10 +149,10 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
     .filter(group => group.items.length > 0);
 
   const profileItems: MenuItem[] = [
-    { title: "Personal Info", url: `${basePath}/profile/personal`, icon: User, roles: ['admin', 'manager', 'support'] },
-    { title: "Password", url: `${basePath}/profile/password`, icon: Lock, roles: ['admin', 'manager', 'support'] },
-    { title: "Security", url: `${basePath}/profile/security`, icon: Shield, roles: ['admin', 'manager', 'support'] },
-    { title: "Login Activity", url: `${basePath}/profile/login-activity`, icon: History, roles: ['admin', 'manager', 'support'] },
+    { title: "Personal Info", url: `${basePath}/account-settings/personal-info`, icon: User, roles: ['admin', 'manager', 'support'] },
+    { title: "Password", url: `${basePath}/account-settings/password`, icon: Lock, roles: ['admin', 'manager', 'support'] },
+    { title: "Security", url: `${basePath}/account-settings/security`, icon: Shield, roles: ['admin', 'manager', 'support'] },
+    { title: "Login Activity", url: `${basePath}/account-settings/login-activity`, icon: History, roles: ['admin', 'manager', 'support'] },
   ].filter(item => role && item.roles.includes(role));
 
   const renderNavItem = (item: MenuItem, isEnd?: boolean) => {

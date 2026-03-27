@@ -167,9 +167,9 @@ const App = () => (
             <Route path="/admin/messages" element={<Messages />} />
             <Route path="/admin/reports" element={<Reports />} />
             <Route path="/admin/coupons" element={<Coupons />} />
-            <Route path="/admin/profile" element={<ProfileLayout />}>
+            <Route path="/admin/account-settings" element={<ProfileLayout />}>
               <Route index element={<ProfilePersonal />} />
-              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="personal-info" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
               <Route path="login-activity" element={<ProfileSessions />} />
@@ -198,9 +198,9 @@ const App = () => (
             <Route path="/manager/trash" element={<GlobalTrash />} />
             <Route path="/manager/settings" element={<ManagerSettings />} />
             <Route path="/manager/messages" element={<Messages />} />
-            <Route path="/manager/profile" element={<ProfileLayout />}>
+            <Route path="/manager/account-settings" element={<ProfileLayout />}>
               <Route index element={<ProfilePersonal />} />
-              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="personal-info" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
               <Route path="login-activity" element={<ProfileSessions />} />
@@ -214,9 +214,9 @@ const App = () => (
             <Route path="/support/customers" element={<Customers />} />
             <Route path="/support/messages" element={<Messages />} />
             <Route path="/support/settings" element={<SupportSettings />} />
-            <Route path="/support/profile" element={<ProfileLayout />}>
+            <Route path="/support/account-settings" element={<ProfileLayout />}>
               <Route index element={<ProfilePersonal />} />
-              <Route path="personal" element={<ProfilePersonal />} />
+              <Route path="personal-info" element={<ProfilePersonal />} />
               <Route path="password" element={<ProfilePassword />} />
               <Route path="security" element={<ProfileSecurity />} />
               <Route path="login-activity" element={<ProfileSessions />} />

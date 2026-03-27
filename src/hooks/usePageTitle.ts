@@ -36,7 +36,7 @@ const pageTitles: Record<string, string> = {
   "/admin/reports": "Reports",
   "/admin/inventory": "Inventory",
   "/admin/coupons": "Coupons",
-  "/admin/profile": "Profile",
+  "/admin/account-settings": "Account Settings",
   "/admin/roles": "Role Management",
   "/admin/abandoned-carts": "Abandoned Carts",
   
@@ -46,7 +46,7 @@ const pageTitles: Record<string, string> = {
   "/manager/products": "Products",
   "/manager/customers": "Customers",
   "/manager/messages": "Messages",
-  "/manager/profile": "Profile",
+  "/manager/account-settings": "Account Settings",
   "/manager/shipping": "Shipping",
   "/manager/coupons": "Coupons",
   
@@ -55,7 +55,7 @@ const pageTitles: Record<string, string> = {
   "/support/orders": "Orders",
   "/support/customers": "Customers",
   "/support/messages": "Messages",
-  "/support/profile": "Profile",
+  "/support/account-settings": "Account Settings",
 };
 
 export function usePageTitle(customTitle?: string) {

@@ -15,7 +15,7 @@ const routeLabels: Record<string, string> = {
   messages: "Messages",
   reports: "Reports",
   roles: "Roles",
-  profile: "Profile",
+  "account-settings": "Account Settings",
   settings: "System Settings",
   "system-settings": "System Settings",
   "abandoned-carts": "Abandoned Carts",
@@ -35,15 +35,10 @@ const routeLabels: Record<string, string> = {
   audit: "Audit Log",
   backup: "Backup & Restore",
   integrations: "Integrations",
-  // Profile sub-pages
-  personal: "Personal Info",
+  // Account Settings sub-pages
+  "personal-info": "Personal Info",
   password: "Password",
-  sessions: "Sessions",
-  active: "Active Sessions",
-  activity: "Login Activity",
-  "2fa": "Two-Factor Auth",
-  recovery: "Recovery Codes",
-  devices: "Trusted Devices",
+  "login-activity": "Login Activity",
 };
 
 export function AdminBreadcrumb() {

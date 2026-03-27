@@ -74,7 +74,7 @@ export function CommandPalette() {
       { label: "Abandoned Carts", icon: ShoppingBasket, path: "/admin/abandoned-carts", roles: ["admin"] },
       { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage", roles: ["admin"], keywords: ["home", "banner", "carousel"] },
       { label: "Role Management", icon: UserCog, path: "/admin/roles", roles: ["admin"] },
-      { label: "Profile", icon: User, path: `${basePath}/profile`, roles: ["admin", "manager", "support"] },
+      { label: "Account Settings", icon: User, path: `${basePath}/account-settings`, roles: ["admin", "manager", "support"] },
       { label: "System Settings", icon: Settings, path: "/admin/system-settings", roles: ["admin"] },
     ],
     [basePath, role]
