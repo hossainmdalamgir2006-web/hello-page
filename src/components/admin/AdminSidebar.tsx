@@ -151,12 +151,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
   const profileItems: MenuItem[] = [
     { title: "Personal Info", url: `${basePath}/profile/personal`, icon: User, roles: ['admin', 'manager', 'support'] },
     { title: "Password", url: `${basePath}/profile/password`, icon: Lock, roles: ['admin', 'manager', 'support'] },
-  ].filter(item => role && item.roles.includes(role));
-
-  const securitySubItems: MenuItem[] = [
-    { title: "Two-Factor Auth", url: `${basePath}/profile/security/2fa`, icon: ShieldCheck, roles: ['admin', 'manager', 'support'] },
-    { title: "Recovery Codes", url: `${basePath}/profile/security/recovery`, icon: KeyRound, roles: ['admin', 'manager', 'support'] },
-    { title: "Trusted Devices", url: `${basePath}/profile/security/devices`, icon: Smartphone, roles: ['admin', 'manager', 'support'] },
+    { title: "Security", url: `${basePath}/profile/security`, icon: Shield, roles: ['admin', 'manager', 'support'] },
   ].filter(item => role && item.roles.includes(role));
 
   const sessionsSubItems: MenuItem[] = [
@@ -288,7 +283,6 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
           {collapsed ? (
             <>
               {profileItems.map((item) => renderNavItem(item))}
-              {securitySubItems.map((item) => renderNavItem(item))}
               {sessionsSubItems.map((item) => renderNavItem(item))}
             </>
           ) : (
@@ -305,20 +299,6 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-0.5 pt-1">
                 {profileItems.map((item) => renderNavItem(item))}
-                
-                {/* Security sub-group */}
-                <Collapsible defaultOpen={false}>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors ml-2">
-                    <span className="flex items-center gap-3">
-                      <Shield className="h-4 w-4 shrink-0" />
-                      Security
-                    </span>
-                    <ChevronDown className="h-3 w-3 transition-transform [[data-state=open]>&]:rotate-180" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="ml-4 space-y-0.5">
-                    {securitySubItems.map((item) => renderNavItem(item))}
-                  </CollapsibleContent>
-                </Collapsible>
 
                 {/* Sessions sub-group */}
                 <Collapsible defaultOpen={false}>
