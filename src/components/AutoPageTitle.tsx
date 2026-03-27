@@ -46,7 +46,7 @@ const pageTitles: Record<string, string> = {
   "/manager/products": "Products",
   "/manager/customers": "Customers",
   "/manager/messages": "Messages",
-  "/manager/profile": "Profile",
+  "/manager/account-settings": "Account Settings",
   "/manager/shipping": "Shipping",
   "/manager/coupons": "Coupons",
   
