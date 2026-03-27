@@ -100,8 +100,8 @@ export function GoogleAnalyticsSettings() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <BarChart3 className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white border overflow-hidden">
+              <img src="/logos/google-analytics.svg" alt="Google Analytics" className="h-8 w-8 object-contain" />
             </div>
             <div>
               <CardTitle className="flex items-center gap-2">
