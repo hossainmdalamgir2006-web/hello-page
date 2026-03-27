@@ -55,7 +55,7 @@ const pageTitles: Record<string, string> = {
   "/support/orders": "Orders",
   "/support/customers": "Customers",
   "/support/messages": "Messages",
-  "/support/profile": "Profile",
+  "/support/account-settings": "Account Settings",
   "/support/settings": "Settings",
   
   // Manager extra pages
