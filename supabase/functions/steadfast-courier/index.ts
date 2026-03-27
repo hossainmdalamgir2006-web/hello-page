@@ -71,7 +71,7 @@ serve(async (req) => {
     }
 
     if (!apiKey || !secretKey) {
-      throw new Error("Steadfast API credentials not configured. Please set them in Settings > Integrations.");
+      throw new Error("Steadfast API credentials not configured. Please set them in System Settings > Integrations.");
     }
 
     const headers = {
