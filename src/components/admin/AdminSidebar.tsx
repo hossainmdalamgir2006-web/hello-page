@@ -284,10 +284,12 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
             </a>
           )}
 
-          {/* Account Group */}
+          {/* Profile Settings */}
           {collapsed ? (
             <>
-              {bottomMenuItems.map((item) => renderNavItem(item))}
+              {profileItems.map((item) => renderNavItem(item))}
+              {securitySubItems.map((item) => renderNavItem(item))}
+              {sessionsSubItems.map((item) => renderNavItem(item))}
             </>
           ) : (
             <Collapsible
@@ -297,15 +299,43 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
               <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
                 <span className="flex items-center gap-3">
                   <User className="h-4 w-4 shrink-0" />
-                  Account
+                  Profile Settings
                 </span>
                 <ChevronDown className={cn(
                   "h-3.5 w-3.5 transition-transform",
                   openGroups['account'] && "rotate-180"
                 )} />
               </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-1 pt-1">
-                {bottomMenuItems.map((item) => renderNavItem(item))}
+              <CollapsibleContent className="space-y-0.5 pt-1">
+                {profileItems.map((item) => renderNavItem(item))}
+                
+                {/* Security sub-group */}
+                <Collapsible defaultOpen={false}>
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors ml-2">
+                    <span className="flex items-center gap-3">
+                      <Shield className="h-4 w-4 shrink-0" />
+                      Security
+                    </span>
+                    <ChevronDown className="h-3 w-3 transition-transform [[data-state=open]>&]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="ml-4 space-y-0.5">
+                    {securitySubItems.map((item) => renderNavItem(item))}
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Sessions sub-group */}
+                <Collapsible defaultOpen={false}>
+                  <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors ml-2">
+                    <span className="flex items-center gap-3">
+                      <Monitor className="h-4 w-4 shrink-0" />
+                      Sessions
+                    </span>
+                    <ChevronDown className="h-3 w-3 transition-transform [[data-state=open]>&]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="ml-4 space-y-0.5">
+                    {sessionsSubItems.map((item) => renderNavItem(item))}
+                  </CollapsibleContent>
+                </Collapsible>
               </CollapsibleContent>
             </Collapsible>
           )}
