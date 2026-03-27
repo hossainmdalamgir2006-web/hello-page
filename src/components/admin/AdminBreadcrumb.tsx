@@ -17,6 +17,7 @@ const routeLabels: Record<string, string> = {
   roles: "Roles",
   profile: "Profile",
   settings: "System Settings",
+  "system-settings": "System Settings",
   "abandoned-carts": "Abandoned Carts",
   "role-management": "Role Management",
   brands: "Brands",
