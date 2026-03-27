@@ -297,10 +297,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
               onOpenChange={() => toggleGroup('account')}
             >
               <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
-                <span className="flex items-center gap-3">
-                  <User className="h-4 w-4 shrink-0" />
-                  Profile Settings
-                </span>
+                <span>Account Settings</span>
                 <ChevronDown className={cn(
                   "h-3.5 w-3.5 transition-transform",
                   openGroups['account'] && "rotate-180"
