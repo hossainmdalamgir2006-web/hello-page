@@ -1,8 +1,8 @@
 import { useState } from "react";
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
-  HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  RotateCcw, Star, MessageCircle, ChevronDown, Bell, KeyRound,
+  HelpCircle, LogOut, ChevronsLeft, ChevronsRight, Store, X,
+  RotateCcw, Star, MessageCircle, ChevronDown, Bell, KeyRound, User, Settings,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
