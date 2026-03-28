@@ -136,7 +136,8 @@ const App = () => (
             <Route path="addresses" element={<AccountAddresses />} />
             <Route path="security" element={<AccountSecurity />} />
             <Route path="support" element={<AccountSupport />} />
-            <Route path="settings" element={<AccountSettings />} />
+            <Route path="settings" element={<Navigate to="/myaccount/settings/personal-info" replace />} />
+            <Route path="settings/personal-info" element={<AccountSettings />} />
             <Route path="settings/password" element={<AccountPasswordPage />} />
             <Route path="returns" element={<AccountReturns />} />
             <Route path="reviews" element={<AccountReviews />} />

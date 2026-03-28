@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { User, Camera, Loader2, Mail, Phone, Calendar, Building2, Languages } from "lucide-react";
+import { User, Camera, Loader2, Mail, Phone, Calendar, Building2 } from "lucide-react";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -22,7 +22,10 @@ const profileSchema = z.object({
   gender: z.enum(["male", "female", "other", "prefer_not_to_say"]).optional().nullable(),
   company_name: z.string().optional(),
   bio: z.string().max(500, "Bio must be 500 characters or less").optional(),
-  language_preference: z.string().optional(),
+});
+
+const emailSchema = z.object({
+  newEmail: z.string().email('Invalid email address'),
 });
 
 
@@ -34,8 +37,10 @@ export default function AccountSettings() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
 
-  const profileForm = useForm({ resolver: zodResolver(profileSchema), defaultValues: { full_name: "", email: "", phone: "", date_of_birth: "", gender: null as any, company_name: "", bio: "", language_preference: "en" } });
+  const profileForm = useForm({ resolver: zodResolver(profileSchema), defaultValues: { full_name: "", email: "", phone: "", date_of_birth: "", gender: null as any, company_name: "", bio: "" } });
+  const emailForm = useForm<z.infer<typeof emailSchema>>({ resolver: zodResolver(emailSchema), defaultValues: { newEmail: "" } });
 
   useEffect(() => {
     if (!user) return;
@@ -45,7 +50,7 @@ export default function AccountSettings() {
         const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
         if (data) {
           setAvatarUrl(data.avatar_url);
-          profileForm.reset({ full_name: data.full_name || "", email: user.email || "", phone: data.phone || "", date_of_birth: data.date_of_birth || "", gender: data.gender || null, company_name: data.company_name || "", bio: data.bio || "", language_preference: data.language_preference || "en" });
+          profileForm.reset({ full_name: data.full_name || "", email: user.email || "", phone: data.phone || "", date_of_birth: data.date_of_birth || "", gender: data.gender || null, company_name: data.company_name || "", bio: data.bio || "" });
         }
       } catch (error) { console.error("Error:", error); }
       finally { setLoading(false); }
@@ -75,13 +80,27 @@ export default function AccountSettings() {
     if (!user) return;
     setSavingProfile(true);
     try {
-      const { error } = await supabase.from("profiles").update({ full_name: values.full_name, phone: values.phone || null, date_of_birth: values.date_of_birth || null, gender: values.gender || null, company_name: values.company_name || null, bio: values.bio || null, language_preference: values.language_preference || "en" }).eq("user_id", user.id);
+      const { error } = await supabase.from("profiles").update({ full_name: values.full_name, phone: values.phone || null, date_of_birth: values.date_of_birth || null, gender: values.gender || null, company_name: values.company_name || null, bio: values.bio || null }).eq("user_id", user.id);
       if (error) throw error;
       toast({ title: "Success", description: "Profile updated successfully" });
     } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
     finally { setSavingProfile(false); }
   };
 
+  const onEmailSubmit = async (values: z.infer<typeof emailSchema>) => {
+    if (!user) return;
+    setIsEmailLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ email: values.newEmail });
+      if (error) throw error;
+      emailForm.reset();
+      toast({ title: "Email Change Requested", description: "A confirmation link has been sent to your new email address." });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Email Update Failed", description: error.message });
+    } finally {
+      setIsEmailLoading(false);
+    }
+  };
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
@@ -238,31 +257,42 @@ export default function AccountSettings() {
 
           {/* Right Column */}
           <div className="space-y-6">
-            {/* Language Preference */}
+            {/* Change Email Card */}
             <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
               <div className="flex items-center gap-3 mb-4">
-                <div className="rounded-lg bg-accent/10 p-2"><Languages className="h-5 w-5 text-accent" /></div>
+                <div className="rounded-lg bg-accent/10 p-2"><Mail className="h-5 w-5 text-accent" /></div>
                 <div>
-                  <h3 className="font-semibold">Language Preference</h3>
-                  <p className="text-xs text-muted-foreground">Choose your preferred language</p>
+                  <h3 className="font-semibold">Change Email</h3>
+                  <p className="text-xs text-muted-foreground">A confirmation link will be sent to the new email</p>
                 </div>
               </div>
-              <Form {...profileForm}>
-                <FormField control={profileForm.control} name="language_preference" render={({ field }) => (
-                  <FormItem>
-                    <Select onValueChange={(val) => { field.onChange(val); profileForm.handleSubmit(onProfileSubmit)(); }} value={field.value || "en"}>
-                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                      <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+              <Form {...emailForm}>
+                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
+                  <div className="space-y-2">
+                    <FormLabel>Current Email</FormLabel>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input className="pl-10 bg-muted" disabled value={user?.email || ''} />
+                    </div>
+                  </div>
+                  <FormField control={emailForm.control} name="newEmail" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-10" placeholder="Enter new email address" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <Button type="submit" disabled={isEmailLoading}>
+                    {isEmailLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Update Email
+                  </Button>
+                </form>
               </Form>
             </div>
-
           </div>
         </div>
       </div>
