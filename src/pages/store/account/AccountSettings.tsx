@@ -83,19 +83,6 @@ export default function AccountSettings() {
     finally { setSavingProfile(false); }
   };
 
-  const onPasswordSubmit = async (values: z.infer<typeof passwordSchema>) => {
-    if (!user) return;
-    setSavingPassword(true);
-    try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email: user.email!, password: values.current_password });
-      if (signInError) throw new Error("Current password is incorrect");
-      const { error: updateError } = await supabase.auth.updateUser({ password: values.new_password });
-      if (updateError) throw updateError;
-      toast({ title: "Success", description: "Password updated successfully" });
-      passwordForm.reset();
-    } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-    finally { setSavingPassword(false); }
-  };
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
