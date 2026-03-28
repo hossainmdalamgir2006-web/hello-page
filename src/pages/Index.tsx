@@ -199,7 +199,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-4"
+            className="md:col-span-2 lg:col-span-4"
           >
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-6">
               {loading ? (
@@ -222,7 +222,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-4"
+            className="md:col-span-2 lg:col-span-4"
           >
             <Suspense fallback={<WidgetLoader />}>
               <PeriodComparison
@@ -242,7 +242,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-2"
+            className="md:col-span-2 lg:col-span-2"
           >
             <Suspense fallback={<WidgetLoader />}>
               <SalesChart data={salesData} loading={loading} />
@@ -257,7 +257,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-1"
+            className="md:col-span-1 lg:col-span-1"
           >
             <Suspense fallback={<WidgetLoader />}>
               <GoalTracker
@@ -280,7 +280,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-1"
+            className="md:col-span-1 lg:col-span-1"
           >
             <Suspense fallback={<WidgetLoader />}>
               <ActivityFeed limit={8} />
@@ -295,7 +295,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-2"
+            className="md:col-span-2 lg:col-span-2"
           >
             <Suspense fallback={<WidgetLoader />}>
               <TopProducts products={topProducts} loading={loading} />
@@ -310,7 +310,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-3"
+            className="md:col-span-2 lg:col-span-3"
           >
             <Suspense fallback={<WidgetLoader />}>
               <RecentOrders orders={recentOrders} loading={loading} />
@@ -325,7 +325,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-1"
+            className="md:col-span-2 lg:col-span-1"
           >
             <Suspense fallback={<WidgetLoader />}>
               <RecentReturnRequests loading={loading} />
@@ -347,10 +347,10 @@ const Index = () => {
 
       {/* Page Header */}
       <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col gap-3">
           <div>
             <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Welcome! Drag widgets to rearrange your dashboard.</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Welcome! Drag widgets to rearrange your dashboard.</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <DateRangeSelector
@@ -368,6 +368,7 @@ const Index = () => {
         </div>
       </div>
 
+
       {/* Draggable Widget Grid */}
       <DndContext
         sensors={sensors}
@@ -378,7 +379,7 @@ const Index = () => {
           items={visibleWidgets.map((w) => w.id)}
           strategy={rectSortingStrategy}
         >
-          <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {visibleWidgets.map((widget) => renderWidget(widget))}
           </div>
         </SortableContext>

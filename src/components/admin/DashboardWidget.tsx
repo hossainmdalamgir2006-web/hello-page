@@ -44,7 +44,7 @@ export function DashboardWidget({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "relative transition-shadow",
+        "relative transition-shadow overflow-hidden",
         isDragging && "shadow-xl ring-2 ring-primary/20 z-50",
         className
       )}
@@ -88,7 +88,7 @@ export function DashboardWidget({
           )}
         </div>
       </CardHeader>
-      <CardContent className="px-4 pb-4">{children}</CardContent>
+      <CardContent className="px-3 pb-3 sm:px-4 sm:pb-4">{children}</CardContent>
     </Card>
   );
 }
