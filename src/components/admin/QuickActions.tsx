@@ -33,9 +33,10 @@ export function QuickActions({ onRefresh, loading }: QuickActionsProps) {
           variant={action.variant} 
           size="sm" 
           onClick={action.onClick}
+          disabled={action.label === "Sync" && loading}
           className={`gap-1.5 sm:gap-2 text-xs sm:text-sm ${index === 0 ? 'flex-1 sm:flex-none' : 'hidden sm:flex'}`}
         >
-          <action.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <action.icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${action.label === "Sync" && loading ? 'animate-spin' : ''}`} />
           <span className="hidden xs:inline sm:inline">{action.label}</span>
           <span className="xs:hidden">{index === 0 ? 'Add' : ''}</span>
         </Button>
