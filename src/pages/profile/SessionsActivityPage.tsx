@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { History, Monitor, Smartphone, Tablet, CheckCircle, XCircle, Clock, Shield, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { SessionManagement } from '@/components/profile/SessionManagement';
 
 interface LoginActivityItem {
   id: string;
