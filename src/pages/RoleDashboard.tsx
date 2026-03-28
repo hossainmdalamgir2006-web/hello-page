@@ -191,20 +191,18 @@ const RoleDashboard = () => {
       <SupportKeyboardShortcuts />
       {/* Header */}
       <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
-              Welcome, {greetingName}! 👋
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+              Support Dashboard
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              Support Dashboard — Manage customer support
-            </p>
           </div>
-          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
         </div>
+      </div>
+
+      {/* Welcome Banner */}
+      <div className="mb-6">
+        <WelcomeBanner basePath="/support" />
       </div>
 
       <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
