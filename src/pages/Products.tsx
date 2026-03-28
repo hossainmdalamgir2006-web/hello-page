@@ -349,10 +349,10 @@ export default function Products() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Products</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Products</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Manage your product inventory ({filteredProducts.length} products)
             </p>
           </div>

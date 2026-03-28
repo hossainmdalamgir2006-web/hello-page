@@ -68,43 +68,44 @@ const StatCard = ({
   subtitle?: string;
   loading?: boolean;
 }) => (
-  <Card>
-    <CardContent className="p-6">
-      {loading ? (
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-12 w-12 rounded-lg" />
-          </div>
-          <Skeleton className="h-8 w-32" />
-          <Skeleton className="h-4 w-20" />
-        </div>
-      ) : (
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">{title}</p>
-            <p className="text-3xl font-bold">{value}</p>
-            <div className="flex items-center gap-2">
-              <span className={cn(
-                "flex items-center text-sm font-medium",
-                changeType === "positive" ? "text-success" : "text-destructive"
-              )}>
-                {changeType === "positive" ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
-                {change}
-              </span>
-              {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
-            </div>
+  <div className={cn(
+    "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+    "hover:shadow-md hover:border-border hover:-translate-y-0.5",
+    "border-l-[3px]",
+    changeType === "positive" ? "border-l-success" : "border-l-destructive",
+    "animate-fade-in"
+  )}>
+    {loading ? (
+      <div className="space-y-3">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-32" />
+        <Skeleton className="h-4 w-20" />
+      </div>
+    ) : (
+      <>
+        <div className="flex items-center justify-between gap-2">
+          <div className={cn(
+            "rounded-lg p-2",
+            changeType === "positive" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+          )}>
+            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-lg",
-            changeType === "positive" ? "bg-success/10" : "bg-destructive/10"
+            "flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
+            changeType === "positive" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
           )}>
-            <Icon className={cn("h-6 w-6", changeType === "positive" ? "text-success" : "text-destructive")} />
+            {changeType === "positive" ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+            {change}
           </div>
         </div>
-      )}
-    </CardContent>
-  </Card>
+        <div className="mt-3">
+          <h3 className="text-lg sm:text-xl font-bold text-foreground truncate tracking-tight">{value}</h3>
+          <p className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider truncate">{title}</p>
+          {subtitle && <p className="text-[10px] text-muted-foreground mt-1">{subtitle}</p>}
+        </div>
+      </>
+    )}
+  </div>
 );
 
 
@@ -131,7 +132,7 @@ export default function Analytics() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Analytics</h1>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Analytics</h1>
             <p className="text-sm text-muted-foreground">
               Detailed insights and performance metrics
             </p>

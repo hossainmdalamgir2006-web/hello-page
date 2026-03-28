@@ -232,63 +232,43 @@ export default function Customers() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Customers</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Customers</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Manage your customer base ({customers.length} customers)
             </p>
           </div>
-          {/* Quick Lookup (21) */}
-          <CustomerQuickLookup customers={customers} onSelect={viewDetails} />
+          <div className="mt-2 sm:mt-0">
+            <CustomerQuickLookup customers={customers} onSelect={viewDetails} />
+          </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                <Users className="h-6 w-6 text-primary" />
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Total Customers", value: stats.total.toString(), icon: Users, color: "primary" },
+            { label: "New This Month", value: stats.newThisMonth.toString(), icon: UserPlus, color: "success" },
+            { label: "Total Revenue", value: formatPrice(stats.totalRevenue), icon: DollarSign, color: "accent" },
+            { label: "Platinum Members", value: platinumCount.toString(), icon: Crown, color: "warning" },
+          ].map((card) => {
+            const IconComp = card.icon;
+            const bgMap: Record<string,string> = { primary: "bg-primary/10 text-primary", accent: "bg-accent/10 text-accent", success: "bg-success/10 text-success", warning: "bg-warning/10 text-warning" };
+            const borderMap: Record<string,string> = { primary: "border-l-primary", accent: "border-l-accent", success: "border-l-success", warning: "border-l-warning" };
+            return (
+              <div key={card.label} className={`group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px] ${borderMap[card.color]} animate-fade-in`}>
+                <div className="flex items-center gap-3">
+                  <div className={`rounded-lg p-2 ${bgMap[card.color]}`}>
+                    <IconComp className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground truncate tracking-tight">{card.value}</h3>
+                  <p className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider truncate">{card.label}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.total}</p>
-                <p className="text-sm text-muted-foreground">Total Customers</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success/10">
-                <UserPlus className="h-6 w-6 text-success" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.newThisMonth}</p>
-                <p className="text-sm text-muted-foreground">New This Month</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-                <DollarSign className="h-6 w-6 text-accent" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{formatPrice(stats.totalRevenue / 1000)}k</p>
-                <p className="text-sm text-muted-foreground">Total Revenue</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-5/10">
-                <Crown className="h-6 w-6 text-chart-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{platinumCount}</p>
-                <p className="text-sm text-muted-foreground">Platinum Members</p>
-              </div>
-            </CardContent>
-          </Card>
+            );
+          })}
         </div>
 
         {/* Segment Tabs (22) */}

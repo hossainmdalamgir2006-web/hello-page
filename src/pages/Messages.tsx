@@ -86,12 +86,12 @@ export default function Messages() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Messages & Support</h1>
-            <p className="text-sm text-muted-foreground">Manage customer inquiries and support tickets</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Messages & Support</h1>
+            <p className="text-sm text-muted-foreground mt-1">Manage customer inquiries and support tickets</p>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap mt-2 sm:mt-0">
             <KnowledgeBaseSheet />
             <Button
               variant={showAgentStats ? "default" : "outline"}
@@ -109,7 +109,7 @@ export default function Messages() {
             >
               {notificationsEnabled ? (
                 <>
-                  <Bell className="h-4 w-4 mr-2 text-green-600" />
+                  <Bell className="h-4 w-4 mr-2 text-success" />
                   Notifications On
                 </>
               ) : (
@@ -132,84 +132,31 @@ export default function Messages() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
-          <Card>
-            <CardContent className="p-3 sm:pt-6">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <div className="p-2 sm:p-3 rounded-full bg-primary/10">
-                  <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+          {[
+            { label: "Total Conversations", value: stats.totalConversations.toString(), icon: MessageSquare, color: "primary" },
+            { label: "Open Chats", value: stats.openConversations.toString(), icon: Inbox, color: "accent" },
+            { label: "Total Tickets", value: stats.totalTickets.toString(), icon: Tag, color: "primary" },
+            { label: "Pending Tickets", value: stats.pendingTickets.toString(), icon: Clock, color: "warning" },
+            { label: "Unread Messages", value: stats.unreadMessages.toString(), icon: AlertCircle, color: "warning" },
+            { label: "SLA Target", value: `${slaConfig.firstResponseMinutes}m`, icon: Timer, color: "accent" },
+          ].map((card) => {
+            const IconComp = card.icon;
+            const bgMap: Record<string,string> = { primary: "bg-primary/10 text-primary", accent: "bg-accent/10 text-accent", success: "bg-success/10 text-success", warning: "bg-warning/10 text-warning" };
+            const borderMap: Record<string,string> = { primary: "border-l-primary", accent: "border-l-accent", success: "border-l-success", warning: "border-l-warning" };
+            return (
+              <div key={card.label} className={`group relative rounded-xl border border-border/50 bg-card p-3 sm:p-4 transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px] ${borderMap[card.color]} animate-fade-in`}>
+                <div className="flex items-center gap-2">
+                  <div className={`rounded-lg p-1.5 sm:p-2 ${bgMap[card.color]}`}>
+                    <IconComp className="h-4 w-4" />
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Total Conversations</p>
-                  <p className="text-lg sm:text-2xl font-bold">{stats.totalConversations}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-3 sm:pt-6">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <div className="p-2 sm:p-3 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                  <Inbox className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Open Chats</p>
-                  <p className="text-lg sm:text-2xl font-bold">{stats.openConversations}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-3 sm:pt-6">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <div className="p-2 sm:p-3 rounded-full bg-purple-100 dark:bg-purple-900/30">
-                  <Tag className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Total Tickets</p>
-                  <p className="text-lg sm:text-2xl font-bold">{stats.totalTickets}</p>
+                <div className="mt-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">{card.value}</h3>
+                  <p className="mt-0.5 text-[10px] sm:text-[11px] text-muted-foreground font-medium uppercase tracking-wider truncate">{card.label}</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-3 sm:pt-6">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <div className="p-2 sm:p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/30">
-                  <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Pending Tickets</p>
-                  <p className="text-lg sm:text-2xl font-bold">{stats.pendingTickets}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-2 md:col-span-1">
-            <CardContent className="p-3 sm:pt-6">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <div className="p-2 sm:p-3 rounded-full bg-red-100 dark:bg-red-900/30">
-                  <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Unread Messages</p>
-                  <p className="text-lg sm:text-2xl font-bold">{stats.unreadMessages}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-2 md:col-span-1">
-            <CardContent className="p-3 sm:pt-6">
-              <div className="flex items-center gap-2 sm:gap-4">
-                <div className="p-2 sm:p-3 rounded-full bg-accent/10">
-                  <Timer className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">SLA Target</p>
-                  <p className="text-lg sm:text-2xl font-bold">{slaConfig.firstResponseMinutes}m</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            );
+          })}
         </div>
 
         {/* Main Content */}

@@ -280,8 +280,8 @@ export default function Orders() {
     <>
       <div className="space-y-6">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Orders</h1>
-          <p className="text-sm text-muted-foreground">Manage and track customer orders ({orders.length} total)</p>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Orders</h1>
+          <p className="text-sm text-muted-foreground mt-1">Manage and track customer orders ({orders.length} total)</p>
         </div>
 
         <Tabs defaultValue="orders" className="space-y-6">

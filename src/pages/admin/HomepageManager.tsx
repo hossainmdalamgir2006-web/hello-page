@@ -251,7 +251,7 @@ export default function HomepageManager() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Homepage Manager</h1>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Homepage Manager</h1>
             <p className="text-sm text-muted-foreground">Control every section of your store homepage</p>
           </div>
           <Button variant="outline" asChild>
