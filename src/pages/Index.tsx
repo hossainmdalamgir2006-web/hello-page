@@ -379,7 +379,7 @@ const Index = () => {
           items={visibleWidgets.map((w) => w.id)}
           strategy={rectSortingStrategy}
         >
-          <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {visibleWidgets.map((widget) => renderWidget(widget))}
           </div>
         </SortableContext>
