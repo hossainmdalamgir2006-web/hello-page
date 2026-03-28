@@ -23,6 +23,7 @@ const pageTitles: Record<string, { title: string; description: string }> = {
   "/myaccount/chat": { title: "Live Chat", description: "Chat with support" },
   "/myaccount/notification-preferences": { title: "Notification Preferences", description: "Manage your notification settings" },
   "/myaccount/settings": { title: "Settings", description: "Account preferences" },
+  "/myaccount/settings/password": { title: "Change Password", description: "Update your account password" },
 };
 
 interface CustomerAccountLayoutProps {

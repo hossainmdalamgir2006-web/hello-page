@@ -137,6 +137,7 @@ const App = () => (
             <Route path="security" element={<AccountSecurity />} />
             <Route path="support" element={<AccountSupport />} />
             <Route path="settings" element={<AccountSettings />} />
+            <Route path="settings/password" element={<AccountPasswordPage />} />
             <Route path="returns" element={<AccountReturns />} />
             <Route path="reviews" element={<AccountReviews />} />
             <Route path="notifications" element={<AccountNotifications />} />
