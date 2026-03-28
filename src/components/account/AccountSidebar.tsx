@@ -1,8 +1,8 @@
 import { useState } from "react";
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
-  HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  RotateCcw, Star, MessageCircle, ChevronDown, Bell, KeyRound,
+  HelpCircle, LogOut, ChevronsLeft, ChevronsRight, Store, X,
+  RotateCcw, Star, MessageCircle, ChevronDown, Bell, KeyRound, User, Settings,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -98,14 +98,14 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
       ],
     },
     {
-      labelKey: "account.accountSection",
+      labelKey: "account.settings",
       groupKey: "account",
       items: [
+        { titleKey: "account.personalInfo", url: "/myaccount/settings/personal-info", icon: User },
+        { titleKey: "account.password", url: "/myaccount/settings/password", icon: KeyRound },
         { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
         { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
         { titleKey: "account.notificationPreferences", url: "/myaccount/notification-preferences", icon: Bell },
-        { titleKey: "account.settings", url: "/myaccount/settings/personal-info", icon: Settings },
-        { titleKey: "account.password", url: "/myaccount/settings/password", icon: KeyRound },
       ],
     },
     {
