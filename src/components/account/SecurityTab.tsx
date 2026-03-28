@@ -18,8 +18,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { TwoFactorSetup } from '@/components/profile/TwoFactorSetup';
-import { LoginActivity } from '@/components/profile/LoginActivity';
-import { SessionManagement } from '@/components/profile/SessionManagement';
 
 export function SecurityTab() {
   const { user, signOut } = useAuth();
@@ -51,15 +49,13 @@ export function SecurityTab() {
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2 items-start">
-        {/* Left: 2FA + Active Sessions */}
+        {/* Left: 2FA */}
         <div className="space-y-6">
           <TwoFactorSetup />
-          <SessionManagement />
         </div>
 
-        {/* Right: Login Activity + Delete Account */}
+        {/* Right: Delete Account */}
         <div className="space-y-6">
-          <LoginActivity />
 
           {/* Delete Account */}
           <Card className="border-destructive/30">
