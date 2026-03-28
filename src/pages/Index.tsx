@@ -171,17 +171,11 @@ const Index = () => {
 
       case "stats":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-2 lg:col-span-4"
-          >
+          <div key={widget.id} className="md:col-span-2 lg:col-span-4">
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-6">
               {loading ? (
                 Array.from({ length: 6 }).map((_, index) => (
-                  <Skeleton key={index} className="h-28 rounded-lg" />
+                  <Skeleton key={index} className="h-28 rounded-xl" />
                 ))
               ) : (
                 statsData.map((stat) => (
@@ -189,7 +183,7 @@ const Index = () => {
                 ))
               )}
             </div>
-          </DashboardWidget>
+          </div>
         );
 
       case "periodComparison":
