@@ -170,22 +170,16 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
 
   if (loading) {
     return (
-      <div className={cn("rounded-xl bg-card p-4 sm:p-6 shadow-card", className)}>
-        <div className="mb-4">
-          <Skeleton className="h-5 w-32 mb-2" />
-          <Skeleton className="h-4 w-48" />
-        </div>
-        <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex gap-3">
-              <Skeleton className="h-8 w-8 rounded-full shrink-0" />
-              <div className="flex-1">
-                <Skeleton className="h-4 w-24 mb-1" />
-                <Skeleton className="h-3 w-full" />
-              </div>
+      <div className="space-y-4">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex gap-3">
+            <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+            <div className="flex-1">
+              <Skeleton className="h-4 w-24 mb-1" />
+              <Skeleton className="h-3 w-full" />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     );
   }
