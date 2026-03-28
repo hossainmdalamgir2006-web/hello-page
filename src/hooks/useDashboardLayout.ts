@@ -9,9 +9,9 @@ const defaultWidgets: WidgetConfig[] = [
   { id: "stats-1", type: "stats", title: "Stats Cards", visible: true, order: 1 },
   { id: "periodComparison-1", type: "periodComparison", title: "Period Comparison", visible: true, order: 2 },
   { id: "salesChart-1", type: "salesChart", title: "Sales Chart", visible: true, order: 3, span: 2 },
-  { id: "goalTracker-1", type: "goalTracker", title: "Goal Tracker", visible: true, order: 4 },
-  { id: "activityFeed-1", type: "activityFeed", title: "Activity Feed", visible: true, order: 5 },
-  { id: "topProducts-1", type: "topProducts", title: "Top Products", visible: true, order: 6 },
+  { id: "topProducts-1", type: "topProducts", title: "Top Products", visible: true, order: 4 },
+  { id: "goalTracker-1", type: "goalTracker", title: "Goal Tracker", visible: true, order: 5 },
+  { id: "activityFeed-1", type: "activityFeed", title: "Activity Feed", visible: true, order: 6 },
   { id: "returnRequests-1", type: "returnRequests", title: "Return/Refund Requests", visible: true, order: 7 },
   { id: "recentOrders-1", type: "recentOrders", title: "Recent Orders", visible: true, order: 8, span: 2 },
 ];
