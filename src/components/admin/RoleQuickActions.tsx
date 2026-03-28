@@ -67,16 +67,6 @@ export function RoleQuickActions({ onRefresh, loading }: RoleQuickActionsProps) 
           </Button>
         ))}
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="w-full gap-2 text-xs"
-        onClick={handleSync}
-        disabled={loading}
-      >
-        <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-        Refresh Dashboard
-      </Button>
     </div>
   );
 }
