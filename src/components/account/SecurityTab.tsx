@@ -38,6 +38,7 @@ export function SecurityTab() {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deleteReason, setDeleteReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showApprovalMessage, setShowApprovalMessage] = useState(false);
   const [existingRequest, setExistingRequest] = useState<DeletionRequest | null>(null);
   const [loadingRequest, setLoadingRequest] = useState(true);
 
