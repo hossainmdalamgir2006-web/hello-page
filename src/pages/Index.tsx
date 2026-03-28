@@ -330,12 +330,6 @@ const Index = () => {
               customRange={customRange}
               onChange={handleDateRangeChange}
             />
-            <DashboardWidgetPicker
-              widgets={widgets}
-              onAddWidget={addWidget}
-              onResetLayout={resetLayout}
-            />
-            <QuickActions />
           </div>
         </div>
       </div>
