@@ -325,7 +325,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-1"
+            className="md:col-span-2 lg:col-span-1"
           >
             <Suspense fallback={<WidgetLoader />}>
               <RecentReturnRequests loading={loading} />
