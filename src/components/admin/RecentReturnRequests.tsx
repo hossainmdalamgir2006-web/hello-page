@@ -103,26 +103,17 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
     <div className="space-y-4">
       {/* Mini stats */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-warning/10 border border-warning/20">
-          <Clock className="h-4 w-4 text-warning" />
-          <div>
-            <p className="text-lg font-bold">{stats.pending}</p>
-            <p className="text-xs text-muted-foreground">Pending</p>
-          </div>
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-warning/10 border border-warning/20 text-center">
+          <p className="text-lg font-bold text-warning">{stats.pending}</p>
+          <p className="text-[10px] text-muted-foreground leading-tight">Pending</p>
         </div>
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-success/10 border border-success/20">
-          <CheckCircle2 className="h-4 w-4 text-success" />
-          <div>
-            <p className="text-lg font-bold">{stats.completed}</p>
-            <p className="text-xs text-muted-foreground">Completed</p>
-          </div>
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-success/10 border border-success/20 text-center">
+          <p className="text-lg font-bold text-success">{stats.completed}</p>
+          <p className="text-[10px] text-muted-foreground leading-tight">Completed</p>
         </div>
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-chart-5/10 border border-chart-5/20">
-          <DollarSign className="h-4 w-4 text-chart-5" />
-          <div>
-            <p className="text-lg font-bold">{formatPrice(stats.totalRefunded)}</p>
-            <p className="text-xs text-muted-foreground">Refunded</p>
-          </div>
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-chart-5/10 border border-chart-5/20 text-center">
+          <p className="text-sm font-bold text-chart-5 truncate w-full">{formatPrice(stats.totalRefunded)}</p>
+          <p className="text-[10px] text-muted-foreground leading-tight">Refunded</p>
         </div>
       </div>
 
@@ -133,21 +124,23 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
           {returns.map((r) => {
             const sc = statusConfig[r.status] || statusConfig.pending;
             return (
-              <div key={r.id} className="flex items-center justify-between gap-2 p-2.5 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+              <div key={r.id} className="flex flex-col gap-2 p-2.5 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium truncate">{r.customer_name || "Unknown"}</p>
                     {r.order_number && (
-                      <span className="text-xs text-muted-foreground">#{r.order_number}</span>
+                      <p className="text-xs text-muted-foreground truncate">#{r.order_number}</p>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground truncate">{r.reason}</p>
-                  <p className="text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM dd, HH:mm")}</p>
+                  <Badge variant="outline" className={cn("text-[10px] shrink-0 px-1.5 py-0.5", sc.color)}>
+                    <sc.icon className="h-3 w-3 mr-0.5" />
+                    {sc.label}
+                  </Badge>
                 </div>
-                <Badge variant="outline" className={cn("text-xs shrink-0", sc.color)}>
-                  <sc.icon className="h-3 w-3 mr-1" />
-                  {sc.label}
-                </Badge>
+                <div>
+                  <p className="text-xs text-muted-foreground truncate">{r.reason}</p>
+                  <p className="text-[10px] text-muted-foreground">{format(new Date(r.created_at), "MMM dd, HH:mm")}</p>
+                </div>
               </div>
             );
           })}
