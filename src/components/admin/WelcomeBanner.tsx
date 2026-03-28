@@ -6,6 +6,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
+interface WelcomeBannerProps {
+  basePath?: string;
+}
+
 interface PendingSummary {
   pendingOrders: number;
   unreadMessages: number;
@@ -13,8 +17,8 @@ interface PendingSummary {
   lowStockProducts: number;
 }
 
-export function WelcomeBanner() {
-  const { user } = useAuth();
+export function WelcomeBanner({ basePath = '/admin' }: WelcomeBannerProps) {
+  const { user, role } = useAuth();
   const navigate = useNavigate();
   const [summary, setSummary] = useState<PendingSummary>({
     pendingOrders: 0,
@@ -47,10 +51,10 @@ export function WelcomeBanner() {
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   const items = [
-    { count: summary.pendingOrders, label: 'pending orders', icon: ShoppingCart, color: 'text-warning', bg: 'bg-warning/10 hover:bg-warning/20', path: '/admin/orders' },
-    { count: summary.unreadMessages, label: 'unread messages', icon: MessageSquare, color: 'text-primary', bg: 'bg-primary/10 hover:bg-primary/20', path: '/admin/messages' },
-    { count: summary.pendingReturns, label: 'return requests', icon: RotateCcw, color: 'text-chart-5', bg: 'bg-chart-5/10 hover:bg-chart-5/20', path: '/admin/orders' },
-    { count: summary.lowStockProducts, label: 'low stock items', icon: AlertTriangle, color: 'text-destructive', bg: 'bg-destructive/10 hover:bg-destructive/20', path: '/admin/products' },
+    { count: summary.pendingOrders, label: 'pending orders', icon: ShoppingCart, color: 'text-warning', bg: 'bg-warning/10 hover:bg-warning/20', path: `${basePath}/orders` },
+    { count: summary.unreadMessages, label: 'unread messages', icon: MessageSquare, color: 'text-primary', bg: 'bg-primary/10 hover:bg-primary/20', path: `${basePath}/messages` },
+    { count: summary.pendingReturns, label: 'return requests', icon: RotateCcw, color: 'text-chart-5', bg: 'bg-chart-5/10 hover:bg-chart-5/20', path: `${basePath}/orders` },
+    { count: summary.lowStockProducts, label: 'low stock items', icon: AlertTriangle, color: 'text-destructive', bg: 'bg-destructive/10 hover:bg-destructive/20', path: `${basePath}/products` },
   ].filter(item => item.count > 0);
 
   return (
