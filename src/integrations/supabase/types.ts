@@ -1632,6 +1632,45 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_goals: {
+        Row: {
+          created_at: string | null
+          customers_actual: number | null
+          customers_target: number | null
+          id: string
+          month: string
+          orders_actual: number | null
+          orders_target: number | null
+          sales_actual: number | null
+          sales_target: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customers_actual?: number | null
+          customers_target?: number | null
+          id?: string
+          month: string
+          orders_actual?: number | null
+          orders_target?: number | null
+          sales_actual?: number | null
+          sales_target?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customers_actual?: number | null
+          customers_target?: number | null
+          id?: string
+          month?: string
+          orders_actual?: number | null
+          orders_target?: number | null
+          sales_actual?: number | null
+          sales_target?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           email: string
