@@ -97,9 +97,7 @@ export function GoalTracker({
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card">
-        <Skeleton className="h-5 w-32 mb-2" />
-        <Skeleton className="h-4 w-48 mb-4" />
+      <div>
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i}>
