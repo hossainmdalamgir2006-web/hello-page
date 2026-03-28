@@ -222,7 +222,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-4"
+            className="md:col-span-2 lg:col-span-4"
           >
             <Suspense fallback={<WidgetLoader />}>
               <PeriodComparison
