@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Menu, LogOut, User, Settings, Command, ChevronDown } from "lucide-react";
+import { Search, Menu, LogOut, User, ExternalLink, Command, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -175,9 +175,11 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
                 <User className="mr-2 h-4 w-4 text-muted-foreground" />
                 {t('header.profile')}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(`${basePath}/settings`)} className="rounded-md py-2 cursor-pointer">
-                <Settings className="mr-2 h-4 w-4 text-muted-foreground" />
-                {t('nav.settings')}
+              <DropdownMenuItem asChild className="rounded-md py-2 cursor-pointer">
+                <a href="/" target="_blank" rel="noopener noreferrer" className="flex w-full items-center">
+                  <ExternalLink className="mr-2 h-4 w-4 text-muted-foreground" />
+                  <span>Visit Store</span>
+                </a>
               </DropdownMenuItem>
             </div>
             <div className="border-t border-border p-1">
