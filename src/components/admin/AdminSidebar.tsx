@@ -285,15 +285,15 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <button onClick={handleLogout} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-                  <LogOut className="h-5 w-5 shrink-0" />
+                <button onClick={handleLogout} className="flex w-full items-center justify-center rounded-lg px-2 py-2 text-sm font-medium text-destructive/80 bg-destructive/5 border border-destructive/10 transition-all hover:bg-destructive/15 hover:text-destructive hover:border-destructive/20">
+                  <LogOut className="h-4.5 w-4.5 shrink-0" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-medium">{t('nav.logout')}</TooltipContent>
             </Tooltip>
           ) : (
-            <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
-              <LogOut className="h-5 w-5" />
+            <button onClick={handleLogout} className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-destructive/80 bg-destructive/5 border border-destructive/10 transition-all hover:bg-destructive/15 hover:text-destructive hover:border-destructive/20">
+              <LogOut className="h-4 w-4" />
               <span>{t('nav.logout')}</span>
             </button>
           )}
