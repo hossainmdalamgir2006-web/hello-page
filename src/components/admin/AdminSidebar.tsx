@@ -238,7 +238,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
                       open={openGroups[group.label.toLowerCase()]}
                       onOpenChange={() => toggleGroup(group.label.toLowerCase())}
                     >
-                      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
+                      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
                         <span>{group.label}</span>
                         <ChevronDown className={cn(
                           "h-3.5 w-3.5 transition-transform",
