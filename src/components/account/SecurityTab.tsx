@@ -77,11 +77,11 @@ export function SecurityTab() {
       if (error) throw error;
       toast({
         title: 'Deletion Request Submitted',
-        description: 'Your account deletion request has been submitted for admin review. You will be notified once it is processed.',
+        description: 'Your request is now pending admin review.',
       });
-      setDeleteConfirmOpen(false);
       setDeleteConfirmText('');
       setDeleteReason('');
+      setShowApprovalMessage(true);
       fetchDeletionRequest();
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
