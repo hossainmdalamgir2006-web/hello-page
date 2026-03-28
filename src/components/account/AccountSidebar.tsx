@@ -98,14 +98,14 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
       ],
     },
     {
-      labelKey: "account.accountSection",
+      labelKey: "account.settings",
       groupKey: "account",
       items: [
+        { titleKey: "account.personalInfo", url: "/myaccount/settings/personal-info", icon: User },
+        { titleKey: "account.password", url: "/myaccount/settings/password", icon: KeyRound },
         { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
         { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
         { titleKey: "account.notificationPreferences", url: "/myaccount/notification-preferences", icon: Bell },
-        { titleKey: "account.settings", url: "/myaccount/settings/personal-info", icon: Settings },
-        { titleKey: "account.password", url: "/myaccount/settings/password", icon: KeyRound },
       ],
     },
     {
