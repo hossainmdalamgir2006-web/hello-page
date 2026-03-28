@@ -86,12 +86,12 @@ export default function Messages() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Messages & Support</h1>
-            <p className="text-sm text-muted-foreground">Manage customer inquiries and support tickets</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Messages & Support</h1>
+            <p className="text-sm text-muted-foreground mt-1">Manage customer inquiries and support tickets</p>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap mt-2 sm:mt-0">
             <KnowledgeBaseSheet />
             <Button
               variant={showAgentStats ? "default" : "outline"}
@@ -109,7 +109,7 @@ export default function Messages() {
             >
               {notificationsEnabled ? (
                 <>
-                  <Bell className="h-4 w-4 mr-2 text-green-600" />
+                  <Bell className="h-4 w-4 mr-2 text-success" />
                   Notifications On
                 </>
               ) : (
