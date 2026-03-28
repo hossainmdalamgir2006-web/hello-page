@@ -243,31 +243,42 @@ export default function AccountSettings() {
 
           {/* Right Column */}
           <div className="space-y-6">
-            {/* Language Preference */}
+            {/* Change Email Card */}
             <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
               <div className="flex items-center gap-3 mb-4">
-                <div className="rounded-lg bg-accent/10 p-2"><Languages className="h-5 w-5 text-accent" /></div>
+                <div className="rounded-lg bg-accent/10 p-2"><Mail className="h-5 w-5 text-accent" /></div>
                 <div>
-                  <h3 className="font-semibold">Language Preference</h3>
-                  <p className="text-xs text-muted-foreground">Choose your preferred language</p>
+                  <h3 className="font-semibold">Change Email</h3>
+                  <p className="text-xs text-muted-foreground">A confirmation link will be sent to the new email</p>
                 </div>
               </div>
-              <Form {...profileForm}>
-                <FormField control={profileForm.control} name="language_preference" render={({ field }) => (
-                  <FormItem>
-                    <Select onValueChange={(val) => { field.onChange(val); profileForm.handleSubmit(onProfileSubmit)(); }} value={field.value || "en"}>
-                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                      <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+              <Form {...emailForm}>
+                <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
+                  <div className="space-y-2">
+                    <FormLabel>Current Email</FormLabel>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input className="pl-10 bg-muted" disabled value={user?.email || ''} />
+                    </div>
+                  </div>
+                  <FormField control={emailForm.control} name="newEmail" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-10" placeholder="Enter new email address" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <Button type="submit" disabled={isEmailLoading}>
+                    {isEmailLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Update Email
+                  </Button>
+                </form>
               </Form>
             </div>
-
           </div>
         </div>
       </div>
