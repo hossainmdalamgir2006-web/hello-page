@@ -21,22 +21,49 @@ export function useGoalTracker(currentSales: number, currentOrders: number, curr
   const currentMonth = format(startOfMonth(new Date()), "yyyy-MM-dd");
 
   const fetchCurrentGoal = useCallback(async () => {
-    const { data } = await supabase
-      .from("monthly_goals" as any)
-      .select("*")
-      .eq("month", currentMonth)
-      .maybeSingle();
-
-    if (data) {
-      setCurrentGoal(data as any);
-    } else {
-      // Create default goal for current month
-      const { data: newGoal } = await supabase
+    try {
+      const { data } = await supabase
         .from("monthly_goals" as any)
-        .insert({ month: currentMonth } as any)
-        .select()
-        .single();
-      if (newGoal) setCurrentGoal(newGoal as any);
+        .select("*")
+        .eq("month", currentMonth)
+        .maybeSingle();
+
+      if (data) {
+        setCurrentGoal(data as any);
+      } else {
+        // Create default goal for current month
+        const { data: newGoal, error } = await supabase
+          .from("monthly_goals" as any)
+          .insert({ month: currentMonth } as any)
+          .select()
+          .single();
+        if (newGoal) {
+          setCurrentGoal(newGoal as any);
+        } else {
+          // If insert fails (e.g. RLS), use defaults
+          console.warn("Could not create monthly goal:", error?.message);
+          setCurrentGoal({
+            month: currentMonth,
+            sales_target: 100000,
+            orders_target: 50,
+            customers_target: 20,
+            sales_actual: 0,
+            orders_actual: 0,
+            customers_actual: 0,
+          });
+        }
+      }
+    } catch (e) {
+      // Fallback to defaults
+      setCurrentGoal({
+        month: currentMonth,
+        sales_target: 100000,
+        orders_target: 50,
+        customers_target: 20,
+        sales_actual: 0,
+        orders_actual: 0,
+        customers_actual: 0,
+      });
     }
   }, [currentMonth]);
 

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, subMonths, format } from 'date-fns';
 import { DateRangePreset, getDateRangeFromPreset } from '@/components/admin/DateRangeSelector';
@@ -228,6 +228,7 @@ export function useDashboardData(
     queryFn: () => fetchDashboardBundle(dateRange),
     staleTime: 5 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 
   return {
