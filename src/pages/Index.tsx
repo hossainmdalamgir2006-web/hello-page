@@ -212,9 +212,10 @@ const Index = () => {
         );
 
       case "goalTracker":
+      case "goalTracker__inner":
         return (
-          <div key={widget.id} className="md:col-span-1 lg:col-span-1 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
-            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
+          <div key={widget.id} className="rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">Goal Tracker</h3>
             <Suspense fallback={<WidgetLoader />}>
               <GoalTracker
                 currentGoal={currentGoal}
@@ -230,9 +231,10 @@ const Index = () => {
         );
 
       case "activityFeed":
+      case "activityFeed__inner":
         return (
-          <div key={widget.id} className="md:col-span-1 lg:col-span-1 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
-            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
+          <div key={widget.id} className="rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">Activity Feed</h3>
             <Suspense fallback={<WidgetLoader />}>
               <ActivityFeed limit={8} />
             </Suspense>
@@ -260,9 +262,10 @@ const Index = () => {
         );
 
       case "returnRequests":
+      case "returnRequests__inner":
         return (
-          <div key={widget.id} className="md:col-span-2 lg:col-span-1 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
-            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
+          <div key={widget.id} className="rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">Return/Refund Requests</h3>
             <Suspense fallback={<WidgetLoader />}>
               <RecentReturnRequests loading={loading} />
             </Suspense>
@@ -296,7 +299,23 @@ const Index = () => {
 
       {/* Widget Grid */}
       <div className="grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        {visibleWidgets.map((widget) => renderWidget(widget))}
+        {visibleWidgets.map((widget) => {
+          // Group Goal Tracker, Activity Feed, Return Requests into a 3-col sub-grid
+          if (widget.type === "goalTracker") {
+            const activityWidget = visibleWidgets.find(w => w.type === "activityFeed");
+            const returnWidget = visibleWidgets.find(w => w.type === "returnRequests");
+            return (
+              <div key="three-col-group" className="md:col-span-2 lg:col-span-4 grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-3">
+                {renderWidget({ ...widget, type: "goalTracker__inner" as any })}
+                {activityWidget && renderWidget({ ...activityWidget, type: "activityFeed__inner" as any })}
+                {returnWidget && renderWidget({ ...returnWidget, type: "returnRequests__inner" as any })}
+              </div>
+            );
+          }
+          // Skip these since they're rendered in the group above
+          if (widget.type === "activityFeed" || widget.type === "returnRequests") return null;
+          return renderWidget(widget);
+        })}
       </div>
     </div>
   );
