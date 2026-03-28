@@ -50,22 +50,16 @@ export function SecurityTab() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2 items-start">
         {/* Left: 2FA + Active Sessions */}
-        <div className="space-y-6 flex flex-col">
-          <div className="flex-1">
-            <TwoFactorSetup />
-          </div>
-          <div className="flex-1">
-            <SessionManagement />
-          </div>
+        <div className="space-y-6">
+          <TwoFactorSetup />
+          <SessionManagement />
         </div>
 
         {/* Right: Login Activity + Delete Account */}
-        <div className="space-y-6 flex flex-col">
-          <div className="flex-1">
-            <LoginActivity />
-          </div>
+        <div className="space-y-6">
+          <LoginActivity />
 
           {/* Delete Account */}
           <Card className="border-destructive/30">
