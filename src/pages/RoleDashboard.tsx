@@ -100,9 +100,9 @@ const RoleDashboard = () => {
           <WelcomeBanner basePath="/manager" />
         </div>
 
-        <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           {/* Stats Cards */}
-          <div className="lg:col-span-4">
+          <div className="col-span-full">
             <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
               {loading
                 ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-lg" />)
@@ -111,66 +111,72 @@ const RoleDashboard = () => {
           </div>
 
           {/* Assigned to Me */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="md:col-span-1 lg:col-span-2">
+            <div className="rounded-lg border bg-card p-3 sm:p-4 shadow-sm h-full">
               <h3 className="text-sm font-semibold mb-3">📌 Assigned to Me</h3>
               <AssignedToMeWidget />
             </div>
           </div>
 
           {/* Team Performance */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="md:col-span-1 lg:col-span-2">
+            <div className="rounded-lg border bg-card p-3 sm:p-4 shadow-sm h-full">
               <h3 className="text-sm font-semibold mb-3">👥 Team Performance</h3>
               <AgentWorkloadStats />
             </div>
           </div>
 
           {/* Sales Chart */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="md:col-span-2 lg:col-span-2">
+            <div className="rounded-lg border bg-card p-3 sm:p-4 shadow-sm h-full">
               <h3 className="text-sm font-semibold mb-3">📈 Sales Chart</h3>
               <SalesChart data={salesData} loading={loading} />
             </div>
           </div>
 
           {/* Shift Summary */}
-          <div className="lg:col-span-1">
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="md:col-span-1 lg:col-span-1">
+            <div className="rounded-lg border bg-card p-3 sm:p-4 shadow-sm h-full">
               <h3 className="text-sm font-semibold mb-3">📋 Shift Report</h3>
               <ShiftSummaryWidget />
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="lg:col-span-1">
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="md:col-span-1 lg:col-span-1">
+            <div className="rounded-lg border bg-card p-3 sm:p-4 shadow-sm h-full">
               <h3 className="text-sm font-semibold mb-3">⚡ Quick Actions</h3>
               <RoleQuickActions onRefresh={() => refetch()} loading={loading} />
             </div>
           </div>
 
           {/* Recent Orders */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="md:col-span-1 lg:col-span-2">
+            <div className="rounded-lg border bg-card p-3 sm:p-4 shadow-sm h-full overflow-x-auto">
               <h3 className="text-sm font-semibold mb-3">🛒 Recent Orders</h3>
               <RecentOrders orders={recentOrders} loading={loading} />
             </div>
           </div>
 
           {/* Priority Queue */}
-          <div className="lg:col-span-2">
-            <PriorityQueue />
+          <div className="md:col-span-1 lg:col-span-2">
+            <div className="h-full">
+              <PriorityQueue />
+            </div>
           </div>
 
           {/* Approval Queue */}
-          <div className="lg:col-span-2">
-            <ManagerApprovalQueue />
+          <div className="md:col-span-1 lg:col-span-2">
+            <div className="h-full">
+              <ManagerApprovalQueue />
+            </div>
           </div>
 
           {/* Activity Feed */}
-          <div className="lg:col-span-2">
-            <ActivityFeed limit={8} />
+          <div className="md:col-span-1 lg:col-span-2">
+            <div className="h-full">
+              <ActivityFeed limit={8} />
+            </div>
           </div>
         </div>
       </>
