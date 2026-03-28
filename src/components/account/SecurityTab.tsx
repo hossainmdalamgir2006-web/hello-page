@@ -3,10 +3,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Shield, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+import { Shield, Trash2, Loader2, AlertTriangle, Monitor, History } from 'lucide-react';
 import { TwoFactorSetup } from '@/components/profile/TwoFactorSetup';
 import { LoginActivity } from '@/components/profile/LoginActivity';
 import { SessionManagement } from '@/components/profile/SessionManagement';
@@ -32,30 +30,18 @@ export function SecurityTab() {
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmText !== 'DELETE') return;
-    
     setDeleting(true);
     try {
-      // Delete user data from profiles and related tables
       if (user) {
         await supabase.from('user_addresses').delete().eq('user_id', user.id);
         await supabase.from('user_sessions').delete().eq('user_id', user.id);
         await supabase.from('profiles').delete().eq('user_id', user.id);
       }
-      
-      // Sign out
       await signOut();
-      
-      toast({
-        title: 'Account Deleted',
-        description: 'Your account data has been removed. You have been signed out.',
-      });
+      toast({ title: 'Account Deleted', description: 'Your account data has been removed. You have been signed out.' });
       navigate('/');
     } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message || 'Failed to delete account',
-        variant: 'destructive',
-      });
+      toast({ title: 'Error', description: error.message || 'Failed to delete account', variant: 'destructive' });
     } finally {
       setDeleting(false);
     }
@@ -63,46 +49,73 @@ export function SecurityTab() {
 
   return (
     <div className="space-y-6">
-      {/* Two-Factor Authentication (#12) */}
-      <TwoFactorSetup />
-
-      {/* Active Sessions (#14) */}
-      <SessionManagement />
-
-      {/* Login Activity (#13) */}
-      <LoginActivity />
-
-      {/* Delete Account (#11) */}
-      <Card className="border-destructive/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
-            <Trash2 className="h-5 w-5" />
-            Delete Account
-          </CardTitle>
-          <CardDescription>
-            Permanently delete your account and all associated data. This action cannot be undone.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20 mb-4">
-            <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-            <div className="text-sm">
-              <p className="font-medium text-destructive">Warning</p>
-              <p className="text-muted-foreground mt-1">
-                Deleting your account will permanently remove all your data including orders, addresses, 
-                wishlist items, and preferences. This action is irreversible.
-              </p>
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Left Column */}
+        <div className="space-y-6">
+          {/* Two-Factor Authentication */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-primary/10 p-2"><Shield className="h-5 w-5 text-primary" /></div>
+              <div>
+                <h3 className="font-semibold">Two-Factor Authentication</h3>
+                <p className="text-xs text-muted-foreground">Add an extra layer of security to your account</p>
+              </div>
             </div>
+            <TwoFactorSetup />
           </div>
-          <Button
-            variant="destructive"
-            onClick={() => setDeleteConfirmOpen(true)}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete My Account
-          </Button>
-        </CardContent>
-      </Card>
+
+          {/* Active Sessions */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-primary/10 p-2"><Monitor className="h-5 w-5 text-primary" /></div>
+              <div>
+                <h3 className="font-semibold">Active Sessions</h3>
+                <p className="text-xs text-muted-foreground">Manage your active login sessions</p>
+              </div>
+            </div>
+            <SessionManagement />
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Login Activity */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-accent/10 p-2"><History className="h-5 w-5 text-accent" /></div>
+              <div>
+                <h3 className="font-semibold">Login Activity</h3>
+                <p className="text-xs text-muted-foreground">Recent login history for your account</p>
+              </div>
+            </div>
+            <LoginActivity />
+          </div>
+
+          {/* Delete Account */}
+          <div className="rounded-xl border border-destructive/30 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-destructive">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-destructive/10 p-2"><Trash2 className="h-5 w-5 text-destructive" /></div>
+              <div>
+                <h3 className="font-semibold text-destructive">Delete Account</h3>
+                <p className="text-xs text-muted-foreground">Permanently delete your account and all data</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20 mb-4">
+              <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-medium text-destructive">Warning</p>
+                <p className="text-muted-foreground mt-1">
+                  Deleting your account will permanently remove all your data including orders, addresses,
+                  wishlist items, and preferences. This action is irreversible.
+                </p>
+              </div>
+            </div>
+            <Button variant="destructive" onClick={() => setDeleteConfirmOpen(true)}>
+              <Trash2 className="h-4 w-4 mr-2" />Delete My Account
+            </Button>
+          </div>
+        </div>
+      </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
@@ -114,7 +127,7 @@ export function SecurityTab() {
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-3">
               <p>
-                This will permanently delete your account and all your data. 
+                This will permanently delete your account and all your data.
                 You will lose access to your order history, saved addresses, and all other account information.
               </p>
               <div className="space-y-2">
@@ -131,19 +144,13 @@ export function SecurityTab() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setDeleteConfirmText('')}>
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setDeleteConfirmText('')}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteAccount}
               disabled={deleteConfirmText !== 'DELETE' || deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleting ? (
-                <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Deleting...</>
-              ) : (
-                'Delete Account Forever'
-              )}
+              {deleting ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />Deleting...</>) : 'Delete Account Forever'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
