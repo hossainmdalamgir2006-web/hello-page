@@ -29,6 +29,7 @@ import {
 interface AdminSidebarProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
+  onCloseMobile?: () => void;
 }
 
 interface MenuItem {
