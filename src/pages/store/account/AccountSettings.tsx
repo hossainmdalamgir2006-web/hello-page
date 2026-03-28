@@ -8,13 +8,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { User, Lock, Camera, Loader2, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Camera, Loader2, Eye, EyeOff, Mail, Phone, Calendar, Building2, Languages, FileText } from "lucide-react";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -78,7 +76,7 @@ export default function AccountSettings() {
       const { error: updateError } = await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", user.id);
       if (updateError) throw updateError;
       setAvatarUrl(publicUrl);
-      toast({ title: t('common.save'), description: "Avatar updated" });
+      toast({ title: "Success", description: "Avatar updated" });
     } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
     finally { setUploadingAvatar(false); }
   };
@@ -89,7 +87,7 @@ export default function AccountSettings() {
     try {
       const { error } = await supabase.from("profiles").update({ full_name: values.full_name, phone: values.phone || null, date_of_birth: values.date_of_birth || null, gender: values.gender || null, company_name: values.company_name || null, bio: values.bio || null, language_preference: values.language_preference || "en" }).eq("user_id", user.id);
       if (error) throw error;
-      toast({ title: t('common.save'), description: t('account.profileInformation') });
+      toast({ title: "Success", description: "Profile updated successfully" });
     } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
     finally { setSavingProfile(false); }
   };
@@ -102,12 +100,11 @@ export default function AccountSettings() {
       if (signInError) throw new Error("Current password is incorrect");
       const { error: updateError } = await supabase.auth.updateUser({ password: values.new_password });
       if (updateError) throw updateError;
-      toast({ title: t('common.save'), description: t('account.changePassword') });
+      toast({ title: "Success", description: "Password updated successfully" });
       passwordForm.reset();
     } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
     finally { setSavingPassword(false); }
   };
-
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
@@ -115,78 +112,273 @@ export default function AccountSettings() {
 
   return (
     <>
-    <SEOHead title="Account Settings" noIndex />
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.settings')}</h1>
-        <p className="text-sm text-muted-foreground">{t('account.manageSettings')}</p>
-      </div>
+      <SEOHead title="Account Settings" noIndex />
+      <div className="space-y-6">
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Avatar Card */}
+            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="rounded-lg bg-primary/10 p-2"><Camera className="h-5 w-5 text-primary" /></div>
+                <div>
+                  <h3 className="font-semibold">Avatar</h3>
+                  <p className="text-xs text-muted-foreground">Upload a profile photo</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <Avatar className="h-28 w-28">
+                    <AvatarImage src={avatarUrl || undefined} />
+                    <AvatarFallback className="text-2xl bg-primary text-primary-foreground">{getInitials(profileForm.getValues("full_name") || user?.email || "U")}</AvatarFallback>
+                  </Avatar>
+                  {uploadingAvatar && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-full">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <input type="file" id="customer-avatar" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+                  <Button asChild variant="outline" disabled={uploadingAvatar}>
+                    <label htmlFor="customer-avatar" className="cursor-pointer">
+                      {uploadingAvatar ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Uploading...</>) : (<><Camera className="mr-2 h-4 w-4" />Change Avatar</>)}
+                    </label>
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative group">
-          <Avatar className="h-20 w-20 border-4 border-primary/20">
-            <AvatarImage src={avatarUrl || undefined} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-lg">{getInitials(profileForm.getValues("full_name") || user?.email || "U")}</AvatarFallback>
-          </Avatar>
-          <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-            {uploadingAvatar ? <Loader2 className="h-5 w-5 text-white animate-spin" /> : <Camera className="h-5 w-5 text-white" />}
-            <input type="file" accept="image/*" onChange={handleAvatarUpload} className="sr-only" disabled={uploadingAvatar} />
-          </label>
+            {/* Personal Info Card */}
+            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="rounded-lg bg-primary/10 p-2"><User className="h-5 w-5 text-primary" /></div>
+                <div>
+                  <h3 className="font-semibold">Personal Information</h3>
+                  <p className="text-xs text-muted-foreground">Update your personal details</p>
+                </div>
+              </div>
+              <Form {...profileForm}>
+                <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField control={profileForm.control} name="full_name" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('account.fullName')}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input className="pl-10" placeholder={t('account.fullName')} {...field} />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={profileForm.control} name="email" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('common.email')}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input className="pl-10 bg-muted" type="email" {...field} disabled />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField control={profileForm.control} name="phone" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('common.phone')}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input className="pl-10" placeholder="01XXXXXXXXX" {...field} />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={profileForm.control} name="date_of_birth" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('account.dateOfBirth')}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input className="pl-10" type="date" {...field} />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField control={profileForm.control} name="gender" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('account.gender')}</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value || undefined}>
+                          <FormControl><SelectTrigger><SelectValue placeholder={t('account.selectGender')} /></SelectTrigger></FormControl>
+                          <SelectContent>
+                            <SelectItem value="male">{t('account.male')}</SelectItem>
+                            <SelectItem value="female">{t('account.female')}</SelectItem>
+                            <SelectItem value="other">{t('account.other')}</SelectItem>
+                            <SelectItem value="prefer_not_to_say">{t('account.preferNotToSay')}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={profileForm.control} name="company_name" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('account.companyName')}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input className="pl-10" placeholder={t('account.companyName')} {...field} />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+                  <FormField control={profileForm.control} name="bio" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('account.bio')}</FormLabel>
+                      <FormControl>
+                        <textarea className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" placeholder={t('account.tellAboutYourself')} maxLength={500} {...field} />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground text-right">{(field.value?.length || 0)}/500</p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <Button type="submit" disabled={savingProfile}>
+                    {savingProfile && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Save Changes
+                  </Button>
+                </form>
+              </Form>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Language Preference */}
+            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="rounded-lg bg-accent/10 p-2"><Languages className="h-5 w-5 text-accent" /></div>
+                <div>
+                  <h3 className="font-semibold">Language Preference</h3>
+                  <p className="text-xs text-muted-foreground">Choose your preferred language</p>
+                </div>
+              </div>
+              <FormField control={profileForm.control} name="language_preference" render={({ field }) => (
+                <FormItem>
+                  <Select onValueChange={field.onChange} value={field.value || "en"}>
+                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+
+            {/* Change Password Card */}
+            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="rounded-lg bg-accent/10 p-2"><Lock className="h-5 w-5 text-accent" /></div>
+                <div>
+                  <h3 className="font-semibold">{t('account.changePassword')}</h3>
+                  <p className="text-xs text-muted-foreground">{t('account.updatePassword')}</p>
+                </div>
+              </div>
+              <Form {...passwordForm}>
+                <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
+                  <FormField control={passwordForm.control} name="current_password" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('account.currentPassword')}</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-10 pr-10" type={showCurrentPassword ? "text" : "password"} placeholder={t('account.currentPassword')} {...field} />
+                          <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 hover:bg-transparent" onClick={() => setShowCurrentPassword(!showCurrentPassword)}>
+                            {showCurrentPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={passwordForm.control} name="new_password" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('account.newPassword')}</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-10 pr-10" type={showNewPassword ? "text" : "password"} placeholder={t('account.newPassword')} {...field} />
+                          <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 hover:bg-transparent" onClick={() => setShowNewPassword(!showNewPassword)}>
+                            {showNewPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">{t('account.passwordHint')}</p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={passwordForm.control} name="confirm_password" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('account.confirmPassword')}</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input className="pl-10 pr-10" type={showConfirmPassword ? "text" : "password"} placeholder={t('account.confirmPassword')} {...field} />
+                          <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <Button type="submit" disabled={savingPassword}>
+                    {savingPassword && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Update Password
+                  </Button>
+                </form>
+              </Form>
+            </div>
+
+            {/* Security Tips */}
+            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-muted">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="rounded-lg bg-muted p-2"><FileText className="h-5 w-5 text-muted-foreground" /></div>
+                <div>
+                  <h3 className="font-semibold">Security Tips</h3>
+                  <p className="text-xs text-muted-foreground">Keep your account secure</p>
+                </div>
+              </div>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                  Use a strong, unique password with at least 8 characters
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                  Include uppercase, lowercase letters and numbers
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                  Never share your password with anyone
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                  Change your password regularly for added security
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div>
-          <h2 className="text-lg font-semibold">{profileForm.getValues("full_name") || "Customer"}</h2>
-          <p className="text-sm text-muted-foreground">{user?.email}</p>
-        </div>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><User className="h-5 w-5" />{t('account.profileInformation')}</CardTitle>
-          <CardDescription>{t('account.updatePersonalInfo')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...profileForm}>
-            <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField control={profileForm.control} name="full_name" render={({ field }) => (<FormItem><FormLabel>{t('account.fullName')}</FormLabel><FormControl><Input placeholder={t('account.fullName')} {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={profileForm.control} name="email" render={({ field }) => (<FormItem><FormLabel>{t('common.email')}</FormLabel><FormControl><Input type="email" {...field} disabled className="bg-muted" /></FormControl><FormMessage /></FormItem>)} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField control={profileForm.control} name="phone" render={({ field }) => (<FormItem><FormLabel>{t('common.phone')}</FormLabel><FormControl><Input placeholder="01XXXXXXXXX" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={profileForm.control} name="date_of_birth" render={({ field }) => (<FormItem><FormLabel>{t('account.dateOfBirth')}</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)} />
-              </div>
-              <Separator />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField control={profileForm.control} name="gender" render={({ field }) => (<FormItem><FormLabel>{t('account.gender')}</FormLabel><Select onValueChange={field.onChange} value={field.value || undefined}><FormControl><SelectTrigger><SelectValue placeholder={t('account.selectGender')} /></SelectTrigger></FormControl><SelectContent><SelectItem value="male">{t('account.male')}</SelectItem><SelectItem value="female">{t('account.female')}</SelectItem><SelectItem value="other">{t('account.other')}</SelectItem><SelectItem value="prefer_not_to_say">{t('account.preferNotToSay')}</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
-                <FormField control={profileForm.control} name="company_name" render={({ field }) => (<FormItem><FormLabel>{t('account.companyName')}</FormLabel><FormControl><Input placeholder={t('account.companyName')} {...field} /></FormControl><FormMessage /></FormItem>)} />
-              </div>
-              <FormField control={profileForm.control} name="bio" render={({ field }) => (<FormItem><FormLabel>{t('account.bio')}</FormLabel><FormControl><textarea className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" placeholder={t('account.tellAboutYourself')} maxLength={500} {...field} /></FormControl><p className="text-xs text-muted-foreground text-right">{(field.value?.length || 0)}/500</p><FormMessage /></FormItem>)} />
-              <Separator />
-              <FormField control={profileForm.control} name="language_preference" render={({ field }) => (<FormItem className="max-w-xs"><FormLabel>{t('account.language')}</FormLabel><Select onValueChange={field.onChange} value={field.value || "en"}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="en">English</SelectItem><SelectItem value="bn">বাংলা (Bengali)</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
-              <Button type="submit" disabled={savingProfile}>{savingProfile && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}{t('account.saveChanges')}</Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Lock className="h-5 w-5" />{t('account.changePassword')}</CardTitle>
-          <CardDescription>{t('account.updatePassword')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...passwordForm}>
-            <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
-              <FormField control={passwordForm.control} name="current_password" render={({ field }) => (<FormItem><FormLabel>{t('account.currentPassword')}</FormLabel><FormControl><div className="relative"><Input type={showCurrentPassword ? "text" : "password"} placeholder={t('account.currentPassword')} {...field} /><Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowCurrentPassword(!showCurrentPassword)}>{showCurrentPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}</Button></div></FormControl><FormMessage /></FormItem>)} />
-              <FormField control={passwordForm.control} name="new_password" render={({ field }) => (<FormItem><FormLabel>{t('account.newPassword')}</FormLabel><FormControl><div className="relative"><Input type={showNewPassword ? "text" : "password"} placeholder={t('account.newPassword')} {...field} /><Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowNewPassword(!showNewPassword)}>{showNewPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}</Button></div></FormControl><p className="text-xs text-muted-foreground">{t('account.passwordHint')}</p><FormMessage /></FormItem>)} />
-              <FormField control={passwordForm.control} name="confirm_password" render={({ field }) => (<FormItem><FormLabel>{t('account.confirmPassword')}</FormLabel><FormControl><div className="relative"><Input type={showConfirmPassword ? "text" : "password"} placeholder={t('account.confirmPassword')} {...field} /><Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>{showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}</Button></div></FormControl><FormMessage /></FormItem>)} />
-              <Button type="submit" disabled={savingPassword}>{savingPassword && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}{t('account.updatePasswordBtn')}</Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-    </div>
     </>
   );
 }
