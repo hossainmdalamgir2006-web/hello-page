@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { User, Lock, Camera, Loader2, Eye, EyeOff, Mail, Phone, Calendar, Building2, Languages, FileText } from "lucide-react";
+import { User, Camera, Loader2, Mail, Phone, Calendar, Building2, Languages } from "lucide-react";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -25,11 +25,6 @@ const profileSchema = z.object({
   language_preference: z.string().optional(),
 });
 
-const passwordSchema = z.object({
-  current_password: z.string().min(1, "Current password is required"),
-  new_password: z.string().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, "Must contain uppercase").regex(/[a-z]/, "Must contain lowercase").regex(/[0-9]/, "Must contain number"),
-  confirm_password: z.string().min(1, "Please confirm your password"),
-}).refine((data) => data.new_password === data.confirm_password, { message: "Passwords don't match", path: ["confirm_password"] });
 
 export default function AccountSettings() {
   const { user } = useAuth();
@@ -39,13 +34,8 @@ export default function AccountSettings() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
-  const [savingPassword, setSavingPassword] = useState(false);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const profileForm = useForm({ resolver: zodResolver(profileSchema), defaultValues: { full_name: "", email: "", phone: "", date_of_birth: "", gender: null as any, company_name: "", bio: "", language_preference: "en" } });
-  const passwordForm = useForm({ resolver: zodResolver(passwordSchema), defaultValues: { current_password: "", new_password: "", confirm_password: "" } });
 
   useEffect(() => {
     if (!user) return;
@@ -92,19 +82,6 @@ export default function AccountSettings() {
     finally { setSavingProfile(false); }
   };
 
-  const onPasswordSubmit = async (values: z.infer<typeof passwordSchema>) => {
-    if (!user) return;
-    setSavingPassword(true);
-    try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email: user.email!, password: values.current_password });
-      if (signInError) throw new Error("Current password is incorrect");
-      const { error: updateError } = await supabase.auth.updateUser({ password: values.new_password });
-      if (updateError) throw updateError;
-      toast({ title: "Success", description: "Password updated successfully" });
-      passwordForm.reset();
-    } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-    finally { setSavingPassword(false); }
-  };
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
@@ -286,98 +263,6 @@ export default function AccountSettings() {
               </Form>
             </div>
 
-            {/* Change Password Card */}
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="rounded-lg bg-accent/10 p-2"><Lock className="h-5 w-5 text-accent" /></div>
-                <div>
-                  <h3 className="font-semibold">{t('account.changePassword')}</h3>
-                  <p className="text-xs text-muted-foreground">{t('account.updatePassword')}</p>
-                </div>
-              </div>
-              <Form {...passwordForm}>
-                <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
-                  <FormField control={passwordForm.control} name="current_password" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('account.currentPassword')}</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input className="pl-10 pr-10" type={showCurrentPassword ? "text" : "password"} placeholder={t('account.currentPassword')} {...field} />
-                          <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 hover:bg-transparent" onClick={() => setShowCurrentPassword(!showCurrentPassword)}>
-                            {showCurrentPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                          </Button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField control={passwordForm.control} name="new_password" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('account.newPassword')}</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input className="pl-10 pr-10" type={showNewPassword ? "text" : "password"} placeholder={t('account.newPassword')} {...field} />
-                          <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 hover:bg-transparent" onClick={() => setShowNewPassword(!showNewPassword)}>
-                            {showNewPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                          </Button>
-                        </div>
-                      </FormControl>
-                      <p className="text-xs text-muted-foreground">{t('account.passwordHint')}</p>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField control={passwordForm.control} name="confirm_password" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('account.confirmPassword')}</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input className="pl-10 pr-10" type={showConfirmPassword ? "text" : "password"} placeholder={t('account.confirmPassword')} {...field} />
-                          <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                            {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                          </Button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <Button type="submit" disabled={savingPassword}>
-                    {savingPassword && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Update Password
-                  </Button>
-                </form>
-              </Form>
-            </div>
-
-            {/* Security Tips */}
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-muted">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="rounded-lg bg-muted p-2"><FileText className="h-5 w-5 text-muted-foreground" /></div>
-                <div>
-                  <h3 className="font-semibold">Security Tips</h3>
-                  <p className="text-xs text-muted-foreground">Keep your account secure</p>
-                </div>
-              </div>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                  Use a strong, unique password with at least 8 characters
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                  Include uppercase, lowercase letters and numbers
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                  Never share your password with anyone
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                  Change your password regularly for added security
-                </li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
