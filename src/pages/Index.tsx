@@ -269,13 +269,13 @@ const Index = () => {
           >
             <Suspense fallback={<WidgetLoader />}>
               <GoalTracker
+                currentGoal={currentGoal}
+                history={goalHistory}
                 currentSales={stats.monthlySales}
                 currentOrders={stats.monthlyOrders}
                 currentCustomers={stats.monthlyCustomers}
-                salesGoal={100000}
-                ordersGoal={50}
-                customersGoal={20}
-                loading={loading}
+                loading={loading || goalsLoading}
+                onUpdateTarget={updateTarget}
               />
             </Suspense>
           </DashboardWidget>
