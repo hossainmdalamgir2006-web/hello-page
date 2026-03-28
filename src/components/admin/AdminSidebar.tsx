@@ -258,23 +258,6 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
 
         {/* Bottom Menu */}
         <div className="mt-auto space-y-1 border-t border-sidebar-border pt-4">
-          {/* Visit Store */}
-          {collapsed ? (
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <a href="/" target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-                  <ExternalLink className="h-5 w-5 shrink-0" />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">Visit Store</TooltipContent>
-            </Tooltip>
-          ) : (
-            <a href="/" target="_blank" rel="noopener noreferrer" className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-              <ExternalLink className="h-5 w-5 shrink-0" />
-              <span>Visit Store</span>
-            </a>
-          )}
-
           {/* Profile Settings */}
           {collapsed ? (
             <>
