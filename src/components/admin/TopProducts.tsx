@@ -27,11 +27,7 @@ export function TopProducts({ products = [], loading = false }: TopProductsProps
   }
 
   return (
-    <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-fade-in">
-      <div className="mb-4 sm:mb-6">
-        <h2 className="font-display text-base sm:text-lg font-semibold text-foreground">Top Products</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">Products with highest stock</p>
-      </div>
+    <div>
       {products.length === 0 ? (
         <div className="text-center text-muted-foreground py-8">No products yet</div>
       ) : (

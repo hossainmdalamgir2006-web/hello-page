@@ -185,14 +185,7 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
   }
 
   return (
-    <div className={cn("rounded-xl bg-card p-4 sm:p-6 shadow-card", className)}>
-      <div className="mb-4">
-        <h2 className="font-display text-base sm:text-lg font-semibold text-foreground">
-          Activity Feed
-        </h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">Recent store activity</p>
-      </div>
-
+    <div className={cn(className)}>
       <ScrollArea className="h-[300px] pr-4">
         {activities.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">

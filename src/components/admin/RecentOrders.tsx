@@ -53,12 +53,8 @@ export function RecentOrders({ orders = [], loading = false }: RecentOrdersProps
   }
 
   return (
-    <div className="rounded-xl bg-card shadow-card animate-fade-in">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-border p-4 sm:p-6">
-        <div>
-          <h2 className="font-display text-base sm:text-lg font-semibold text-foreground">Recent Orders</h2>
-          <p className="text-xs sm:text-sm text-muted-foreground">Latest customer orders</p>
-        </div>
+    <div>
+      <div className="flex items-center justify-end mb-3">
         <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => navigate('/admin/orders')}>
           View All
         </Button>
