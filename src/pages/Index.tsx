@@ -203,7 +203,7 @@ const Index = () => {
 
       case "salesChart":
         return (
-          <div key={widget.id} className="md:col-span-2 lg:col-span-4 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+          <div key={widget.id} className="md:col-span-2 lg:col-span-2 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
             <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <SalesChart data={salesData} loading={loading} />
@@ -243,7 +243,7 @@ const Index = () => {
 
       case "topProducts":
         return (
-          <div key={widget.id} className="md:col-span-2 lg:col-span-4 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+          <div key={widget.id} className="md:col-span-2 lg:col-span-2 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
             <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <TopProducts products={topProducts} loading={loading} />
