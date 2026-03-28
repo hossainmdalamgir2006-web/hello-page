@@ -16,7 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { User, Lock, Bell, Camera, Loader2, Eye, EyeOff, Package, Tag, ShoppingBag, TrendingDown } from "lucide-react";
+import { User, Lock, Camera, Loader2, Eye, EyeOff } from "lucide-react";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
