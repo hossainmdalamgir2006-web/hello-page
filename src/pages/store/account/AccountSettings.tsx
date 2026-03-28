@@ -47,11 +47,6 @@ export default function AccountSettings() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [savingNotifications, setSavingNotifications] = useState(false);
-  const [notifications, setNotifications] = useState({
-    order_updates: true, order_shipped: true, order_delivered: true,
-    promotions: false, new_arrivals: false, price_drops: false, account_activity: true,
-  });
 
   const profileForm = useForm({ resolver: zodResolver(profileSchema), defaultValues: { full_name: "", email: "", phone: "", date_of_birth: "", gender: null as any, company_name: "", bio: "", language_preference: "en" } });
   const passwordForm = useForm({ resolver: zodResolver(passwordSchema), defaultValues: { current_password: "", new_password: "", confirm_password: "" } });
