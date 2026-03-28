@@ -80,7 +80,7 @@ export default function AccountSettings() {
     if (!user) return;
     setSavingProfile(true);
     try {
-      const { error } = await supabase.from("profiles").update({ full_name: values.full_name, phone: values.phone || null, date_of_birth: values.date_of_birth || null, gender: values.gender || null, company_name: values.company_name || null, bio: values.bio || null, language_preference: values.language_preference || "en" }).eq("user_id", user.id);
+      const { error } = await supabase.from("profiles").update({ full_name: values.full_name, phone: values.phone || null, date_of_birth: values.date_of_birth || null, gender: values.gender || null, company_name: values.company_name || null, bio: values.bio || null }).eq("user_id", user.id);
       if (error) throw error;
       toast({ title: "Success", description: "Profile updated successfully" });
     } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
