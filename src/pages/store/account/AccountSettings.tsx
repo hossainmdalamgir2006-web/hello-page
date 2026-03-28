@@ -25,11 +25,6 @@ const profileSchema = z.object({
   language_preference: z.string().optional(),
 });
 
-const passwordSchema = z.object({
-  current_password: z.string().min(1, "Current password is required"),
-  new_password: z.string().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, "Must contain uppercase").regex(/[a-z]/, "Must contain lowercase").regex(/[0-9]/, "Must contain number"),
-  confirm_password: z.string().min(1, "Please confirm your password"),
-}).refine((data) => data.new_password === data.confirm_password, { message: "Passwords don't match", path: ["confirm_password"] });
 
 export default function AccountSettings() {
   const { user } = useAuth();
