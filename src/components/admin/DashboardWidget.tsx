@@ -44,7 +44,7 @@ export function DashboardWidget({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "relative transition-shadow",
+        "relative transition-shadow overflow-hidden",
         isDragging && "shadow-xl ring-2 ring-primary/20 z-50",
         className
       )}
