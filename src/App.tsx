@@ -89,6 +89,7 @@ const HomepageManager = lazy(() => import("./pages/admin/HomepageManager"));
 const AppearanceManager = lazy(() => import("./pages/admin/AppearanceManager"));
 const PageContentManager = lazy(() => import("./pages/admin/PageContentManager"));
 const ReviewsManager = lazy(() => import("./pages/admin/ReviewsManager"));
+const AccountDeletionRequests = lazy(() => import("./pages/admin/AccountDeletionRequests"));
 const SupportSettings = lazy(() => import("./pages/SupportSettings"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
