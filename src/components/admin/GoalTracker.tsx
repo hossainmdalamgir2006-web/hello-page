@@ -112,7 +112,7 @@ export function GoalTracker({
 
   if (showHistory) {
     return (
-      <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card">
+      <div>
         <div className="flex items-center gap-2 mb-4">
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowHistory(false)}>
             <ChevronLeft className="h-4 w-4" />
