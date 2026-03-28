@@ -55,8 +55,9 @@ export function SecurityTab() {
           <TwoFactorSetup />
         </div>
 
-        {/* Right: Delete Account */}
+        {/* Right: Recovery Codes + Delete Account */}
         <div className="space-y-6">
+          <RecoveryCodes />
 
           {/* Delete Account */}
           <Card className="border-destructive/30">
