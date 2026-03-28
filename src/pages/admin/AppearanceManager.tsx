@@ -197,14 +197,14 @@ export default function AppearanceManager() {
                   <CardDescription>সাইটের Light theme এর সব রঙ নিয়ন্ত্রণ করুন</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <ColorField label="Primary Color" settingKey="primary_color" description="Main brand color" />
-                  <ColorField label="Secondary Color" settingKey="secondary_color" />
-                  <ColorField label="Accent Color" settingKey="accent_color" />
-                  <ColorField label="Background" settingKey="background_color" />
-                  <ColorField label="Foreground (Text)" settingKey="foreground_color" />
-                  <ColorField label="Muted Text" settingKey="muted_color" />
-                  <ColorField label="Border Color" settingKey="border_color" />
-                  <ColorField label="Card Background" settingKey="card_color" />
+                  {renderColorField("Primary Color", "primary_color", "Main brand color")}
+                  {renderColorField("Secondary Color", "secondary_color")}
+                  {renderColorField("Accent Color", "accent_color")}
+                  {renderColorField("Background", "background_color")}
+                  {renderColorField("Foreground (Text)", "foreground_color")}
+                  {renderColorField("Muted Text", "muted_color")}
+                  {renderColorField("Border Color", "border_color")}
+                  {renderColorField("Card Background", "card_color")}
                 </CardContent>
               </Card>
 
@@ -214,18 +214,18 @@ export default function AppearanceManager() {
                   <CardDescription>Status colors ও Dark mode settings</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <ColorField label="Success Color" settingKey="success_color" />
-                  <ColorField label="Warning Color" settingKey="warning_color" />
-                  <ColorField label="Error / Destructive" settingKey="destructive_color" />
-                  <ColorField label="Link Color" settingKey="link_color" />
-                  <ColorField label="Link Hover" settingKey="link_hover_color" />
+                  {renderColorField("Success Color", "success_color")}
+                  {renderColorField("Warning Color", "warning_color")}
+                  {renderColorField("Error / Destructive", "destructive_color")}
+                  {renderColorField("Link Color", "link_color")}
+                  {renderColorField("Link Hover", "link_hover_color")}
                   <div className="border-t pt-4 mt-4">
                     <SwitchField label="Dark Mode Toggle" settingKey="dark_mode_enabled" description="Allow dark mode switching" />
                   </div>
-                  <ColorField label="Dark Primary" settingKey="dark_primary_color" />
-                  <ColorField label="Dark Background" settingKey="dark_background_color" />
-                  <ColorField label="Dark Foreground" settingKey="dark_foreground_color" />
-                  <ColorField label="Dark Card" settingKey="dark_card_color" />
+                  {renderColorField("Dark Primary", "dark_primary_color")}
+                  {renderColorField("Dark Background", "dark_background_color")}
+                  {renderColorField("Dark Foreground", "dark_foreground_color")}
+                  {renderColorField("Dark Card", "dark_card_color")}
                 </CardContent>
               </Card>
             </div>
@@ -242,10 +242,10 @@ export default function AppearanceManager() {
                 <div className="grid gap-6 md:grid-cols-2">
                   <TextField label="Button Border Radius" settingKey="button_radius" description="e.g. 0.5rem, 8px, 9999px" />
                   <SwitchField label="Button Shadow" settingKey="button_shadow" description="বাটনে shadow দেখাবে" />
-                  <ColorField label="Primary Button BG" settingKey="button_primary_bg" />
-                  <ColorField label="Primary Button Text" settingKey="button_primary_text" />
-                  <ColorField label="Secondary Button BG" settingKey="button_secondary_bg" />
-                  <ColorField label="Destructive Button BG" settingKey="button_destructive_bg" />
+                  {renderColorField("Primary Button BG", "button_primary_bg")}
+                  {renderColorField("Primary Button Text", "button_primary_text")}
+                  {renderColorField("Secondary Button BG", "button_secondary_bg")}
+                  {renderColorField("Destructive Button BG", "button_destructive_bg")}
                 </div>
                 {/* Preview */}
                 <div className="mt-6 p-4 border rounded-lg bg-muted/30">
@@ -313,10 +313,10 @@ export default function AppearanceManager() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
-                  <ColorField label="Sidebar Background" settingKey="sidebar_bg" />
-                  <ColorField label="Sidebar Text" settingKey="sidebar_text" />
-                  <ColorField label="Active Item Color" settingKey="sidebar_active" />
-                  <ColorField label="Icon Color" settingKey="sidebar_icon_color" />
+                  {renderColorField("Sidebar Background", "sidebar_bg")}
+                  {renderColorField("Sidebar Text", "sidebar_text")}
+                  {renderColorField("Active Item Color", "sidebar_active")}
+                  {renderColorField("Icon Color", "sidebar_icon_color")}
                   <NumberField label="Sidebar Width (Expanded)" settingKey="sidebar_width" suffix="px" />
                   <NumberField label="Sidebar Width (Collapsed)" settingKey="sidebar_collapsed_width" suffix="px" />
                 </div>
@@ -333,8 +333,8 @@ export default function AppearanceManager() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
-                  <ColorField label="Header Background" settingKey="header_bg" />
-                  <ColorField label="Header Text" settingKey="header_text" />
+                  {renderColorField("Header Background", "header_bg")}
+                  {renderColorField("Header Text", "header_text")}
                   <NumberField label="Header Height" settingKey="header_height" suffix="px" />
                 </div>
               </CardContent>
@@ -385,7 +385,7 @@ export default function AppearanceManager() {
                     { value: "dotted", label: "Dotted" },
                     { value: "none", label: "None" },
                   ]} />
-                  <ColorField label="Divider Color" settingKey="divider_color" />
+                  {renderColorField("Divider Color", "divider_color")}
                 </CardContent>
               </Card>
             </div>
@@ -400,16 +400,16 @@ export default function AppearanceManager() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
-                  <ColorField label="Store Primary" settingKey="store_primary" />
-                  <ColorField label="Store Secondary" settingKey="store_secondary" />
-                  <ColorField label="Store Accent" settingKey="store_accent" />
-                  <ColorField label="Store Background" settingKey="store_bg" />
+                  {renderColorField("Store Primary", "store_primary")}
+                  {renderColorField("Store Secondary", "store_secondary")}
+                  {renderColorField("Store Accent", "store_accent")}
+                  {renderColorField("Store Background", "store_bg")}
                   <NumberField label="Product Grid Columns" settingKey="product_card_columns" />
                   <NumberField label="Product Card Gap" settingKey="product_card_gap" suffix="px" />
-                  <ColorField label="New Badge Color" settingKey="badge_new_color" />
-                  <ColorField label="Sale Badge Color" settingKey="badge_sale_color" />
-                  <ColorField label="Footer Background" settingKey="footer_bg" />
-                  <ColorField label="Footer Text" settingKey="footer_text" />
+                  {renderColorField("New Badge Color", "badge_new_color")}
+                  {renderColorField("Sale Badge Color", "badge_sale_color")}
+                  {renderColorField("Footer Background", "footer_bg")}
+                  {renderColorField("Footer Text", "footer_text")}
                 </div>
               </CardContent>
             </Card>
@@ -425,10 +425,10 @@ export default function AppearanceManager() {
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
                   <TextField label="Input Border Radius" settingKey="input_radius" />
-                  <ColorField label="Input Border Color" settingKey="input_border_color" />
-                  <ColorField label="Input Focus Color" settingKey="input_focus_color" />
-                  <ColorField label="Switch/Checkbox Accent" settingKey="switch_accent" />
-                  <ColorField label="Label Text Color" settingKey="label_color" />
+                  {renderColorField("Input Border Color", "input_border_color")}
+                  {renderColorField("Input Focus Color", "input_focus_color")}
+                  {renderColorField("Switch/Checkbox Accent", "switch_accent")}
+                  {renderColorField("Label Text Color", "label_color")}
                 </div>
                 {/* Preview */}
                 <div className="mt-6 p-4 border rounded-lg bg-muted/30 space-y-3">
@@ -450,10 +450,10 @@ export default function AppearanceManager() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
-                  <ColorField label="Default Badge BG" settingKey="badge_default_bg" />
-                  <ColorField label="Success Badge BG" settingKey="badge_success_bg" />
-                  <ColorField label="Warning Badge BG" settingKey="badge_warning_bg" />
-                  <ColorField label="Error Badge BG" settingKey="badge_error_bg" />
+                  {renderColorField("Default Badge BG", "badge_default_bg")}
+                  {renderColorField("Success Badge BG", "badge_success_bg")}
+                  {renderColorField("Warning Badge BG", "badge_warning_bg")}
+                  {renderColorField("Error Badge BG", "badge_error_bg")}
                   <SelectField label="Badge Shape" settingKey="badge_shape" options={[
                     { value: "rounded", label: "Rounded" },
                     { value: "pill", label: "Pill" },
@@ -472,8 +472,8 @@ export default function AppearanceManager() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
-                  <ColorField label="Tab Active Color" settingKey="tab_active_color" />
-                  <ColorField label="Tab Inactive Color" settingKey="tab_inactive_color" />
+                  {renderColorField("Tab Active Color", "tab_active_color")}
+                  {renderColorField("Tab Inactive Color", "tab_inactive_color")}
                   <SelectField label="Tab Style" settingKey="tab_style" options={[
                     { value: "underline", label: "Underline" },
                     { value: "pill", label: "Pill" },
@@ -524,8 +524,8 @@ export default function AppearanceManager() {
                     { value: "bottom-left", label: "Bottom Left" },
                   ]} />
                   <NumberField label="Toast Duration" settingKey="toast_duration" suffix="ms" />
-                  <ColorField label="Success Toast BG" settingKey="toast_success_bg" />
-                  <ColorField label="Error Toast BG" settingKey="toast_error_bg" />
+                  {renderColorField("Success Toast BG", "toast_success_bg")}
+                  {renderColorField("Error Toast BG", "toast_error_bg")}
                 </div>
               </CardContent>
             </Card>
@@ -540,12 +540,12 @@ export default function AppearanceManager() {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
-                  <ColorField label="Chart Color 1" settingKey="chart_color_1" />
-                  <ColorField label="Chart Color 2" settingKey="chart_color_2" />
-                  <ColorField label="Chart Color 3" settingKey="chart_color_3" />
-                  <ColorField label="Chart Color 4" settingKey="chart_color_4" />
-                  <ColorField label="Chart Color 5" settingKey="chart_color_5" />
-                  <ColorField label="Grid Line Color" settingKey="chart_grid_color" />
+                  {renderColorField("Chart Color 1", "chart_color_1")}
+                  {renderColorField("Chart Color 2", "chart_color_2")}
+                  {renderColorField("Chart Color 3", "chart_color_3")}
+                  {renderColorField("Chart Color 4", "chart_color_4")}
+                  {renderColorField("Chart Color 5", "chart_color_5")}
+                  {renderColorField("Grid Line Color", "chart_grid_color")}
                 </div>
                 {/* Color preview row */}
                 <div className="mt-6 flex gap-2">
