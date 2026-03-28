@@ -211,7 +211,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
         <nav className="flex-1 space-y-4">
           <div>
             {!collapsed && (
-              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.menu')}</p>
+              <p className="mb-3 px-2 text-sm font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.menu')}</p>
             )}
             <div className="space-y-1">
               {menuItems.map((item) => renderNavItem(item, item.url.endsWith('/dashboard')))}
