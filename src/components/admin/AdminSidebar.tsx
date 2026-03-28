@@ -211,7 +211,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
         <nav className="flex-1 space-y-4">
           <div>
             {!collapsed && (
-              <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.menu')}</p>
+              <p className="mb-3 px-2 text-sm font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.menu')}</p>
             )}
             <div className="space-y-1">
               {menuItems.map((item) => renderNavItem(item, item.url.endsWith('/dashboard')))}
@@ -222,7 +222,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
           {filteredGroups.length > 0 && (
             <div>
               {!collapsed && (
-                <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.management')}</p>
+                <p className="mb-3 px-2 text-sm font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.management')}</p>
               )}
               {collapsed && <div className="my-3 border-t border-sidebar-border" />}
               
@@ -238,7 +238,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
                       open={openGroups[group.label.toLowerCase()]}
                       onOpenChange={() => toggleGroup(group.label.toLowerCase())}
                     >
-                      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
+                      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
                         <span>{group.label}</span>
                         <ChevronDown className={cn(
                           "h-3.5 w-3.5 transition-transform",
@@ -268,7 +268,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
               open={openGroups['account']}
               onOpenChange={() => toggleGroup('account')}
             >
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-wider text-sidebar-muted hover:bg-sidebar-accent/50 transition-colors">
                 <span>Account Settings</span>
                 <ChevronDown className={cn(
                   "h-3.5 w-3.5 transition-transform",
