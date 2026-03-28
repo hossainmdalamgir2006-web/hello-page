@@ -15,19 +15,13 @@ export function TopProducts({ products = [], loading = false }: TopProductsProps
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-fade-in">
-        <div className="mb-4 sm:mb-6">
-          <Skeleton className="h-5 w-28 mb-2" />
-          <Skeleton className="h-4 w-36" />
-        </div>
-        <div className="space-y-4 sm:space-y-5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="space-y-2">
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-2 w-full" />
-            </div>
-          ))}
-        </div>
+      <div className="space-y-4 sm:space-y-5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-2 w-full" />
+          </div>
+        ))}
       </div>
     );
   }
