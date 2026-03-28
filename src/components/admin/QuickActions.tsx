@@ -1,14 +1,28 @@
-import { Plus, Upload, Download } from "lucide-react";
+import { Plus, Upload, Download, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-export function QuickActions() {
+interface QuickActionsProps {
+  onRefresh?: () => void;
+  loading?: boolean;
+}
+
+export function QuickActions({ onRefresh, loading }: QuickActionsProps) {
   const navigate = useNavigate();
+
+  const handleSync = () => {
+    if (onRefresh) {
+      onRefresh();
+      toast.success("Dashboard data synced successfully!");
+    }
+  };
 
   const actions = [
     { label: "Add Product", icon: Plus, variant: "default" as const, onClick: () => navigate('/admin/products?action=add') },
     { label: "Import", icon: Upload, variant: "outline" as const, onClick: () => navigate('/admin/products?action=import') },
     { label: "Export", icon: Download, variant: "outline" as const, onClick: () => navigate('/admin/products?action=export') },
+    { label: "Sync", icon: RefreshCw, variant: "outline" as const, onClick: handleSync },
   ];
 
   return (
