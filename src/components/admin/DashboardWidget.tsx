@@ -1,6 +1,4 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, X, Maximize2, Minimize2 } from "lucide-react";
+import { X, Maximize2, Minimize2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,7 +11,6 @@ interface DashboardWidgetProps {
   isExpanded?: boolean;
   onToggleExpand?: () => void;
   className?: string;
-  isDragging?: boolean;
 }
 
 export function DashboardWidget({
@@ -25,42 +22,15 @@ export function DashboardWidget({
   onToggleExpand,
   className,
 }: DashboardWidgetProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   return (
     <Card
-      ref={setNodeRef}
-      style={style}
       className={cn(
         "relative transition-shadow overflow-hidden",
-        isDragging && "shadow-xl ring-2 ring-primary/20 z-50",
         className
       )}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pt-3 px-4">
-        <div className="flex items-center gap-2">
-          <button
-            {...attributes}
-            {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Drag to reorder"
-          >
-            <GripVertical className="h-4 w-4" />
-          </button>
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        </div>
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <div className="flex items-center gap-1">
           {onToggleExpand && (
             <Button

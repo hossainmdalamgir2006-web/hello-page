@@ -1,18 +1,4 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
 import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -96,23 +82,6 @@ const Index = () => {
 
 
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      moveWidget(active.id as string, over.id as string);
-    }
-  };
 
   const handleDateRangeChange = (preset: DateRangePreset, range?: { from: Date; to: Date }) => {
     setDateRangePreset(preset);
@@ -358,7 +327,7 @@ const Index = () => {
         <div className="flex flex-col gap-3">
           <div>
             <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">Welcome! Drag widgets to rearrange your dashboard.</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Overview of your store performance.</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <DateRangeSelector
@@ -377,21 +346,10 @@ const Index = () => {
       </div>
 
 
-      {/* Draggable Widget Grid */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={visibleWidgets.map((w) => w.id)}
-          strategy={rectSortingStrategy}
-        >
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-            {visibleWidgets.map((widget) => renderWidget(widget))}
-          </div>
-        </SortableContext>
-      </DndContext>
+      {/* Widget Grid */}
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        {visibleWidgets.map((widget) => renderWidget(widget))}
+      </div>
     </>
   );
 };
