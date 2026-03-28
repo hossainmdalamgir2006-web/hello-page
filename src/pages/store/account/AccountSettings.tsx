@@ -50,7 +50,7 @@ export default function AccountSettings() {
         const { data } = await supabase.from("profiles").select("*").eq("user_id", user.id).single();
         if (data) {
           setAvatarUrl(data.avatar_url);
-          profileForm.reset({ full_name: data.full_name || "", email: user.email || "", phone: data.phone || "", date_of_birth: data.date_of_birth || "", gender: data.gender || null, company_name: data.company_name || "", bio: data.bio || "", language_preference: data.language_preference || "en" });
+          profileForm.reset({ full_name: data.full_name || "", email: user.email || "", phone: data.phone || "", date_of_birth: data.date_of_birth || "", gender: data.gender || null, company_name: data.company_name || "", bio: data.bio || "" });
         }
       } catch (error) { console.error("Error:", error); }
       finally { setLoading(false); }
