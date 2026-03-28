@@ -79,14 +79,11 @@ const RoleDashboard = () => {
         <SupportKeyboardShortcuts />
         {/* Header */}
         <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
-              <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                Welcome, {greetingName}! 👋
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                {roleLabel} Dashboard
               </h1>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {roleLabel} Dashboard — View today's activities
-              </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <DateRangeSelector
@@ -98,6 +95,11 @@ const RoleDashboard = () => {
           </div>
         </div>
 
+        {/* Welcome Banner */}
+        <div className="mb-6">
+          <WelcomeBanner basePath="/manager" />
+        </div>
+
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
           {/* Stats Cards */}
           <div className="lg:col-span-4">
@@ -107,26 +109,6 @@ const RoleDashboard = () => {
                 : statsData.map((stat) => <StatsCard key={stat.title} {...stat} />)}
             </div>
           </div>
-
-          {/* Alerts */}
-          {(stats.pendingOrders > 0 || stats.lowStockProducts > 0) && (
-            <div className="lg:col-span-4">
-              <div className="grid gap-3 sm:grid-cols-2">
-                {stats.pendingOrders > 0 && (
-                  <div className="flex items-center gap-3 rounded-lg border border-warning/30 bg-warning/10 p-3">
-                    <Clock className="h-5 w-5 text-warning" />
-                    <span className="text-sm font-medium">{stats.pendingOrders} pending orders need attention</span>
-                  </div>
-                )}
-                {stats.lowStockProducts > 0 && (
-                  <div className="flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
-                    <AlertCircle className="h-5 w-5 text-destructive" />
-                    <span className="text-sm font-medium">{stats.lowStockProducts} products low on stock</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Assigned to Me */}
           <div className="lg:col-span-2">
