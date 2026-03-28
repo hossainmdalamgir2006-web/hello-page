@@ -42,14 +42,7 @@ export function RecentOrders({ orders = [], loading = false }: RecentOrdersProps
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-card shadow-card animate-fade-in">
-        <div className="flex items-center justify-between border-b border-border p-4 sm:p-6">
-          <div>
-            <Skeleton className="h-5 w-32 mb-2" />
-            <Skeleton className="h-4 w-24" />
-          </div>
-          <Skeleton className="h-9 w-20" />
-        </div>
+      <div>
         <div className="p-4 space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-16 w-full" />
