@@ -222,7 +222,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
           {filteredGroups.length > 0 && (
             <div>
               {!collapsed && (
-                <p className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.management')}</p>
+                <p className="mb-3 px-2 text-sm font-semibold uppercase tracking-wider text-sidebar-muted">{t('nav.management')}</p>
               )}
               {collapsed && <div className="my-3 border-t border-sidebar-border" />}
               
