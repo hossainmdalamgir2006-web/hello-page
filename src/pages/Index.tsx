@@ -317,11 +317,6 @@ const Index = () => {
 
   return (
     <>
-      {/* Welcome Banner */}
-      <div className="mb-6">
-        <WelcomeBanner />
-      </div>
-
       {/* Page Header */}
       <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
         <div className="flex flex-col gap-3">
@@ -343,6 +338,11 @@ const Index = () => {
             <QuickActions />
           </div>
         </div>
+      </div>
+
+      {/* Welcome Banner */}
+      <div className="mb-6">
+        <WelcomeBanner />
       </div>
 
 
