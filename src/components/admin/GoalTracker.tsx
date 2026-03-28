@@ -97,9 +97,7 @@ export function GoalTracker({
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card">
-        <Skeleton className="h-5 w-32 mb-2" />
-        <Skeleton className="h-4 w-48 mb-4" />
+      <div>
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i}>
@@ -114,7 +112,7 @@ export function GoalTracker({
 
   if (showHistory) {
     return (
-      <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card">
+      <div>
         <div className="flex items-center gap-2 mb-4">
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowHistory(false)}>
             <ChevronLeft className="h-4 w-4" />
@@ -157,16 +155,13 @@ export function GoalTracker({
   }
 
   return (
-    <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card">
+    <div>
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <h2 className="font-display text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Goals & Targets
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground">This month's progress</p>
+        <div className="flex items-center gap-2">
+          <Target className="h-4 w-4 text-primary" />
+          <p className="text-xs text-muted-foreground">This month's progress</p>
         </div>
-        <Button variant="ghost" size="sm" className="h-8 gap-1 text-xs" onClick={() => setShowHistory(true)}>
+        <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => setShowHistory(true)}>
           <History className="h-3.5 w-3.5" />
           History
         </Button>

@@ -16,11 +16,7 @@ interface SalesChartProps {
 export function SalesChart({ data = [], loading = false }: SalesChartProps) {
   if (loading) {
     return (
-      <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-fade-in">
-        <div className="mb-4 sm:mb-6">
-          <Skeleton className="h-5 w-32 mb-2" />
-          <Skeleton className="h-4 w-48" />
-        </div>
+      <div>
         <Skeleton className="h-60 sm:h-80 w-full" />
       </div>
     );
@@ -29,11 +25,7 @@ export function SalesChart({ data = [], loading = false }: SalesChartProps) {
   const hasData = data.some(d => d.sales > 0);
 
   return (
-    <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-fade-in">
-      <div className="mb-4 sm:mb-6">
-        <h2 className="font-display text-base sm:text-lg font-semibold text-foreground">Sales Overview</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">Monthly sales performance (last 12 months)</p>
-      </div>
+    <div>
       <div className="h-60 sm:h-80">
         {!hasData ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">

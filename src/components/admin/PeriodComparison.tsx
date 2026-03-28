@@ -40,8 +40,7 @@ export function PeriodComparison({
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card animate-pulse">
-        <div className="h-5 w-40 bg-muted rounded mb-4" />
+      <div className="animate-pulse">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="space-y-2">
@@ -56,11 +55,8 @@ export function PeriodComparison({
   }
 
   return (
-    <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-display text-base sm:text-lg font-semibold text-foreground">
-          Period Comparison
-        </h3>
+    <div>
+      <div className="flex items-center justify-end mb-3">
         <div className="flex items-center gap-4 text-xs">
           <span className="flex items-center gap-1 text-primary">
             <span className="w-2 h-2 rounded-full bg-primary" />
