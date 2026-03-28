@@ -16,17 +16,30 @@ const iconBgClasses = {
   warning: "bg-warning/10 text-warning",
 };
 
+const borderAccent = {
+  primary: "border-l-primary",
+  accent: "border-l-accent",
+  success: "border-l-success",
+  warning: "border-l-warning",
+};
+
 export function StatsCard({ title, value, change, icon: Icon, iconBg = "primary" }: StatsCardProps) {
   const isPositive = change >= 0;
 
   return (
-    <div className="rounded-xl bg-card p-4 sm:p-6 shadow-card transition-all hover:shadow-md animate-fade-in">
-      <div className="flex items-start justify-between">
-        <div className={cn("rounded-lg p-2 sm:p-3", iconBgClasses[iconBg])}>
-          <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+    <div className={cn(
+      "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+      "hover:shadow-md hover:border-border hover:-translate-y-0.5",
+      "border-l-[3px]",
+      borderAccent[iconBg],
+      "animate-fade-in"
+    )}>
+      <div className="flex items-center justify-between gap-2">
+        <div className={cn("rounded-lg p-2", iconBgClasses[iconBg])}>
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
         <div className={cn(
-          "flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium",
+          "flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
           isPositive 
             ? "bg-success/10 text-success" 
             : "bg-destructive/10 text-destructive"
@@ -35,9 +48,9 @@ export function StatsCard({ title, value, change, icon: Icon, iconBg = "primary"
           {Math.abs(change)}%
         </div>
       </div>
-      <div className="mt-3 sm:mt-4">
-        <h3 className="text-lg sm:text-2xl font-bold text-foreground truncate" title={value}>{value}</h3>
-        <p className="mt-1 text-xs sm:text-sm text-muted-foreground truncate">{title}</p>
+      <div className="mt-3">
+        <h3 className="text-lg sm:text-xl font-bold text-foreground truncate tracking-tight" title={value}>{value}</h3>
+        <p className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider truncate">{title}</p>
       </div>
     </div>
   );

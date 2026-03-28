@@ -316,35 +316,30 @@ const Index = () => {
   };
 
   return (
-    <>
+    <div className="space-y-6">
       {/* Page Header */}
-      <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
-        <div className="flex flex-col gap-3">
-          <div>
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">Overview of your store performance.</p>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <DateRangeSelector
-              value={dateRangePreset}
-              customRange={customRange}
-              onChange={handleDateRangeChange}
-            />
-          </div>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Overview of your store performance</p>
+        </div>
+        <div className="flex items-center gap-2 mt-2 sm:mt-0">
+          <DateRangeSelector
+            value={dateRangePreset}
+            customRange={customRange}
+            onChange={handleDateRangeChange}
+          />
         </div>
       </div>
 
       {/* Welcome Banner */}
-      <div className="mb-6">
-        <WelcomeBanner />
-      </div>
-
+      <WelcomeBanner />
 
       {/* Widget Grid */}
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {visibleWidgets.map((widget) => renderWidget(widget))}
       </div>
-    </>
+    </div>
   );
 };
 
