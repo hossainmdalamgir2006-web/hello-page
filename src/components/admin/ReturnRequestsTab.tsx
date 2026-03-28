@@ -204,23 +204,29 @@ export function ReturnRequestsTab() {
   return (
     <div className="space-y-6">
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3">
         {[
-          { label: "Pending", value: counts.pending, icon: Clock, color: "bg-warning/10 text-warning" },
-          { label: "Completed", value: counts.completed, icon: CheckCircle2, color: "bg-success/10 text-success" },
-          { label: "Total Refunded", value: `${formatPrice(refundStats.totalRefunded)}`, icon: DollarSign, color: "bg-chart-5/10 text-chart-5" },
+          { label: "Pending", value: counts.pending, icon: Clock, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
+          { label: "Completed", value: counts.completed, icon: CheckCircle2, iconBg: "bg-success/10 text-success", border: "border-l-success" },
+          { label: "Total Refunded", value: `${formatPrice(refundStats.totalRefunded)}`, icon: DollarSign, iconBg: "bg-accent/10 text-accent-foreground", border: "border-l-accent" },
         ].map((stat) => (
-          <Card key={stat.label}>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg", stat.color)}>
-                <stat.icon className="h-5 w-5" />
+          <div
+            key={stat.label}
+            className={cn(
+              "rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5",
+              stat.border
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg shrink-0", stat.iconBg)}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
+              <div className="min-w-0">
+                <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
 
