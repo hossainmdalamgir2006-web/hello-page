@@ -11,15 +11,15 @@ export default function SecurityPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left Column */}
+        {/* Left: 2FA + Trusted Devices */}
         <div className="space-y-6">
           <TwoFactorSetup />
+          <TrustedDevices />
         </div>
 
-        {/* Right Column */}
+        {/* Right: Recovery Codes */}
         <div className="space-y-6">
           <RecoveryCodes />
-          <TrustedDevices />
         </div>
       </div>
     </div>

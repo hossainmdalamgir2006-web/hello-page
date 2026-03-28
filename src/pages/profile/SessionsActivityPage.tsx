@@ -130,9 +130,21 @@ export default function SessionsActivityPage() {
         })}
       </div>
 
-      {/* 2-Column Activity List */}
+      {/* 2-Column: Active Sessions left, Login Activity right */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Successful Logins */}
+        {/* Active Sessions */}
+        <div className="rounded-xl border border-border/50 bg-card p-5 border-l-[3px] border-l-primary">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="rounded-lg bg-primary/10 p-2"><Shield className="h-5 w-5 text-primary" /></div>
+            <div>
+              <h3 className="font-semibold">Active Sessions</h3>
+              <p className="text-xs text-muted-foreground">Manage your active sessions</p>
+            </div>
+          </div>
+          <SessionManagement />
+        </div>
+
+        {/* Login Activity */}
         <div className="rounded-xl border border-border/50 bg-card p-5 border-l-[3px] border-l-success">
           <div className="flex items-center gap-3 mb-4">
             <div className="rounded-lg bg-success/10 p-2"><Shield className="h-5 w-5 text-success" /></div>
