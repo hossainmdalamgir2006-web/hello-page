@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
-import { bn } from "date-fns/locale";
 
 interface MonthlyGoal {
   month: string;
@@ -36,6 +35,8 @@ interface GoalItem {
   target: number;
   unit: string;
   field: "sales_target" | "orders_target" | "customers_target";
+  accent: string;
+  progressAccent: string;
 }
 
 export function GoalTracker({
@@ -59,6 +60,8 @@ export function GoalTracker({
       target: currentGoal?.sales_target ?? 100000,
       unit: "৳",
       field: "sales_target",
+      accent: "bg-primary/8 border-primary/15",
+      progressAccent: "",
     },
     {
       id: "orders",
@@ -67,6 +70,8 @@ export function GoalTracker({
       target: currentGoal?.orders_target ?? 50,
       unit: "",
       field: "orders_target",
+      accent: "bg-accent/8 border-accent/15",
+      progressAccent: "[&>div]:bg-accent",
     },
     {
       id: "customers",
@@ -75,6 +80,8 @@ export function GoalTracker({
       target: currentGoal?.customers_target ?? 20,
       unit: "",
       field: "customers_target",
+      accent: "bg-warning/8 border-warning/15",
+      progressAccent: "[&>div]:bg-warning",
     },
   ];
 
@@ -97,15 +104,14 @@ export function GoalTracker({
 
   if (loading) {
     return (
-      <div>
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i}>
-              <Skeleton className="h-4 w-24 mb-2" />
-              <Skeleton className="h-3 w-full" />
-            </div>
-          ))}
-        </div>
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-lg bg-muted/30 p-3 space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-2 w-full" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        ))}
       </div>
     );
   }
@@ -122,7 +128,7 @@ export function GoalTracker({
         {history.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-6">No previous data yet</p>
         ) : (
-          <div className="space-y-3 max-h-[400px] overflow-y-auto">
+          <div className="space-y-2.5 max-h-[400px] overflow-y-auto">
             {history.map((h) => {
               const salesPct = h.sales_target > 0 ? Math.min((h.sales_actual / h.sales_target) * 100, 100) : 0;
               const ordersPct = h.orders_target > 0 ? Math.min((h.orders_actual / h.orders_target) * 100, 100) : 0;
@@ -131,7 +137,7 @@ export function GoalTracker({
               const allAchieved = h.sales_actual >= h.sales_target && h.orders_actual >= h.orders_target && h.customers_actual >= h.customers_target;
 
               return (
-                <div key={h.month} className="border rounded-lg p-3 space-y-2">
+                <div key={h.month} className="border rounded-lg p-3 space-y-2 hover:bg-muted/30 transition-colors">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">
                       {format(parseISO(h.month), "MMMM yyyy")}
@@ -158,8 +164,10 @@ export function GoalTracker({
     <div>
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Target className="h-4 w-4 text-primary" />
-          <p className="text-xs text-muted-foreground">This month's progress</p>
+          <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
+            <Target className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <p className="text-xs text-muted-foreground font-medium">This month's progress</p>
         </div>
         <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => setShowHistory(true)}>
           <History className="h-3.5 w-3.5" />
@@ -167,14 +175,14 @@ export function GoalTracker({
         </Button>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-2.5">
         {goals.map((goal) => {
           const percentage = goal.target > 0 ? Math.min((goal.current / goal.target) * 100, 100) : 0;
           const isAchieved = goal.current >= goal.target;
           const isEditing = editingId === goal.id;
 
           return (
-            <div key={goal.id}>
+            <div key={goal.id} className={cn("rounded-lg border p-3 transition-all duration-200", goal.accent)}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-foreground">{goal.label}</span>
                 <div className="flex items-center gap-2">
@@ -200,27 +208,30 @@ export function GoalTracker({
                     </div>
                   ) : (
                     <>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-[11px] text-muted-foreground font-medium">
                         {formatValue(goal.current, goal.unit)} / {formatValue(goal.target, goal.unit)}
                       </span>
-                      <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => handleEditStart(goal)}>
+                      <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => handleEditStart(goal)}>
                         <Edit2 className="h-3 w-3" />
                       </Button>
                     </>
                   )}
                 </div>
               </div>
-              <Progress value={percentage} className={cn("h-2", isAchieved && "[&>div]:bg-success")} />
-              <div className="flex items-center justify-between mt-1">
-                <span className={cn("text-xs font-medium", isAchieved ? "text-success" : "text-muted-foreground")}>
+              <Progress value={percentage} className={cn("h-1.5", isAchieved ? "[&>div]:bg-success" : goal.progressAccent)} />
+              <div className="flex items-center justify-between mt-1.5">
+                <span className={cn(
+                  "text-xs font-semibold px-1.5 py-0.5 rounded-full",
+                  isAchieved ? "text-success bg-success/10" : "text-muted-foreground bg-muted/50"
+                )}>
                   {percentage.toFixed(0)}%
                 </span>
                 {isAchieved ? (
-                  <span className="text-xs text-success flex items-center gap-1">
+                  <span className="text-[11px] text-success flex items-center gap-1 font-medium">
                     <TrendingUp className="h-3 w-3" /> Goal achieved!
                   </span>
                 ) : (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     {formatValue(goal.target - goal.current, goal.unit)} to go
                   </span>
                 )}
