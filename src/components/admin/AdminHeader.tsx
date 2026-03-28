@@ -171,7 +171,7 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
               </div>
             </div>
             <div className="p-1">
-              <DropdownMenuItem onClick={() => navigate(`${basePath}/profile`)} className="rounded-md py-2 cursor-pointer">
+              <DropdownMenuItem onClick={() => navigate(`${basePath}/account-settings/personal-info`)} className="rounded-md py-2 cursor-pointer">
                 <User className="mr-2 h-4 w-4 text-muted-foreground" />
                 {t('header.profile')}
               </DropdownMenuItem>
