@@ -118,8 +118,8 @@ export default function AbandonedCarts() {
                 <AbandonedCartTable carts={filteredCarts} isLoading={isLoading} onRefresh={refetch} />
               </TabsContent>
             </Tabs>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </>
   );
