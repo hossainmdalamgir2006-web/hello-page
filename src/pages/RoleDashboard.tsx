@@ -185,19 +185,15 @@ const RoleDashboard = () => {
   }
 
   // --- Support Dashboard ---
-    return (
+  return (
     <>
-      {/* Keyboard Shortcuts */}
       <SupportKeyboardShortcuts />
+
       {/* Header */}
-      <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-              Support Dashboard
-            </h1>
-          </div>
-        </div>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+          Support Dashboard
+        </h1>
       </div>
 
       {/* Welcome Banner */}
@@ -205,44 +201,47 @@ const RoleDashboard = () => {
         <WelcomeBanner basePath="/support" />
       </div>
 
-      <div className="grid gap-4 sm:gap-6 lg:grid-cols-4">
-        {/* Assigned to Me - Primary focus */}
-        <div className="lg:col-span-3">
-          <div className="rounded-lg border bg-card p-4 shadow-sm">
+      {/* Main Grid */}
+      <div className="grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        {/* Assigned to Me */}
+        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+          <div className="rounded-xl border bg-card p-3 sm:p-4 shadow-sm h-full">
             <h3 className="text-sm font-semibold mb-3">📌 Assigned to Me</h3>
             <AssignedToMeWidget />
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="lg:col-span-1">
-          <div className="rounded-lg border bg-card p-4 shadow-sm">
+        <div className="col-span-1">
+          <div className="rounded-xl border bg-card p-3 sm:p-4 shadow-sm h-full">
             <h3 className="text-sm font-semibold mb-3">⚡ Quick Actions</h3>
             <RoleQuickActions onRefresh={() => refetch()} loading={loading} />
           </div>
         </div>
 
-        {/* Shift Summary */}
-        <div className="lg:col-span-2">
-          <div className="rounded-lg border bg-card p-4 shadow-sm">
+        {/* Today's Shift */}
+        <div className="col-span-1 md:col-span-1 lg:col-span-2">
+          <div className="rounded-xl border bg-card p-3 sm:p-4 shadow-sm h-full">
             <h3 className="text-sm font-semibold mb-3">📋 Today's Shift</h3>
             <ShiftSummaryWidget />
           </div>
         </div>
 
         {/* Priority Queue */}
-        <div className="lg:col-span-2">
+        <div className="col-span-1 md:col-span-1 lg:col-span-2">
           <PriorityQueue />
         </div>
 
-        {/* Activity Feed */}
-        <div className="lg:col-span-2">
-          <ActivityFeed limit={8} />
+        {/* Activity Feed + Recent Orders side by side */}
+        <div className="col-span-1 md:col-span-1 lg:col-span-2">
+          <div className="rounded-xl border bg-card p-3 sm:p-4 shadow-sm h-full">
+            <h3 className="text-sm font-semibold mb-3">📊 Activity Feed</h3>
+            <ActivityFeed limit={6} />
+          </div>
         </div>
 
-        {/* Recent Orders (read-only context) */}
-        <div className="lg:col-span-4">
-          <div className="rounded-lg border bg-card p-4 shadow-sm">
+        <div className="col-span-1 md:col-span-1 lg:col-span-2">
+          <div className="rounded-xl border bg-card p-3 sm:p-4 shadow-sm h-full overflow-x-auto">
             <h3 className="text-sm font-semibold mb-3">🛒 Recent Orders</h3>
             <RecentOrders orders={recentOrders} loading={loading} />
           </div>
