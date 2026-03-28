@@ -121,7 +121,7 @@ export default function PageContentManager() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Page & Content Manager</h1>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Page & Content Manager</h1>
             <p className="text-sm text-muted-foreground">Manage all page content and homepage sections</p>
           </div>
           <Button variant="outline" asChild>

@@ -205,7 +205,7 @@ export default function ReviewsManager() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground">Product Reviews</h1>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Product Reviews</h1>
             <p className="text-sm text-muted-foreground">
               Manage customer reviews and ratings ({reviews.length} total)
             </p>

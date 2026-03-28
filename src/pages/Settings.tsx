@@ -124,7 +124,7 @@ export default function Settings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Settings</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Settings</h1>
           <p className="text-sm text-muted-foreground">Manage your store configuration and preferences</p>
         </div>
         <div className="flex items-center gap-2">
