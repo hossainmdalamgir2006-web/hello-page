@@ -18,8 +18,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { TwoFactorSetup } from '@/components/profile/TwoFactorSetup';
-import { LoginActivity } from '@/components/profile/LoginActivity';
-import { SessionManagement } from '@/components/profile/SessionManagement';
 
 export function SecurityTab() {
   const { user, signOut } = useAuth();
