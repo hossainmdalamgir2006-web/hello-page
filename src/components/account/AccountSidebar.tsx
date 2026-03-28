@@ -103,6 +103,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
       items: [
         { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
         { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
+        { titleKey: "account.notificationPreferences", url: "/myaccount/notification-preferences", icon: Bell },
         { titleKey: "account.settings", url: "/myaccount/settings", icon: Settings },
       ],
     },
