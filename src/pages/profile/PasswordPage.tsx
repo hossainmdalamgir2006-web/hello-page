@@ -3,14 +3,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { usePasswordSecurity } from '@/hooks/usePasswordSecurity';
 import { PasswordStrengthIndicator } from '@/components/ui/password-strength';
-import { Loader2, Lock, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Lock, Eye, EyeOff, ShieldCheck, Info } from 'lucide-react';
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(6, 'Password must be at least 6 characters'),
@@ -82,15 +81,21 @@ export default function PasswordPage() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-l-4 border-l-primary/20 hover:shadow-md transition-shadow">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
+      <div>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Password</h1>
+        <p className="text-sm text-muted-foreground">Change your account password</p>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Left: Change Password Form */}
+        <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+          <div className="flex items-center gap-3 mb-4">
             <div className="rounded-lg bg-primary/10 p-2"><Lock className="h-5 w-5 text-primary" /></div>
-            Change Password
-          </CardTitle>
-          <CardDescription>Update your password for security</CardDescription>
-        </CardHeader>
-        <CardContent>
+            <div>
+              <h3 className="font-semibold">Change Password</h3>
+              <p className="text-xs text-muted-foreground">Update your password for security</p>
+            </div>
+          </div>
           <Form {...passwordForm}>
             <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
               <FormField control={passwordForm.control} name="currentPassword" render={({ field }) => (
@@ -138,8 +143,27 @@ export default function PasswordPage() {
               </Button>
             </form>
           </Form>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Right: Tips */}
+        <div className="space-y-6">
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-success">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-success/10 p-2"><ShieldCheck className="h-5 w-5 text-success" /></div>
+              <div>
+                <h3 className="font-semibold">Password Tips</h3>
+                <p className="text-xs text-muted-foreground">Keep your account secure</p>
+              </div>
+            </div>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Use at least 8 characters with a mix of letters, numbers, and symbols</li>
+              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Avoid using common words or personal information</li>
+              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Don't reuse passwords from other websites</li>
+              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Consider using a password manager</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

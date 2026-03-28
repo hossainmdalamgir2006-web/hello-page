@@ -123,116 +123,125 @@ export default function PersonalInfoPage() {
 
   return (
     <div className="space-y-6">
-      {/* Avatar Card */}
-      <Card className="border-l-4 border-l-primary/20 hover:shadow-md transition-shadow">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <div className="rounded-lg bg-primary/10 p-2"><Camera className="h-5 w-5 text-primary" /></div>
-            Avatar
-          </CardTitle>
-          <CardDescription>Upload a profile photo</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <Avatar className="h-32 w-32">
-              <AvatarImage src={avatarUrl || ''} />
-              <AvatarFallback className="text-2xl bg-primary text-primary-foreground">{getInitials()}</AvatarFallback>
-            </Avatar>
-            {uploading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-full">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
-            )}
-          </div>
-          <div>
-            <input type="file" id="avatar" accept="image/*" className="hidden" onChange={uploadAvatar} disabled={uploading} />
-            <Button asChild variant="outline" disabled={uploading}>
-              <label htmlFor="avatar" className="cursor-pointer">
-                {uploading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Uploading...</>) : (<><Camera className="mr-2 h-4 w-4" />Change Avatar</>)}
-              </label>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Personal Info</h1>
+        <p className="text-sm text-muted-foreground">Manage your profile details and email</p>
+      </div>
 
-      {/* Personal Info Card */}
-      <Card className="border-l-4 border-l-primary/20 hover:shadow-md transition-shadow">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <div className="rounded-lg bg-primary/10 p-2"><User className="h-5 w-5 text-primary" /></div>
-            Personal Information
-          </CardTitle>
-          <CardDescription>Update your personal details</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...profileForm}>
-            <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
-              <FormField control={profileForm.control} name="fullName" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input className="pl-10" {...field} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <div className="space-y-2">
-                <FormLabel>Email</FormLabel>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input className="pl-10" disabled value={user?.email || ''} />
-                </div>
-                <p className="text-xs text-muted-foreground">To change your email, use the form below.</p>
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Left Column */}
+        <div className="space-y-6">
+          {/* Avatar Card */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-primary/10 p-2"><Camera className="h-5 w-5 text-primary" /></div>
+              <div>
+                <h3 className="font-semibold">Avatar</h3>
+                <p className="text-xs text-muted-foreground">Upload a profile photo</p>
               </div>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Save
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                <Avatar className="h-28 w-28">
+                  <AvatarImage src={avatarUrl || ''} />
+                  <AvatarFallback className="text-2xl bg-primary text-primary-foreground">{getInitials()}</AvatarFallback>
+                </Avatar>
+                {uploading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-full">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                )}
+              </div>
+              <div>
+                <input type="file" id="avatar" accept="image/*" className="hidden" onChange={uploadAvatar} disabled={uploading} />
+                <Button asChild variant="outline" disabled={uploading}>
+                  <label htmlFor="avatar" className="cursor-pointer">
+                    {uploading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Uploading...</>) : (<><Camera className="mr-2 h-4 w-4" />Change Avatar</>)}
+                  </label>
+                </Button>
+              </div>
+            </div>
+          </div>
 
-      {/* Change Email Card */}
-      <Card className="border-l-4 border-l-primary/20 hover:shadow-md transition-shadow">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <div className="rounded-lg bg-primary/10 p-2"><Mail className="h-5 w-5 text-primary" /></div>
-            Change Email
-          </CardTitle>
-          <CardDescription>Update your email address. A confirmation link will be sent to the new email.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...emailForm}>
-            <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <FormLabel>Current Email</FormLabel>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input className="pl-10" disabled value={user?.email || ''} />
-                </div>
+          {/* Personal Info Card */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-primary/10 p-2"><User className="h-5 w-5 text-primary" /></div>
+              <div>
+                <h3 className="font-semibold">Personal Information</h3>
+                <p className="text-xs text-muted-foreground">Update your personal details</p>
               </div>
-              <FormField control={emailForm.control} name="newEmail" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>New Email</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input className="pl-10" placeholder="Enter new email address" {...field} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
-              <Button type="submit" disabled={isEmailLoading}>
-                {isEmailLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Update Email
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+            </div>
+            <Form {...profileForm}>
+              <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
+                <FormField control={profileForm.control} name="fullName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input className="pl-10" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <div className="space-y-2">
+                  <FormLabel>Email</FormLabel>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input className="pl-10" disabled value={user?.email || ''} />
+                  </div>
+                  <p className="text-xs text-muted-foreground">To change your email, use the form on the right.</p>
+                </div>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Save
+                </Button>
+              </form>
+            </Form>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Change Email Card */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-accent/10 p-2"><Mail className="h-5 w-5 text-accent" /></div>
+              <div>
+                <h3 className="font-semibold">Change Email</h3>
+                <p className="text-xs text-muted-foreground">A confirmation link will be sent to the new email</p>
+              </div>
+            </div>
+            <Form {...emailForm}>
+              <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <FormLabel>Current Email</FormLabel>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input className="pl-10" disabled value={user?.email || ''} />
+                  </div>
+                </div>
+                <FormField control={emailForm.control} name="newEmail" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Email</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input className="pl-10" placeholder="Enter new email address" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <Button type="submit" disabled={isEmailLoading}>
+                  {isEmailLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Update Email
+                </Button>
+              </form>
+            </Form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
