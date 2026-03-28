@@ -153,29 +153,6 @@ export function SecurityTab() {
                 </div>
               ) : null}
 
-              {/* Warning */}
-              <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20">
-                <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-medium text-destructive">Warning</p>
-                  <p className="text-muted-foreground mt-1">
-                    Account deletion requires admin approval. Once approved, all your data including orders, addresses,
-                    wishlist items, and preferences will be permanently removed.
-                  </p>
-                </div>
-              </div>
-
-              {/* Admin approval info */}
-              <div className="flex items-start gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20">
-                <ShieldAlert className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-medium text-primary">Admin Approval Required</p>
-                  <p className="text-muted-foreground mt-1">
-                    Your request will be reviewed by an administrator. You will be notified once a decision has been made.
-                  </p>
-                </div>
-              </div>
-
               <Button
                 variant="destructive"
                 onClick={() => setDeleteConfirmOpen(true)}
