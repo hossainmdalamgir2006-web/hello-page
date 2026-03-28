@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Menu, LogOut, User, Settings, Command, ChevronDown } from "lucide-react";
+import { Search, Menu, LogOut, User, ExternalLink, Command, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
