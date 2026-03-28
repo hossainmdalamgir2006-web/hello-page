@@ -21,6 +21,7 @@ const pageTitles: Record<string, { title: string; description: string }> = {
   "/myaccount/security": { title: "Security", description: "Manage your account security" },
   "/myaccount/support": { title: "Support", description: "Get help from our team" },
   "/myaccount/chat": { title: "Live Chat", description: "Chat with support" },
+  "/myaccount/notification-preferences": { title: "Notification Preferences", description: "Manage your notification settings" },
   "/myaccount/settings": { title: "Settings", description: "Account preferences" },
 };
 

@@ -45,6 +45,7 @@ const AccountInvoice = lazy(() => import("./pages/store/account/AccountInvoice")
 const AccountReturns = lazy(() => import("./pages/store/account/AccountReturns"));
 const AccountReviews = lazy(() => import("./pages/store/account/AccountReviews"));
 const AccountNotifications = lazy(() => import("./pages/store/account/AccountNotifications"));
+const AccountNotificationPreferences = lazy(() => import("./pages/store/account/AccountNotificationPreferences"));
 
 const AccountChat = lazy(() => import("./pages/store/account/AccountChat"));
 import { CustomerAccountLayout } from "./layouts/CustomerAccountLayout";
@@ -138,6 +139,7 @@ const App = () => (
             <Route path="returns" element={<AccountReturns />} />
             <Route path="reviews" element={<AccountReviews />} />
             <Route path="notifications" element={<AccountNotifications />} />
+            <Route path="notification-preferences" element={<AccountNotificationPreferences />} />
             
             <Route path="chat" element={<AccountChat />} />
           </Route>

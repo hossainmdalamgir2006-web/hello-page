@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
   HelpCircle, Settings, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  RotateCcw, Star, MessageCircle, ChevronDown,
+  RotateCcw, Star, MessageCircle, ChevronDown, Bell,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -103,6 +103,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
       items: [
         { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
         { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
+        { titleKey: "account.notificationPreferences", url: "/myaccount/notification-preferences", icon: Bell },
         { titleKey: "account.settings", url: "/myaccount/settings", icon: Settings },
       ],
     },

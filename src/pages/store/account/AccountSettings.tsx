@@ -10,13 +10,11 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { User, Lock, Bell, Camera, Loader2, Eye, EyeOff, Package, Tag, ShoppingBag, TrendingDown } from "lucide-react";
+import { User, Lock, Camera, Loader2, Eye, EyeOff } from "lucide-react";
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -47,11 +45,6 @@ export default function AccountSettings() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [savingNotifications, setSavingNotifications] = useState(false);
-  const [notifications, setNotifications] = useState({
-    order_updates: true, order_shipped: true, order_delivered: true,
-    promotions: false, new_arrivals: false, price_drops: false, account_activity: true,
-  });
 
   const profileForm = useForm({ resolver: zodResolver(profileSchema), defaultValues: { full_name: "", email: "", phone: "", date_of_birth: "", gender: null as any, company_name: "", bio: "", language_preference: "en" } });
   const passwordForm = useForm({ resolver: zodResolver(passwordSchema), defaultValues: { current_password: "", new_password: "", confirm_password: "" } });
@@ -65,7 +58,6 @@ export default function AccountSettings() {
         if (data) {
           setAvatarUrl(data.avatar_url);
           profileForm.reset({ full_name: data.full_name || "", email: user.email || "", phone: data.phone || "", date_of_birth: data.date_of_birth || "", gender: data.gender || null, company_name: data.company_name || "", bio: data.bio || "", language_preference: data.language_preference || "en" });
-          setNotifications({ order_updates: data.notify_order_updates ?? true, order_shipped: data.notify_order_shipped ?? true, order_delivered: data.notify_order_delivered ?? true, promotions: data.notify_promotions ?? false, new_arrivals: data.notify_new_arrivals ?? false, price_drops: data.notify_price_drops ?? false, account_activity: data.notify_account_activity ?? true });
         }
       } catch (error) { console.error("Error:", error); }
       finally { setLoading(false); }
@@ -116,20 +108,6 @@ export default function AccountSettings() {
     finally { setSavingPassword(false); }
   };
 
-  const handleNotificationChange = async (key: keyof typeof notifications, value: boolean) => {
-    if (!user) return;
-    setNotifications((prev) => ({ ...prev, [key]: value }));
-    setSavingNotifications(true);
-    try {
-      const updateData: Record<string, boolean> = {};
-      updateData[`notify_${key}`] = value;
-      const { error } = await supabase.from("profiles").update(updateData).eq("user_id", user.id);
-      if (error) throw error;
-    } catch (error: any) {
-      setNotifications((prev) => ({ ...prev, [key]: !value }));
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally { setSavingNotifications(false); }
-  };
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
@@ -208,57 +186,6 @@ export default function AccountSettings() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5" />{t('account.notificationPreferences')}</CardTitle>
-          <CardDescription>{t('account.manageNotifications')}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" />{t('account.orderNotifications')}</h3>
-            <div className="space-y-3">
-              {[
-                { key: "order_updates" as const, label: t('account.orderUpdates'), desc: t('account.orderUpdatesDesc') },
-                { key: "order_shipped" as const, label: t('account.shippingNotifications'), desc: t('account.shippingNotificationsDesc') },
-                { key: "order_delivered" as const, label: t('account.deliveryNotifications'), desc: t('account.deliveryNotificationsDesc') },
-              ].map((item) => (
-                <div key={item.key}>
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
-                    <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleNotificationChange(item.key, checked)} disabled={savingNotifications} />
-                  </div>
-                  <Separator className="mt-3" />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Tag className="h-4 w-4" />{t('account.marketingPromotions')}</h3>
-            <div className="space-y-3">
-              {[
-                { key: "promotions" as const, label: t('account.promotionsOffers'), desc: t('account.promotionsDesc') },
-                { key: "new_arrivals" as const, label: t('account.newArrivals'), desc: t('account.newArrivalsDesc') },
-                { key: "price_drops" as const, label: t('account.priceDrops'), desc: t('account.priceDropsDesc') },
-              ].map((item) => (
-                <div key={item.key}>
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
-                    <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleNotificationChange(item.key, checked)} disabled={savingNotifications} />
-                  </div>
-                  <Separator className="mt-3" />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Lock className="h-4 w-4" />{t('account.accountSecurity')}</h3>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5"><Label htmlFor="account_activity">{t('account.accountActivity')}</Label><p className="text-xs text-muted-foreground">{t('account.accountActivityDesc')}</p></div>
-              <Switch id="account_activity" checked={notifications.account_activity} onCheckedChange={(checked) => handleNotificationChange("account_activity", checked)} disabled={savingNotifications} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
     </>
   );
