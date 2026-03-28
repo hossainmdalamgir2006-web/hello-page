@@ -327,7 +327,7 @@ const Index = () => {
         <div className="flex flex-col gap-3">
           <div>
             <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">Welcome! Drag widgets to rearrange your dashboard.</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Overview of your store performance.</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <DateRangeSelector
