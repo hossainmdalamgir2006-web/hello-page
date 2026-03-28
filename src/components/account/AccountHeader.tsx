@@ -229,13 +229,9 @@ export function AccountHeader({ onMenuClick, pageTitle = "My Account" }: Account
               </div>
             </div>
             <div className="p-1">
-              <DropdownMenuItem onClick={() => navigate("/myaccount")} className="rounded-md py-2 cursor-pointer">
-                <User className="mr-2 h-4 w-4 text-muted-foreground" />
-                My Account
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/myaccount/personal-info")} className="rounded-md py-2 cursor-pointer">
-                <Settings className="mr-2 h-4 w-4 text-muted-foreground" />
-                Settings
+                <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                Profile
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="rounded-md py-2 cursor-pointer">
                 <a href="/" target="_blank" rel="noopener noreferrer" className="flex w-full items-center">
