@@ -190,37 +190,7 @@ const Index = () => {
   const renderWidget = (widget: typeof visibleWidgets[0]) => {
     switch (widget.type) {
       case "alerts":
-        if (stats.pendingOrders === 0 && stats.lowStockProducts === 0 && pendingReturns === 0) return null;
-        return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-4"
-          >
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {stats.pendingOrders > 0 && (
-                <div className="flex items-center gap-3 rounded-lg border border-warning/30 bg-warning/10 p-3">
-                  <Clock className="h-5 w-5 text-warning" />
-                  <span className="text-sm font-medium">{stats.pendingOrders} pending orders need attention</span>
-                </div>
-              )}
-              {stats.lowStockProducts > 0 && (
-                <div className="flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
-                  <AlertCircle className="h-5 w-5 text-destructive" />
-                  <span className="text-sm font-medium">{stats.lowStockProducts} products are low on stock</span>
-                </div>
-              )}
-              {pendingReturns > 0 && (
-                <div className="flex items-center gap-3 rounded-lg border border-chart-5/30 bg-chart-5/10 p-3">
-                  <RotateCcw className="h-5 w-5 text-chart-5" />
-                  <span className="text-sm font-medium">{pendingReturns} return/refund request(s) pending</span>
-                </div>
-              )}
-            </div>
-          </DashboardWidget>
-        );
+        return null;
 
       case "stats":
         return (
