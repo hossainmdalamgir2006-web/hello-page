@@ -199,7 +199,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-4"
+            className="md:col-span-2 lg:col-span-4"
           >
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-6">
               {loading ? (
