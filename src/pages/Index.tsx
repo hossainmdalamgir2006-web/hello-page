@@ -82,23 +82,6 @@ const Index = () => {
 
 
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      moveWidget(active.id as string, over.id as string);
-    }
-  };
 
   const handleDateRangeChange = (preset: DateRangePreset, range?: { from: Date; to: Date }) => {
     setDateRangePreset(preset);
