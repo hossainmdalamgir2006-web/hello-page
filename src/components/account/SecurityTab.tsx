@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { TwoFactorSetup } from '@/components/profile/TwoFactorSetup';
+import { RecoveryCodes } from '@/components/profile/RecoveryCodes';
 
 export function SecurityTab() {
   const { user, signOut } = useAuth();
@@ -54,8 +55,9 @@ export function SecurityTab() {
           <TwoFactorSetup />
         </div>
 
-        {/* Right: Delete Account */}
+        {/* Right: Recovery Codes + Delete Account */}
         <div className="space-y-6">
+          <RecoveryCodes />
 
           {/* Delete Account */}
           <Card className="border-destructive/30">
