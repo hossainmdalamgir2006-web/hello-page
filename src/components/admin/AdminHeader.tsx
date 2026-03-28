@@ -182,8 +182,11 @@ export function AdminHeader({ onMenuClick, collapsed }: AdminHeaderProps) {
                 </a>
               </DropdownMenuItem>
             </div>
-            <div className="border-t border-border p-1">
-              <DropdownMenuItem onClick={handleLogout} className="rounded-md py-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+            <div className="border-t border-border p-1.5">
+              <DropdownMenuItem 
+                onClick={handleLogout} 
+                className="rounded-lg py-2.5 cursor-pointer text-destructive/80 bg-destructive/5 border border-destructive/10 hover:bg-destructive/15 hover:text-destructive hover:border-destructive/20 focus:bg-destructive/15 focus:text-destructive transition-all justify-center font-medium"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 {t('nav.logout')}
               </DropdownMenuItem>
