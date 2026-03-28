@@ -35,12 +35,24 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 2. Delete related messages first (FK constraint)
+    // 2. Delete related records first (FK constraints)
     const { error: msgErr } = await supabase
       .from("live_chat_messages")
       .delete()
       .in("conversation_id", expiredIds);
     if (msgErr) console.error("Error deleting messages:", msgErr.message);
+
+    const { error: csatErr } = await supabase
+      .from("csat_ratings")
+      .delete()
+      .in("conversation_id", expiredIds);
+    if (csatErr) console.error("Error deleting CSAT ratings:", csatErr.message);
+
+    const { error: notesErr } = await supabase
+      .from("customer_notes")
+      .delete()
+      .in("conversation_id", expiredIds);
+    if (notesErr) console.error("Error deleting customer notes:", notesErr.message);
 
     // 3. Delete the expired conversations
     const { error: convErr } = await supabase
