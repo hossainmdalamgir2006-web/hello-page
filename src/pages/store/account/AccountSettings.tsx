@@ -87,6 +87,20 @@ export default function AccountSettings() {
     finally { setSavingProfile(false); }
   };
 
+  const onEmailSubmit = async (values: z.infer<typeof emailSchema>) => {
+    if (!user) return;
+    setIsEmailLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ email: values.newEmail });
+      if (error) throw error;
+      emailForm.reset();
+      toast({ title: "Email Change Requested", description: "A confirmation link has been sent to your new email address." });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Email Update Failed", description: error.message });
+    } finally {
+      setIsEmailLoading(false);
+    }
+  };
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
