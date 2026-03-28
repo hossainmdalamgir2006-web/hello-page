@@ -23,6 +23,7 @@ import { DashboardWidget } from "@/components/admin/DashboardWidget";
 import { DashboardWidgetPicker } from "@/components/admin/DashboardWidgetPicker";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useDashboardLayout } from "@/hooks/useDashboardLayout";
+import { useGoalTracker } from "@/hooks/useGoalTracker";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
