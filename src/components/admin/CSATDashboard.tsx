@@ -52,64 +52,28 @@ export function CSATDashboard() {
   return (
     <div className="space-y-4">
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        {[
+          { label: "Avg Rating", value: averageRating.toFixed(1), icon: Star, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
+          { label: "Satisfaction Rate", value: `${satisfactionRate.toFixed(0)}%`, icon: ThumbsUp, iconBg: "bg-success/10 text-success", border: "border-l-success" },
+          { label: "Total Ratings", value: totalRatings, icon: MessageSquare, iconBg: "bg-primary/10 text-primary", border: "border-l-primary" },
+          { label: "4-5 Stars", value: ratingDistribution[4] + ratingDistribution[5], icon: TrendingUp, iconBg: "bg-accent/10 text-accent-foreground", border: "border-l-accent" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className={`rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border}`}
+          >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900/30">
-                <Star className="h-5 w-5 text-yellow-600 fill-yellow-600" />
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Avg Rating</p>
-                <p className="text-2xl font-bold">{averageRating.toFixed(1)}</p>
+              <div className="min-w-0">
+                <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-                <ThumbsUp className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Satisfaction Rate</p>
-                <p className="text-2xl font-bold">{satisfactionRate.toFixed(0)}%</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                <MessageSquare className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Total Ratings</p>
-                <p className="text-2xl font-bold">{totalRatings}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-primary/10">
-                <TrendingUp className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">4-5 Stars</p>
-                <p className="text-2xl font-bold">
-                  {ratingDistribution[4] + ratingDistribution[5]}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
