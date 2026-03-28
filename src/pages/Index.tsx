@@ -296,7 +296,23 @@ const Index = () => {
 
       {/* Widget Grid */}
       <div className="grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        {visibleWidgets.map((widget) => renderWidget(widget))}
+        {visibleWidgets.map((widget) => {
+          // Group Goal Tracker, Activity Feed, Return Requests into a 3-col sub-grid
+          if (widget.type === "goalTracker") {
+            const activityWidget = visibleWidgets.find(w => w.type === "activityFeed");
+            const returnWidget = visibleWidgets.find(w => w.type === "returnRequests");
+            return (
+              <div key="three-col-group" className="md:col-span-2 lg:col-span-4 grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-3">
+                {renderWidget({ ...widget, type: "goalTracker__inner" as any })}
+                {activityWidget && renderWidget({ ...activityWidget, type: "activityFeed__inner" as any })}
+                {returnWidget && renderWidget({ ...returnWidget, type: "returnRequests__inner" as any })}
+              </div>
+            );
+          }
+          // Skip these since they're rendered in the group above
+          if (widget.type === "activityFeed" || widget.type === "returnRequests") return null;
+          return renderWidget(widget);
+        })}
       </div>
     </div>
   );
