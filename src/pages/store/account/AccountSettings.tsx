@@ -60,7 +60,6 @@ export default function AccountSettings() {
         if (data) {
           setAvatarUrl(data.avatar_url);
           profileForm.reset({ full_name: data.full_name || "", email: user.email || "", phone: data.phone || "", date_of_birth: data.date_of_birth || "", gender: data.gender || null, company_name: data.company_name || "", bio: data.bio || "", language_preference: data.language_preference || "en" });
-          setNotifications({ order_updates: data.notify_order_updates ?? true, order_shipped: data.notify_order_shipped ?? true, order_delivered: data.notify_order_delivered ?? true, promotions: data.notify_promotions ?? false, new_arrivals: data.notify_new_arrivals ?? false, price_drops: data.notify_price_drops ?? false, account_activity: data.notify_account_activity ?? true });
         }
       } catch (error) { console.error("Error:", error); }
       finally { setLoading(false); }
