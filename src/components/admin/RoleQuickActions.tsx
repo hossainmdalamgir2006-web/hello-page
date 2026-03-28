@@ -53,17 +53,17 @@ export function RoleQuickActions({ onRefresh, loading }: RoleQuickActionsProps) 
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {actions.map((action) => (
           <Button
             key={action.label}
             variant="outline"
             size="sm"
-            className="h-auto py-3 flex flex-col items-center gap-1.5 text-xs"
+            className="h-auto py-2.5 flex flex-col items-center gap-1 text-[11px] px-1"
             onClick={action.onClick}
           >
-            <action.icon className="h-4 w-4" />
-            {action.label}
+            <action.icon className="h-4 w-4 shrink-0" />
+            <span className="truncate w-full text-center">{action.label}</span>
           </Button>
         ))}
       </div>

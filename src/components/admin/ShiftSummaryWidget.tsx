@@ -13,23 +13,9 @@ export function ShiftSummaryWidget() {
   ];
 
   return (
-    <div className="space-y-4">
-      {/* Today's header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">
-            Today's Shift Summary
-          </span>
-        </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <TrendingUp className="h-3 w-3" />
-          <span>Live</span>
-        </div>
-      </div>
-
+    <div className="space-y-3">
       {/* Metrics Grid */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {metrics.map((metric) => (
           <div key={metric.label} className="rounded-lg border p-3">
             <div className="flex items-center gap-2 mb-2">

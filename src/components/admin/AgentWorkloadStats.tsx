@@ -19,8 +19,8 @@ export function AgentWorkloadStats() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
+      <div className="grid grid-cols-2 gap-3">
+        {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-24" />
           ))}
         </div>
@@ -34,62 +34,23 @@ export function AgentWorkloadStats() {
   return (
     <div className="space-y-4">
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-primary/10">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Total Agents</p>
-                <p className="text-2xl font-bold">{summary.totalAgents}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/30">
-                <Circle className="h-5 w-5 text-green-600 fill-green-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Online</p>
-                <p className="text-2xl font-bold">{summary.onlineAgents}</p>
+      <div className="grid grid-cols-2 gap-3">
+        {[
+          { label: "Total Agents", value: summary.totalAgents, icon: Users, bg: "bg-primary/10", color: "text-primary" },
+          { label: "Online", value: summary.onlineAgents, icon: Circle, bg: "bg-green-100 dark:bg-green-900/30", color: "text-green-600", fill: "fill-green-600" },
+          { label: "Total Assigned", value: summary.totalAssigned, icon: Tag, bg: "bg-blue-100 dark:bg-blue-900/30", color: "text-blue-600" },
+          { label: "Resolved Today", value: summary.resolvedToday, icon: TrendingUp, bg: "bg-emerald-100 dark:bg-emerald-900/30", color: "text-emerald-600" },
+        ].map((stat) => (
+          <div key={stat.label} className="rounded-lg border p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <div className={`p-1.5 rounded-full ${stat.bg}`}>
+                <stat.icon className={`h-3.5 w-3.5 ${stat.color} ${stat.fill || ""}`} />
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                <Tag className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Total Assigned</p>
-                <p className="text-2xl font-bold">{summary.totalAssigned}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-                <TrendingUp className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Resolved Today</p>
-                <p className="text-2xl font-bold">{summary.resolvedToday}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <p className="text-xl font-bold">{stat.value}</p>
+            <p className="text-[11px] text-muted-foreground truncate">{stat.label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Agent List */}
