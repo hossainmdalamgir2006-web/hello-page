@@ -15,6 +15,7 @@ import {
 } from "@dnd-kit/sortable";
 import { RefreshCw } from "lucide-react";
 
+import { WelcomeBanner } from "@/components/admin/WelcomeBanner";
 import { RecentOrders } from "@/components/admin/RecentOrders";
 import { SalesChart } from "@/components/admin/SalesChart";
 import { TopProducts } from "@/components/admin/TopProducts";
