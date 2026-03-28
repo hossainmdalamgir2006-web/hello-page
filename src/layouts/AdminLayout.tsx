@@ -40,7 +40,7 @@ export function AdminLayout() {
         collapsed ? "w-[68px]" : "w-64",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <AdminSidebar collapsed={collapsed} onToggleCollapse={toggleCollapsed} />
+        <AdminSidebar collapsed={collapsed} onToggleCollapse={toggleCollapsed} onCloseMobile={() => setSidebarOpen(false)} />
       </div>
 
       {/* Main content */}

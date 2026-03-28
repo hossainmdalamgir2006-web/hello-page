@@ -29,6 +29,7 @@ import {
 interface AdminSidebarProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
+  onCloseMobile?: () => void;
 }
 
 interface MenuItem {
@@ -43,7 +44,7 @@ interface MenuGroup {
   items: MenuItem[];
 }
 
-export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSidebarProps) {
+export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobile }: AdminSidebarProps) {
   const { t } = useLanguage();
   const { storeName } = useSiteTitle();
   const { signOut, role } = useAuth();
@@ -156,11 +157,16 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSideb
   ].filter(item => role && item.roles.includes(role));
 
   const renderNavItem = (item: MenuItem, isEnd?: boolean) => {
+    const handleNavClick = () => {
+      onCloseMobile?.();
+    };
+
     const linkContent = (
       <NavLink
         key={item.url}
         to={item.url}
         end={isEnd}
+        onClick={handleNavClick}
         className={cn(
           "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground",
           collapsed && "justify-center px-2"
