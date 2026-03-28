@@ -110,20 +110,6 @@ export default function AccountSettings() {
     finally { setSavingPassword(false); }
   };
 
-  const handleNotificationChange = async (key: keyof typeof notifications, value: boolean) => {
-    if (!user) return;
-    setNotifications((prev) => ({ ...prev, [key]: value }));
-    setSavingNotifications(true);
-    try {
-      const updateData: Record<string, boolean> = {};
-      updateData[`notify_${key}`] = value;
-      const { error } = await supabase.from("profiles").update(updateData).eq("user_id", user.id);
-      if (error) throw error;
-    } catch (error: any) {
-      setNotifications((prev) => ({ ...prev, [key]: !value }));
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally { setSavingNotifications(false); }
-  };
 
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
