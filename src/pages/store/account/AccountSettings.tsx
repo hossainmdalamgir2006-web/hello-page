@@ -270,18 +270,20 @@ export default function AccountSettings() {
                   <p className="text-xs text-muted-foreground">Choose your preferred language</p>
                 </div>
               </div>
-              <FormField control={profileForm.control} name="language_preference" render={({ field }) => (
-                <FormItem>
-                  <Select onValueChange={field.onChange} value={field.value || "en"}>
-                    <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                    <SelectContent>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <Form {...profileForm}>
+                <FormField control={profileForm.control} name="language_preference" render={({ field }) => (
+                  <FormItem>
+                    <Select onValueChange={(val) => { field.onChange(val); profileForm.handleSubmit(onProfileSubmit)(); }} value={field.value || "en"}>
+                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </Form>
             </div>
 
             {/* Change Password Card */}
