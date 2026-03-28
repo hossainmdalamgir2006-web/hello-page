@@ -1,5 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp } from "lucide-react";
 import { formatPrice } from "@/lib/formatPrice";
 
 interface SalesDataPoint {
@@ -15,32 +16,39 @@ interface SalesChartProps {
 
 export function SalesChart({ data = [], loading = false }: SalesChartProps) {
   if (loading) {
-    return (
-      <div>
-        <Skeleton className="h-60 sm:h-80 w-full" />
-      </div>
-    );
+    return <Skeleton className="h-60 sm:h-72 w-full rounded-lg" />;
   }
 
   const hasData = data.some(d => d.sales > 0);
+  const totalSales = data.reduce((sum, d) => sum + d.sales, 0);
 
   return (
     <div>
-      <div className="h-60 sm:h-80">
+      {hasData && (
+        <div className="flex items-center gap-2 mb-3">
+          <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
+            <TrendingUp className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <span className="text-sm font-semibold text-foreground">{formatPrice(totalSales)}</span>
+          <span className="text-[11px] text-muted-foreground">total in period</span>
+        </div>
+      )}
+      <div className="h-56 sm:h-64">
         {!hasData ? (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            No sales data available yet
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <TrendingUp className="h-8 w-8 mb-2 opacity-40" />
+            <p className="text-sm">No sales data available yet</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <AreaChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.25} />
                   <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} opacity={0.5} />
               <XAxis 
                 dataKey="name" 
                 axisLine={false}
@@ -59,8 +67,10 @@ export function SalesChart({ data = [], loading = false }: SalesChartProps) {
                 contentStyle={{ 
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
-                  borderRadius: "8px",
-                  boxShadow: "var(--shadow-md)"
+                  borderRadius: "10px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                  padding: "8px 12px",
+                  fontSize: "12px",
                 }}
                 formatter={(value: number, name: string) => [
                   name === 'sales' ? `${formatPrice(value)}` : value,

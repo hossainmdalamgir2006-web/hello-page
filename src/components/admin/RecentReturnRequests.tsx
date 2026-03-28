@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RotateCcw, Clock, CheckCircle2, XCircle, DollarSign } from "lucide-react";
+import { RotateCcw, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/formatPrice";
@@ -32,7 +31,6 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
   useEffect(() => {
     async function fetch() {
       setLoading(true);
-      // Fetch latest 5 return requests
       const { data: rr } = await supabase
         .from('return_requests')
         .select('*')
@@ -65,19 +63,16 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
       }
       setReturns(enriched);
 
-      // Pending count
       const { count: pendingCount } = await supabase
         .from('return_requests')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending');
 
-      // Completed count
       const { count: completedCount } = await supabase
         .from('return_requests')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'completed');
 
-      // Total refunded
       const { data: refunded } = await supabase
         .from('orders' as any)
         .select('refund_amount')
@@ -94,7 +89,10 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
   if (loading || externalLoading) {
     return (
       <div className="space-y-3">
-        {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-14" />)}
+        <div className="grid grid-cols-3 gap-2">
+          {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-lg" />)}
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-lg" />)}
       </div>
     );
   }
@@ -103,33 +101,36 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
     <div className="space-y-4">
       {/* Mini stats */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-warning/10 border border-warning/20 text-center">
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-warning/8 border border-warning/15 text-center transition-all hover:shadow-sm">
           <p className="text-lg font-bold text-warning">{stats.pending}</p>
-          <p className="text-[10px] text-muted-foreground leading-tight">Pending</p>
+          <p className="text-[10px] text-muted-foreground font-medium leading-tight">Pending</p>
         </div>
-        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-success/10 border border-success/20 text-center">
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-success/8 border border-success/15 text-center transition-all hover:shadow-sm">
           <p className="text-lg font-bold text-success">{stats.completed}</p>
-          <p className="text-[10px] text-muted-foreground leading-tight">Completed</p>
+          <p className="text-[10px] text-muted-foreground font-medium leading-tight">Completed</p>
         </div>
-        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-chart-5/10 border border-chart-5/20 text-center">
-          <p className="text-sm font-bold text-chart-5 truncate w-full">{formatPrice(stats.totalRefunded)}</p>
-          <p className="text-[10px] text-muted-foreground leading-tight">Refunded</p>
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-primary/8 border border-primary/15 text-center transition-all hover:shadow-sm">
+          <p className="text-sm font-bold text-primary truncate w-full">{formatPrice(stats.totalRefunded)}</p>
+          <p className="text-[10px] text-muted-foreground font-medium leading-tight">Refunded</p>
         </div>
       </div>
 
       {returns.length === 0 ? (
-        <p className="text-center text-sm text-muted-foreground py-4">No return requests yet</p>
+        <div className="flex flex-col items-center justify-center py-4 text-muted-foreground">
+          <RotateCcw className="h-8 w-8 mb-2 opacity-40" />
+          <p className="text-sm">No return requests yet</p>
+        </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {returns.map((r) => {
             const sc = statusConfig[r.status] || statusConfig.pending;
             return (
-              <div key={r.id} className="flex flex-col gap-2 p-2.5 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+              <div key={r.id} className="flex flex-col gap-2 p-2.5 rounded-lg border border-transparent hover:border-border/50 hover:bg-muted/30 transition-all duration-200">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium truncate">{r.customer_name || "Unknown"}</p>
                     {r.order_number && (
-                      <p className="text-xs text-muted-foreground truncate">#{r.order_number}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">#{r.order_number}</p>
                     )}
                   </div>
                   <Badge variant="outline" className={cn("text-[10px] shrink-0 px-1.5 py-0.5", sc.color)}>
@@ -139,7 +140,7 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground truncate">{r.reason}</p>
-                  <p className="text-[10px] text-muted-foreground">{format(new Date(r.created_at), "MMM dd, HH:mm")}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{format(new Date(r.created_at), "MMM dd, HH:mm")}</p>
                 </div>
               </div>
             );

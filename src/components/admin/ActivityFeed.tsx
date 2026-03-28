@@ -1,14 +1,6 @@
 import { useState, useEffect } from "react";
 import { 
-  ShoppingCart, 
-  Package, 
-  Users, 
-  MessageSquare, 
-  CreditCard,
-  Truck,
-  AlertCircle,
-  CheckCircle,
-  Clock
+  ShoppingCart, Package, Users, MessageSquare, CreditCard, Truck, Clock
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
@@ -36,10 +28,10 @@ const activityIcons = {
 };
 
 const statusStyles = {
-  success: "text-success bg-success/10",
-  warning: "text-warning bg-warning/10",
-  error: "text-destructive bg-destructive/10",
-  info: "text-primary bg-primary/10",
+  success: "text-success bg-success/10 ring-success/20",
+  warning: "text-warning bg-warning/10 ring-warning/20",
+  error: "text-destructive bg-destructive/10 ring-destructive/20",
+  info: "text-primary bg-primary/10 ring-primary/20",
 };
 
 interface ActivityFeedProps {
@@ -53,21 +45,18 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
 
   const fetchActivities = async () => {
     try {
-      // Fetch recent orders
       const { data: orders } = await supabase
         .from('orders')
         .select('id, order_number, status, payment_status, created_at, total_amount')
         .order('created_at', { ascending: false })
         .limit(5);
 
-      // Fetch recent customers
       const { data: customers } = await supabase
         .from('customers')
         .select('id, full_name, created_at')
         .order('created_at', { ascending: false })
         .limit(3);
 
-      // Fetch recent contact messages
       const { data: messages } = await supabase
         .from('contact_messages')
         .select('id, name, subject, created_at, status')
@@ -76,7 +65,6 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
 
       const activityItems: ActivityItem[] = [];
 
-      // Map orders to activities
       (orders || []).forEach((order: any) => {
         let status: ActivityItem["status"] = "info";
         let description = `Order #${order.order_number}`;
@@ -107,7 +95,6 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
         });
       });
 
-      // Map customers to activities
       (customers || []).forEach((customer: any) => {
         activityItems.push({
           id: `customer-${customer.id}`,
@@ -119,7 +106,6 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
         });
       });
 
-      // Map messages to activities
       (messages || []).forEach((message: any) => {
         activityItems.push({
           id: `message-${message.id}`,
@@ -131,9 +117,7 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
         });
       });
 
-      // Sort by timestamp
       activityItems.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-
       setActivities(activityItems.slice(0, limit));
     } catch (error) {
       console.error("Error fetching activities:", error);
@@ -145,7 +129,6 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
   useEffect(() => {
     fetchActivities();
 
-    // Subscribe to realtime changes
     const ordersChannel = supabase
       .channel('activity-orders')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchActivities)
@@ -170,12 +153,12 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex gap-3">
+          <div key={i} className="flex gap-3 p-2 rounded-lg bg-muted/30">
             <Skeleton className="h-8 w-8 rounded-full shrink-0" />
-            <div className="flex-1">
-              <Skeleton className="h-4 w-24 mb-1" />
+            <div className="flex-1 space-y-1">
+              <Skeleton className="h-4 w-24" />
               <Skeleton className="h-3 w-full" />
             </div>
           </div>
@@ -186,34 +169,37 @@ export function ActivityFeed({ limit = 10, className }: ActivityFeedProps) {
 
   return (
     <div className={cn(className)}>
-      <ScrollArea className="h-[300px] pr-4">
+      <ScrollArea className="h-[300px] pr-2">
         {activities.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <Clock className="h-8 w-8 mb-2 opacity-50" />
+            <Clock className="h-8 w-8 mb-2 opacity-40" />
             <p className="text-sm">No recent activity</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-1.5">
             {activities.map((activity) => {
               const Icon = activityIcons[activity.type];
               return (
-                <div key={activity.id} className="flex gap-3 group">
+                <div
+                  key={activity.id}
+                  className="flex gap-3 p-2.5 rounded-lg border border-transparent hover:border-border/50 hover:bg-muted/30 transition-all duration-200 group"
+                >
                   <div className={cn(
-                    "h-8 w-8 rounded-full flex items-center justify-center shrink-0",
+                    "h-8 w-8 rounded-full flex items-center justify-center shrink-0 ring-1",
                     statusStyles[activity.status || "info"]
                   )}>
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-3.5 w-3.5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-sm font-medium text-foreground truncate">
                         {activity.title}
                       </p>
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      <span className="text-[10px] text-muted-foreground whitespace-nowrap bg-muted/50 px-1.5 py-0.5 rounded-full">
                         {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">
                       {activity.description}
                     </p>
                   </div>
