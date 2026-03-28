@@ -245,12 +245,12 @@ export default function Reports() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Reports</h1>
-            <p className="text-muted-foreground">Generate and schedule business reports</p>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Reports</h1>
+            <p className="text-sm text-muted-foreground mt-1">Generate and schedule business reports</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-2 sm:mt-0">
             <Button variant="outline" onClick={() => setScheduleDialogOpen(true)}>
               <Clock className="h-4 w-4 mr-2" />
               Create Schedule
@@ -263,59 +263,30 @@ export default function Reports() {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-primary/10">
-                  <FileText className="h-5 w-5 text-primary" />
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
+          {[
+            { label: "Total Reports", value: stats.totalReports.toString(), icon: FileText, color: "primary" },
+            { label: "Active Schedules", value: stats.scheduledActive.toString(), icon: Clock, color: "success" },
+            { label: "Generating", value: stats.generatingNow.toString(), icon: RefreshCw, color: "accent" },
+            { label: "This Month", value: stats.thisMonth.toString(), icon: CalendarIcon, color: "warning" },
+          ].map((card) => {
+            const IconComp = card.icon;
+            const bgMap: Record<string,string> = { primary: "bg-primary/10 text-primary", accent: "bg-accent/10 text-accent", success: "bg-success/10 text-success", warning: "bg-warning/10 text-warning" };
+            const borderMap: Record<string,string> = { primary: "border-l-primary", accent: "border-l-accent", success: "border-l-success", warning: "border-l-warning" };
+            return (
+              <div key={card.label} className={`group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px] ${borderMap[card.color]} animate-fade-in`}>
+                <div className="flex items-center gap-3">
+                  <div className={`rounded-lg p-2 ${bgMap[card.color]}`}>
+                    <IconComp className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Reports</p>
-                  <p className="text-2xl font-bold">{stats.totalReports}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-green-100">
-                  <Clock className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Active Schedules</p>
-                  <p className="text-2xl font-bold">{stats.scheduledActive}</p>
+                <div className="mt-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground truncate tracking-tight">{card.value}</h3>
+                  <p className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider truncate">{card.label}</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-blue-100">
-                  <RefreshCw className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Generating</p>
-                  <p className="text-2xl font-bold">{stats.generatingNow}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-purple-100">
-                  <CalendarIcon className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">This Month</p>
-                  <p className="text-2xl font-bold">{stats.thisMonth}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            );
+          })}
         </div>
 
         {/* Main Content */}
