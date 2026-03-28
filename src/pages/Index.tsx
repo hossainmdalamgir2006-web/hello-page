@@ -257,7 +257,7 @@ const Index = () => {
             id={widget.id}
             title={widget.title}
             onRemove={() => removeWidget(widget.id)}
-            className="lg:col-span-1"
+            className="md:col-span-1 lg:col-span-1"
           >
             <Suspense fallback={<WidgetLoader />}>
               <GoalTracker
