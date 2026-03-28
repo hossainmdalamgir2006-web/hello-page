@@ -50,7 +50,7 @@ export function useGlobalTrash() {
       setLoading(true);
       const allItems: TrashedItem[] = [];
       const typesToFetch: TrashEntityType[] = filter === 'all' 
-        ? ['product', 'order', 'brand', 'category', 'coupon'] 
+        ? (Object.keys(ENTITY_CONFIGS) as TrashEntityType[])
         : [filter];
 
       await Promise.all(typesToFetch.map(async (entityType) => {
