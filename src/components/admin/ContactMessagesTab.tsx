@@ -177,59 +177,28 @@ export function ContactMessagesTab() {
   return (
     <div className="space-y-4">
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        {[
+          { label: "Total Messages", value: messages.length, icon: MessageSquare, iconBg: "bg-primary/10 text-primary", border: "border-l-primary" },
+          { label: "Unread", value: unreadCount, icon: Mail, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive" },
+          { label: "Unreplied", value: unrepliedCount, icon: Reply, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
+          { label: "Replied", value: repliedCount, icon: CheckCircle2, iconBg: "bg-success/10 text-success", border: "border-l-success" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className={`rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border}`}
+          >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-primary/10">
-                <MessageSquare className="h-5 w-5 text-primary" />
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Messages</p>
-                <p className="text-2xl font-bold">{messages.length}</p>
+              <div className="min-w-0">
+                <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-destructive/10">
-                <Mail className="h-5 w-5 text-destructive" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Unread</p>
-                <p className="text-2xl font-bold">{unreadCount}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/30">
-                <Reply className="h-5 w-5 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Unreplied</p>
-                <p className="text-2xl font-bold">{unrepliedCount}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Replied</p>
-                <p className="text-2xl font-bold">{repliedCount}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
 
       {/* Filters */}
