@@ -580,54 +580,34 @@ export default function Categories() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                <FolderTree className="h-6 w-6 text-primary" />
+          {[
+            { label: "Root Categories", value: rootCategories.length, icon: FolderTree, color: "primary" },
+            { label: "Total Categories", value: categories.length, icon: Tag, color: "accent" },
+            { label: "Total Products", value: categories.reduce((sum, c) => sum + (c.product_count || 0), 0), icon: Package, color: "success" },
+            { label: "Inactive", value: categories.filter((c) => c.status === "inactive").length, icon: Tag, color: "warning" },
+          ].map((card) => {
+            const borderMap: Record<string, string> = { primary: "border-l-primary", accent: "border-l-accent", success: "border-l-success", warning: "border-l-yellow-500" };
+            const bgMap: Record<string, string> = { primary: "bg-primary/10", accent: "bg-accent/10", success: "bg-success/10", warning: "bg-yellow-500/10" };
+            const textMap: Record<string, string> = { primary: "text-primary", accent: "text-accent", success: "text-success", warning: "text-yellow-500" };
+            const IconComp = card.icon;
+            return (
+              <div key={card.label} className={cn(
+                "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+                "hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px]",
+                borderMap[card.color], "animate-fade-in"
+              )}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{card.label}</p>
+                    <p className="text-lg sm:text-xl font-bold tracking-tight mt-1">{card.value}</p>
+                  </div>
+                  <div className={cn("rounded-lg p-2", bgMap[card.color])}>
+                    <IconComp className={cn("h-5 w-5", textMap[card.color])} />
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold">{rootCategories.length}</p>
-                <p className="text-sm text-muted-foreground">Root Categories</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-                <Tag className="h-6 w-6 text-accent" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{categories.length}</p>
-                <p className="text-sm text-muted-foreground">Total Categories</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success/10">
-                <Package className="h-6 w-6 text-success" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">
-                  {categories.reduce((sum, c) => sum + (c.product_count || 0), 0)}
-                </p>
-                <p className="text-sm text-muted-foreground">Total Products</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-warning/10">
-                <Tag className="h-6 w-6 text-warning" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">
-                  {categories.filter((c) => c.status === "inactive").length}
-                </p>
-                <p className="text-sm text-muted-foreground">Inactive</p>
-              </div>
-            </CardContent>
-          </Card>
+            );
+          })}
         </div>
 
         {/* Search */}
