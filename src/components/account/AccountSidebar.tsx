@@ -224,34 +224,18 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
 
         {/* Bottom Actions */}
         <div className="mt-auto space-y-1 border-t border-sidebar-border pt-4">
-          {/* Back to Store */}
+          {/* Logout — styled like header dropdown */}
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
-                <button onClick={() => { navigate("/"); onCloseMobile?.(); }} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-                  <Store className="h-5 w-5 shrink-0" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="font-medium">{t('account.backToStore')}</TooltipContent>
-            </Tooltip>
-          ) : (
-            <button onClick={() => { navigate("/"); onCloseMobile?.(); }} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground">
-              <Store className="h-5 w-5 shrink-0" /><span>{t('account.backToStore')}</span>
-            </button>
-          )}
-
-          {/* Logout */}
-          {collapsed ? (
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <button onClick={handleLogout} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
+                <button onClick={handleLogout} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-sm font-medium text-destructive/80 bg-destructive/5 border border-destructive/10 hover:bg-destructive/15 hover:text-destructive hover:border-destructive/20 transition-all">
                   <LogOut className="h-5 w-5 shrink-0" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="font-medium">{t('account.signOut')}</TooltipContent>
             </Tooltip>
           ) : (
-            <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-muted transition-all hover:bg-destructive/10 hover:text-destructive">
+            <button onClick={handleLogout} className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive/80 bg-destructive/5 border border-destructive/10 hover:bg-destructive/15 hover:text-destructive hover:border-destructive/20 transition-all">
               <LogOut className="h-5 w-5" /><span>{t('account.signOut')}</span>
             </button>
           )}
