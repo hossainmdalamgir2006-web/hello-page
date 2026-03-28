@@ -346,21 +346,10 @@ const Index = () => {
       </div>
 
 
-      {/* Draggable Widget Grid */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={visibleWidgets.map((w) => w.id)}
-          strategy={rectSortingStrategy}
-        >
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-            {visibleWidgets.map((widget) => renderWidget(widget))}
-          </div>
-        </SortableContext>
-      </DndContext>
+      {/* Widget Grid */}
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        {visibleWidgets.map((widget) => renderWidget(widget))}
+      </div>
     </>
   );
 };
