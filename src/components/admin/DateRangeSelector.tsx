@@ -9,11 +9,6 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { format, subDays, subMonths, startOfMonth, endOfMonth, startOfYear } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -136,37 +131,36 @@ export function DateRangeSelector({ value, customRange, onChange }: DateRangeSel
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Popover open={isCustomOpen} onOpenChange={setIsCustomOpen}>
-        <PopoverTrigger asChild>
-          <span className="hidden" />
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
-          <div className="p-3 border-b">
-            <h4 className="font-medium text-sm">Select Date Range</h4>
+      {isCustomOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setIsCustomOpen(false)}>
+          <div className="bg-popover rounded-lg shadow-lg border" onClick={(e) => e.stopPropagation()}>
+            <div className="p-3 border-b">
+              <h4 className="font-medium text-sm">Select Date Range</h4>
+            </div>
+            <CalendarComponent
+              initialFocus
+              mode="range"
+              defaultMonth={tempRange?.from}
+              selected={tempRange}
+              onSelect={setTempRange}
+              numberOfMonths={2}
+              className={cn("p-3 pointer-events-auto")}
+            />
+            <div className="flex items-center justify-end gap-2 p-3 border-t">
+              <Button variant="outline" size="sm" onClick={() => setIsCustomOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                size="sm" 
+                onClick={handleCustomApply}
+                disabled={!tempRange?.from || !tempRange?.to}
+              >
+                Apply
+              </Button>
+            </div>
           </div>
-          <CalendarComponent
-            initialFocus
-            mode="range"
-            defaultMonth={tempRange?.from}
-            selected={tempRange}
-            onSelect={setTempRange}
-            numberOfMonths={2}
-            className="p-3"
-          />
-          <div className="flex items-center justify-end gap-2 p-3 border-t">
-            <Button variant="outline" size="sm" onClick={() => setIsCustomOpen(false)}>
-              Cancel
-            </Button>
-            <Button 
-              size="sm" 
-              onClick={handleCustomApply}
-              disabled={!tempRange?.from || !tempRange?.to}
-            >
-              Apply
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
+        </div>
+      )}
     </div>
   );
 }
