@@ -62,24 +62,48 @@ export default function AccountDeletionRequests() {
     if (!selectedRequest || !actionType) return;
     setProcessing(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from('account_deletion_requests')
-        .update({
-          status: actionType === 'approve' ? 'approved' : 'rejected',
-          admin_notes: adminNotes || null,
-          reviewed_by: user?.id || null,
-          reviewed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', selectedRequest.id);
-      if (error) throw error;
-      toast({
-        title: actionType === 'approve' ? 'Request Approved' : 'Request Rejected',
-        description: actionType === 'approve'
-          ? 'The account deletion request has been approved.'
-          : 'The account deletion request has been rejected.',
-      });
+      if (actionType === 'approve') {
+        // Call edge function to permanently delete the user account
+        const { data: sessionData } = await supabase.auth.getSession();
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user-account`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionData.session?.access_token}`,
+            },
+            body: JSON.stringify({
+              request_id: selectedRequest.id,
+              admin_notes: adminNotes || null,
+            }),
+          }
+        );
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Failed to delete account');
+        toast({
+          title: 'Account Deleted',
+          description: 'The user account and all associated data have been permanently deleted.',
+        });
+      } else {
+        // Reject - just update status
+        const { data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase
+          .from('account_deletion_requests')
+          .update({
+            status: 'rejected',
+            admin_notes: adminNotes || null,
+            reviewed_by: user?.id || null,
+            reviewed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', selectedRequest.id);
+        if (error) throw error;
+        toast({
+          title: 'Request Rejected',
+          description: 'The account deletion request has been rejected.',
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ['account-deletion-requests'] });
       setSelectedRequest(null);
       setActionType(null);
