@@ -5,7 +5,7 @@ import { WidgetConfig } from "@/components/admin/DashboardWidgetPicker";
 const STORAGE_KEY = "dashboard-widget-layout";
 
 const defaultWidgets: WidgetConfig[] = [
-  { id: "alerts-1", type: "alerts", title: "Alerts", visible: true, order: 0 },
+  
   { id: "stats-1", type: "stats", title: "Stats Cards", visible: true, order: 1 },
   { id: "periodComparison-1", type: "periodComparison", title: "Period Comparison", visible: true, order: 2 },
   { id: "salesChart-1", type: "salesChart", title: "Sales Chart", visible: true, order: 3, span: 2 },
