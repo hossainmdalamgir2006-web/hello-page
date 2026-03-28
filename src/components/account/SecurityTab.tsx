@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { TwoFactorSetup } from '@/components/profile/TwoFactorSetup';
+import { RecoveryCodes } from '@/components/profile/RecoveryCodes';
 
 export function SecurityTab() {
   const { user, signOut } = useAuth();
