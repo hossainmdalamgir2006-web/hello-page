@@ -10,6 +10,7 @@ interface WelcomeBannerProps {
   basePath?: string;
 }
 
+interface PendingSummary {
   pendingOrders: number;
   unreadMessages: number;
   pendingReturns: number;
