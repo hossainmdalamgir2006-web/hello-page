@@ -48,10 +48,14 @@ export const DeleteConfirmModal = React.forwardRef<HTMLDivElement, DeleteConfirm
     const resolvedConfirmLabel = confirmLabel || (isTrash ? "Move to Trash" : "Delete");
     const resolvedLoadingLabel = loadingLabel || (isTrash ? "Moving..." : "Deleting...");
 
-    const handleConfirm = (e: React.MouseEvent) => {
+    const handleConfirm = async (e: React.MouseEvent) => {
       e.preventDefault();
-      onConfirm();
-      onOpenChange(false);
+      e.stopPropagation();
+      try {
+        await onConfirm();
+      } finally {
+        onOpenChange(false);
+      }
     };
 
     return (
