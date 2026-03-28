@@ -188,6 +188,7 @@ const App = () => (
             <Route path="/admin/page-content" element={<PageContentManager />} />
             <Route path="/admin/reviews" element={<ReviewsManager />} />
             <Route path="/admin/trash" element={<GlobalTrash />} />
+            <Route path="/admin/account-deletion-requests" element={<AccountDeletionRequests />} />
             <Route path="/admin/support-settings" element={<SupportSettings />} />
           </Route>
 

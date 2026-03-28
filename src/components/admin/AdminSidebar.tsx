@@ -115,6 +115,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
         { title: t('nav.shipping'), url: `${role === 'admin' ? '/admin' : '/manager'}/shipping`, icon: Truck, roles: ['admin', 'manager'] },
         { title: t('nav.coupons'), url: `${role === 'admin' ? '/admin' : '/manager'}/coupons`, icon: Ticket, roles: ['admin', 'manager'] },
         { title: "Abandoned Carts", url: "/admin/abandoned-carts", icon: ShoppingBasket, roles: ['admin'] },
+        { title: "Deletion Requests", url: "/admin/account-deletion-requests", icon: UserCog, roles: ['admin'] },
         { title: "Trash", url: `${role === 'admin' ? '/admin' : '/manager'}/trash`, icon: Trash2, roles: ['admin', 'manager'] },
       ],
     },
