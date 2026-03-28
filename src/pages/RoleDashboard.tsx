@@ -174,7 +174,8 @@ const RoleDashboard = () => {
 
           {/* Activity Feed */}
           <div className="md:col-span-1 lg:col-span-2">
-            <div className="h-full">
+            <div className="rounded-lg border bg-card p-3 sm:p-4 shadow-sm h-full">
+              <h3 className="text-sm font-semibold mb-3">📊 Activity Feed</h3>
               <ActivityFeed limit={8} />
             </div>
           </div>
