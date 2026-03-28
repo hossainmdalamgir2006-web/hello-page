@@ -80,7 +80,7 @@ export default function AbandonedCarts() {
               View and manage abandoned shopping carts. Automatic email reminders are sent at 1h, 24h, and 72h.
             </p>
           </div>
-          <CardContent>
+          <div>
             <Tabs defaultValue="all" className="space-y-4" onValueChange={(value) => setStatusFilter(value as FilterStatus)}>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <TabsList>
