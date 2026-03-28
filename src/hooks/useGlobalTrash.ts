@@ -136,6 +136,7 @@ export function useGlobalTrash() {
     
     await logTrashAction(item.entity_type, item.id, item.name, 'restored');
     setItems(prev => prev.filter(i => i.id !== item.id));
+    toast.success(`"${item.name}" restored successfully`);
     return true;
   };
 
@@ -150,6 +151,7 @@ export function useGlobalTrash() {
     
     await logTrashAction(item.entity_type, item.id, item.name, 'permanently_deleted');
     setItems(prev => prev.filter(i => i.id !== item.id));
+    toast.success(`"${item.name}" permanently deleted`);
     return true;
   };
 
