@@ -44,7 +44,7 @@ interface MenuGroup {
   items: MenuItem[];
 }
 
-export function AdminSidebar({ collapsed = false, onToggleCollapse }: AdminSidebarProps) {
+export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobile }: AdminSidebarProps) {
   const { t } = useLanguage();
   const { storeName } = useSiteTitle();
   const { signOut, role } = useAuth();
