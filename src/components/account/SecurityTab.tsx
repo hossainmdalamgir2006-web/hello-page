@@ -173,52 +173,88 @@ export function SecurityTab() {
       </div>
 
       {/* Deletion Request Dialog */}
-      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={(open) => { setDeleteConfirmOpen(open); if (!open) { setShowApprovalMessage(false); setDeleteConfirmText(''); setDeleteReason(''); } }}>
         <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-5 w-5" />
-              Request Account Deletion
-            </AlertDialogTitle>
-            <AlertDialogDescription asChild>
-              <div className="space-y-4">
-                <p>
-                  Your account deletion request will be sent to an administrator for review.
-                  Once approved, all your data will be permanently deleted.
-                </p>
-                <div className="space-y-2">
-                  <label className="font-medium text-foreground text-sm">Reason (optional)</label>
-                  <Textarea
-                    value={deleteReason}
-                    onChange={(e) => setDeleteReason(e.target.value)}
-                    placeholder="Tell us why you want to delete your account..."
-                    className="min-h-[80px]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <p className="font-medium text-foreground text-sm">
-                    Type <span className="font-mono text-destructive">DELETE</span> to confirm:
-                  </p>
-                  <Input
-                    value={deleteConfirmText}
-                    onChange={(e) => setDeleteConfirmText(e.target.value)}
-                    placeholder="Type DELETE"
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => { setDeleteConfirmText(''); setDeleteReason(''); }}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleSubmitDeletionRequest}
-              disabled={deleteConfirmText !== 'DELETE' || submitting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {submitting ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />Submitting...</>) : 'Submit Deletion Request'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
+          {showApprovalMessage ? (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2 text-primary">
+                  <ShieldAlert className="h-5 w-5" />
+                  Admin Approval Required
+                </AlertDialogTitle>
+                <AlertDialogDescription asChild>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                      <ShieldAlert className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-medium text-primary">Request Submitted Successfully</p>
+                        <p className="text-muted-foreground mt-1">
+                          Your account deletion request has been submitted and is now pending admin review. You will be notified once a decision has been made.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Close</AlertDialogCancel>
+              </AlertDialogFooter>
+            </>
+          ) : (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+                  <AlertTriangle className="h-5 w-5" />
+                  Request Account Deletion
+                </AlertDialogTitle>
+                <AlertDialogDescription asChild>
+                  <div className="space-y-4">
+                    {/* Warning inside modal */}
+                    <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20">
+                      <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-medium text-destructive">Warning</p>
+                        <p className="text-muted-foreground mt-1">
+                          Account deletion requires admin approval. Once approved, all your data including orders, addresses,
+                          wishlist items, and preferences will be permanently removed.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="font-medium text-foreground text-sm">Reason (optional)</label>
+                      <Textarea
+                        value={deleteReason}
+                        onChange={(e) => setDeleteReason(e.target.value)}
+                        placeholder="Tell us why you want to delete your account..."
+                        className="min-h-[80px]"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-medium text-foreground text-sm">
+                        Type <span className="font-mono text-destructive">DELETE</span> to confirm:
+                      </p>
+                      <Input
+                        value={deleteConfirmText}
+                        onChange={(e) => setDeleteConfirmText(e.target.value)}
+                        placeholder="Type DELETE"
+                        className="font-mono"
+                      />
+                    </div>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => { setDeleteConfirmText(''); setDeleteReason(''); }}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleSubmitDeletionRequest}
+                  disabled={deleteConfirmText !== 'DELETE' || submitting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {submitting ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />Submitting...</>) : 'Submit Deletion Request'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </>
+          )}
         </AlertDialogContent>
       </AlertDialog>
     </div>
