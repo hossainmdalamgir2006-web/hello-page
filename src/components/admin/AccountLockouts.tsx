@@ -159,57 +159,28 @@ export function AccountLockouts() {
   return (
     <div className="space-y-6">
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active Lockouts</p>
-                <p className="text-2xl font-bold text-destructive">{activeLockouts.length}</p>
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
+        {[
+          { label: "Active Lockouts", value: activeLockouts.length, icon: Lock, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive" },
+          { label: "Total Lockouts", value: lockouts.length, icon: Shield, iconBg: "bg-primary/10 text-primary", border: "border-l-primary" },
+          { label: "Failed Attempts (24h)", value: failedAttempts.filter(a => new Date(a.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)).length, icon: AlertTriangle, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
+          { label: "Unlocked", value: lockouts.filter(l => l.is_unlocked).length, icon: Unlock, iconBg: "bg-success/10 text-success", border: "border-l-success" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className={`rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border}`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <Lock className="h-8 w-8 text-destructive/20" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Lockouts</p>
-                <p className="text-2xl font-bold">{lockouts.length}</p>
+              <div className="min-w-0">
+                <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
               </div>
-              <Shield className="h-8 w-8 text-muted-foreground/20" />
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Failed Attempts (24h)</p>
-                <p className="text-2xl font-bold text-warning">
-                  {failedAttempts.filter(a => 
-                    new Date(a.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
-                  ).length}
-                </p>
-              </div>
-              <AlertTriangle className="h-8 w-8 text-warning/20" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Unlocked</p>
-                <p className="text-2xl font-bold text-primary">
-                  {lockouts.filter(l => l.is_unlocked).length}
-                </p>
-              </div>
-              <Unlock className="h-8 w-8 text-primary/20" />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
 
       {/* Main Content */}

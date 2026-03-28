@@ -138,54 +138,28 @@ export function BlockedLoginAttempts() {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Blocked</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
+        {[
+          { label: "Total Blocked", value: stats.total, icon: ShieldAlert, iconBg: "bg-primary/10 text-primary", border: "border-l-primary" },
+          { label: "Active Blocks", value: stats.active, icon: ShieldX, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive" },
+          { label: "Expired", value: stats.expired, icon: Clock, iconBg: "bg-muted text-muted-foreground", border: "border-l-muted-foreground" },
+          { label: "Permanent", value: stats.permanent, icon: Shield, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className={`rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border}`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <ShieldAlert className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Blocks</p>
-                <p className="text-2xl font-bold text-destructive">{stats.active}</p>
+              <div className="min-w-0">
+                <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
               </div>
-              <ShieldX className="h-8 w-8 text-destructive" />
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Expired</p>
-                <p className="text-2xl font-bold text-muted-foreground">{stats.expired}</p>
-              </div>
-              <Clock className="h-8 w-8 text-muted-foreground" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Permanent</p>
-                <p className="text-2xl font-bold text-warning">{stats.permanent}</p>
-              </div>
-              <Shield className="h-8 w-8 text-warning" />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
 
       {/* Main Table Card */}

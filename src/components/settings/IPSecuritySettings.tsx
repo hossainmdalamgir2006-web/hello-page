@@ -309,55 +309,28 @@ export function IPSecuritySettings() {
   return (
     <div className="space-y-6">
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Blocked IPs</p>
-                <p className="text-2xl font-bold text-destructive">{activeBlockedIPs.length}</p>
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
+        {[
+          { label: "Blocked IPs", value: activeBlockedIPs.length, icon: Ban, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive" },
+          { label: "Blocked Countries", value: geoRules.filter(r => r.is_blocked).length, icon: Globe, iconBg: "bg-primary/10 text-primary", border: "border-l-primary" },
+          { label: "Permanent Blocks", value: blockedIPs.filter(ip => ip.is_permanent).length, icon: Shield, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
+          { label: "Geo-Blocking", value: geoRules.filter(r => r.is_blocked).length > 0 ? 'ON' : 'OFF', icon: Activity, iconBg: "bg-success/10 text-success", border: "border-l-success" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className={`rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border}`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <Ban className="h-8 w-8 text-destructive/20" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Blocked Countries</p>
-                <p className="text-2xl font-bold">{geoRules.filter(r => r.is_blocked).length}</p>
+              <div className="min-w-0">
+                <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
               </div>
-              <Globe className="h-8 w-8 text-muted-foreground/20" />
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Permanent Blocks</p>
-                <p className="text-2xl font-bold text-warning">
-                  {blockedIPs.filter(ip => ip.is_permanent).length}
-                </p>
-              </div>
-              <Shield className="h-8 w-8 text-warning/20" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Geo-Blocking</p>
-                <p className="text-2xl font-bold text-primary">
-                  {geoRules.filter(r => r.is_blocked).length > 0 ? 'ON' : 'OFF'}
-                </p>
-              </div>
-              <Activity className="h-8 w-8 text-primary/20" />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
 
       {/* Main Content */}
