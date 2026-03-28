@@ -22,7 +22,10 @@ const profileSchema = z.object({
   gender: z.enum(["male", "female", "other", "prefer_not_to_say"]).optional().nullable(),
   company_name: z.string().optional(),
   bio: z.string().max(500, "Bio must be 500 characters or less").optional(),
-  language_preference: z.string().optional(),
+});
+
+const emailSchema = z.object({
+  newEmail: z.string().email('Invalid email address'),
 });
 
 
