@@ -103,26 +103,17 @@ export function RecentReturnRequests({ loading: externalLoading }: { loading?: b
     <div className="space-y-4">
       {/* Mini stats */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-warning/10 border border-warning/20">
-          <Clock className="h-4 w-4 text-warning" />
-          <div>
-            <p className="text-lg font-bold">{stats.pending}</p>
-            <p className="text-xs text-muted-foreground">Pending</p>
-          </div>
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-warning/10 border border-warning/20 text-center">
+          <p className="text-lg font-bold text-warning">{stats.pending}</p>
+          <p className="text-[10px] text-muted-foreground leading-tight">Pending</p>
         </div>
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-success/10 border border-success/20">
-          <CheckCircle2 className="h-4 w-4 text-success" />
-          <div>
-            <p className="text-lg font-bold">{stats.completed}</p>
-            <p className="text-xs text-muted-foreground">Completed</p>
-          </div>
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-success/10 border border-success/20 text-center">
+          <p className="text-lg font-bold text-success">{stats.completed}</p>
+          <p className="text-[10px] text-muted-foreground leading-tight">Completed</p>
         </div>
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-chart-5/10 border border-chart-5/20">
-          <DollarSign className="h-4 w-4 text-chart-5" />
-          <div>
-            <p className="text-lg font-bold">{formatPrice(stats.totalRefunded)}</p>
-            <p className="text-xs text-muted-foreground">Refunded</p>
-          </div>
+        <div className="flex flex-col items-center justify-center p-2.5 rounded-lg bg-chart-5/10 border border-chart-5/20 text-center">
+          <p className="text-sm font-bold text-chart-5 truncate w-full">{formatPrice(stats.totalRefunded)}</p>
+          <p className="text-[10px] text-muted-foreground leading-tight">Refunded</p>
         </div>
       </div>
 
