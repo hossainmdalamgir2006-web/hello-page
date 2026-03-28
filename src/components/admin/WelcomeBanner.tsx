@@ -16,8 +16,8 @@ interface WelcomeBannerProps {
   lowStockProducts: number;
 }
 
-export function WelcomeBanner() {
-  const { user } = useAuth();
+export function WelcomeBanner({ basePath = '/admin' }: WelcomeBannerProps) {
+  const { user, role } = useAuth();
   const navigate = useNavigate();
   const [summary, setSummary] = useState<PendingSummary>({
     pendingOrders: 0,
