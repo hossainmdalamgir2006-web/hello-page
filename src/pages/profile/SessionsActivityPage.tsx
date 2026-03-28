@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { History, Monitor, Smartphone, Tablet, CheckCircle, XCircle, Clock, Shield, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { SessionManagement } from '@/components/profile/SessionManagement';
 
 interface LoginActivityItem {
   id: string;
@@ -130,80 +131,53 @@ export default function SessionsActivityPage() {
         })}
       </div>
 
-      {/* 2-Column Activity List */}
+      {/* 2-Column: Active Sessions left, Login Activity right */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Successful Logins */}
-        <div className="rounded-xl border border-border/50 bg-card p-5 border-l-[3px] border-l-success">
+        {/* Active Sessions */}
+        <div className="rounded-xl border border-border/50 bg-card p-5 border-l-[3px] border-l-primary">
           <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-lg bg-success/10 p-2"><Shield className="h-5 w-5 text-success" /></div>
+            <div className="rounded-lg bg-primary/10 p-2"><Shield className="h-5 w-5 text-primary" /></div>
             <div>
-              <h3 className="font-semibold">Successful Logins</h3>
-              <p className="text-xs text-muted-foreground">{successCount} successful attempts</p>
+              <h3 className="font-semibold">Active Sessions</h3>
+              <p className="text-xs text-muted-foreground">Manage your active sessions</p>
             </div>
           </div>
-          <ScrollArea className="h-[400px] pr-2">
-            <div className="space-y-3">
-              {activities.filter(a => a.status === 'success').map((activity) => {
-                const { browser, os } = parseUserAgent(activity.user_agent);
-                const locationStr = typeof activity.location === 'object' && activity.location ? activity.location.city || activity.location.country || '' : '';
-                return (
-                  <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg border bg-background hover:bg-muted/50">
-                    <div className="p-2 rounded-full bg-success/10">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium">Successful login</span>
-                        <Badge variant="outline" className="text-xs">{getDeviceType(activity)}</Badge>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                        {getDeviceIcon(activity)}
-                        <span>{browser} on {os}</span>
-                      </div>
-                      {activity.ip_address && (
-                        <p className="text-xs text-muted-foreground mt-1">IP: {activity.ip_address.toString()}{locationStr && ` • ${locationStr}`}</p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })} • {format(new Date(activity.created_at), 'MMM d, yyyy h:mm a')}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-              {successCount === 0 && <p className="text-sm text-muted-foreground text-center py-6">No successful logins</p>}
-            </div>
-          </ScrollArea>
+          <SessionManagement />
         </div>
 
-        {/* Failed Logins */}
-        <div className="rounded-xl border border-border/50 bg-card p-5 border-l-[3px] border-l-destructive">
+        {/* Login Activity */}
+        <div className="rounded-xl border border-border/50 bg-card p-5 border-l-[3px] border-l-success">
           <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-lg bg-destructive/10 p-2"><AlertTriangle className="h-5 w-5 text-destructive" /></div>
+            <div className="rounded-lg bg-success/10 p-2"><History className="h-5 w-5 text-success" /></div>
             <div>
-              <h3 className="font-semibold">Failed Attempts</h3>
-              <p className="text-xs text-muted-foreground">{failedCount} failed attempts</p>
+              <h3 className="font-semibold">Login Activity</h3>
+              <p className="text-xs text-muted-foreground">{activities.length} total login attempts</p>
             </div>
           </div>
           <ScrollArea className="h-[400px] pr-2">
             <div className="space-y-3">
-              {activities.filter(a => a.status !== 'success').map((activity) => {
+              {activities.map((activity) => {
                 const { browser, os } = parseUserAgent(activity.user_agent);
+                const successful = activity.status === 'success';
                 const locationStr = typeof activity.location === 'object' && activity.location ? activity.location.city || activity.location.country || '' : '';
                 return (
-                  <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg border bg-destructive/5 border-destructive/20">
-                    <div className="p-2 rounded-full bg-destructive/10">
-                      <XCircle className="h-4 w-4 text-destructive" />
+                  <div key={activity.id} className={cn(
+                    "flex items-start gap-3 p-3 rounded-lg border",
+                    successful ? "bg-background hover:bg-muted/50" : "bg-destructive/5 border-destructive/20"
+                  )}>
+                    <div className={cn("p-2 rounded-full", successful ? "bg-success/10" : "bg-destructive/10")}>
+                      {successful ? <CheckCircle className="h-4 w-4 text-success" /> : <XCircle className="h-4 w-4 text-destructive" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium">Failed login</span>
+                        <span className="text-sm font-medium">{successful ? 'Successful login' : 'Failed login'}</span>
                         <Badge variant="outline" className="text-xs">{getDeviceType(activity)}</Badge>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                         {getDeviceIcon(activity)}
                         <span>{browser} on {os}</span>
                       </div>
-                      {activity.failure_reason && <p className="text-xs text-destructive mt-1">{activity.failure_reason}</p>}
+                      {!successful && activity.failure_reason && <p className="text-xs text-destructive mt-1">{activity.failure_reason}</p>}
                       {activity.ip_address && (
                         <p className="text-xs text-muted-foreground mt-1">IP: {activity.ip_address.toString()}{locationStr && ` • ${locationStr}`}</p>
                       )}
@@ -214,7 +188,7 @@ export default function SessionsActivityPage() {
                   </div>
                 );
               })}
-              {failedCount === 0 && <p className="text-sm text-muted-foreground text-center py-6">No failed attempts — great!</p>}
+              {activities.length === 0 && <p className="text-sm text-muted-foreground text-center py-6">No login activity recorded</p>}
             </div>
           </ScrollArea>
         </div>
