@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -15,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Shield, Trash2, Loader2, AlertTriangle, Monitor, History } from 'lucide-react';
+import { Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { TwoFactorSetup } from '@/components/profile/TwoFactorSetup';
 import { LoginActivity } from '@/components/profile/LoginActivity';
 import { SessionManagement } from '@/components/profile/SessionManagement';
@@ -50,70 +51,43 @@ export function SecurityTab() {
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Left Column */}
+        {/* Left: 2FA + Active Sessions */}
         <div className="space-y-6">
-          {/* Two-Factor Authentication */}
-          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="rounded-lg bg-primary/10 p-2"><Shield className="h-5 w-5 text-primary" /></div>
-              <div>
-                <h3 className="font-semibold">Two-Factor Authentication</h3>
-                <p className="text-xs text-muted-foreground">Add an extra layer of security to your account</p>
-              </div>
-            </div>
-            <TwoFactorSetup />
-          </div>
-
-          {/* Active Sessions */}
-          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="rounded-lg bg-primary/10 p-2"><Monitor className="h-5 w-5 text-primary" /></div>
-              <div>
-                <h3 className="font-semibold">Active Sessions</h3>
-                <p className="text-xs text-muted-foreground">Manage your active login sessions</p>
-              </div>
-            </div>
-            <SessionManagement />
-          </div>
+          <TwoFactorSetup />
+          <SessionManagement />
         </div>
 
-        {/* Right Column */}
+        {/* Right: Login Activity + Delete Account */}
         <div className="space-y-6">
-          {/* Login Activity */}
-          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="rounded-lg bg-accent/10 p-2"><History className="h-5 w-5 text-accent" /></div>
-              <div>
-                <h3 className="font-semibold">Login Activity</h3>
-                <p className="text-xs text-muted-foreground">Recent login history for your account</p>
-              </div>
-            </div>
-            <LoginActivity />
-          </div>
+          <LoginActivity />
 
           {/* Delete Account */}
-          <div className="rounded-xl border border-destructive/30 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-destructive">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="rounded-lg bg-destructive/10 p-2"><Trash2 className="h-5 w-5 text-destructive" /></div>
-              <div>
-                <h3 className="font-semibold text-destructive">Delete Account</h3>
-                <p className="text-xs text-muted-foreground">Permanently delete your account and all data</p>
+          <Card className="border-destructive/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive">
+                <Trash2 className="h-5 w-5" />
+                Delete Account
+              </CardTitle>
+              <CardDescription>
+                Permanently delete your account and all associated data. This action cannot be undone.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20 mb-4">
+                <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-medium text-destructive">Warning</p>
+                  <p className="text-muted-foreground mt-1">
+                    Deleting your account will permanently remove all your data including orders, addresses,
+                    wishlist items, and preferences. This action is irreversible.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20 mb-4">
-              <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-destructive">Warning</p>
-                <p className="text-muted-foreground mt-1">
-                  Deleting your account will permanently remove all your data including orders, addresses,
-                  wishlist items, and preferences. This action is irreversible.
-                </p>
-              </div>
-            </div>
-            <Button variant="destructive" onClick={() => setDeleteConfirmOpen(true)}>
-              <Trash2 className="h-4 w-4 mr-2" />Delete My Account
-            </Button>
-          </div>
+              <Button variant="destructive" onClick={() => setDeleteConfirmOpen(true)}>
+                <Trash2 className="h-4 w-4 mr-2" />Delete My Account
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
