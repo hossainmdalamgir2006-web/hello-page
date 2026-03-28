@@ -6,7 +6,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
-interface PendingSummary {
+interface WelcomeBannerProps {
+  basePath?: string;
+}
+
   pendingOrders: number;
   unreadMessages: number;
   pendingReturns: number;
