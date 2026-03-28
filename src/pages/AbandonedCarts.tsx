@@ -73,14 +73,14 @@ export default function AbandonedCarts() {
         <RecoveryRateChart carts={abandonedCarts} />
 
         {/* Main Content */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Cart Recovery</CardTitle>
-            <CardDescription>
+        <div className="rounded-xl border border-border/50 bg-card p-5 sm:p-6">
+          <div className="mb-1">
+            <h2 className="text-lg font-semibold tracking-tight">Cart Recovery</h2>
+            <p className="text-sm text-muted-foreground">
               View and manage abandoned shopping carts. Automatic email reminders are sent at 1h, 24h, and 72h.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </p>
+          </div>
+          <div>
             <Tabs defaultValue="all" className="space-y-4" onValueChange={(value) => setStatusFilter(value as FilterStatus)}>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <TabsList>
@@ -118,8 +118,8 @@ export default function AbandonedCarts() {
                 <AbandonedCartTable carts={filteredCarts} isLoading={isLoading} onRefresh={refetch} />
               </TabsContent>
             </Tabs>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </>
   );
