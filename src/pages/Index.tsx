@@ -86,8 +86,15 @@ const Index = () => {
     addWidget,
     resetLayout,
   } = useDashboardLayout();
-  
-  
+
+  const {
+    currentGoal,
+    history: goalHistory,
+    loading: goalsLoading,
+    updateTarget,
+  } = useGoalTracker(stats.monthlySales, stats.monthlyOrders, stats.monthlyCustomers);
+
+
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
