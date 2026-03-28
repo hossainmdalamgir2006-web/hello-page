@@ -188,13 +188,8 @@ const Index = () => {
 
       case "periodComparison":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-2 lg:col-span-4"
-          >
+          <div key={widget.id} className="md:col-span-2 lg:col-span-4 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <PeriodComparison
                 metrics={comparisonMetrics}
@@ -203,33 +198,23 @@ const Index = () => {
                 loading={loading}
               />
             </Suspense>
-          </DashboardWidget>
+          </div>
         );
 
       case "salesChart":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-2 lg:col-span-2"
-          >
+          <div key={widget.id} className="md:col-span-2 lg:col-span-2 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <SalesChart data={salesData} loading={loading} />
             </Suspense>
-          </DashboardWidget>
+          </div>
         );
 
       case "goalTracker":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-1 lg:col-span-1"
-          >
+          <div key={widget.id} className="md:col-span-1 lg:col-span-1 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <GoalTracker
                 currentGoal={currentGoal}
@@ -241,67 +226,47 @@ const Index = () => {
                 onUpdateTarget={updateTarget}
               />
             </Suspense>
-          </DashboardWidget>
+          </div>
         );
 
       case "activityFeed":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-1 lg:col-span-1"
-          >
+          <div key={widget.id} className="md:col-span-1 lg:col-span-1 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <ActivityFeed limit={8} />
             </Suspense>
-          </DashboardWidget>
+          </div>
         );
 
       case "topProducts":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-2 lg:col-span-2"
-          >
+          <div key={widget.id} className="md:col-span-2 lg:col-span-2 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <TopProducts products={topProducts} loading={loading} />
             </Suspense>
-          </DashboardWidget>
+          </div>
         );
 
       case "recentOrders":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-2 lg:col-span-3"
-          >
+          <div key={widget.id} className="md:col-span-2 lg:col-span-3 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <RecentOrders orders={recentOrders} loading={loading} />
             </Suspense>
-          </DashboardWidget>
+          </div>
         );
 
       case "returnRequests":
         return (
-          <DashboardWidget
-            key={widget.id}
-            id={widget.id}
-            title={widget.title}
-            onRemove={() => removeWidget(widget.id)}
-            className="md:col-span-2 lg:col-span-1"
-          >
+          <div key={widget.id} className="md:col-span-2 lg:col-span-1 rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border animate-fade-in">
+            <h3 className="text-sm font-semibold tracking-tight text-foreground mb-3">{widget.title}</h3>
             <Suspense fallback={<WidgetLoader />}>
               <RecentReturnRequests loading={loading} />
             </Suspense>
-          </DashboardWidget>
+          </div>
         );
 
       default:
