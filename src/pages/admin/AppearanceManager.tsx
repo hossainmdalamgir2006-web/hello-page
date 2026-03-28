@@ -43,10 +43,9 @@ export default function AppearanceManager() {
 
   const hasChanges = Object.keys(localValues).length > 0;
 
-  // HSL color input helper
-  const ColorField = ({ label, settingKey, description }: { label: string; settingKey: string; description?: string }) => {
+  // HSL color input helper - extracted as a render function to avoid ref forwarding issues
+  const renderColorField = (label: string, settingKey: string, description?: string) => {
     const hslValue = getVal(settingKey);
-    // Convert HSL string to a hex-like preview
     const previewStyle = hslValue ? { backgroundColor: `hsl(${hslValue})` } : {};
     
     return (
