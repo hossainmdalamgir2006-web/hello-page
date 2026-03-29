@@ -52,7 +52,7 @@ export const EditorToolbar = ({
   toolbar, disabled, readOnly, activeFormats, showSource, isFullscreen,
   execCommand, onToggleSource, onToggleFullscreen,
   onInsertTable, onInsertEmoji, onInsertLink, onInsertImage,
-  onInsertChar, onInsertVideo, onSetLineHeight,
+  onInsertChar, onInsertVideo, onInsertChecklist, onSetLineHeight,
   onToggleFindReplace, onToggleDirection, onPrint, onSaveSelection,
 }: EditorToolbarProps) => {
   const [linkUrl, setLinkUrl] = React.useState("");
