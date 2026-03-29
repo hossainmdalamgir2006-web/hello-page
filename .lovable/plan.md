@@ -1,36 +1,51 @@
 
 
-## Plan: Product Description-এ Image/Video Insert ফিক্স
+## Plan: Rich Text Editor-এ নতুন ফিচার যোগ করা
 
-### সমস্যা
+### নতুন ৪টি ফিচার
 
-Rich Text Editor যখন Dialog/Modal এর ভিতরে থাকে, তখন Image/Video Popover ক্লিক করলে contentEditable div থেকে focus চলে যায়। ফলে `document.execCommand("insertImage")` বা `document.execCommand("insertHTML")` কাজ করে না — কারণ selection/cursor হারিয়ে যায়।
+**1. Drag & Drop Image**
+- Editor contentEditable div-এ `onDragOver` এবং `onDrop` handler যোগ করা
+- Drop হলে File read করে `insertImage` execute করা
+- Drop zone visual indicator (border highlight) দেখানো
 
-### সমাধান
+**2. Image Resize & Float**
+- Editor-এর ভিতরে কোনো image ক্লিক করলে একটি floating toolbar দেখাবে
+- Toolbar-এ options: Small (25%), Medium (50%), Large (75%), Full (100%) সাইজ
+- Float options: Left, Center, Right
+- Image-এ inline style সেট করা হবে (`width`, `float`, `margin`)
+- Editor এর বাইরে ক্লিক করলে toolbar বন্ধ হবে
 
-Editor-এ **selection save/restore** মেকানিজম যোগ করা হবে। Popover ওপেন হওয়ার আগে current selection সংরক্ষণ করা হবে, এবং insert করার সময় সেই selection restore করে তারপর command execute হবে।
+**3. Checklist / Task List**
+- Toolbar-এ নতুন Checklist বাটন (CheckSquare icon)
+- ক্লিক করলে `<ul>` with `<li>` containing checkbox input insert হবে
+- CSS styling: `[&_input[type=checkbox]]` দিয়ে চেকবক্স সুন্দর করা
 
-### Steps
+**4. Custom Color Picker**
+- Text Color ও Highlight Color Popover-এ preset colors-এর নিচে একটি `<input type="color">` যোগ করা
+- যেকোনো কাস্টম কালার কোড দিয়ে text/highlight সেট করা যাবে
 
-**1. `RichTextEditor.tsx` — Selection save/restore যোগ করা**
-- একটি `savedRange` ref রাখা হবে
-- Editor blur হলে বা popover-related action হলে current `Selection.getRangeAt(0)` সেভ করা
-- `execCommand`, `handleInsertImage`, `handleInsertVideo`, `handleInsertTable` কল করার আগে saved range restore করা (focus + `Selection.removeAllRanges()` + `addRange()`)
-- নতুন helper: `saveSelection()` এবং `restoreSelection()`
+### Files to modify
 
-**2. `EditorToolbar.tsx` — Popover open হলে selection save করা**
-- `EditorToolbarProps`-এ নতুন prop: `onSaveSelection: () => void`
-- Image, Video, Link Popover-এর `onOpenChange` এ যখন open হয় তখন `onSaveSelection()` কল করা
+- `src/components/ui/rich-text-editor/RichTextEditor.tsx` — drag/drop handlers, image click toolbar, checklist insert
+- `src/components/ui/rich-text-editor/EditorToolbar.tsx` — checklist button, custom color picker input যোগ
+- `src/components/ui/rich-text-editor/ImageToolbar.tsx` — নতুন ফাইল: image resize/float floating toolbar component
 
 ### Technical Detail
 
 ```text
-User clicks Image icon → Popover opens → onSaveSelection() saves cursor position
-User picks image/URL → clicks Insert → restoreSelection() puts cursor back → execCommand runs → image inserted at correct position
-```
+Drag & Drop:
+  onDragOver → e.preventDefault() + highlight border
+  onDrop → read File → insertImage as base64/data URL
 
-### Files to modify
-- `src/components/ui/rich-text-editor/RichTextEditor.tsx` — add `savedRange` ref, `saveSelection()`, `restoreSelection()`, wrap insert handlers
-- `src/components/ui/rich-text-editor/EditorToolbar.tsx` — accept `onSaveSelection` prop, call it on popover open
-- `src/components/ui/rich-text-editor/types.ts` — (if needed) update type
+Image Toolbar:
+  editor onClick → check if target is <img> → show floating toolbar positioned near image
+  toolbar buttons set img.style.width and img.style.float
+  
+Checklist:
+  insertHTML → <ul style="list-style:none;padding-left:0"><li><input type="checkbox"> Item</li></ul>
+
+Custom Color:
+  <input type="color"> onChange → execCommand("foreColor"/hiliteColor", hex)
+```
 
