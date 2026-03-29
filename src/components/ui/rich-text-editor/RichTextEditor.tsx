@@ -105,6 +105,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
         html += "</tr>";
       }
       html += "</table><p><br></p>";
+      restoreSelection();
       document.execCommand("insertHTML", false, html);
       editorRef.current?.focus();
       syncContent();
