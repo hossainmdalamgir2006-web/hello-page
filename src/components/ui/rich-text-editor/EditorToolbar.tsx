@@ -16,7 +16,7 @@ import {
   Link, Unlink, Quote, Minus, Code, RemoveFormatting, Undo, Redo,
   Palette, Image, ChevronDown, Eye, Code2,
   Superscript, Subscript, Indent, Outdent, Highlighter, Maximize, Minimize,
-  Type, LineChart, Search, Printer, ArrowRightLeft, Video, Upload,
+  Type, LineChart, Search, Printer, ArrowRightLeft, Video, Upload, CheckSquare,
 } from "lucide-react";
 import { ToolBtn, Divider } from "./ToolBtn";
 import { TablePicker } from "./TablePicker";
@@ -40,6 +40,7 @@ interface EditorToolbarProps {
   onInsertImage: (url: string) => void;
   onInsertChar: (char: string) => void;
   onInsertVideo: (url: string) => void;
+  onInsertChecklist: () => void;
   onSetLineHeight: (value: string) => void;
   onToggleFindReplace: () => void;
   onToggleDirection: () => void;
@@ -51,7 +52,7 @@ export const EditorToolbar = ({
   toolbar, disabled, readOnly, activeFormats, showSource, isFullscreen,
   execCommand, onToggleSource, onToggleFullscreen,
   onInsertTable, onInsertEmoji, onInsertLink, onInsertImage,
-  onInsertChar, onInsertVideo, onSetLineHeight,
+  onInsertChar, onInsertVideo, onInsertChecklist, onSetLineHeight,
   onToggleFindReplace, onToggleDirection, onPrint, onSaveSelection,
 }: EditorToolbarProps) => {
   const [linkUrl, setLinkUrl] = React.useState("");
@@ -213,6 +214,10 @@ export const EditorToolbar = ({
                   <button key={color} type="button" className="h-6 w-6 rounded border border-input hover:scale-110 transition-transform" style={{ backgroundColor: color }} onMouseDown={(e) => { e.preventDefault(); execCommand("foreColor", color); }} />
                 ))}
               </div>
+              <div className="mt-2 flex items-center gap-2">
+                <input type="color" className="h-6 w-6 cursor-pointer border-0 p-0 rounded" onChange={(e) => execCommand("foreColor", e.target.value)} />
+                <span className="text-[10px] text-muted-foreground">Custom</span>
+              </div>
             </PopoverContent>
           </Popover>
 
@@ -228,6 +233,10 @@ export const EditorToolbar = ({
                 {HIGHLIGHT_COLORS.map((color) => (
                   <button key={color} type="button" className="h-6 w-6 rounded border border-input hover:scale-110 transition-transform" style={{ backgroundColor: color }} onMouseDown={(e) => { e.preventDefault(); execCommand("hiliteColor", color); }} />
                 ))}
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <input type="color" className="h-6 w-6 cursor-pointer border-0 p-0 rounded" onChange={(e) => execCommand("hiliteColor", e.target.value)} />
+                <span className="text-[10px] text-muted-foreground">Custom</span>
               </div>
             </PopoverContent>
           </Popover>
@@ -249,6 +258,9 @@ export const EditorToolbar = ({
       {/* 7. Lists & Indentation */}
       <ToolBtn icon={List} command="insertUnorderedList" label="Bullet List" active={isActive("insertUnorderedList")} disabled={isDisabled} execCommand={execCommand} />
       <ToolBtn icon={ListOrdered} command="insertOrderedList" label="Numbered List" active={isActive("insertOrderedList")} disabled={isDisabled} execCommand={execCommand} />
+      <button type="button" disabled={isDisabled} onMouseDown={(e) => { e.preventDefault(); onInsertChecklist(); }} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40" title="Checklist">
+        <CheckSquare className="h-3.5 w-3.5" />
+      </button>
       <ToolBtn icon={Quote} command="formatBlock" value="blockquote" label="Blockquote" active={isBlockActive("blockquote")} disabled={isDisabled} execCommand={execCommand} />
 
       {toolbar === "full" && (
