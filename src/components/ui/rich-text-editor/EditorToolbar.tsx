@@ -279,7 +279,7 @@ export const EditorToolbar = ({
           <Divider />
 
           {/* 9. Media: Image, Video, Table */}
-          <Popover open={imageOpen} onOpenChange={setImageOpen}>
+          <Popover open={imageOpen} onOpenChange={(open) => { if (open) onSaveSelection(); setImageOpen(open); }}>
             <PopoverTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
                 <Image className="h-3.5 w-3.5" />
