@@ -67,7 +67,7 @@ export const EditorToolbar = ({
   const isDisabled = disabled || readOnly;
   const isActive = (cmd: string) => activeFormats.has(cmd);
   const isBlockActive = (tag: string) => activeFormats.has(`formatBlock:${tag}`);
-  const currentHeading = isBlockActive("h1") ? "H1" : isBlockActive("h2") ? "H2" : isBlockActive("h3") ? "H3" : "¶";
+  const currentHeading = isBlockActive("h1") ? "H1" : isBlockActive("h2") ? "H2" : isBlockActive("h3") ? "H3" : isBlockActive("h4") ? "H4" : isBlockActive("h5") ? "H5" : isBlockActive("h6") ? "H6" : "¶";
 
   const handleInsertLink = () => {
     if (linkUrl) { onInsertLink(linkUrl); setLinkUrl(""); setLinkOpen(false); }
