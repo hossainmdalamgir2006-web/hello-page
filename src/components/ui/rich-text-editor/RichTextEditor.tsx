@@ -39,7 +39,26 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
       setWordCount(text.trim() ? text.trim().split(/\s+/).length : 0);
     };
 
+    const saveSelection = () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+      }
+    };
+
+    const restoreSelection = () => {
+      if (savedRangeRef.current && editorRef.current) {
+        editorRef.current.focus();
+        const sel = window.getSelection();
+        if (sel) {
+          sel.removeAllRanges();
+          sel.addRange(savedRangeRef.current);
+        }
+      }
+    };
+
     const execCommand = (command: string, val?: string) => {
+      restoreSelection();
       document.execCommand(command, false, val);
       editorRef.current?.focus();
       syncContent();
