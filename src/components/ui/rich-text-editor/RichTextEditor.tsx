@@ -192,6 +192,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           execCommand={execCommand}
           onToggleSource={toggleSource}
           onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+          onSaveSelection={saveSelection}
           onInsertTable={handleInsertTable}
           onInsertEmoji={handleInsertEmoji}
           onInsertLink={handleInsertLink}
