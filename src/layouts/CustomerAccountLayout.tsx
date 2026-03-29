@@ -90,7 +90,6 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
 
       {/* Main content */}
       <div className={cn(
-        "transition-all duration-300",
         collapsed ? "lg:ml-[68px]" : "lg:ml-64"
       )}>
         <AccountHeader

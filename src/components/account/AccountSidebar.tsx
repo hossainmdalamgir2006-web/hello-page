@@ -158,10 +158,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
   };
 
   return (
-    <aside className={cn(
-      "fixed left-0 top-0 z-40 h-screen bg-sidebar border-r border-sidebar-border",
-      collapsed ? "w-[68px]" : "w-64"
-    )}>
+    <aside className="h-full w-full bg-sidebar border-r border-sidebar-border">
       <div className="flex h-full flex-col overflow-y-auto px-3 py-6">
         {/* Logo / Brand */}
         <div className={cn("mb-8 flex items-center gap-3 px-2", collapsed && "justify-center px-0")}>
