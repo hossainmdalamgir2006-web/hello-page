@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, Suspense } from "react";
 import { useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -99,9 +99,11 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
           pageDescription={pageInfo.description}
         />
         <main className="p-3 sm:p-4 md:p-6">
-          <div key={location.pathname} className="mx-auto max-w-6xl animate-fade-in">
-            {children || <Outlet />}
-          </div>
+          <Suspense fallback={<div className="flex items-center justify-center min-h-[50vh]"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>}>
+            <div className="mx-auto max-w-6xl animate-fade-in">
+              {children || <Outlet />}
+            </div>
+          </Suspense>
         </main>
       </div>
     </div>
