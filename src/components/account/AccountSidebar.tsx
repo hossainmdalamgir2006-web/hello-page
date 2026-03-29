@@ -159,9 +159,9 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
 
   return (
     <aside className="h-full w-full bg-sidebar border-r border-sidebar-border">
-      <div className="flex h-full flex-col overflow-y-auto px-3 py-6">
+      <div className="flex h-full flex-col px-3 py-6">
         {/* Logo / Brand */}
-        <div className={cn("mb-8 flex items-center gap-3 px-2", collapsed && "justify-center px-0")}>
+        <div className={cn("mb-6 flex items-center gap-3 px-2 shrink-0", collapsed && "justify-center px-0")}>
           {storeLogo ? (
             <img src={storeLogo} alt={storeName} className="h-10 w-10 rounded-lg object-contain shrink-0" />
           ) : (
@@ -184,10 +184,9 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
           )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 space-y-4">
+        {/* Scrollable Navigation */}
+        <nav className="flex-1 min-h-0 overflow-y-auto space-y-4 scrollbar-thin">
           {collapsed ? (
-            // Collapsed: flat list with separators
             <div className="space-y-1">
               {menuGroups.map((group, idx) => (
                 <div key={group.groupKey}>
@@ -197,7 +196,6 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
               ))}
             </div>
           ) : (
-            // Expanded: collapsible groups
             menuGroups.map((group) => (
               <Collapsible
                 key={group.groupKey}
@@ -219,9 +217,8 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
           )}
         </nav>
 
-        {/* Bottom Actions */}
-        <div className="mt-auto space-y-1 border-t border-sidebar-border pt-4">
-          {/* Logout — styled like header dropdown */}
+        {/* Bottom Actions — always visible */}
+        <div className="shrink-0 space-y-1 border-t border-sidebar-border pt-4 mt-2">
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
@@ -237,7 +234,6 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
             </button>
           )}
 
-          {/* Collapse toggle */}
           {onToggleCollapse && (
             <Button
               variant="ghost"
