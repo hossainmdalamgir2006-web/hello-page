@@ -258,6 +258,9 @@ export const EditorToolbar = ({
       {/* 7. Lists & Indentation */}
       <ToolBtn icon={List} command="insertUnorderedList" label="Bullet List" active={isActive("insertUnorderedList")} disabled={isDisabled} execCommand={execCommand} />
       <ToolBtn icon={ListOrdered} command="insertOrderedList" label="Numbered List" active={isActive("insertOrderedList")} disabled={isDisabled} execCommand={execCommand} />
+      <button type="button" disabled={isDisabled} onMouseDown={(e) => { e.preventDefault(); onInsertChecklist(); }} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40" title="Checklist">
+        <CheckSquare className="h-3.5 w-3.5" />
+      </button>
       <ToolBtn icon={Quote} command="formatBlock" value="blockquote" label="Blockquote" active={isBlockActive("blockquote")} disabled={isDisabled} execCommand={execCommand} />
 
       {toolbar === "full" && (
