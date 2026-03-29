@@ -40,6 +40,7 @@ interface EditorToolbarProps {
   onInsertImage: (url: string) => void;
   onInsertChar: (char: string) => void;
   onInsertVideo: (url: string) => void;
+  onInsertChecklist: () => void;
   onSetLineHeight: (value: string) => void;
   onToggleFindReplace: () => void;
   onToggleDirection: () => void;
