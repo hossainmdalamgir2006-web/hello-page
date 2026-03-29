@@ -16,7 +16,7 @@ import {
   Link, Unlink, Quote, Minus, Code, RemoveFormatting, Undo, Redo,
   Palette, Image, ChevronDown, Eye, Code2,
   Superscript, Subscript, Indent, Outdent, Highlighter, Maximize, Minimize,
-  Type, LineChart, Search, Printer, ArrowRightLeft, Video, Upload,
+  Type, LineChart, Search, Printer, ArrowRightLeft, Video, Upload, CheckSquare,
 } from "lucide-react";
 import { ToolBtn, Divider } from "./ToolBtn";
 import { TablePicker } from "./TablePicker";
