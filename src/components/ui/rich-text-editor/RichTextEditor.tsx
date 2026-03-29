@@ -112,12 +112,14 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
     };
 
     const handleInsertEmoji = (emoji: string) => {
+      restoreSelection();
       document.execCommand("insertText", false, emoji);
       editorRef.current?.focus();
       syncContent();
     };
 
     const handleInsertChar = (char: string) => {
+      restoreSelection();
       document.execCommand("insertText", false, char);
       editorRef.current?.focus();
       syncContent();
