@@ -261,7 +261,7 @@ export const EditorToolbar = ({
       <Divider />
 
       {/* 8. Link */}
-      <Popover open={linkOpen} onOpenChange={setLinkOpen}>
+      <Popover open={linkOpen} onOpenChange={(open) => { if (open) onSaveSelection(); setLinkOpen(open); }}>
         <PopoverTrigger asChild>
           <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
             <Link className="h-3.5 w-3.5" />
