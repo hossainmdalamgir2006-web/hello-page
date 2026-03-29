@@ -44,6 +44,7 @@ interface EditorToolbarProps {
   onToggleFindReplace: () => void;
   onToggleDirection: () => void;
   onPrint: () => void;
+  onSaveSelection: () => void;
 }
 
 export const EditorToolbar = ({
