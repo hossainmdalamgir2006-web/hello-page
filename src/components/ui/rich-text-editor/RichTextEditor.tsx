@@ -7,6 +7,7 @@ import type { RichTextEditorProps } from "./types";
 const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
   ({ value, onChange, placeholder, className, maxLength, minHeight = "120px", disabled = false, readOnly = false, toolbar = "full" }, ref) => {
     const editorRef = React.useRef<HTMLDivElement>(null);
+    const savedRangeRef = React.useRef<Range | null>(null);
     const [charCount, setCharCount] = React.useState(0);
     const [wordCount, setWordCount] = React.useState(0);
     const [activeFormats, setActiveFormats] = React.useState<Set<string>>(new Set());
