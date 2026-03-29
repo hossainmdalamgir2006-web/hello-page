@@ -125,9 +125,12 @@ export const EditorToolbar = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="min-w-[120px]">
           <DropdownMenuItem onSelect={() => execCommand("formatBlock", "p")}><span className="text-sm">Paragraph</span></DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h1")}><span className="text-lg font-bold">Heading 1</span></DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h2")}><span className="text-base font-bold">Heading 2</span></DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h3")}><span className="text-sm font-bold">Heading 3</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h1")}><span className="text-xl font-bold">Heading 1</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h2")}><span className="text-lg font-bold">Heading 2</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h3")}><span className="text-base font-bold">Heading 3</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h4")}><span className="text-sm font-bold">Heading 4</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h5")}><span className="text-xs font-bold">Heading 5</span></DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => execCommand("formatBlock", "h6")}><span className="text-xs font-semibold text-muted-foreground">Heading 6</span></DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
