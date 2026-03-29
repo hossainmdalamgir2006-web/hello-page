@@ -214,6 +214,10 @@ export const EditorToolbar = ({
                   <button key={color} type="button" className="h-6 w-6 rounded border border-input hover:scale-110 transition-transform" style={{ backgroundColor: color }} onMouseDown={(e) => { e.preventDefault(); execCommand("foreColor", color); }} />
                 ))}
               </div>
+              <div className="mt-2 flex items-center gap-2">
+                <input type="color" className="h-6 w-6 cursor-pointer border-0 p-0 rounded" onChange={(e) => execCommand("foreColor", e.target.value)} />
+                <span className="text-[10px] text-muted-foreground">Custom</span>
+              </div>
             </PopoverContent>
           </Popover>
 
