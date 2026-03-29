@@ -99,7 +99,7 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
           pageDescription={pageInfo.description}
         />
         <main className="p-3 sm:p-4 md:p-6">
-          <Suspense fallback={<div className="flex items-center justify-center min-h-[50vh]"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>}>
+          <Suspense fallback={null}>
             <div className="mx-auto max-w-6xl animate-fade-in">
               {children || <Outlet />}
             </div>
