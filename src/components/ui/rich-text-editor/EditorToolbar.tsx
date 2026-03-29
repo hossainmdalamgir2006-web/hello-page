@@ -44,6 +44,7 @@ interface EditorToolbarProps {
   onToggleFindReplace: () => void;
   onToggleDirection: () => void;
   onPrint: () => void;
+  onSaveSelection: () => void;
 }
 
 export const EditorToolbar = ({
@@ -51,7 +52,7 @@ export const EditorToolbar = ({
   execCommand, onToggleSource, onToggleFullscreen,
   onInsertTable, onInsertEmoji, onInsertLink, onInsertImage,
   onInsertChar, onInsertVideo, onSetLineHeight,
-  onToggleFindReplace, onToggleDirection, onPrint,
+  onToggleFindReplace, onToggleDirection, onPrint, onSaveSelection,
 }: EditorToolbarProps) => {
   const [linkUrl, setLinkUrl] = React.useState("");
   const [linkOpen, setLinkOpen] = React.useState(false);
@@ -260,7 +261,7 @@ export const EditorToolbar = ({
       <Divider />
 
       {/* 8. Link */}
-      <Popover open={linkOpen} onOpenChange={setLinkOpen}>
+      <Popover open={linkOpen} onOpenChange={(open) => { if (open) onSaveSelection(); setLinkOpen(open); }}>
         <PopoverTrigger asChild>
           <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
             <Link className="h-3.5 w-3.5" />
@@ -278,7 +279,7 @@ export const EditorToolbar = ({
           <Divider />
 
           {/* 9. Media: Image, Video, Table */}
-          <Popover open={imageOpen} onOpenChange={setImageOpen}>
+          <Popover open={imageOpen} onOpenChange={(open) => { if (open) onSaveSelection(); setImageOpen(open); }}>
             <PopoverTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
                 <Image className="h-3.5 w-3.5" />
@@ -305,7 +306,7 @@ export const EditorToolbar = ({
             </PopoverContent>
           </Popover>
 
-          <Popover open={videoOpen} onOpenChange={setVideoOpen}>
+          <Popover open={videoOpen} onOpenChange={(open) => { if (open) onSaveSelection(); setVideoOpen(open); }}>
             <PopoverTrigger asChild>
               <button type="button" disabled={isDisabled} className="h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40">
                 <Video className="h-3.5 w-3.5" />

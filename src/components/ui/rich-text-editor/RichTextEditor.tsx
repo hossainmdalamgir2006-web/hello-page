@@ -7,6 +7,7 @@ import type { RichTextEditorProps } from "./types";
 const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
   ({ value, onChange, placeholder, className, maxLength, minHeight = "120px", disabled = false, readOnly = false, toolbar = "full" }, ref) => {
     const editorRef = React.useRef<HTMLDivElement>(null);
+    const savedRangeRef = React.useRef<Range | null>(null);
     const [charCount, setCharCount] = React.useState(0);
     const [wordCount, setWordCount] = React.useState(0);
     const [activeFormats, setActiveFormats] = React.useState<Set<string>>(new Set());
@@ -38,7 +39,26 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
       setWordCount(text.trim() ? text.trim().split(/\s+/).length : 0);
     };
 
+    const saveSelection = () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+      }
+    };
+
+    const restoreSelection = () => {
+      if (savedRangeRef.current && editorRef.current) {
+        editorRef.current.focus();
+        const sel = window.getSelection();
+        if (sel) {
+          sel.removeAllRanges();
+          sel.addRange(savedRangeRef.current);
+        }
+      }
+    };
+
     const execCommand = (command: string, val?: string) => {
+      restoreSelection();
       document.execCommand(command, false, val);
       editorRef.current?.focus();
       syncContent();
@@ -85,18 +105,21 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
         html += "</tr>";
       }
       html += "</table><p><br></p>";
+      restoreSelection();
       document.execCommand("insertHTML", false, html);
       editorRef.current?.focus();
       syncContent();
     };
 
     const handleInsertEmoji = (emoji: string) => {
+      restoreSelection();
       document.execCommand("insertText", false, emoji);
       editorRef.current?.focus();
       syncContent();
     };
 
     const handleInsertChar = (char: string) => {
+      restoreSelection();
       document.execCommand("insertText", false, char);
       editorRef.current?.focus();
       syncContent();
@@ -112,12 +135,12 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
 
     const handleInsertVideo = (url: string) => {
       let embedUrl = url;
-      // YouTube URL parsing
       const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
       if (ytMatch) {
         embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
       }
       const html = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:8px 0"><iframe src="${embedUrl}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div><p><br></p>`;
+      restoreSelection();
       document.execCommand("insertHTML", false, html);
       editorRef.current?.focus();
       syncContent();
@@ -169,6 +192,7 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           execCommand={execCommand}
           onToggleSource={toggleSource}
           onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+          onSaveSelection={saveSelection}
           onInsertTable={handleInsertTable}
           onInsertEmoji={handleInsertEmoji}
           onInsertLink={handleInsertLink}
