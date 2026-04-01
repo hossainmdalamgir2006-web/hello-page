@@ -160,7 +160,7 @@ export default function Returns() {
               <Card className="h-full border-primary/30">
                 <CardContent className="p-6">
                   <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" /> Eligible for Return
+                    <CheckCircle className="h-5 w-5 text-primary" /> Eligible for Return
                   </h2>
                   <ul className="space-y-2">
                     {eligible.map((item: string, i: number) => (
