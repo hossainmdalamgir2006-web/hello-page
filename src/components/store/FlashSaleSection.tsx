@@ -50,12 +50,13 @@ function useCountdown(endTime: string | null) {
 function TimerBlock({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-14 h-14 md:w-16 md:h-16 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20">
-        <span className="font-display text-2xl md:text-3xl font-bold text-white leading-none">
+      <div className="w-14 h-14 md:w-16 md:h-16 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20 relative overflow-hidden">
+        <span className="font-display text-2xl md:text-3xl font-bold text-white leading-none relative z-10">
           {String(value).padStart(2, "0")}
         </span>
+        <div className="absolute inset-0 bg-white/5 animate-pulse" />
       </div>
-      <span className="text-white/70 text-xs mt-1 uppercase tracking-wider">{label}</span>
+      <span className="text-white/70 text-xs mt-1.5 uppercase tracking-wider font-medium">{label}</span>
     </div>
   );
 }
@@ -72,7 +73,9 @@ export function FlashSaleSection({
   const displaySubtitle = subtitle || "";
   const displayBadge = badge || `⚡ ${t('store.flashSale')}`;
   const { products: allProducts, loading } = useFeaturedProducts(8);
-  const { timeLeft, expired } = useCountdown(endTime || null);
+  // Default end time: 24 hours from now if none provided
+  const defaultEndTime = endTime || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  const { timeLeft, expired } = useCountdown(defaultEndTime);
 
   // Show products with discount
   const saleProducts = allProducts.filter(p => p.compare_at_price && p.compare_at_price > p.price).slice(0, count);
@@ -96,15 +99,16 @@ export function FlashSaleSection({
             {displaySubtitle && <p className="text-white/75 mt-1">{displaySubtitle}</p>}
           </div>
 
-          {/* Countdown */}
-          {endTime && !expired && (
-            <div className="flex items-center gap-3">
+          {/* Countdown - always visible */}
+          {!expired && (
+            <div className="flex items-center gap-2 md:gap-3">
+              <span className="text-white/60 text-sm font-medium mr-1 hidden md:block">Ends in</span>
               <TimerBlock value={timeLeft.days} label={t('flashSale.days')} />
-              <span className="text-white/60 text-2xl font-bold mb-4">:</span>
+              <span className="text-white/40 text-2xl font-bold mb-4">:</span>
               <TimerBlock value={timeLeft.hours} label={t('flashSale.hours')} />
-              <span className="text-white/60 text-2xl font-bold mb-4">:</span>
+              <span className="text-white/40 text-2xl font-bold mb-4">:</span>
               <TimerBlock value={timeLeft.minutes} label={t('flashSale.mins')} />
-              <span className="text-white/60 text-2xl font-bold mb-4">:</span>
+              <span className="text-white/40 text-2xl font-bold mb-4">:</span>
               <TimerBlock value={timeLeft.seconds} label={t('flashSale.secs')} />
             </div>
           )}

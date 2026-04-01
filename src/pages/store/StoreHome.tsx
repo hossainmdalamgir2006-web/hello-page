@@ -121,9 +121,9 @@ export default function StoreHome() {
               {features.map((feature: any) => {
                 const FeatureIcon = iconMap[feature.icon] || Truck;
                 return (
-                  <div key={feature.title} className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full bg-store-primary/10 flex items-center justify-center flex-shrink-0">
-                      <FeatureIcon className="h-5 w-5 text-store-primary" />
+                  <div key={feature.title} className="flex items-center gap-3 group cursor-default">
+                    <div className="w-11 h-11 rounded-full bg-store-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-store-primary/20 transition-colors duration-300 group-hover:animate-[bounce_0.6s_ease-in-out]">
+                      <FeatureIcon className="h-5 w-5 text-store-primary group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <div>
                       <p className="font-semibold text-foreground text-sm">{feature.title}</p>
@@ -149,6 +149,13 @@ export default function StoreHome() {
         />
       )}
 
+      {/* Wave divider */}
+      <div className="relative h-12 -mb-1">
+        <svg viewBox="0 0 1440 48" fill="none" className="absolute bottom-0 w-full h-full" preserveAspectRatio="none">
+          <path d="M0 48h1440V24C1200 0 960 48 720 24S240 48 0 24v24z" className="fill-store-background" />
+        </svg>
+      </div>
+
       {/* 4. New Arrivals */}
       {isEnabled(newArrivals) && (
         <NewArrivalsSection
@@ -168,6 +175,13 @@ export default function StoreHome() {
 
       {/* Trending Products */}
       <TrendingProductsSection count={4} />
+
+      {/* Wave divider */}
+      <div className="relative h-12 -mb-1">
+        <svg viewBox="0 0 1440 48" fill="none" className="absolute bottom-0 w-full h-full" preserveAspectRatio="none">
+          <path d="M0 0C240 48 480 0 720 24S1200 0 1440 48V48H0V0z" className="fill-store-muted" />
+        </svg>
+      </div>
 
       {/* 6. Best Sellers / Featured Products */}
       {isEnabled(bestSellers) && (
@@ -243,37 +257,43 @@ export default function StoreHome() {
 
       {/* 10. Newsletter */}
       {isEnabled(newsletter) && (
-        <section className="py-16 bg-gradient-to-br from-store-primary/10 via-store-background to-store-secondary/10">
-          <div className="container mx-auto px-4 text-center max-w-xl">
-            <div className="w-14 h-14 rounded-full bg-store-primary/10 flex items-center justify-center mx-auto mb-5">
-              <Mail className="h-7 w-7 text-store-primary" />
+        <section className="relative py-20 overflow-hidden">
+          {/* Decorative background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-store-primary via-store-primary/90 to-store-secondary" />
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+          
+          <div className="container mx-auto px-4 text-center max-w-2xl relative z-10">
+            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center mx-auto mb-6 border border-white/20">
+              <Mail className="h-8 w-8 text-white" />
             </div>
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-3">
               {newsletter?.title || t('store.stayInLoop')}
             </h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-white/70 mb-8 text-lg">
               {newsletter?.subtitle || t('store.newsletterSubtitle')}
             </p>
             <form
               onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
-              className="flex gap-2 max-w-md mx-auto"
+              className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
             >
               <Input
                 type="email"
                 placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
-                className="flex-1"
+                className="flex-1 h-12 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25"
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 disabled={newsletterLoading}
               />
               <Button
                 type="submit"
-                className="bg-store-primary text-store-primary-foreground hover:bg-store-primary/90"
+                size="lg"
+                className="h-12 px-8 bg-white text-store-primary hover:bg-white/90 font-semibold"
                 disabled={newsletterLoading}
               >
                 {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
               </Button>
             </form>
+            <p className="text-white/40 text-xs mt-4">Join 5,000+ subscribers. No spam, unsubscribe anytime.</p>
           </div>
         </section>
       )}
