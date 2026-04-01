@@ -65,7 +65,7 @@ export default function TrackOrder() {
               createdAt: o.created_at,
               updatedAt: o.updated_at,
               shippingAddress: o.shipping_address,
-              total: o.total,
+              total: o.total_amount,
               shippingCost: o.shipping_cost,
             })));
           }
