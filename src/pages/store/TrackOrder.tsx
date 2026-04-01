@@ -49,8 +49,15 @@ export default function TrackOrder() {
   const [recentOrders, setRecentOrders] = useState<OrderResult[]>([]);
   const [loadingRecent, setLoadingRecent] = useState(false);
 
+  // Auto-fill order number from URL query param
+  useEffect(() => {
+    if (orderFromUrl) {
+      setOrderNumber(orderFromUrl.toUpperCase());
+    }
+  }, [orderFromUrl]);
+
   // Load recent orders for logged-in users
-  useState(() => {
+  useEffect(() => {
     if (user) {
       setLoadingRecent(true);
       supabase
@@ -74,7 +81,7 @@ export default function TrackOrder() {
           setLoadingRecent(false);
         });
     }
-  });
+  }, [user]);
 
   const handleOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
