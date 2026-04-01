@@ -50,12 +50,13 @@ function useCountdown(endTime: string | null) {
 function TimerBlock({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-14 h-14 md:w-16 md:h-16 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20">
-        <span className="font-display text-2xl md:text-3xl font-bold text-white leading-none">
+      <div className="w-14 h-14 md:w-16 md:h-16 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20 relative overflow-hidden">
+        <span className="font-display text-2xl md:text-3xl font-bold text-white leading-none relative z-10">
           {String(value).padStart(2, "0")}
         </span>
+        <div className="absolute inset-0 bg-white/5 animate-pulse" />
       </div>
-      <span className="text-white/70 text-xs mt-1 uppercase tracking-wider">{label}</span>
+      <span className="text-white/70 text-xs mt-1.5 uppercase tracking-wider font-medium">{label}</span>
     </div>
   );
 }
