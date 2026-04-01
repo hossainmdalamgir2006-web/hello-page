@@ -195,7 +195,7 @@ export default function StoreHome() {
       {isEnabled(bestSellers) && (
         <section className="py-10 bg-store-muted">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <div>
                 {bestSellers?.badge_text && (
                   <Badge className="bg-store-secondary/15 text-store-secondary border-0 text-xs uppercase tracking-wider mb-2">
