@@ -133,7 +133,7 @@ export default function StoreHome() {
                     </div>
                     <div>
                       <p className="font-semibold text-foreground text-sm">{feature.title}</p>
-                      <p className="text-muted-foreground text-xs">{feature.desc}</p>
+                      
                     </div>
                   </div>
                 );
