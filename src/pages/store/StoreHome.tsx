@@ -166,6 +166,9 @@ export default function StoreHome() {
         />
       )}
 
+      {/* Trending Products */}
+      <TrendingProductsSection count={4} />
+
       {/* 6. Best Sellers / Featured Products */}
       {isEnabled(bestSellers) && (
         <section className="py-16 bg-store-muted">
