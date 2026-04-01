@@ -139,21 +139,12 @@ export default function AccountDashboard() {
         initial="hidden"
         animate="visible"
       >
-        {/* Hero Welcome Banner */}
-        <motion.div variants={itemVariants} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5 border border-border/50 p-6 sm:p-8">
-          <div className="absolute -top-12 -right-12 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-accent/5 rounded-full blur-2xl" />
-          <div className="relative flex items-center gap-4">
-            <div className="hidden sm:flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-              <LayoutDashboard className="h-7 w-7 text-primary" />
-            </div>
-            <div>
-              <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                {t('account.welcomeBack')}, {profile?.full_name || t('orders.customer')}! 👋
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">{t('account.whatsHappening')}</p>
-            </div>
-          </div>
+        {/* Welcome Banner */}
+        <motion.div variants={itemVariants} className="rounded-xl bg-gradient-to-r from-primary/5 via-accent/5 to-transparent p-5 sm:p-6 border border-border">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+            {t('account.welcomeBack')}, {profile?.full_name || t('orders.customer')}! 👋
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">{t('account.whatsHappening')}</p>
         </motion.div>
 
         {/* Profile Completion */}
