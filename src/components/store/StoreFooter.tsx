@@ -145,34 +145,6 @@ export function StoreFooter() {
 
   return (
     <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]">
-      {/* Newsletter Section */}
-      <div className="bg-gradient-to-r from-store-primary/20 via-store-accent/10 to-store-primary/20 border-b border-white/5">
-        <div className="container mx-auto px-4 py-10 text-center">
-          <Mail className="h-8 w-8 mx-auto mb-3 text-store-accent opacity-80" />
-          <h3 className="font-display text-xl md:text-2xl font-bold mb-2">{newsletterTitle}</h3>
-          <p className="text-[hsl(215,16%,60%)] text-sm mb-5 max-w-md mx-auto">
-            Subscribe to get exclusive offers, new arrivals & more straight to your inbox.
-          </p>
-          <NewsletterForm buttonText={newsletterButton} />
-        </div>
-      </div>
-
-      {/* Trust Badges */}
-      <div className="border-b border-white/5">
-        <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {trustBadges.map((badge, i) => (
-              <div key={i} className="flex items-center gap-3 justify-center md:justify-start">
-                <div className="w-10 h-10 rounded-full bg-store-accent/10 flex items-center justify-center flex-shrink-0">
-                  <badge.icon className="h-5 w-5 text-store-accent" />
-                </div>
-                <span className="text-sm font-medium text-[hsl(210,40%,90%)]">{badge.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Main Footer Grid */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -284,12 +256,6 @@ export function StoreFooter() {
           <div className="flex items-center gap-6">
             <Link to="/privacy" className="hover:text-store-accent transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-store-accent transition-colors">Terms of Service</Link>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="hover:text-store-accent transition-colors inline-flex items-center gap-1"
-            >
-              <ArrowUp className="h-3.5 w-3.5" /> Back to Top
-            </button>
           </div>
         </div>
       </div>
