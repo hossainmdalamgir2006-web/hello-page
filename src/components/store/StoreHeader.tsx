@@ -124,12 +124,13 @@ export function StoreHeader() {
           </Link>
 
           {/* Center Search Bar — Desktop */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4">
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4 relative">
             <div className="flex w-full rounded-full border-2 border-store-primary/30 overflow-hidden bg-background shadow-sm hover:shadow-md hover:border-store-primary/50 transition-all">
               <Input
-                placeholder={t('store.searchPlaceholder')}
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
                 className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none bg-transparent pl-5"
               />
               <Select value={searchCategory} onValueChange={setSearchCategory}>
@@ -154,6 +155,15 @@ export function StoreHeader() {
                 <span className="sr-only">Search</span>
               </Button>
             </div>
+            <SearchSuggestions
+              query={searchQuery}
+              visible={searchFocused}
+              onClose={() => setSearchFocused(false)}
+              onSelect={(q) => {
+                const params = new URLSearchParams({ search: q });
+                navigate(`/products?${params.toString()}`);
+              }}
+            />
           </form>
 
           {/* Actions */}
