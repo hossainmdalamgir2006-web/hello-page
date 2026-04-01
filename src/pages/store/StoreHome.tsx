@@ -193,7 +193,7 @@ export default function StoreHome() {
 
       {/* 8. Best Sellers / Featured Products */}
       {isEnabled(bestSellers) && (
-        <section className="py-16 bg-store-muted">
+        <section className="py-10 bg-store-muted">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
               <div>
