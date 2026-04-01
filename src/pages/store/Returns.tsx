@@ -175,7 +175,7 @@ export default function Returns() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.45 }}>
-              <Card className="h-full border-red-200 dark:border-red-900">
+              <Card className="h-full border-destructive/30">
                 <CardContent className="p-6">
                   <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-2">
                     <XCircle className="h-5 w-5 text-destructive" /> Not Eligible for Return
