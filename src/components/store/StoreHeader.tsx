@@ -30,6 +30,7 @@ import { MegaMenuNav, MobileMegaMenu, useDynamicCategories } from "./MegaMenuNav
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { SearchSuggestions } from "./SearchSuggestions";
 
 export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
