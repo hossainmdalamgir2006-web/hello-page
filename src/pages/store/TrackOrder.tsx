@@ -83,7 +83,7 @@ export default function TrackOrder() {
       setOrderError(t('track.invalidOrder'));
       return;
     }
-    navigate(`/track/${trimmedOrder}`);
+    navigate(`/track-order?order=${trimmedOrder}`);
   };
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
