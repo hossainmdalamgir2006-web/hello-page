@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, RotateCcw, Plus } from "lucide-react";
@@ -15,6 +14,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { format, differenceInDays } from "date-fns";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 const statusColors: Record<string, string> = {
   pending: "secondary",
@@ -25,7 +34,6 @@ const statusColors: Record<string, string> = {
 
 export default function AccountReturns() {
   const { user } = useAuth();
-  
   const [requests, setRequests] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,8 +100,8 @@ export default function AccountReturns() {
   return (
     <>
     <SEOHead title="Returns" noIndex />
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+      <motion.div variants={itemVariants} className="flex justify-between items-center">
         <p className="text-xs text-muted-foreground">
           Returns accepted within {returnWindowDays} days of delivery
         </p>
@@ -135,39 +143,46 @@ export default function AccountReturns() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
+      </motion.div>
 
       {requests.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            <RotateCcw className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>No return requests yet</p>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="border-dashed">
+            <CardContent className="py-16 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                <RotateCcw className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="font-semibold text-lg mb-1">No return requests yet</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">If you need to return a product, you can submit a request here</p>
+            </CardContent>
+          </Card>
+        </motion.div>
       ) : (
         <div className="space-y-3">
           {requests.map((r) => (
-            <Card key={r.id}>
-              <CardContent className="py-4">
-                <div className="flex items-start justify-between gap-3 flex-wrap">
-                  <div className="space-y-1">
-                    <p className="font-semibold text-sm">{r.reason}</p>
-                    {r.description && <p className="text-xs text-muted-foreground">{r.description}</p>}
-                    <p className="text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM dd, yyyy HH:mm")}</p>
-                    {r.admin_notes && (
-                      <p className="text-xs text-foreground mt-1 p-2 bg-muted rounded">
-                        <strong>Admin:</strong> {r.admin_notes}
-                      </p>
-                    )}
+            <motion.div key={r.id} variants={itemVariants}>
+              <Card className="hover:shadow-md transition-all hover:border-primary/30">
+                <CardContent className="py-4">
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="space-y-1">
+                      <p className="font-semibold text-sm">{r.reason}</p>
+                      {r.description && <p className="text-xs text-muted-foreground">{r.description}</p>}
+                      <p className="text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM dd, yyyy HH:mm")}</p>
+                      {r.admin_notes && (
+                        <p className="text-xs text-foreground mt-1 p-2 bg-muted rounded">
+                          <strong>Admin:</strong> {r.admin_notes}
+                        </p>
+                      )}
+                    </div>
+                    <Badge variant={(statusColors[r.status] as any) || "secondary"}>{r.status}</Badge>
                   </div>
-                  <Badge variant={(statusColors[r.status] as any) || "secondary"}>{r.status}</Badge>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
     </>
   );
 }
