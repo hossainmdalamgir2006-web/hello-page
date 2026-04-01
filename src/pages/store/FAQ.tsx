@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { StoreBreadcrumb } from "@/components/store/StoreBreadcrumb";
+
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -110,7 +110,6 @@ export default function FAQ() {
   return (
     <>
       <SEOHead title="FAQ" description={subtitle} canonicalPath="/faq" jsonLd={faqJsonLd} />
-      <StoreBreadcrumb />
 
       {/* Hero Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-accent/30 to-secondary/20 py-14 md:py-20">
