@@ -89,7 +89,7 @@ export function LoginSignupView({
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">{t('store.fullNameLabel')}</Label>
+                  <Label htmlFor="signup-name">Full Name</Label>
                   <Input id="signup-name" type="text" placeholder="John Doe" value={signupData.fullName} onChange={(e) => setSignupData(prev => ({ ...prev, fullName: e.target.value }))} required />
                 </div>
                 <div className="space-y-2">
