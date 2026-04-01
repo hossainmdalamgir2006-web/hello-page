@@ -238,6 +238,9 @@ export default function StoreHome() {
       )}
 
 
+      {/* Recently Viewed */}
+      <RecentlyViewedCarousel />
+
       {/* 10. Newsletter */}
       {isEnabled(newsletter) && (
         <section className="py-16 bg-gradient-to-br from-store-primary/10 via-store-background to-store-secondary/10">
