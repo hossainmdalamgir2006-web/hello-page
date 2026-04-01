@@ -3,8 +3,10 @@ import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Phone, MapPin, Clock, Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Mail, Phone, MapPin, Clock, Loader2, Send, Facebook, Instagram, MessageCircle, CheckCircle2, ChevronRight, Home } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,39 +17,77 @@ import { useState } from "react";
 import { usePageContent } from "@/hooks/usePageContents";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const contactFormSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(50),
   lastName: z.string().trim().min(1, "Last name is required").max(50),
   email: z.string().trim().email("Invalid email address").max(100),
   phone: z.string().trim().max(20).optional().or(z.literal("")),
+  subject: z.string().min(1, "Please select a topic"),
   message: z.string().trim().min(10, "Message must be at least 10 characters").max(1000),
 });
 
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
+const subjectOptions = [
+  { value: "general", label: "General Inquiry" },
+  { value: "order", label: "Order Issue" },
+  { value: "return", label: "Return / Refund" },
+  { value: "product", label: "Product Question" },
+  { value: "shipping", label: "Shipping Issue" },
+  { value: "other", label: "Other" },
+];
+
+const faqItems = [
+  { q: "How can I track my order?", a: "You can track your order by going to your Account > Orders section or using the Track Order page with your order number." },
+  { q: "What is your return policy?", a: "We accept returns within 7 days of delivery. Items must be in original condition with tags attached. Visit our Returns page for more details." },
+  { q: "How long does shipping take?", a: "Standard shipping takes 3-5 business days within Dhaka and 5-7 business days outside Dhaka." },
+  { q: "How do I contact customer support?", a: "You can reach us through this contact form, via phone, email, or WhatsApp. We respond within 24 hours." },
+  { q: "Can I change or cancel my order?", a: "You can modify or cancel your order within 1 hour of placing it. After that, please contact us immediately." },
+];
+
 const iconMap: Record<string, React.ElementType> = {
   "map-pin": MapPin, phone: Phone, mail: Mail, clock: Clock,
 };
 
+function BusinessHoursStatus() {
+  const now = new Date();
+  const day = now.getDay();
+  const hour = now.getHours();
+  const isWeekday = day >= 0 && day <= 4; // Sun-Thu for BD
+  const isOpen = isWeekday && hour >= 10 && hour < 20;
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full ${isOpen ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${isOpen ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+      {isOpen ? "Open Now" : "Closed"}
+    </span>
+  );
+}
+
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { data: pageData, loading: pageLoading } = usePageContent("contact");
   const { t } = useLanguage();
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { firstName: "", lastName: "", email: "", phone: "", message: "" },
+    defaultValues: { firstName: "", lastName: "", email: "", phone: "", subject: "", message: "" },
   });
+
+  const messageValue = form.watch("message");
 
   const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("contact_messages").insert({
         first_name: data.firstName, last_name: data.lastName, email: data.email,
-        phone: data.phone || null, message: data.message,
+        phone: data.phone || null, subject: data.subject, message: data.message,
       });
       if (error) throw error;
-      toast.success("Message sent successfully! We'll get back to you soon.");
+      setIsSuccess(true);
       form.reset();
     } catch (error) {
       console.error("Error submitting contact form:", error);
@@ -61,20 +101,18 @@ export default function Contact() {
   const subtitle = pageData?.subtitle || t('store.contactSubtitle');
   const formTitle = (pageData?.content as any)?.form_title || t('store.sendUsMessage');
   const cards = (pageData?.content as any)?.cards || [
-    { icon: "map-pin", title: "Visit Us", text: "Update your address in admin settings" },
-    { icon: "phone", title: "Call Us", text: "Update your phone in admin settings" },
-    { icon: "mail", title: "Email Us", text: "Update your email in admin settings" },
-    { icon: "clock", title: "Business Hours", text: "Update your hours in admin settings" },
+    { icon: "map-pin", title: "Visit Us", text: "Dhaka, Bangladesh" },
+    { icon: "phone", title: "Call Us", text: "+880 1XXX-XXXXXX" },
+    { icon: "mail", title: "Email Us", text: "support@store.com" },
+    { icon: "clock", title: "Business Hours", text: "Sun - Thu: 10AM - 8PM\nFri - Sat: Closed" },
   ];
 
   if (pageLoading) {
     return (
-      <>
-        <div className="container mx-auto px-4 py-12 space-y-4">
-          <Skeleton className="h-10 w-48 mx-auto" />
-          <Skeleton className="h-6 w-96 mx-auto" />
-        </div>
-      </>
+      <div className="container mx-auto px-4 py-12 space-y-4">
+        <Skeleton className="h-10 w-48 mx-auto" />
+        <Skeleton className="h-6 w-96 mx-auto" />
+      </div>
     );
   }
 
@@ -91,61 +129,230 @@ export default function Contact() {
           description: subtitle,
         }}
       />
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-center mb-4">{title}</h1>
-        <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">{subtitle}</p>
 
-        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          <Card>
-            <CardHeader><CardTitle>{formTitle}</CardTitle></CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField control={form.control} name="firstName" render={({ field }) => (
-                      <FormItem><FormLabel>{t('store.firstName')}</FormLabel><FormControl><Input placeholder="John" {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={form.control} name="lastName" render={({ field }) => (
-                      <FormItem><FormLabel>{t('store.lastName')}</FormLabel><FormControl><Input placeholder="Doe" {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                  </div>
-                  <FormField control={form.control} name="email" render={({ field }) => (
-                    <FormItem><FormLabel>{t('common.email')}</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={form.control} name="phone" render={({ field }) => (
-                    <FormItem><FormLabel>{t('store.phoneOptional')}</FormLabel><FormControl><Input placeholder="+880 1XXX-XXXXXX" {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={form.control} name="message" render={({ field }) => (
-                    <FormItem><FormLabel>{t('store.message')}</FormLabel><FormControl><Textarea placeholder="How can we help you?" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={isSubmitting}>
-                    {isSubmitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('store.sending')}</>) : t('store.sendMessage')}
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+      {/* Breadcrumb */}
+      <nav aria-label="Breadcrumb" className="container mx-auto px-4 py-3">
+        <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <li>
+            <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1">
+              <Home className="h-3.5 w-3.5" />
+              <span>Home</span>
+            </Link>
+          </li>
+          <li className="flex items-center gap-1.5">
+            <ChevronRight className="h-3 w-3" />
+            <span className="text-foreground font-medium">Contact</span>
+          </li>
+        </ol>
+      </nav>
 
-          <div className="space-y-6">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-store-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-store-primary/8 rounded-full blur-2xl" />
+        </div>
+        <div className="container mx-auto px-4 py-12 md:py-16 text-center relative z-10">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-3"
+          >
+            {title}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto"
+          >
+            {subtitle}
+          </motion.p>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-10">
+        {/* Info Cards + Form */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+
+          {/* Left: Info Cards (show first on mobile) */}
+          <div className="space-y-4 order-1 md:order-2">
             {cards.map((card: any, i: number) => {
               const IconComp = iconMap[card.icon] || MapPin;
+              const isClockCard = card.icon === "clock";
               return (
-                <Card key={i}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-store-primary/10 flex items-center justify-center flex-shrink-0">
-                        <IconComp className="h-6 w-6 text-store-primary" />
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.08 }}
+                >
+                  <Card className="group hover:shadow-md transition-all duration-300 hover:border-store-primary/30">
+                    <CardContent className="p-5">
+                      <div className="flex items-start gap-4">
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-store-primary/20 to-store-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                          <IconComp className="h-5 w-5 text-store-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-sm">{card.title}</h3>
+                            {isClockCard && <BusinessHoursStatus />}
+                          </div>
+                          <p className="text-muted-foreground text-sm whitespace-pre-line">{card.text}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold mb-1">{card.title}</h3>
-                        <p className="text-muted-foreground whitespace-pre-line">{card.text}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               );
             })}
+
+            {/* Social Media Links */}
+            <Card className="hover:shadow-md transition-all duration-300 hover:border-store-primary/30">
+              <CardContent className="p-5">
+                <h3 className="font-semibold text-sm mb-3">Connect With Us</h3>
+                <div className="flex items-center gap-3">
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 flex items-center justify-center transition-colors">
+                    <Facebook className="h-4.5 w-4.5 text-blue-600" />
+                  </a>
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 flex items-center justify-center transition-colors">
+                    <Instagram className="h-4.5 w-4.5 text-pink-600" />
+                  </a>
+                  <a href="https://wa.me/8801XXXXXXXXX" target="_blank" rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-green-500/10 hover:bg-green-500/20 flex items-center justify-center transition-colors">
+                    <MessageCircle className="h-4.5 w-4.5 text-green-600" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Google Map */}
+            <Card className="overflow-hidden hover:shadow-md transition-all duration-300">
+              <div className="h-48 w-full">
+                <iframe
+                  title="Store Location"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233668.0714569872!2d90.27885829067017!3d23.780573258035967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b087026b81%3A0x8fa563b5e1d8bd6!2sDhaka!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="grayscale hover:grayscale-0 transition-all duration-500"
+                />
+              </div>
+            </Card>
           </div>
+
+          {/* Right: Contact Form */}
+          <div className="order-2 md:order-1">
+            <AnimatePresence mode="wait">
+              {isSuccess ? (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="flex flex-col items-center justify-center text-center py-16"
+                >
+                  <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-5">
+                    <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h2 className="text-2xl font-bold mb-2">Message Sent!</h2>
+                  <p className="text-muted-foreground mb-6 max-w-sm">
+                    Thank you for reaching out. We'll get back to you within 24 hours.
+                  </p>
+                  <Button onClick={() => setIsSuccess(false)} variant="outline">
+                    Send Another Message
+                  </Button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="form"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                >
+                  <Card className="shadow-lg border-store-primary/10">
+                    <CardContent className="p-6 md:p-8">
+                      <h2 className="text-xl font-bold mb-5">{formTitle}</h2>
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField control={form.control} name="firstName" render={({ field }) => (
+                              <FormItem><FormLabel>{t('store.firstName')}</FormLabel><FormControl><Input placeholder="John" {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="lastName" render={({ field }) => (
+                              <FormItem><FormLabel>{t('store.lastName')}</FormLabel><FormControl><Input placeholder="Doe" {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                          </div>
+                          <FormField control={form.control} name="email" render={({ field }) => (
+                            <FormItem><FormLabel>{t('common.email')}</FormLabel><FormControl><Input type="email" placeholder="john@example.com" {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={form.control} name="phone" render={({ field }) => (
+                            <FormItem><FormLabel>{t('store.phoneOptional')}</FormLabel><FormControl><Input placeholder="+880 1XXX-XXXXXX" {...field} /></FormControl><FormMessage /></FormItem>
+                          )} />
+                          <FormField control={form.control} name="subject" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Topic</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger><SelectValue placeholder="What is this about?" /></SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {subjectOptions.map(opt => (
+                                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                          <FormField control={form.control} name="message" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t('store.message')}</FormLabel>
+                              <FormControl><Textarea placeholder="How can we help you?" rows={5} {...field} /></FormControl>
+                              <div className="flex justify-between items-center">
+                                <FormMessage />
+                                <span className={`text-xs ml-auto ${(messageValue?.length || 0) > 900 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                                  {messageValue?.length || 0}/1000
+                                </span>
+                              </div>
+                            </FormItem>
+                          )} />
+                          <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90 gap-2" disabled={isSubmitting}>
+                            {isSubmitting ? (
+                              <><Loader2 className="h-4 w-4 animate-spin" />{t('store.sending')}</>
+                            ) : (
+                              <><Send className="h-4 w-4" />{t('store.sendMessage')}</>
+                            )}
+                          </Button>
+                          <p className="text-xs text-muted-foreground text-center">
+                            Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">⌘</kbd> + <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Enter</kbd> to send
+                          </p>
+                        </form>
+                      </Form>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="max-w-3xl mx-auto mt-14">
+          <h2 className="text-2xl font-bold text-center mb-6">Frequently Asked Questions</h2>
+          <Accordion type="single" collapsible className="w-full">
+            {faqItems.map((item, i) => (
+              <AccordionItem key={i} value={`faq-${i}`}>
+                <AccordionTrigger className="text-left text-sm">{item.q}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </>
