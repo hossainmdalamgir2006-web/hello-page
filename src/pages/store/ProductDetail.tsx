@@ -621,10 +621,11 @@ export default function ProductDetail() {
         <RelatedProductsGrid products={relatedProducts} />
       </div>
 
-      {isMobile && displayQuantity > 0 && (
+      {displayQuantity > 0 && (
         <StickyAddToCartBar
           productName={product.name}
           displayPrice={displayPrice}
+          productImage={product.images?.[0]}
           onAddToCart={handleAddToCart}
           onBuyNow={handleBuyNow}
           visible={showStickyBar}
