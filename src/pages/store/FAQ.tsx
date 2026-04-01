@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { StoreBreadcrumb } from "@/components/store/StoreBreadcrumb";
+
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
