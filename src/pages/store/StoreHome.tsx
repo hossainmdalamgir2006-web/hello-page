@@ -18,7 +18,7 @@ import { NewArrivalsSection } from "@/components/store/NewArrivalsSection";
 import { PromoBannerSection } from "@/components/store/PromoBannerSection";
 import { FlashSaleSection } from "@/components/store/FlashSaleSection";
 import { TestimonialsSection } from "@/components/store/TestimonialsSection";
-import { LookbookSection } from "@/components/store/LookbookSection";
+
 import { useSiteTitle } from "@/components/DynamicTitleProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -88,7 +88,7 @@ export default function StoreHome() {
   const bestSellers = getSection("best_sellers");
   const flashSale = getSection("flash_sale");
   const testimonials = getSection("testimonials");
-  const lookbook = getSection("lookbook");
+  
   const newsletter = getSection("newsletter");
 
   const features = featureBar?.content?.features || defaultFeatures;
@@ -228,14 +228,6 @@ export default function StoreHome() {
         />
       )}
 
-      {/* 9. Lookbook */}
-      {isEnabled(lookbook) && (
-        <LookbookSection
-          title={lookbook?.title || t('store.styleInspiration')}
-          subtitle={lookbook?.subtitle || undefined}
-          images={lookbook?.content?.images}
-        />
-      )}
 
       {/* 10. Newsletter */}
       {isEnabled(newsletter) && (
