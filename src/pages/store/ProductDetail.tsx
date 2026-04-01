@@ -157,6 +157,18 @@ export default function ProductDetail() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const actionsRef = useRef<HTMLDivElement>(null);
 
+  // Live watching count (simulated)
+  const [watchingCount, setWatchingCount] = useState(() => Math.floor(Math.random() * 15) + 5);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWatchingCount(prev => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        return Math.max(3, Math.min(30, prev + delta));
+      });
+    }, 5000 + Math.random() * 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const { variants } = useProductVariants(product?.id || null);
   const { getSettingValue } = useStoreSettings();
   const inWishlist = product ? isInWishlist(product.id) : false;
