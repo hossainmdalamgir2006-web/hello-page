@@ -1,73 +1,42 @@
 
 
-## Returns Page — সম্ভাব্য Updates
+## Footer Update Plan
 
-বর্তমানে page টা basic — plain cards, no animations, database content না থাকলে empty দেখায়।
+Screenshot দেখে footer টা functional কিন্তু বেশ plain। এগুলো improve করা যায়:
 
-### 1. Gradient Hero Banner
-- Contact/FAQ/Shipping page-এর মতো gradient hero section with title & subtitle
-- Decorative blur elements
+### 1. Newsletter Section (Top)
+- Footer-এর উপরে একটা full-width newsletter subscription bar যোগ করা
+- Gradient background with title "Join the {storeName} Family" + email input + subscribe button
+- এটা already code-এ আছে (`NewsletterForm`) কিন্তু render হচ্ছে না — enable করতে হবে
 
-### 2. Animated Entry
-- Framer Motion দিয়ে cards ও sections-এ staggered animations
+### 2. Visual Improvements
+- Social icons-এ hover-এ brand color glow effect
+- Link items-এ hover-এ subtle arrow/slide animation
+- Headings-এ accent underline bar
+- Payment method icons row (Visa, Mastercard, bKash, Nagad etc.) bottom bar-এ
 
-### 3. Default Fallback Content
-- Database-এ content না থাকলে meaningful default data — eligible items, non-eligible items, return steps, refund info সব default দেওয়া
+### 3. "Back to Top" in Footer
+- Footer bottom-এ copyright-এর পাশে scroll-to-top link
 
-### 4. Return Process Timeline
-- Step-by-step visual timeline (Contact Us → Get Approval → Ship Item → Refund Processed)
-- Shipping page-এর delivery timeline-এর মতো design
+### 4. App Download Badges (Optional)
+- Google Play / App Store badges যদি applicable হয়
 
-### 5. FAQ Section
-- Returns-related common questions accordion (FAQ page-এর design-এ)
-- "Was this helpful?" feedback
+### 5. Privacy/Terms Links Fix
+- `t('store.privacyPolicy')` → hardcoded "Privacy Policy" (marker text issue fix)
+- `t('store.termsOfService')` → hardcoded "Terms of Service"
 
-### 6. Contact CTA
-- Page-এর নিচে "Need Help with a Return?" section with Contact page link
-
-### 7. Return Status Checker
-- Logged-in user হলে তার existing return requests দেখানোর link (Account Returns page-এ)
-
-### 8. Policy Highlights Cards
-- Key highlights (7-day window, free returns, easy exchange) icon cards grid
-
----
-
-## Size Guide Page — সম্ভাব্য Updates
-
-বর্তমানে basic table আর database content ছাড়া empty।
-
-### 1. Gradient Hero Banner
-- Same gradient hero style as other pages
-
-### 2. Animated Entry
-- Framer Motion animations on tabs, tables, cards
-
-### 3. Default Size Data
-- Database-এ data না থাকলে default size chart (S/M/L/XL/XXL) দেখানো
-- Default "How to Measure" ও tips content
-
-### 4. Visual Measurement Guide
-- Body measurement diagram/illustration — কোথায় মাপবে সেটা visually দেখানো
-- Icon-based cards (Chest, Waist, Hip)
-
-### 5. Size Recommendation Tool
-- Interactive tool — height/weight input করলে recommended size suggest করবে
-
-### 6. Unit Converter (cm/inch)
-- Toggle button দিয়ে cm ↔ inch switch করা যাবে
-
-### 7. FAQ Section
-- Size-related common questions (What if between sizes? How to measure at home?)
-
-### 8. "Still Unsure?" CTA
-- Contact page-এ redirect section
+### 6. Trust Badges
+- "Secure Payment", "Fast Delivery", "24/7 Support" mini badges row
 
 ---
 
 ### Files to Modify
-- `src/pages/store/Returns.tsx` — all returns updates
-- `src/pages/store/SizeGuide.tsx` — all size guide updates
+- `src/components/store/StoreFooter.tsx` — all changes in this single file
 
-কোন কোন update চাও বলো, implement করে দিচ্ছি।
+### Technical Details
+- Enable NewsletterForm rendering above the 4-column grid
+- Add payment icons as inline SVGs or text badges
+- Add trust badge row between newsletter and main grid
+- Fix `t()` calls to hardcoded strings
+- Add hover animations via Tailwind `group-hover` and `transition` classes
 
