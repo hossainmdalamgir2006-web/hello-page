@@ -288,17 +288,15 @@ export default function StoreHome() {
               onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
               className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
             >
-              <div className="flex-1 relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50 pointer-events-none" />
-                <Input
-                  type="email"
-                  placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
-                  className="w-full h-12 pl-12 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  disabled={newsletterLoading}
-                />
-              </div>
+              <Mail className="h-6 w-6 text-white/70 shrink-0" />
+              <Input
+                type="email"
+                placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
+                className="flex-1 h-12 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                disabled={newsletterLoading}
+              />
               <Button
                 type="submit"
                 size="lg"
