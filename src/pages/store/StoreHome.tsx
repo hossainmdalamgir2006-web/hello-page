@@ -88,7 +88,7 @@ export default function StoreHome() {
   const bestSellers = getSection("best_sellers");
   const flashSale = getSection("flash_sale");
   const testimonials = getSection("testimonials");
-  const lookbook = getSection("lookbook");
+  
   const newsletter = getSection("newsletter");
 
   const features = featureBar?.content?.features || defaultFeatures;
