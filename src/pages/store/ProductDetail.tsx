@@ -157,17 +157,43 @@ export default function ProductDetail() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const actionsRef = useRef<HTMLDivElement>(null);
 
-  // Live watching count (simulated)
-  const [watchingCount, setWatchingCount] = useState(() => Math.floor(Math.random() * 15) + 5);
+  // Live watching count - real data from analytics_events
+  const [watchingCount, setWatchingCount] = useState(0);
   useEffect(() => {
-    const interval = setInterval(() => {
-      setWatchingCount(prev => {
-        const delta = Math.random() > 0.5 ? 1 : -1;
-        return Math.max(3, Math.min(30, prev + delta));
-      });
-    }, 5000 + Math.random() * 3000);
+    if (!slug) return;
+    const sessionId = sessionStorage.getItem('session_id') || (() => {
+      const id = crypto.randomUUID();
+      sessionStorage.setItem('session_id', id);
+      return id;
+    })();
+
+    // Record this view
+    const trackView = () => {
+      supabase.from('analytics_events' as any).insert({
+        event_type: 'product_view',
+        page_url: `/product/${slug}`,
+        session_id: sessionId,
+      }).then(() => {});
+    };
+    trackView();
+
+    // Fetch active viewers (last 5 minutes)
+    const fetchViewers = async () => {
+      const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const { count } = await supabase
+        .from('analytics_events' as any)
+        .select('session_id', { count: 'exact', head: true })
+        .eq('event_type', 'product_view')
+        .eq('page_url', `/product/${slug}`)
+        .gte('created_at', fiveMinAgo);
+      setWatchingCount(count || 0);
+    };
+    fetchViewers();
+
+    // Refresh count every 15 seconds
+    const interval = setInterval(fetchViewers, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [slug]);
 
   const { variants } = useProductVariants(product?.id || null);
   const { getSettingValue } = useStoreSettings();
