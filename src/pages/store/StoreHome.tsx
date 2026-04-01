@@ -18,6 +18,9 @@ import { NewArrivalsSection } from "@/components/store/NewArrivalsSection";
 import { PromoBannerSection } from "@/components/store/PromoBannerSection";
 import { FlashSaleSection } from "@/components/store/FlashSaleSection";
 import { TestimonialsSection } from "@/components/store/TestimonialsSection";
+import { BrandMarquee } from "@/components/store/BrandMarquee";
+import { TrendingProductsSection } from "@/components/store/TrendingProductsSection";
+import { RecentlyViewedCarousel } from "@/components/store/RecentlyViewedCarousel";
 
 import { useSiteTitle } from "@/components/DynamicTitleProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -134,6 +137,9 @@ export default function StoreHome() {
         </section>
       )}
 
+      {/* Brand Logos Marquee */}
+      <BrandMarquee />
+
       {/* 3. Categories Grid */}
       {isEnabled(categoriesGrid) && (
         <CategoryGrid
@@ -159,6 +165,9 @@ export default function StoreHome() {
           banners={promoBanners?.content?.banners}
         />
       )}
+
+      {/* Trending Products */}
+      <TrendingProductsSection count={4} />
 
       {/* 6. Best Sellers / Featured Products */}
       {isEnabled(bestSellers) && (
@@ -228,6 +237,9 @@ export default function StoreHome() {
         />
       )}
 
+
+      {/* Recently Viewed */}
+      <RecentlyViewedCarousel />
 
       {/* 10. Newsletter */}
       {isEnabled(newsletter) && (

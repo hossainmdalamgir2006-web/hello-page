@@ -24,6 +24,7 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
   const { t } = useLanguage();
 
   const imageUrl = product.images.length > 0 ? product.images[0] : "/placeholder.svg";
+  const secondImage = product.images.length > 1 ? product.images[1] : null;
   const discount = product.compare_at_price
     ? Math.round((1 - product.price / product.compare_at_price) * 100)
     : 0;
@@ -36,7 +37,10 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
   return (
     <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
       <Link to={`/product/${product.slug || product.id}`} className="relative aspect-[3/4] overflow-hidden block">
-        <img src={imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+        <img src={imageUrl} alt={product.name} className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${secondImage ? "group-hover:opacity-0" : ""}`} loading="lazy" />
+        {secondImage && (
+          <img src={secondImage} alt={product.name} className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" loading="lazy" />
+        )}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {isNew && <Badge className="bg-store-highlight text-store-primary-foreground">{t('store.new')}</Badge>}
           {discount > 0 && <Badge className="bg-store-secondary text-store-primary-foreground">{discount}% OFF</Badge>}
