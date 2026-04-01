@@ -539,8 +539,10 @@ export default function StoreProducts() {
         canonicalPath="/products"
       />
 
-      <section className="bg-gradient-to-r from-store-primary to-store-secondary py-12">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-12 overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="font-display text-3xl md:text-4xl font-bold text-store-primary-foreground mb-2">
             {showSale ? t('storeProducts.saleItems') : showNew ? t('storeProducts.newArrivals') : t('storeProducts.allProducts')}
           </h1>
