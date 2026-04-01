@@ -1,51 +1,65 @@
 
 
-## Plan: Rich Text Editor-এ নতুন ফিচার যোগ করা
+## Plan: Homepage-এ ৫টি Enhancement
 
-### নতুন ৪টি ফিচার
+### বর্তমান অবস্থা
+Homepage-এ আছে: Hero Carousel, Feature Bar, Categories Grid, New Arrivals, Promo Banners, Best Sellers, Flash Sale, Testimonials, Newsletter।
 
-**1. Drag & Drop Image**
-- Editor contentEditable div-এ `onDragOver` এবং `onDrop` handler যোগ করা
-- Drop হলে File read করে `insertImage` execute করা
-- Drop zone visual indicator (border highlight) দেখানো
+### যা করা হবে
 
-**2. Image Resize & Float**
-- Editor-এর ভিতরে কোনো image ক্লিক করলে একটি floating toolbar দেখাবে
-- Toolbar-এ options: Small (25%), Medium (50%), Large (75%), Full (100%) সাইজ
-- Float options: Left, Center, Right
-- Image-এ inline style সেট করা হবে (`width`, `float`, `margin`)
-- Editor এর বাইরে ক্লিক করলে toolbar বন্ধ হবে
+**1. Brand Logos Marquee Section** (নতুন কম্পোনেন্ট)
+- `src/components/store/BrandMarquee.tsx` তৈরি করা
+- CSS `@keyframes` দিয়ে infinite scroll animation (marquee effect)
+- Database `brands` টেবিল থেকে active brands-এর logo fetch করবে
+- Feature Bar-এর পরে দেখাবে
+- Framer Motion ছাড়া pure CSS animation ব্যবহার করা হবে (lightweight)
 
-**3. Checklist / Task List**
-- Toolbar-এ নতুন Checklist বাটন (CheckSquare icon)
-- ক্লিক করলে `<ul>` with `<li>` containing checkbox input insert হবে
-- CSS styling: `[&_input[type=checkbox]]` দিয়ে চেকবক্স সুন্দর করা
+**2. Trending / Popular Products Section** (নতুন কম্পোনেন্ট)
+- `src/components/store/TrendingProductsSection.tsx` তৈরি করা
+- Database থেকে সবচেয়ে বেশি বিক্রি হওয়া প্রোডাক্ট fetch করবে (orders টেবিল থেকে count করে)
+- অথবা সরাসরি products টেবিলের `total_sold` / view count ব্যবহার করা যাবে
+- FeaturedProductCard দিয়ে render করবে
+- Best Sellers-এর আগে বসবে
 
-**4. Custom Color Picker**
-- Text Color ও Highlight Color Popover-এ preset colors-এর নিচে একটি `<input type="color">` যোগ করা
-- যেকোনো কাস্টম কালার কোড দিয়ে text/highlight সেট করা যাবে
+**3. Recently Viewed Products Carousel** (নতুন কম্পোনেন্ট)
+- `src/components/store/RecentlyViewedCarousel.tsx` তৈরি করা
+- `useRecentlyViewed` hook আগে থেকেই আছে — সেটা ব্যবহার করবে
+- Horizontal scroll carousel (CSS snap scroll)
+- Newsletter-এর আগে দেখাবে, শুধু logged-in বা যাদের viewed history আছে তাদের জন্য
 
-### Files to modify
+**4. Parallax Scroll Effects**
+- Hero Carousel-এর পরে sections-এ subtle parallax যোগ করা
+- `useEffect` + `scroll` event listener দিয়ে lightweight parallax
+- Best Sellers ও Testimonials section-এ background parallax effect
+- Performance-এর জন্য `transform: translateY()` ব্যবহার করা হবে (GPU accelerated)
 
-- `src/components/ui/rich-text-editor/RichTextEditor.tsx` — drag/drop handlers, image click toolbar, checklist insert
-- `src/components/ui/rich-text-editor/EditorToolbar.tsx` — checklist button, custom color picker input যোগ
-- `src/components/ui/rich-text-editor/ImageToolbar.tsx` — নতুন ফাইল: image resize/float floating toolbar component
+**5. Better Product Card Hover**
+- `FeaturedProductCard.tsx`-এ hover-এ 2nd image swap যোগ করা
+- Product data-তে 2nd image থাকলে hover-এ দেখাবে
+- Quick Add button-এ slide-up animation আগে থেকেই আছে — সেটা রাখা হবে
+- Wishlist heart icon hover-এ দেখাবে
 
-### Technical Detail
+### ফাইল পরিবর্তন
+| ফাইল | পরিবর্তন |
+|---|---|
+| `src/components/store/BrandMarquee.tsx` | নতুন তৈরি |
+| `src/components/store/TrendingProductsSection.tsx` | নতুন তৈরি |
+| `src/components/store/RecentlyViewedCarousel.tsx` | নতুন তৈরি |
+| `src/components/store/FeaturedProductCard.tsx` | Image swap + wishlist hover |
+| `src/pages/store/StoreHome.tsx` | নতুন সেকশনগুলো integrate + parallax |
+| `src/index.css` | Marquee keyframes animation |
 
-```text
-Drag & Drop:
-  onDragOver → e.preventDefault() + highlight border
-  onDrop → read File → insertImage as base64/data URL
-
-Image Toolbar:
-  editor onClick → check if target is <img> → show floating toolbar positioned near image
-  toolbar buttons set img.style.width and img.style.float
-  
-Checklist:
-  insertHTML → <ul style="list-style:none;padding-left:0"><li><input type="checkbox"> Item</li></ul>
-
-Custom Color:
-  <input type="color"> onChange → execCommand("foreColor"/hiliteColor", hex)
-```
+### সেকশন অর্ডার (উপর থেকে নিচে)
+1. Hero Carousel
+2. Feature Bar
+3. **Brand Logos Marquee** ← নতুন
+4. Categories Grid
+5. New Arrivals
+6. Promo Banners
+7. **Trending Products** ← নতুন
+8. Best Sellers (with parallax bg)
+9. Flash Sale
+10. Testimonials (with parallax bg)
+11. **Recently Viewed** ← নতুন
+12. Newsletter
 
