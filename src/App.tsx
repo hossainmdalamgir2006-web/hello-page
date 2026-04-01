@@ -47,6 +47,7 @@ const AccountReviews = lazy(() => import("./pages/store/account/AccountReviews")
 const AccountNotifications = lazy(() => import("./pages/store/account/AccountNotifications"));
 const AccountNotificationPreferences = lazy(() => import("./pages/store/account/AccountNotificationPreferences"));
 const AccountPasswordPage = lazy(() => import("./pages/store/account/AccountPasswordPage"));
+const AccountPaymentMethods = lazy(() => import("./pages/store/account/AccountPaymentMethods"));
 
 const AccountChat = lazy(() => import("./pages/store/account/AccountChat"));
 import { CustomerAccountLayout } from "./layouts/CustomerAccountLayout";
