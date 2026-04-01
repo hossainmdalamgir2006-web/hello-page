@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   LayoutDashboard, Package, Heart, ShoppingBag, Clock, MapPin, Shield,
   HelpCircle, LogOut, ChevronsLeft, ChevronsRight, Store, X,
-  RotateCcw, Star, MessageCircle, ChevronDown, Bell, KeyRound, User, Settings,
+  RotateCcw, Star, MessageCircle, ChevronDown, Bell, KeyRound, User, Settings, CreditCard,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -105,6 +105,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
         { titleKey: "account.password", url: "/myaccount/password", icon: KeyRound },
         { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
         { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
+        { titleKey: "account.paymentMethods", url: "/myaccount/payment-methods", icon: CreditCard },
         { titleKey: "account.notificationPreferences", url: "/myaccount/notification-preferences", icon: Bell },
       ],
     },

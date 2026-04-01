@@ -15,6 +15,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useEnabledPaymentMethods } from "@/hooks/useEnabledPaymentMethods";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 export default function AccountPaymentMethods() {
   const { user } = useAuth();
@@ -65,9 +75,7 @@ export default function AccountPaymentMethods() {
     fetchMethods();
   };
 
-  if (loading || loadingMethods) {
-    return <DelayedLoader><GenericCardGridSkeleton count={3} /></DelayedLoader>;
-  }
+  if (loading || loadingMethods) return <DelayedLoader><GenericCardGridSkeleton count={3} /></DelayedLoader>;
 
   const getIcon = (type: string) => enabledMethods.find((m) => m.code === type || m.method_id === type)?.icon || "💳";
   const getMethodName = (type: string) => enabledMethods.find((m) => m.code === type || m.method_id === type)?.name || type;
@@ -75,8 +83,8 @@ export default function AccountPaymentMethods() {
   return (
     <>
     <SEOHead title="Payment Methods" noIndex />
-    <div className="space-y-6">
-      <div className="flex justify-end">
+    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+      <motion.div variants={itemVariants} className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />{t('account.addMethod')}</Button>
@@ -110,48 +118,55 @@ export default function AccountPaymentMethods() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
+      </motion.div>
 
       {methods.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            <CreditCard className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>{t('account.noSavedPayments')}</p>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="border-dashed">
+            <CardContent className="py-16 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                <CreditCard className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="font-semibold text-lg mb-1">{t('account.noSavedPayments')}</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">Save your preferred payment methods for faster checkout</p>
+            </CardContent>
+          </Card>
+        </motion.div>
       ) : (
         <div className="space-y-3">
           {methods.map((m) => (
-            <Card key={m.id}>
-              <CardContent className="flex items-center justify-between py-4 flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{getIcon(m.method_type)}</span>
-                  <div>
-                    <p className="font-semibold text-sm flex items-center gap-2">
-                      {m.label}
-                      {m.is_default && <Badge variant="default" className="text-[10px]">{t('account.default')}</Badge>}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {getMethodName(m.method_type)}{m.last_four && ` · •••• ${m.last_four}`}
-                    </p>
+            <motion.div key={m.id} variants={itemVariants}>
+              <Card className="hover:shadow-md transition-all hover:border-primary/30">
+                <CardContent className="flex items-center justify-between py-4 flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{getIcon(m.method_type)}</span>
+                    <div>
+                      <p className="font-semibold text-sm flex items-center gap-2">
+                        {m.label}
+                        {m.is_default && <Badge variant="default" className="text-[10px]">{t('account.default')}</Badge>}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {getMethodName(m.method_type)}{m.last_four && ` · •••• ${m.last_four}`}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  {!m.is_default && (
-                    <Button variant="ghost" size="sm" onClick={() => handleSetDefault(m.id)}>
-                      <Star className="h-4 w-4" />
+                  <div className="flex items-center gap-1">
+                    {!m.is_default && (
+                      <Button variant="ghost" size="sm" onClick={() => handleSetDefault(m.id)}>
+                        <Star className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDelete(m.id)}>
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                  )}
-                  <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDelete(m.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
     </>
   );
 }

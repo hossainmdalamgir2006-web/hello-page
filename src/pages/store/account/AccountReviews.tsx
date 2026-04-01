@@ -17,6 +17,16 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 export default function AccountReviews() {
   const { user } = useAuth();
@@ -82,8 +92,8 @@ export default function AccountReviews() {
   return (
     <>
     <SEOHead title="My Reviews" noIndex />
-    <div className="space-y-6">
-      <div className="flex justify-end">
+    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+      <motion.div variants={itemVariants} className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button size="sm" disabled={products.length === 0}>
@@ -127,42 +137,49 @@ export default function AccountReviews() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
+      </motion.div>
 
       {reviews.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-40" />
-            <p>{t('account.noReviews')}</p>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="border-dashed">
+            <CardContent className="py-16 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                <MessageSquare className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="font-semibold text-lg mb-1">{t('account.noReviews')}</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">Share your experience with products you've purchased</p>
+            </CardContent>
+          </Card>
+        </motion.div>
       ) : (
         <div className="space-y-3">
           {reviews.map((r) => (
-            <Card key={r.id}>
-              <CardContent className="py-4">
-                <div className="flex items-start justify-between gap-3 flex-wrap">
-                  <div className="space-y-1">
-                    <p className="font-semibold text-sm">{r.product_name}</p>
-                    <div className="flex gap-0.5">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className={cn("h-4 w-4", s <= r.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")} />
-                      ))}
+            <motion.div key={r.id} variants={itemVariants}>
+              <Card className="hover:shadow-md transition-all hover:border-primary/30">
+                <CardContent className="py-4">
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="space-y-1">
+                      <p className="font-semibold text-sm">{r.product_name}</p>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} className={cn("h-4 w-4", s <= r.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")} />
+                        ))}
+                      </div>
+                      {r.title && <p className="text-sm font-medium">{r.title}</p>}
+                      {r.content && <p className="text-xs text-muted-foreground">{r.content}</p>}
+                      <p className="text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM dd, yyyy")}</p>
                     </div>
-                    {r.title && <p className="text-sm font-medium">{r.title}</p>}
-                    {r.content && <p className="text-xs text-muted-foreground">{r.content}</p>}
-                    <p className="text-xs text-muted-foreground">{format(new Date(r.created_at), "MMM dd, yyyy")}</p>
+                    <Badge variant={r.is_approved ? "default" : "secondary"}>
+                      {r.is_approved ? t('account.published') : t('account.pending')}
+                    </Badge>
                   </div>
-                  <Badge variant={r.is_approved ? "default" : "secondary"}>
-                    {r.is_approved ? t('account.published') : t('account.pending')}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
     </>
   );
 }

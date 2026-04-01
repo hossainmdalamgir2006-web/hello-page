@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import EmojiPicker from "emoji-picker-react";
+import { motion } from "framer-motion";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   open: { label: "Open", className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/20" },
@@ -50,43 +51,28 @@ export default function AccountChat() {
     if (!user) return;
     setLoading(true);
     const { data } = await supabase
-      .from("live_chat_conversations")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("updated_at", { ascending: false });
+      .from("live_chat_conversations").select("*").eq("user_id", user.id).order("updated_at", { ascending: false });
     setConversations(data || []);
     setLoading(false);
   };
 
   const fetchMessages = async (convId: string) => {
     const { data } = await supabase
-      .from("live_chat_messages")
-      .select("*")
-      .eq("conversation_id", convId)
-      .order("created_at", { ascending: true });
+      .from("live_chat_messages").select("*").eq("conversation_id", convId).order("created_at", { ascending: true });
     setMessages(data || []);
     setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
   };
 
   useEffect(() => { fetchConversations(); }, [user]);
 
-  // Realtime messages + typing indicator
   useEffect(() => {
     if (!activeConv) return;
     fetchMessages(activeConv);
-
     const msgChannel = supabase
       .channel(`chat-${activeConv}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "live_chat_messages", filter: `conversation_id=eq.${activeConv}` }, () => {
-        fetchMessages(activeConv);
-      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "live_chat_messages", filter: `conversation_id=eq.${activeConv}` }, () => { fetchMessages(activeConv); })
       .subscribe();
-
-    // Typing presence channel
-    const typingChannel = supabase.channel(`typing-${activeConv}`, {
-      config: { presence: { key: `customer-${user?.id}` } }
-    });
-
+    const typingChannel = supabase.channel(`typing-${activeConv}`, { config: { presence: { key: `customer-${user?.id}` } } });
     typingChannel
       .on("presence", { event: "sync" }, () => {
         const state = typingChannel.presenceState();
@@ -101,9 +87,7 @@ export default function AccountChat() {
           await typingChannel.track({ name: user?.user_metadata?.full_name || "Customer", isTyping: false, sender: "customer" });
         }
       });
-
     typingChannelRef.current = typingChannel;
-
     return () => {
       supabase.removeChannel(msgChannel);
       supabase.removeChannel(typingChannel);
@@ -115,11 +99,7 @@ export default function AccountChat() {
     if (!typingChannelRef.current) return;
     if (typing === isTypingRef.current) return;
     isTypingRef.current = typing;
-    await typingChannelRef.current.track({
-      name: user?.user_metadata?.full_name || "Customer",
-      isTyping: typing,
-      sender: "customer"
-    });
+    await typingChannelRef.current.track({ name: user?.user_metadata?.full_name || "Customer", isTyping: typing, sender: "customer" });
   }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,19 +113,9 @@ export default function AccountChat() {
     if (!user) return;
     const { data } = await supabase
       .from("live_chat_conversations")
-      .insert({
-        user_id: user.id,
-        customer_name: user.user_metadata?.full_name || user.email,
-        customer_email: user.email,
-        status: "open",
-        subject: t('account.newSupportChat'),
-      })
-      .select()
-      .single();
-    if (data) {
-      setActiveConv(data.id);
-      fetchConversations();
-    }
+      .insert({ user_id: user.id, customer_name: user.user_metadata?.full_name || user.email, customer_email: user.email, status: "open", subject: t('account.newSupportChat') })
+      .select().single();
+    if (data) { setActiveConv(data.id); fetchConversations(); }
   };
 
   const sendMessage = async (content?: string, attachments?: any[]) => {
@@ -154,10 +124,7 @@ export default function AccountChat() {
     setSending(true);
     broadcastTyping(false);
     const { error } = await supabase.from("live_chat_messages").insert({
-      conversation_id: activeConv,
-      content: msgContent,
-      sender_type: "customer",
-      sender_id: user!.id,
+      conversation_id: activeConv, content: msgContent, sender_type: "customer", sender_id: user!.id,
       sender_name: user!.user_metadata?.full_name || user!.email,
       attachments: attachments ? JSON.parse(JSON.stringify(attachments)) : null,
     });
@@ -236,7 +203,8 @@ export default function AccountChat() {
   return (
     <>
     <SEOHead title="Chat" noIndex />
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-14rem)]">
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: "easeOut" }}
+      className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[calc(100vh-14rem)]">
       <Card className="md:col-span-1 flex flex-col">
         <CardHeader className="pb-2 flex-row items-center justify-between">
           <CardTitle className="text-sm">{t('account.chats')}</CardTitle>
@@ -276,7 +244,6 @@ export default function AccountChat() {
                 </Button>
               )}
             </div>
-
             <ScrollArea className="flex-1 p-4">
               <div className="space-y-3">
                 {messages.map((m) => (
@@ -303,7 +270,6 @@ export default function AccountChat() {
                 <div ref={scrollRef} />
               </div>
             </ScrollArea>
-
             {isClosed ? (
               <div className="border-t border-border p-3 text-center text-xs text-muted-foreground">
                 এই চ্যাট বন্ধ করা হয়েছে। নতুন চ্যাট শুরু করতে + বাটনে ক্লিক করুন।
@@ -322,13 +288,8 @@ export default function AccountChat() {
                     <EmojiPicker onEmojiClick={onEmojiClick} width={300} height={350} />
                   </PopoverContent>
                 </Popover>
-                <Input
-                  ref={inputRef}
-                  value={newMsg}
-                  onChange={handleInputChange}
-                  placeholder={t('account.typeMessage')}
-                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                />
+                <Input ref={inputRef} value={newMsg} onChange={handleInputChange} placeholder={t('account.typeMessage')}
+                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()} />
                 <Button onClick={() => sendMessage()} disabled={sending || !newMsg.trim()} size="icon">
                   {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </Button>
@@ -338,13 +299,15 @@ export default function AccountChat() {
         ) : (
           <CardContent className="flex-1 flex items-center justify-center text-muted-foreground">
             <div className="text-center">
-              <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">{t('account.selectOrStartChat')}</p>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                <MessageCircle className="h-8 w-8 text-primary" />
+              </div>
+              <p className="text-sm font-medium">{t('account.selectOrStartChat')}</p>
             </div>
           </CardContent>
         )}
       </Card>
-    </div>
+    </motion.div>
     </>
   );
 }

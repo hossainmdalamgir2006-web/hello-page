@@ -9,6 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Bell, Package, Tag, Lock, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 export default function AccountNotificationPreferences() {
   const { user } = useAuth();
@@ -64,64 +74,66 @@ export default function AccountNotificationPreferences() {
   return (
     <>
       <SEOHead title="Notification Preferences" noIndex />
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5" />{t('account.notificationPreferences')}</CardTitle>
-            <CardDescription>{t('account.manageNotifications')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Order Notifications */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" />{t('account.orderNotifications')}</h3>
-              <div className="space-y-3">
-                {([
-                  { key: "order_updates" as const, label: t('account.orderUpdates'), desc: t('account.orderUpdatesDesc') },
-                  { key: "order_shipped" as const, label: t('account.shippingNotifications'), desc: t('account.shippingNotificationsDesc') },
-                  { key: "order_delivered" as const, label: t('account.deliveryNotifications'), desc: t('account.deliveryNotificationsDesc') },
-                ]).map((item) => (
-                  <div key={item.key}>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
-                      <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleChange(item.key, checked)} disabled={saving} />
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+        <motion.div variants={itemVariants}>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5" />{t('account.notificationPreferences')}</CardTitle>
+              <CardDescription>{t('account.manageNotifications')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Order Notifications */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" />{t('account.orderNotifications')}</h3>
+                <div className="space-y-3">
+                  {([
+                    { key: "order_updates" as const, label: t('account.orderUpdates'), desc: t('account.orderUpdatesDesc') },
+                    { key: "order_shipped" as const, label: t('account.shippingNotifications'), desc: t('account.shippingNotificationsDesc') },
+                    { key: "order_delivered" as const, label: t('account.deliveryNotifications'), desc: t('account.deliveryNotificationsDesc') },
+                  ]).map((item) => (
+                    <div key={item.key}>
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
+                        <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleChange(item.key, checked)} disabled={saving} />
+                      </div>
+                      <Separator className="mt-3" />
                     </div>
-                    <Separator className="mt-3" />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Marketing */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Tag className="h-4 w-4" />{t('account.marketingPromotions')}</h3>
-              <div className="space-y-3">
-                {([
-                  { key: "promotions" as const, label: t('account.promotionsOffers'), desc: t('account.promotionsDesc') },
-                  { key: "new_arrivals" as const, label: t('account.newArrivals'), desc: t('account.newArrivalsDesc') },
-                  { key: "price_drops" as const, label: t('account.priceDrops'), desc: t('account.priceDropsDesc') },
-                ]).map((item) => (
-                  <div key={item.key}>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
-                      <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleChange(item.key, checked)} disabled={saving} />
+              {/* Marketing */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Tag className="h-4 w-4" />{t('account.marketingPromotions')}</h3>
+                <div className="space-y-3">
+                  {([
+                    { key: "promotions" as const, label: t('account.promotionsOffers'), desc: t('account.promotionsDesc') },
+                    { key: "new_arrivals" as const, label: t('account.newArrivals'), desc: t('account.newArrivalsDesc') },
+                    { key: "price_drops" as const, label: t('account.priceDrops'), desc: t('account.priceDropsDesc') },
+                  ]).map((item) => (
+                    <div key={item.key}>
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
+                        <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleChange(item.key, checked)} disabled={saving} />
+                      </div>
+                      <Separator className="mt-3" />
                     </div>
-                    <Separator className="mt-3" />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Security */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Lock className="h-4 w-4" />{t('account.accountSecurity')}</h3>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5"><Label htmlFor="account_activity">{t('account.accountActivity')}</Label><p className="text-xs text-muted-foreground">{t('account.accountActivityDesc')}</p></div>
-                <Switch id="account_activity" checked={notifications.account_activity} onCheckedChange={(checked) => handleChange("account_activity", checked)} disabled={saving} />
+              {/* Security */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Lock className="h-4 w-4" />{t('account.accountSecurity')}</h3>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5"><Label htmlFor="account_activity">{t('account.accountActivity')}</Label><p className="text-xs text-muted-foreground">{t('account.accountActivityDesc')}</p></div>
+                  <Switch id="account_activity" checked={notifications.account_activity} onCheckedChange={(checked) => handleChange("account_activity", checked)} disabled={saving} />
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
     </>
   );
 }

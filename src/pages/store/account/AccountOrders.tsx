@@ -4,8 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { OrdersListSkeleton } from "@/components/skeletons";
 import { OrdersTab } from "@/components/account/OrdersTab";
-
 import { SEOHead } from "@/components/SEOHead";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 export default function AccountOrders() {
   const { user } = useAuth();
@@ -82,7 +91,11 @@ export default function AccountOrders() {
   return (
     <>
       <SEOHead title="My Orders" noIndex />
-      <OrdersTab orders={orders} onRefresh={fetchOrders} />
+      <motion.div variants={containerVariants} initial="hidden" animate="visible">
+        <motion.div variants={itemVariants}>
+          <OrdersTab orders={orders} onRefresh={fetchOrders} />
+        </motion.div>
+      </motion.div>
     </>
   );
 }

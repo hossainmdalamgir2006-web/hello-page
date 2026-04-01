@@ -11,6 +11,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Lock, Loader2, Eye, EyeOff, FileText, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 const passwordSchema = z.object({
   current_password: z.string().min(1, "Current password is required"),
@@ -46,11 +56,10 @@ export default function AccountPassword() {
   return (
     <>
       <SEOHead title="Change Password" noIndex />
-      <div className="space-y-6">
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* Left Column - Change Password */}
           <div className="space-y-6">
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-primary/10 p-2"><Lock className="h-5 w-5 text-primary" /></div>
                 <div>
@@ -111,12 +120,11 @@ export default function AccountPassword() {
                   </Button>
                 </form>
               </Form>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Right Column - Tips */}
           <div className="space-y-6">
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-accent/10 p-2"><ShieldCheck className="h-5 w-5 text-accent" /></div>
                 <div>
@@ -125,21 +133,15 @@ export default function AccountPassword() {
                 </div>
               </div>
               <ul className="space-y-3 text-sm">
-                {[
-                  "At least 8 characters long",
-                  "Contains at least one uppercase letter (A-Z)",
-                  "Contains at least one lowercase letter (a-z)",
-                  "Contains at least one number (0-9)",
-                ].map((tip) => (
+                {["At least 8 characters long", "Contains at least one uppercase letter (A-Z)", "Contains at least one lowercase letter (a-z)", "Contains at least one number (0-9)"].map((tip) => (
                   <li key={tip} className="flex items-start gap-2 text-muted-foreground">
-                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                    {tip}
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />{tip}
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
 
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-muted">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-muted">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-muted p-2"><FileText className="h-5 w-5 text-muted-foreground" /></div>
                 <div>
@@ -148,23 +150,16 @@ export default function AccountPassword() {
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                  Never share your password with anyone
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                  Change your password regularly for added security
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                  Don't reuse passwords across different websites
-                </li>
+                {["Never share your password with anyone", "Change your password regularly for added security", "Don't reuse passwords across different websites"].map((tip) => (
+                  <li key={tip} className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />{tip}
+                  </li>
+                ))}
               </ul>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

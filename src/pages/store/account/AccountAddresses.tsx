@@ -21,6 +21,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { MapPin, Plus, Edit, Trash2, Phone, Home, Truck, Building2, Loader2 } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { AddressesSkeleton } from "@/components/skeletons";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 interface Address {
   id: string; label: string; full_name: string; phone: string; street: string;
@@ -138,65 +148,71 @@ export default function AccountAddresses() {
   return (
     <>
       <SEOHead title="My Addresses" noIndex />
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.addresses')}</h1>
             <p className="text-sm text-muted-foreground">{t('account.manageAddresses')}</p>
           </div>
           <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />{t('account.addAddress')}</Button>
-        </div>
+        </motion.div>
 
         {addresses.length === 0 ? (
-          <Card>
-            <CardContent className="py-12">
-              <div className="text-center">
-                <MapPin className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="font-medium text-lg mb-2">{t('account.noAddresses')}</h3>
-                <p className="text-muted-foreground mb-4">{t('account.addAddressForCheckout')}</p>
-                <Button onClick={openNew} variant="outline"><Plus className="h-4 w-4 mr-2" />{t('account.addAddress')}</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <motion.div variants={itemVariants}>
+            <Card className="border-dashed">
+              <CardContent className="py-16">
+                <div className="text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                    <MapPin className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{t('account.noAddresses')}</h3>
+                  <p className="text-muted-foreground text-sm mb-4 max-w-sm mx-auto">{t('account.addAddressForCheckout')}</p>
+                  <Button onClick={openNew} variant="outline"><Plus className="h-4 w-4 mr-2" />{t('account.addAddress')}</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {addresses.map((address) => (
-              <Card key={address.id} className={address.is_default ? "border-primary" : ""}>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant={address.is_default ? "default" : "secondary"}>{address.label}</Badge>
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {address.address_type === "both" ? <><Truck className="h-3 w-3 mr-1" /><Building2 className="h-3 w-3 mr-1" />{t('account.both')}</> : address.address_type === "billing" ? <><Building2 className="h-3 w-3 mr-1" />{t('account.billing')}</> : <><Truck className="h-3 w-3 mr-1" />{t('account.shipping')}</>}
-                      </Badge>
+            {addresses.map((address, i) => (
+              <motion.div key={address.id} variants={itemVariants}>
+                <Card className={`hover:shadow-md transition-all ${address.is_default ? "border-primary ring-1 ring-primary/20" : "hover:border-primary/30"}`}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={address.is_default ? "default" : "secondary"}>{address.label}</Badge>
+                        <Badge variant="outline" className="text-xs capitalize">
+                          {address.address_type === "both" ? <><Truck className="h-3 w-3 mr-1" /><Building2 className="h-3 w-3 mr-1" />{t('account.both')}</> : address.address_type === "billing" ? <><Building2 className="h-3 w-3 mr-1" />{t('account.billing')}</> : <><Truck className="h-3 w-3 mr-1" />{t('account.shipping')}</>}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(address)}><Edit className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeletingAddress(address)}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(address)}><Edit className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeletingAddress(address)}><Trash2 className="h-4 w-4" /></Button>
+                    {address.is_default && (
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <Badge variant="outline" className="text-xs border-green-500 text-green-600 bg-green-50 dark:bg-green-900/20"><Truck className="h-3 w-3 mr-1" />{t('account.defaultShipping')}</Badge>
+                        <Badge variant="outline" className="text-xs border-blue-500 text-blue-600 bg-blue-50 dark:bg-blue-900/20"><Building2 className="h-3 w-3 mr-1" />{t('account.defaultBilling')}</Badge>
+                      </div>
+                    )}
+                    {!address.is_default && (
+                      <div className="mb-3">
+                        <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleSetDefault(address)}><Truck className="h-3 w-3 mr-1" />{t('account.setDefault')}</Button>
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      <p className="font-medium">{address.full_name}</p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground"><Phone className="h-3 w-3" />{address.phone}</div>
+                      <div className="flex items-start gap-2 text-sm text-muted-foreground"><Home className="h-3 w-3 mt-0.5" /><span>{address.street}{address.area && `, ${address.area}`}{address.city && `, ${address.city}`}{address.postal_code && ` - ${address.postal_code}`}</span></div>
                     </div>
-                  </div>
-                  {address.is_default && (
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <Badge variant="outline" className="text-xs border-green-500 text-green-600 bg-green-50 dark:bg-green-900/20"><Truck className="h-3 w-3 mr-1" />{t('account.defaultShipping')}</Badge>
-                      <Badge variant="outline" className="text-xs border-blue-500 text-blue-600 bg-blue-50 dark:bg-blue-900/20"><Building2 className="h-3 w-3 mr-1" />{t('account.defaultBilling')}</Badge>
-                    </div>
-                  )}
-                  {!address.is_default && (
-                    <div className="mb-3">
-                      <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleSetDefault(address)}><Truck className="h-3 w-3 mr-1" />{t('account.setDefault')}</Button>
-                    </div>
-                  )}
-                  <div className="space-y-1">
-                    <p className="font-medium">{address.full_name}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground"><Phone className="h-3 w-3" />{address.phone}</div>
-                    <div className="flex items-start gap-2 text-sm text-muted-foreground"><Home className="h-3 w-3 mt-0.5" /><span>{address.street}{address.area && `, ${address.area}`}{address.city && `, ${address.city}`}{address.postal_code && ` - ${address.postal_code}`}</span></div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         )}
-      </div>
+      </motion.div>
 
       <Dialog open={addressDialogOpen} onOpenChange={(open) => { if (!open) { setEditingAddress(null); addressForm.reset(); } setAddressDialogOpen(open); }}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">

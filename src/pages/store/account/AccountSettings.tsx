@@ -13,6 +13,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { User, Camera, Loader2, Mail, Phone, Calendar, Building2 } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
 
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -27,7 +37,6 @@ const profileSchema = z.object({
 const emailSchema = z.object({
   newEmail: z.string().email('Invalid email address'),
 });
-
 
 export default function AccountSettings() {
   const { user } = useAuth();
@@ -109,12 +118,12 @@ export default function AccountSettings() {
   return (
     <>
       <SEOHead title="Account Settings" noIndex />
-      <div className="space-y-6">
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Left Column */}
           <div className="space-y-6">
             {/* Avatar Card */}
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-primary/10 p-2"><Camera className="h-5 w-5 text-primary" /></div>
                 <div>
@@ -143,10 +152,10 @@ export default function AccountSettings() {
                   </Button>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Personal Info Card */}
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-primary/10 p-2"><User className="h-5 w-5 text-primary" /></div>
                 <div>
@@ -252,13 +261,13 @@ export default function AccountSettings() {
                   </Button>
                 </form>
               </Form>
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
             {/* Change Email Card */}
-            <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-accent/10 p-2"><Mail className="h-5 w-5 text-accent" /></div>
                 <div>
@@ -292,10 +301,10 @@ export default function AccountSettings() {
                   </Button>
                 </form>
               </Form>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }
