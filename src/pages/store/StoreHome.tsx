@@ -149,6 +149,13 @@ export default function StoreHome() {
         />
       )}
 
+      {/* Wave divider */}
+      <div className="relative h-12 -mb-1">
+        <svg viewBox="0 0 1440 48" fill="none" className="absolute bottom-0 w-full h-full" preserveAspectRatio="none">
+          <path d="M0 48h1440V24C1200 0 960 48 720 24S240 48 0 24v24z" className="fill-store-background" />
+        </svg>
+      </div>
+
       {/* 4. New Arrivals */}
       {isEnabled(newArrivals) && (
         <NewArrivalsSection
