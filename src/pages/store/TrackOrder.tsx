@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Search, Package, ArrowRight, Phone, Hash, Loader2, Copy, Check, CheckCircle2, Truck, Clock, HelpCircle, MessageCircle, PackageX } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,8 @@ export default function TrackOrder() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const orderFromUrl = searchParams.get('order');
   const [orderNumber, setOrderNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [orderError, setOrderError] = useState("");
@@ -47,8 +49,15 @@ export default function TrackOrder() {
   const [recentOrders, setRecentOrders] = useState<OrderResult[]>([]);
   const [loadingRecent, setLoadingRecent] = useState(false);
 
+  // Auto-fill order number from URL query param
+  useEffect(() => {
+    if (orderFromUrl) {
+      setOrderNumber(orderFromUrl.toUpperCase());
+    }
+  }, [orderFromUrl]);
+
   // Load recent orders for logged-in users
-  useState(() => {
+  useEffect(() => {
     if (user) {
       setLoadingRecent(true);
       supabase
@@ -72,7 +81,7 @@ export default function TrackOrder() {
           setLoadingRecent(false);
         });
     }
-  });
+  }, [user]);
 
   const handleOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +92,7 @@ export default function TrackOrder() {
       setOrderError(t('track.invalidOrder'));
       return;
     }
-    navigate(`/track/${trimmedOrder}`);
+    navigate(`/track-order?order=${trimmedOrder}`);
   };
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
@@ -162,7 +171,7 @@ export default function TrackOrder() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className="p-4 border rounded-xl hover:border-store-primary/50 cursor-pointer transition-all hover:shadow-md bg-card"
-      onClick={() => navigate(`/track/${order.orderNumber}`)}
+      onClick={() => navigate(`/track-order?order=${order.orderNumber}`)}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">

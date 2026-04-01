@@ -513,7 +513,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
                 <Button
                   variant="outline"
                   className="flex-1"
-                  onClick={() => { setOrderDetailsOpen(false); navigate(`/track/${selectedOrder.order_number}`); }}
+                  onClick={() => { setOrderDetailsOpen(false); navigate(`/track-order?order=${selectedOrder.order_number}`); }}
                 >
                   <Truck className="h-4 w-4 mr-2" /> Track Order
                 </Button>
