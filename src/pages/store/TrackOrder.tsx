@@ -53,7 +53,7 @@ export default function TrackOrder() {
       setLoadingRecent(true);
       supabase
         .from("orders")
-        .select("order_number, status, created_at, updated_at, shipping_address, total, shipping_cost")
+        .select("order_number, status, created_at, updated_at, shipping_address, total_amount, shipping_cost")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(5)
