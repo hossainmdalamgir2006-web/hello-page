@@ -55,7 +55,7 @@ export function LoginSignupView({
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">{t('store.signInTab')}</TabsTrigger>
+              <TabsTrigger value="login">Sign In</TabsTrigger>
               <TabsTrigger value="signup">{t('store.signUpTab')}</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
