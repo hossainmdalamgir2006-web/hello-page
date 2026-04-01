@@ -100,7 +100,7 @@ export function LoginSignupView({
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">{t('store.passwordLabel')}</Label>
+                  <Label htmlFor="signup-password">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input id="signup-password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" className="pl-10 pr-10" value={signupData.password} onChange={(e) => setSignupData(prev => ({ ...prev, password: e.target.value }))} required minLength={6} />
