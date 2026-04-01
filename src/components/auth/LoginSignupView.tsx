@@ -93,7 +93,7 @@ export function LoginSignupView({
                   <Input id="signup-name" type="text" placeholder="John Doe" value={signupData.fullName} onChange={(e) => setSignupData(prev => ({ ...prev, fullName: e.target.value }))} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">{t('store.emailLabel')}</Label>
+                  <Label htmlFor="signup-email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input id="signup-email" type="email" placeholder="you@example.com" className="pl-10" value={signupData.email} onChange={(e) => setSignupData(prev => ({ ...prev, email: e.target.value }))} required />
