@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Mail, Phone, MapPin, Clock, Loader2, Send, Facebook, Instagram, MessageCircle, CheckCircle2, ChevronRight, Home } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Loader2, Send, Facebook, Instagram, MessageCircle, CheckCircle2, ChevronRight, Home, Search, Package, Truck, RotateCcw, HelpCircle, ThumbsUp, ThumbsDown, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
