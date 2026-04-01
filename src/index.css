@@ -57,22 +57,22 @@
     --chart-4: 38 92% 50%;
     --chart-5: 280 65% 60%;
     
-    /* Storefront vibrant colors */
-    --store-primary: 280 85% 55%;
+    /* Storefront — Emerald & Warm Gold palette */
+    --store-primary: 160 84% 39%;
     --store-primary-foreground: 0 0% 100%;
-    --store-secondary: 340 85% 60%;
-    --store-accent: 45 100% 55%;
+    --store-secondary: 25 95% 53%;
+    --store-accent: 43 96% 56%;
     --store-accent-foreground: 0 0% 10%;
-    --store-highlight: 180 75% 45%;
-    --store-background: 270 30% 98%;
+    --store-highlight: 199 89% 48%;
+    --store-background: 150 20% 97%;
     --store-card: 0 0% 100%;
-    --store-muted: 270 20% 95%;
+    --store-muted: 150 14% 93%;
 
     --gradient-primary: linear-gradient(135deg, hsl(222 47% 20%) 0%, hsl(222 47% 30%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(12 76% 61%) 0%, hsl(12 76% 50%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
-    --gradient-store: linear-gradient(135deg, hsl(280 85% 55%) 0%, hsl(340 85% 60%) 50%, hsl(45 100% 55%) 100%);
-    --gradient-store-dark: linear-gradient(135deg, hsl(280 85% 35%) 0%, hsl(340 85% 40%) 100%);
+    --gradient-store: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(199 89% 48%) 50%, hsl(43 96% 56%) 100%);
+    --gradient-store-dark: linear-gradient(135deg, hsl(160 84% 30%) 0%, hsl(25 95% 45%) 100%);
 
     --shadow-sm: 0 1px 2px 0 hsl(222 47% 11% / 0.05);
     --shadow-md: 0 4px 6px -1px hsl(222 47% 11% / 0.1), 0 2px 4px -2px hsl(222 47% 11% / 0.1);
@@ -131,12 +131,12 @@
     --chart-4: 38 85% 55%;
     --chart-5: 280 55% 60%;
 
-    --store-primary: 270 70% 60%;
+    --store-primary: 160 70% 42%;
     --store-primary-foreground: 0 0% 100%;
-    --store-secondary: 330 70% 60%;
-    --store-accent: 45 90% 60%;
+    --store-secondary: 25 80% 55%;
+    --store-accent: 43 85% 58%;
     --store-accent-foreground: 0 0% 10%;
-    --store-highlight: 180 60% 50%;
+    --store-highlight: 199 70% 50%;
     --store-background: 224 30% 7%;
     --store-card: 224 28% 10%;
     --store-muted: 224 25% 14%;
@@ -144,8 +144,8 @@
     --gradient-primary: linear-gradient(135deg, hsl(210 60% 55%) 0%, hsl(210 60% 45%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(15 80% 58%) 0%, hsl(15 80% 48%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(224 28% 12%) 0%, hsl(224 28% 10%) 100%);
-    --gradient-store: linear-gradient(135deg, hsl(270 70% 50%) 0%, hsl(330 70% 50%) 50%, hsl(45 90% 55%) 100%);
-    --gradient-store-dark: linear-gradient(135deg, hsl(270 70% 35%) 0%, hsl(330 70% 40%) 100%);
+    --gradient-store: linear-gradient(135deg, hsl(160 70% 35%) 0%, hsl(199 70% 45%) 50%, hsl(43 85% 55%) 100%);
+    --gradient-store-dark: linear-gradient(135deg, hsl(160 70% 28%) 0%, hsl(25 80% 42%) 100%);
 
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.3);
     --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.4), 0 2px 4px -2px hsl(0 0% 0% / 0.3);
