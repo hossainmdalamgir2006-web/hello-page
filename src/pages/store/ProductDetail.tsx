@@ -614,6 +614,7 @@ export default function ProductDetail() {
               </TabsContent>
             )}
             <TabsContent value="reviews" className="py-6"><ProductReviews productId={product.id} /></TabsContent>
+            <TabsContent value="qa" className="py-6"><ProductQA productId={product.id} /></TabsContent>
           </Tabs>
         </div>
 
