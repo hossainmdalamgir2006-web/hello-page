@@ -70,7 +70,7 @@ export function LoginSignupView({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="login-password">Password</Label>
-                    <button type="button" onClick={onForgotPassword} className="text-xs text-store-primary hover:underline">{t('store.forgotPasswordQ')}</button>
+                    <button type="button" onClick={onForgotPassword} className="text-xs text-store-primary hover:underline">Forgot Password?</button>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
