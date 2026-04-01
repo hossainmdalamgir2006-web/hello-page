@@ -199,8 +199,8 @@ export default function TrackOrder() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-store-primary/10 flex items-center justify-center">
               <Package className="h-8 w-8 text-store-primary" />
             </div>
-            <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">{t('track.title')}</h1>
-            <p className="text-muted-foreground text-lg">{t('track.subtitle')}</p>
+            <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">{t('track.title') !== 'track.title' ? t('track.title') : 'Track Your Order'}</h1>
+            <p className="text-muted-foreground text-lg">{t('track.subtitle') !== 'track.subtitle' ? t('track.subtitle') : 'Enter your order number or phone number to check the status of your order'}</p>
           </motion.div>
         </div>
       </div>
