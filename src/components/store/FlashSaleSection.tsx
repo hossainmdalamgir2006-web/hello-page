@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Zap, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -73,9 +73,14 @@ export function FlashSaleSection({
   const displaySubtitle = subtitle || "";
   const displayBadge = badge || `⚡ ${t('store.flashSale')}`;
   const { products: allProducts, loading } = useFeaturedProducts(8);
-  // Default end time: 24 hours from now if none provided
-  const defaultEndTime = endTime || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-  const { timeLeft, expired } = useCountdown(defaultEndTime);
+  // Stable default: midnight tonight (or 24h from first mount)
+  const stableEndTime = useMemo(() => {
+    if (endTime) return endTime;
+    const tomorrow = new Date();
+    tomorrow.setHours(23, 59, 59, 999);
+    return tomorrow.toISOString();
+  }, [endTime]);
+  const { timeLeft, expired } = useCountdown(stableEndTime);
 
   // Show products with discount
   const saleProducts = allProducts.filter(p => p.compare_at_price && p.compare_at_price > p.price).slice(0, count);
