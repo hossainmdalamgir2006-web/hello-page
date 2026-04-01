@@ -103,7 +103,7 @@ export default function Contact() {
   const cards = (pageData?.content as any)?.cards || [
     { icon: "map-pin", title: "Visit Us", text: "Dhaka, Bangladesh" },
     { icon: "phone", title: "Call Us", text: "+880 1XXX-XXXXXX" },
-    { icon: "mail", title: "Email Us", text: "support@store.com" },
+    { icon: "mail", title: "Email Us", text: "hello@gmail.com" },
     { icon: "clock", title: "Business Hours", text: "Sun - Thu: 10AM - 8PM\nFri - Sat: Closed" },
   ];
 
