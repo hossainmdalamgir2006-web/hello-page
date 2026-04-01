@@ -176,6 +176,13 @@ export default function StoreHome() {
       {/* Trending Products */}
       <TrendingProductsSection count={4} />
 
+      {/* Wave divider */}
+      <div className="relative h-12 -mb-1">
+        <svg viewBox="0 0 1440 48" fill="none" className="absolute bottom-0 w-full h-full" preserveAspectRatio="none">
+          <path d="M0 0C240 48 480 0 720 24S1200 0 1440 48V48H0V0z" className="fill-store-muted" />
+        </svg>
+      </div>
+
       {/* 6. Best Sellers / Featured Products */}
       {isEnabled(bestSellers) && (
         <section className="py-16 bg-store-muted">
