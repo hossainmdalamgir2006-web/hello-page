@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingBag, Search, Menu, User, Heart, LogOut, LayoutDashboard, X } from "lucide-react";
 
@@ -30,12 +30,14 @@ import { MegaMenuNav, MobileMegaMenu, useDynamicCategories } from "./MegaMenuNav
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { SearchSuggestions } from "./SearchSuggestions";
 
 export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCategory, setSearchCategory] = useState("all");
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const { data: settings } = useStoreSettingsCache();
   const { data: headerContent } = usePageContent("header");
   const { itemCount, setIsOpen: setCartOpen } = useCart();
@@ -122,12 +124,13 @@ export function StoreHeader() {
           </Link>
 
           {/* Center Search Bar — Desktop */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4">
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4 relative">
             <div className="flex w-full rounded-full border-2 border-store-primary/30 overflow-hidden bg-background shadow-sm hover:shadow-md hover:border-store-primary/50 transition-all">
               <Input
-                placeholder={t('store.searchPlaceholder')}
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
                 className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none bg-transparent pl-5"
               />
               <Select value={searchCategory} onValueChange={setSearchCategory}>
@@ -152,6 +155,15 @@ export function StoreHeader() {
                 <span className="sr-only">Search</span>
               </Button>
             </div>
+            <SearchSuggestions
+              query={searchQuery}
+              visible={searchFocused}
+              onClose={() => setSearchFocused(false)}
+              onSelect={(q) => {
+                const params = new URLSearchParams({ search: q });
+                navigate(`/products?${params.toString()}`);
+              }}
+            />
           </form>
 
           {/* Actions */}
@@ -237,9 +249,10 @@ export function StoreHeader() {
       <div className="md:hidden px-4 pb-3">
         <form onSubmit={handleSearch} className="flex rounded-lg border border-store-muted overflow-hidden bg-background">
           <Input
-            placeholder={t('store.searchPlaceholder')}
+            placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
             className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none h-9 text-sm"
           />
           <Button
