@@ -32,6 +32,7 @@ import { ProductTrustBadges } from "@/components/product/ProductTrustBadges";
 import { RelatedProductsGrid } from "@/components/product/RelatedProductsGrid";
 import { StickyAddToCartBar } from "@/components/product/StickyAddToCartBar";
 import { formatPrice } from "@/lib/formatPrice";
+import { ProductQA } from "@/components/product/ProductQA";
 
 // --- Types ---
 interface Product {
