@@ -66,9 +66,16 @@ export function StoreHeader() {
   return (
     <header className="sticky top-0 z-50 bg-store-card/95 backdrop-blur-md border-b border-store-muted">
       {/* Top Banner */}
-      {(headerContent?.content as any)?.banner_enabled !== false && (
-        <div className="bg-gradient-to-r from-store-primary via-store-secondary to-store-accent text-store-primary-foreground py-2 text-center text-sm font-medium">
-          {(headerContent?.content as any)?.banner_text || "🔥 Free Shipping on Orders Over ৳2,000!"}
+      {(headerContent?.content as any)?.banner_enabled !== false && !bannerDismissed && (
+        <div className="bg-gradient-to-r from-store-primary via-store-secondary to-store-accent text-store-primary-foreground py-2 text-center text-sm font-medium relative">
+          <span>{(headerContent?.content as any)?.banner_text || "🔥 Free Shipping on Orders Over ৳2,000 | Use Code: EKTA20 for 20% Off"}</span>
+          <button
+            onClick={() => setBannerDismissed(true)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"
+            aria-label="Close banner"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       )}
 
