@@ -281,27 +281,24 @@ export default function StoreHome() {
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
           
           <div className="container mx-auto px-4 text-center max-w-2xl relative z-10">
-            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center mx-auto mb-6 border border-white/20">
-              <Mail className="h-8 w-8 text-white" />
-            </div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-3">
-              {newsletter?.title || t('store.stayInLoop')}
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-8">
+              {newsletter?.title || "Subscribe Newsletter"}
             </h2>
-            <p className="text-white/70 mb-8 text-lg">
-              {newsletter?.subtitle || t('store.newsletterSubtitle')}
-            </p>
             <form
               onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
               className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
             >
-              <Input
-                type="email"
-                placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
-                className="flex-1 h-12 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                disabled={newsletterLoading}
-              />
+              <div className="flex-1 relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50 pointer-events-none" />
+                <Input
+                  type="email"
+                  placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
+                  className="w-full h-12 pl-12 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  disabled={newsletterLoading}
+                />
+              </div>
               <Button
                 type="submit"
                 size="lg"
