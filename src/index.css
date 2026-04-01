@@ -71,8 +71,8 @@
     --gradient-primary: linear-gradient(135deg, hsl(222 47% 20%) 0%, hsl(222 47% 30%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(12 76% 61%) 0%, hsl(12 76% 50%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
-    --gradient-store: linear-gradient(135deg, hsl(280 85% 55%) 0%, hsl(340 85% 60%) 50%, hsl(45 100% 55%) 100%);
-    --gradient-store-dark: linear-gradient(135deg, hsl(280 85% 35%) 0%, hsl(340 85% 40%) 100%);
+    --gradient-store: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(199 89% 48%) 50%, hsl(43 96% 56%) 100%);
+    --gradient-store-dark: linear-gradient(135deg, hsl(160 84% 30%) 0%, hsl(25 95% 45%) 100%);
 
     --shadow-sm: 0 1px 2px 0 hsl(222 47% 11% / 0.05);
     --shadow-md: 0 4px 6px -1px hsl(222 47% 11% / 0.1), 0 2px 4px -2px hsl(222 47% 11% / 0.1);
