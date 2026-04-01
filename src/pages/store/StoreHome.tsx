@@ -271,8 +271,6 @@ export default function StoreHome() {
       {/* 11. Recently Viewed */}
       <RecentlyViewedCarousel />
 
-      {/* ── Divider: Recently Viewed → Newsletter ── */}
-      <CurveDivider fillClass="fill-store-primary" />
 
       {/* 12. Newsletter */}
       {isEnabled(newsletter) && (
