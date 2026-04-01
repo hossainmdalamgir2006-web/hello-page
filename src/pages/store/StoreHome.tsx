@@ -193,7 +193,7 @@ export default function StoreHome() {
 
       {/* 8. Best Sellers / Featured Products */}
       {isEnabled(bestSellers) && (
-        <section className="py-16 bg-store-muted">
+        <section className="py-10 bg-store-muted">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
               <div>
@@ -274,7 +274,7 @@ export default function StoreHome() {
 
       {/* 12. Newsletter */}
       {isEnabled(newsletter) && (
-        <section className="relative py-16 md:py-20 overflow-hidden bg-store-background">
+        <section className="relative py-12 md:py-14 overflow-hidden bg-store-background">
           <div className="container mx-auto px-4 relative z-10">
             <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden">
               {/* Card background */}
