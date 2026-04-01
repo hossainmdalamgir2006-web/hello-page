@@ -228,14 +228,6 @@ export default function StoreHome() {
         />
       )}
 
-      {/* 9. Lookbook */}
-      {isEnabled(lookbook) && (
-        <LookbookSection
-          title={lookbook?.title || t('store.styleInspiration')}
-          subtitle={lookbook?.subtitle || undefined}
-          images={lookbook?.content?.images}
-        />
-      )}
 
       {/* 10. Newsletter */}
       {isEnabled(newsletter) && (
