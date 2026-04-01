@@ -157,7 +157,7 @@ export default function Returns() {
           {/* Eligible / Not Eligible */}
           <div className="grid md:grid-cols-2 gap-6">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
-              <Card className="h-full border-green-200 dark:border-green-900">
+              <Card className="h-full border-primary/30">
                 <CardContent className="p-6">
                   <h2 className="font-display text-xl font-bold mb-4 flex items-center gap-2">
                     <CheckCircle className="h-5 w-5 text-green-600" /> Eligible for Return
