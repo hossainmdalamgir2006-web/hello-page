@@ -57,16 +57,16 @@
     --chart-4: 38 92% 50%;
     --chart-5: 280 65% 60%;
     
-    /* Storefront vibrant colors */
-    --store-primary: 280 85% 55%;
+    /* Storefront — Emerald & Warm Gold palette */
+    --store-primary: 160 84% 39%;
     --store-primary-foreground: 0 0% 100%;
-    --store-secondary: 340 85% 60%;
-    --store-accent: 45 100% 55%;
+    --store-secondary: 25 95% 53%;
+    --store-accent: 43 96% 56%;
     --store-accent-foreground: 0 0% 10%;
-    --store-highlight: 180 75% 45%;
-    --store-background: 270 30% 98%;
+    --store-highlight: 199 89% 48%;
+    --store-background: 150 20% 97%;
     --store-card: 0 0% 100%;
-    --store-muted: 270 20% 95%;
+    --store-muted: 150 14% 93%;
 
     --gradient-primary: linear-gradient(135deg, hsl(222 47% 20%) 0%, hsl(222 47% 30%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(12 76% 61%) 0%, hsl(12 76% 50%) 100%);
