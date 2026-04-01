@@ -93,83 +93,28 @@ interface MobileMegaMenuProps {
 }
 
 export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
-  const { navCategories } = useDynamicCategories();
   const { t } = useLanguage();
+
+  const menuLinks = [
+    { label: "New Arrivals", href: "/products?sort=newest" },
+    { label: "Flash Sale", href: "/products?flash_sale=true" },
+    { label: t('store.contactUs'), href: "/contact" },
+    { label: t('store.trackOrder'), href: "/track-order" },
+    { label: t('store.shippingInfo'), href: "/shipping-info" },
+  ];
 
   return (
     <div className="flex flex-col gap-1">
-      {navCategories.map((cat) => (
-        <div key={cat.label} className="border-b border-store-muted last:border-0">
-          <div className="flex items-center justify-between py-3">
-            <Link
-              to={cat.href}
-              className="text-base font-medium text-foreground hover:text-store-primary transition-colors"
-              onClick={onClose}
-            >
-              {cat.label}
-            </Link>
-            {cat.subGroups.length > 0 && (
-              <button
-                onClick={() => setExpanded(expanded === cat.label ? null : cat.label)}
-                className="p-1 text-muted-foreground hover:text-store-primary"
-              >
-                <ChevronDown className={`h-4 w-4 transition-transform ${expanded === cat.label ? "rotate-180" : ""}`} />
-              </button>
-            )}
-          </div>
-
-          {cat.subGroups.length > 0 && expanded === cat.label && (
-            <div className="pb-3 pl-3 space-y-2">
-              {cat.subGroups.map((group) => (
-                <div key={group.group}>
-                  <button
-                    onClick={() => setExpandedGroup(expandedGroup === group.group ? null : group.group)}
-                    className="flex items-center justify-between w-full text-sm font-semibold text-store-primary uppercase tracking-wider py-1"
-                  >
-                    {group.group}
-                    <ChevronDown className={`h-3 w-3 transition-transform ${expandedGroup === group.group ? "rotate-180" : ""}`} />
-                  </button>
-                  {expandedGroup === group.group && (
-                    <div className="pl-3 pt-1 space-y-1">
-                      {group.items.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className="block text-sm text-foreground/70 hover:text-store-primary py-1 transition-colors"
-                          onClick={onClose}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      {menuLinks.map((page) => (
+        <Link
+          key={page.label}
+          to={page.href}
+          className="block py-3 text-base font-medium text-foreground hover:text-store-primary transition-colors border-b border-store-muted last:border-0"
+          onClick={onClose}
+        >
+          {page.label}
+        </Link>
       ))}
-
-      <div className="border-t border-store-muted mt-2 pt-2">
-        {[
-          { label: "New Arrivals", href: "/products?sort=newest" },
-          { label: "Flash Sale", href: "/products?flash_sale=true" },
-          { label: t('store.contactUs'), href: "/contact" },
-          { label: t('store.trackOrder'), href: "/track-order" },
-          { label: t('store.shippingInfo'), href: "/shipping-info" },
-        ].map((page) => (
-          <Link
-            key={page.label}
-            to={page.href}
-            className="block py-3 text-base font-medium text-foreground hover:text-store-primary transition-colors"
-            onClick={onClose}
-          >
-            {page.label}
-          </Link>
-        ))}
-      </div>
     </div>
   );
 }
