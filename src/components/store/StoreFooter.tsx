@@ -165,7 +165,7 @@ export function StoreFooter() {
 
           {/* Shop Links */}
           <div>
-            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.shopFooter')}</h3>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Shop</h3>
             <ul className="space-y-2 text-sm">
               {shopLinks.map((link: any, i: number) => (
                 <li key={i}>
@@ -177,7 +177,7 @@ export function StoreFooter() {
 
           {/* Help Links */}
           <div>
-            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.helpFooter')}</h3>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Help Center</h3>
             <ul className="space-y-2 text-sm">
               {helpLinks.map((link: any, i: number) => (
                 <li key={i}>
@@ -189,7 +189,7 @@ export function StoreFooter() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.contact')}</h3>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Contact Us</h3>
             <ul className="space-y-3 text-sm">
               {storeAddress && (
                 <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
