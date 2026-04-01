@@ -21,6 +21,16 @@ import { TestimonialsSection } from "@/components/store/TestimonialsSection";
 import { BrandMarquee } from "@/components/store/BrandMarquee";
 import { TrendingProductsSection } from "@/components/store/TrendingProductsSection";
 import { RecentlyViewedCarousel } from "@/components/store/RecentlyViewedCarousel";
+import {
+  WaveDivider,
+  ZigzagDivider,
+  SlantDivider,
+  CurveDivider,
+  DoubleWaveDivider,
+  TiltCurveDivider,
+  ScallopDivider,
+  ArrowDivider,
+} from "@/components/store/SectionDividers";
 
 import { useSiteTitle } from "@/components/DynamicTitleProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -28,13 +38,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const iconMap: Record<string, React.ElementType> = {
   Truck, Shield, RefreshCw, Headphones,
 };
-
-const defaultFeatures = [
-  { icon: "Truck", title: "Free Shipping", desc: "On orders over ৳2,000" },
-  { icon: "Shield", title: "Secure Payment", desc: "100% protected" },
-  { icon: "RefreshCw", title: "Easy Returns", desc: "7-day return policy" },
-  { icon: "Headphones", title: "24/7 Support", desc: "Always here to help" },
-];
 
 export default function StoreHome() {
   const { products, loading: productsLoading, isNewProduct } = useFeaturedProducts(8);
@@ -91,7 +94,6 @@ export default function StoreHome() {
   const bestSellers = getSection("best_sellers");
   const flashSale = getSection("flash_sale");
   const testimonials = getSection("testimonials");
-  
   const newsletter = getSection("newsletter");
 
   const features = featureBar?.content?.features || defaultFeatures;
@@ -104,6 +106,7 @@ export default function StoreHome() {
         canonicalPath="/"
         jsonLd={orgJsonLd}
       />
+
       {/* 1. Hero Carousel */}
       {isEnabled(heroCarousel) && (
         <HeroCarousel
@@ -113,9 +116,12 @@ export default function StoreHome() {
         />
       )}
 
+      {/* ── Divider: Hero → Feature Bar ── */}
+      <WaveDivider fillClass="fill-store-card" />
+
       {/* 2. Trust / Features Bar */}
       {isEnabled(featureBar) && (
-        <section className="bg-store-card py-5 border-y border-store-muted">
+        <section className="bg-store-card py-5 border-b border-store-muted/50">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {features.map((feature: any) => {
@@ -137,10 +143,16 @@ export default function StoreHome() {
         </section>
       )}
 
-      {/* Brand Logos Marquee */}
+      {/* ── Divider: Feature Bar → Brand Marquee ── */}
+      <ZigzagDivider fillClass="fill-store-background" />
+
+      {/* 3. Brand Logos Marquee */}
       <BrandMarquee />
 
-      {/* 3. Categories Grid */}
+      {/* ── Divider: Brand Marquee → Categories ── */}
+      <SlantDivider fillClass="fill-store-background" direction="right" />
+
+      {/* 4. Categories Grid */}
       {isEnabled(categoriesGrid) && (
         <CategoryGrid
           title={categoriesGrid?.title || t('store.shopByCategory')}
@@ -149,14 +161,10 @@ export default function StoreHome() {
         />
       )}
 
-      {/* Wave divider */}
-      <div className="relative h-12 -mb-1">
-        <svg viewBox="0 0 1440 48" fill="none" className="absolute bottom-0 w-full h-full" preserveAspectRatio="none">
-          <path d="M0 48h1440V24C1200 0 960 48 720 24S240 48 0 24v24z" className="fill-store-background" />
-        </svg>
-      </div>
+      {/* ── Divider: Categories → New Arrivals ── */}
+      <CurveDivider fillClass="fill-store-card" />
 
-      {/* 4. New Arrivals */}
+      {/* 5. New Arrivals */}
       {isEnabled(newArrivals) && (
         <NewArrivalsSection
           title={newArrivals?.title || t('store.newArrivals')}
@@ -166,24 +174,24 @@ export default function StoreHome() {
         />
       )}
 
-      {/* 5. Promo Banners */}
+      {/* ── Divider: New Arrivals → Promo Banners ── */}
+      <DoubleWaveDivider fillClass="fill-store-background" accentClass="fill-store-primary/5" />
+
+      {/* 6. Promo Banners */}
       {isEnabled(promoBanners) && (
-        <PromoBannerSection
-          banners={promoBanners?.content?.banners}
-        />
+        <PromoBannerSection banners={promoBanners?.content?.banners} />
       )}
 
-      {/* Trending Products */}
+      {/* ── Divider: Promo → Trending ── */}
+      <TiltCurveDivider fillClass="fill-store-background" />
+
+      {/* 7. Trending Products */}
       <TrendingProductsSection count={4} />
 
-      {/* Wave divider */}
-      <div className="relative h-12 -mb-1">
-        <svg viewBox="0 0 1440 48" fill="none" className="absolute bottom-0 w-full h-full" preserveAspectRatio="none">
-          <path d="M0 0C240 48 480 0 720 24S1200 0 1440 48V48H0V0z" className="fill-store-muted" />
-        </svg>
-      </div>
+      {/* ── Divider: Trending → Best Sellers ── */}
+      <ScallopDivider fillClass="fill-store-muted" />
 
-      {/* 6. Best Sellers / Featured Products */}
+      {/* 8. Best Sellers / Featured Products */}
       {isEnabled(bestSellers) && (
         <section className="py-16 bg-store-muted">
           <div className="container mx-auto px-4">
@@ -231,7 +239,10 @@ export default function StoreHome() {
         </section>
       )}
 
-      {/* 7. Flash Sale */}
+      {/* ── Divider: Best Sellers → Flash Sale ── */}
+      <ArrowDivider fillClass="fill-store-primary" />
+
+      {/* 9. Flash Sale */}
       {isEnabled(flashSale) && (
         <FlashSaleSection
           title={flashSale?.title || t('store.flashSale')}
@@ -242,7 +253,10 @@ export default function StoreHome() {
         />
       )}
 
-      {/* 8. Testimonials */}
+      {/* ── Divider: Flash Sale → Testimonials ── */}
+      <WaveDivider fillClass="fill-store-muted" flip />
+
+      {/* 10. Testimonials */}
       {isEnabled(testimonials) && (
         <TestimonialsSection
           title={testimonials?.title || t('store.whatCustomersSay')}
@@ -251,15 +265,19 @@ export default function StoreHome() {
         />
       )}
 
+      {/* ── Divider: Testimonials → Recently Viewed ── */}
+      <SlantDivider fillClass="fill-store-background" direction="left" />
 
-      {/* Recently Viewed */}
+      {/* 11. Recently Viewed */}
       <RecentlyViewedCarousel />
 
-      {/* 10. Newsletter */}
+      {/* ── Divider: Recently Viewed → Newsletter ── */}
+      <CurveDivider fillClass="fill-store-primary" />
+
+      {/* 12. Newsletter */}
       {isEnabled(newsletter) && (
         <section className="relative py-20 overflow-hidden">
-          {/* Decorative background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-store-primary via-store-primary/90 to-store-secondary" />
+          <div className="absolute inset-0 bg-gradient-to-br from-store-primary via-store-primary/90 to-store-highlight" />
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
           
           <div className="container mx-auto px-4 text-center max-w-2xl relative z-10">
