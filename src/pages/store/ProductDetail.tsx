@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { ProductDetailSkeleton } from "@/components/skeletons";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Minus, Plus, Heart, Truck, RefreshCw, Shield, ShoppingBag, Package, AlertTriangle, Star, Copy, Bell, Clock, CreditCard, Lock, Ruler } from "lucide-react";
+import { Minus, Plus, Heart, Truck, RefreshCw, Shield, ShoppingBag, Package, AlertTriangle, Star, Copy, Bell, Clock, CreditCard, Lock, Ruler, Eye } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -156,6 +156,18 @@ export default function ProductDetail() {
   const [showCompare, setShowCompare] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const actionsRef = useRef<HTMLDivElement>(null);
+
+  // Live watching count (simulated)
+  const [watchingCount, setWatchingCount] = useState(() => Math.floor(Math.random() * 15) + 5);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWatchingCount(prev => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        return Math.max(3, Math.min(30, prev + delta));
+      });
+    }, 5000 + Math.random() * 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const { variants } = useProductVariants(product?.id || null);
   const { getSettingValue } = useStoreSettings();
@@ -368,6 +380,16 @@ export default function ProductDetail() {
                   <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => { navigator.clipboard.writeText(product.sku!); toast.success(t('store.skuCopied')); }}><Copy className="h-3 w-3" /></Button>
                 </div>
               )}
+            </div>
+
+            {/* Live watching indicator */}
+            <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-destructive/10 border border-destructive/20 w-fit">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-destructive"></span>
+              </span>
+              <Eye className="h-3.5 w-3.5 text-destructive" />
+              <span className="text-sm font-medium text-destructive">{watchingCount} people are viewing this right now</span>
             </div>
 
             {product.short_description && (
