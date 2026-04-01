@@ -165,7 +165,7 @@ export function StoreFooter() {
 
           {/* Shop Links */}
           <div>
-            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">{t('store.shopFooter')}</h3>
+            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Shop</h3>
             <ul className="space-y-2 text-sm">
               {shopLinks.map((link: any, i: number) => (
                 <li key={i}>
