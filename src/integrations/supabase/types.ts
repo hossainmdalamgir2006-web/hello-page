@@ -2327,6 +2327,48 @@ export type Database = {
           },
         ]
       }
+      product_questions: {
+        Row: {
+          answer: string | null
+          answered_at: string | null
+          answered_by: string | null
+          asked_by_name: string
+          created_at: string
+          helpful_count: number | null
+          id: string
+          product_id: string
+          question: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          answer?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
+          asked_by_name?: string
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          product_id: string
+          question: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          answer?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
+          asked_by_name?: string
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          product_id?: string
+          question?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       product_reviews: {
         Row: {
           content: string | null
