@@ -379,8 +379,8 @@ export default function ProductDetail() {
     <>
       <SEOHead title={product.name} description={product.description?.slice(0, 160) || `Buy ${product.name} online`} canonicalPath={`/product/${product.slug || product.id}`} ogImage={product.images?.[0]} ogType="product" jsonLd={productJsonLd} />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 lg:gap-12">
           <ProductImageGallery
             images={product.images} productName={product.name} videoUrl={product.video_url}
             youtubeId={youtubeId} discount={discount} isBundle={isBundle} isMobile={isMobile}
