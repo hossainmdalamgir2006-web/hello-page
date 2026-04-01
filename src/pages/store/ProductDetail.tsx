@@ -32,6 +32,7 @@ import { ProductTrustBadges } from "@/components/product/ProductTrustBadges";
 import { RelatedProductsGrid } from "@/components/product/RelatedProductsGrid";
 import { StickyAddToCartBar } from "@/components/product/StickyAddToCartBar";
 import { formatPrice } from "@/lib/formatPrice";
+import { ProductQA } from "@/components/product/ProductQA";
 
 // --- Types ---
 interface Product {
@@ -378,8 +379,8 @@ export default function ProductDetail() {
     <>
       <SEOHead title={product.name} description={product.description?.slice(0, 160) || `Buy ${product.name} online`} canonicalPath={`/product/${product.slug || product.id}`} ogImage={product.images?.[0]} ogType="product" jsonLd={productJsonLd} />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 lg:gap-12">
           <ProductImageGallery
             images={product.images} productName={product.name} videoUrl={product.video_url}
             youtubeId={youtubeId} discount={discount} isBundle={isBundle} isMobile={isMobile}
@@ -582,8 +583,8 @@ export default function ProductDetail() {
             <TabsList className="w-full justify-start border-b rounded-none bg-transparent h-auto p-0 flex-wrap">
               <TabsTrigger value="description" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.description')}</TabsTrigger>
               {attributes.length > 0 && <TabsTrigger value="specifications" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.specifications')}</TabsTrigger>}
-              
               <TabsTrigger value="reviews" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.reviews')} ({reviewSummary.totalReviews})</TabsTrigger>
+              <TabsTrigger value="qa" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">Q&A</TabsTrigger>
             </TabsList>
             <TabsContent value="description" className="py-6">
               {product.description ? (
@@ -613,16 +614,18 @@ export default function ProductDetail() {
               </TabsContent>
             )}
             <TabsContent value="reviews" className="py-6"><ProductReviews productId={product.id} /></TabsContent>
+            <TabsContent value="qa" className="py-6"><ProductQA productId={product.id} /></TabsContent>
           </Tabs>
         </div>
 
         <RelatedProductsGrid products={relatedProducts} />
       </div>
 
-      {isMobile && displayQuantity > 0 && (
+      {displayQuantity > 0 && (
         <StickyAddToCartBar
           productName={product.name}
           displayPrice={displayPrice}
+          productImage={product.images?.[0]}
           onAddToCart={handleAddToCart}
           onBuyNow={handleBuyNow}
           visible={showStickyBar}
