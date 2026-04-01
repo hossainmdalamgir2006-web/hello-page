@@ -165,7 +165,7 @@ export default function Returns() {
                   <ul className="space-y-2">
                     {eligible.map((item: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                        <CheckCircle className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" />
                         {item}
                       </li>
                     ))}
