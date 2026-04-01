@@ -103,7 +103,7 @@ export default function Contact() {
   const cards = (pageData?.content as any)?.cards || [
     { icon: "map-pin", title: "Visit Us", text: "Dhaka, Bangladesh" },
     { icon: "phone", title: "Call Us", text: "+880 1XXX-XXXXXX" },
-    { icon: "mail", title: "Email Us", text: "support@store.com" },
+    { icon: "mail", title: "Email Us", text: "hello@gmail.com" },
     { icon: "clock", title: "Business Hours", text: "Sun - Thu: 10AM - 8PM\nFri - Sat: Closed" },
   ];
 
@@ -130,21 +130,6 @@ export default function Contact() {
         }}
       />
 
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="container mx-auto px-4 py-3">
-        <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <li>
-            <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1">
-              <Home className="h-3.5 w-3.5" />
-              <span>Home</span>
-            </Link>
-          </li>
-          <li className="flex items-center gap-1.5">
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-foreground font-medium">Contact</span>
-          </li>
-        </ol>
-      </nav>
 
       {/* Hero Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
@@ -329,9 +314,6 @@ export default function Contact() {
                               <><Send className="h-4 w-4" />{t('store.sendMessage')}</>
                             )}
                           </Button>
-                          <p className="text-xs text-muted-foreground text-center">
-                            Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">⌘</kbd> + <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Enter</kbd> to send
-                          </p>
                         </form>
                       </Form>
                     </CardContent>
