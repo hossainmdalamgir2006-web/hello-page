@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPrice } from "@/lib/formatPrice";
 
@@ -21,6 +23,7 @@ interface FeaturedProductCardProps {
 
 export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps) {
   const { addItem } = useCart();
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const { t } = useLanguage();
 
   const imageUrl = product.images.length > 0 ? product.images[0] : "/placeholder.svg";
@@ -28,10 +31,21 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
   const discount = product.compare_at_price
     ? Math.round((1 - product.price / product.compare_at_price) * 100)
     : 0;
+  const wishlisted = isInWishlist(product.id);
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     addItem({ id: product.id, name: product.name, price: product.price, comparePrice: product.compare_at_price || undefined, image: imageUrl });
+  };
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (wishlisted) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product.id);
+    }
   };
 
   return (
@@ -45,6 +59,18 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
           {isNew && <Badge className="bg-store-highlight text-store-primary-foreground">{t('store.new')}</Badge>}
           {discount > 0 && <Badge className="bg-store-secondary text-store-primary-foreground">{discount}% OFF</Badge>}
         </div>
+        {/* Wishlist Heart */}
+        <button
+          onClick={handleWishlistToggle}
+          className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+            wishlisted
+              ? "bg-red-500 text-white scale-100"
+              : "bg-white/80 text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-white hover:text-red-500"
+          }`}
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <Heart className={`h-4 w-4 ${wishlisted ? "fill-current" : ""}`} />
+        </button>
         <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
           <Button className="w-full bg-store-primary hover:bg-store-primary/90" onClick={handleQuickAdd}>{t('store.quickAdd')}</Button>
         </div>
