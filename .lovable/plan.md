@@ -1,75 +1,73 @@
 
 
-## Shipping Info Page — সম্ভাব্য Updates
+## Returns Page — সম্ভাব্য Updates
 
-বর্তমানে page টা খুব basic — plain cards, no animations, no visual hierarchy।
+বর্তমানে page টা basic — plain cards, no animations, database content না থাকলে empty দেখায়।
 
 ### 1. Gradient Hero Banner
-- Contact/FAQ page-এর মতো gradient hero section with title & subtitle
+- Contact/FAQ/Shipping page-এর মতো gradient hero section with title & subtitle
 - Decorative blur elements
 
 ### 2. Animated Entry
 - Framer Motion দিয়ে cards ও sections-এ staggered animations
 
-### 3. Shipping Cost Calculator
-- Interactive calculator — area select করলে estimated shipping cost দেখাবে
-- Inside/Outside Dhaka dropdown
+### 3. Default Fallback Content
+- Database-এ content না থাকলে meaningful default data — eligible items, non-eligible items, return steps, refund info সব default দেওয়া
 
-### 4. Delivery Timeline Visual
-- Step-by-step visual timeline (Order Placed → Processing → Shipped → Delivered)
-- Estimated days সহ
+### 4. Return Process Timeline
+- Step-by-step visual timeline (Contact Us → Get Approval → Ship Item → Refund Processed)
+- Shipping page-এর delivery timeline-এর মতো design
 
-### 5. Courier Partner Logos
-- যেসব courier ব্যবহার হয় (Steadfast, Pathao, RedX, etc.) তাদের logo grid
+### 5. FAQ Section
+- Returns-related common questions accordion (FAQ page-এর design-এ)
+- "Was this helpful?" feedback
 
-### 6. FAQ Section
-- Shipping-related common questions accordion (Contact/FAQ page-এর design-এ)
+### 6. Contact CTA
+- Page-এর নিচে "Need Help with a Return?" section with Contact page link
 
-### 7. Default Fallback Content
-- Database-এ content না থাকলে meaningful default data দেখানো
+### 7. Return Status Checker
+- Logged-in user হলে তার existing return requests দেখানোর link (Account Returns page-এ)
 
-### 8. CTA — Track Order
-- Page-এর নিচে "Track Your Order" button/section with link to /track-order
+### 8. Policy Highlights Cards
+- Key highlights (7-day window, free returns, easy exchange) icon cards grid
 
 ---
 
-## Track Order Page — সম্ভাব্য Updates
+## Size Guide Page — সম্ভাব্য Updates
 
-বর্তমানে functional কিন্তু visually plain।
+বর্তমানে basic table আর database content ছাড়া empty।
 
 ### 1. Gradient Hero Banner
 - Same gradient hero style as other pages
 
 ### 2. Animated Entry
-- Framer Motion animations on card and results
+- Framer Motion animations on tabs, tables, cards
 
-### 3. Recent Order History (Logged-in Users)
-- Logged-in user হলে তার recent orders automatically দেখানো
-- Quick-click করে track করা যাবে
+### 3. Default Size Data
+- Database-এ data না থাকলে default size chart (S/M/L/XL/XXL) দেখানো
+- Default "How to Measure" ও tips content
 
-### 4. Live Status Stepper
-- Phone search result-এ visual step indicator (pending → processing → shipped → delivered)
-- OrderTracking page-এর মতো stepper
+### 4. Visual Measurement Guide
+- Body measurement diagram/illustration — কোথায় মাপবে সেটা visually দেখানো
+- Icon-based cards (Chest, Waist, Hip)
 
-### 5. Order Result Card Enhancement
-- Result card-এ আরো info — shipping address preview, estimated delivery date
-- Better visual styling with shadows and hover effects
+### 5. Size Recommendation Tool
+- Interactive tool — height/weight input করলে recommended size suggest করবে
 
-### 6. Copy Order Number
-- Order number-এ click করলে clipboard-এ copy হবে
+### 6. Unit Converter (cm/inch)
+- Toggle button দিয়ে cm ↔ inch switch করা যাবে
 
-### 7. "Need Help?" CTA
-- Page-এর নিচে Contact page-এ redirect section
+### 7. FAQ Section
+- Size-related common questions (What if between sizes? How to measure at home?)
 
-### 8. Better Empty/Error States
-- Animated empty states with illustrations
-- More helpful error messages
+### 8. "Still Unsure?" CTA
+- Contact page-এ redirect section
 
 ---
 
 ### Files to Modify
-- `src/pages/store/ShippingInfo.tsx` — all shipping updates
-- `src/pages/store/TrackOrder.tsx` — all tracking updates
+- `src/pages/store/Returns.tsx` — all returns updates
+- `src/pages/store/SizeGuide.tsx` — all size guide updates
 
 কোন কোন update চাও বলো, implement করে দিচ্ছি।
 
