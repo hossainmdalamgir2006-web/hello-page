@@ -73,7 +73,9 @@ export function FlashSaleSection({
   const displaySubtitle = subtitle || "";
   const displayBadge = badge || `⚡ ${t('store.flashSale')}`;
   const { products: allProducts, loading } = useFeaturedProducts(8);
-  const { timeLeft, expired } = useCountdown(endTime || null);
+  // Default end time: 24 hours from now if none provided
+  const defaultEndTime = endTime || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  const { timeLeft, expired } = useCountdown(defaultEndTime);
 
   // Show products with discount
   const saleProducts = allProducts.filter(p => p.compare_at_price && p.compare_at_price > p.price).slice(0, count);
