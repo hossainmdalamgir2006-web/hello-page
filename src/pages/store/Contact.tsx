@@ -346,13 +346,101 @@ export default function Contact() {
         {/* FAQ Section */}
         <div className="max-w-3xl mx-auto mt-14">
           <h2 className="text-2xl font-bold text-center mb-6">Frequently Asked Questions</h2>
-          <Accordion type="single" collapsible className="w-full">
-            {faqItems.map((item, i) => (
-              <AccordionItem key={i} value={`faq-${i}`}>
-                <AccordionTrigger className="text-left text-sm">{item.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
-              </AccordionItem>
-            ))}
+          
+          {/* Search with Suggestions */}
+          <div className="relative mb-6">
+            <div className="relative">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search questions..."
+                value={faqSearch}
+                onChange={(e) => { setFaqSearch(e.target.value); setShowSuggestions(true); }}
+                onFocus={() => faqSearch && setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                className="pl-10 pr-10 h-11 rounded-xl border-muted-foreground/20 bg-background shadow-sm"
+              />
+              {faqSearch && (
+                <button onClick={() => { setFaqSearch(""); setShowSuggestions(false); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            {showSuggestions && faqSearch && (
+              <div className="absolute z-20 top-full mt-1 w-full bg-card border rounded-xl shadow-lg overflow-hidden">
+                {faqItems.filter(f => f.q.toLowerCase().includes(faqSearch.toLowerCase())).map((item, i) => {
+                  const cat = faqCategoryConfig[item.category];
+                  const Icon = cat.icon;
+                  return (
+                    <button
+                      key={i}
+                      className="w-full text-left px-4 py-3 hover:bg-accent/50 flex items-center gap-3 text-sm transition-colors"
+                      onMouseDown={() => { setFaqSearch(item.q); setShowSuggestions(false); }}
+                    >
+                      <span className={`p-1 rounded-md ${cat.color}`}><Icon className="h-3.5 w-3.5" /></span>
+                      {item.q}
+                    </button>
+                  );
+                })}
+                {faqItems.filter(f => f.q.toLowerCase().includes(faqSearch.toLowerCase())).length === 0 && (
+                  <div className="px-4 py-3 text-sm text-muted-foreground">No matching questions</div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* FAQ Accordion - matching FAQ page style */}
+          <Accordion type="single" collapsible className="space-y-3">
+            <AnimatePresence>
+              {faqItems
+                .filter(f => !faqSearch || f.q.toLowerCase().includes(faqSearch.toLowerCase()) || f.a.toLowerCase().includes(faqSearch.toLowerCase()))
+                .map((item, i) => {
+                  const cat = faqCategoryConfig[item.category];
+                  const CatIcon = cat.icon;
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04 }}
+                    >
+                      <AccordionItem
+                        value={`faq-${i}`}
+                        className="border rounded-xl px-5 bg-card shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <AccordionTrigger className="text-left gap-3 py-4 hover:no-underline">
+                          <div className="flex items-center gap-3 flex-1">
+                            <span className={`p-1.5 rounded-lg ${cat.color}`}>
+                              <CatIcon className="h-4 w-4" />
+                            </span>
+                            <span className="font-medium text-sm">{item.q}</span>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground pb-4">
+                          <p className="pl-10">{item.a}</p>
+                          <div className="pl-10 mt-3 flex items-center gap-3">
+                            <span className="text-xs text-muted-foreground/70">Was this helpful?</span>
+                            <button
+                              onClick={() => setFaqHelpful(m => ({ ...m, [i]: "yes" }))}
+                              className={`p-1 rounded hover:bg-accent transition-colors ${faqHelpful[i] === "yes" ? "text-green-600" : "text-muted-foreground/50"}`}
+                            >
+                              <ThumbsUp className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={() => setFaqHelpful(m => ({ ...m, [i]: "no" }))}
+                              className={`p-1 rounded hover:bg-accent transition-colors ${faqHelpful[i] === "no" ? "text-red-500" : "text-muted-foreground/50"}`}
+                            >
+                              <ThumbsDown className="h-3.5 w-3.5" />
+                            </button>
+                            {faqHelpful[i] && (
+                              <span className="text-xs text-muted-foreground/60">Thanks for your feedback!</span>
+                            )}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </motion.div>
+                  );
+                })}
+            </AnimatePresence>
           </Accordion>
         </div>
       </div>
