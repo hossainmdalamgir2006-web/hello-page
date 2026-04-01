@@ -249,9 +249,10 @@ export function StoreHeader() {
       <div className="md:hidden px-4 pb-3">
         <form onSubmit={handleSearch} className="flex rounded-lg border border-store-muted overflow-hidden bg-background">
           <Input
-            placeholder={t('store.searchPlaceholder')}
+            placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
             className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none h-9 text-sm"
           />
           <Button
