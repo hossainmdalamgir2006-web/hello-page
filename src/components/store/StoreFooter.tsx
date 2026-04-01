@@ -256,12 +256,6 @@ export function StoreFooter() {
           <div className="flex items-center gap-6">
             <Link to="/privacy" className="hover:text-store-accent transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-store-accent transition-colors">Terms of Service</Link>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="hover:text-store-accent transition-colors inline-flex items-center gap-1"
-            >
-              <ArrowUp className="h-3.5 w-3.5" /> Back to Top
-            </button>
           </div>
         </div>
       </div>
