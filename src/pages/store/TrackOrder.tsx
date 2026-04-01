@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Search, Package, ArrowRight, Phone, Hash, Loader2, Copy, Check, CheckCircle2, Truck, Clock, HelpCircle, MessageCircle, PackageX } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
