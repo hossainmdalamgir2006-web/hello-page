@@ -40,12 +40,27 @@ const subjectOptions = [
   { value: "other", label: "Other" },
 ];
 
-const faqItems = [
-  { q: "How can I track my order?", a: "You can track your order by going to your Account > Orders section or using the Track Order page with your order number." },
-  { q: "What is your return policy?", a: "We accept returns within 7 days of delivery. Items must be in original condition with tags attached. Visit our Returns page for more details." },
-  { q: "How long does shipping take?", a: "Standard shipping takes 3-5 business days within Dhaka and 5-7 business days outside Dhaka." },
-  { q: "How do I contact customer support?", a: "You can reach us through this contact form, via phone, email, or WhatsApp. We respond within 24 hours." },
-  { q: "Can I change or cancel my order?", a: "You can modify or cancel your order within 1 hour of placing it. After that, please contact us immediately." },
+type FaqCategory = "orders" | "returns" | "shipping" | "general";
+
+interface FaqItem {
+  q: string;
+  a: string;
+  category: FaqCategory;
+}
+
+const faqCategoryConfig: Record<FaqCategory, { label: string; icon: React.ElementType; color: string }> = {
+  orders: { label: "Orders", icon: Package, color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" },
+  shipping: { label: "Shipping", icon: Truck, color: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300" },
+  returns: { label: "Returns", icon: RotateCcw, color: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300" },
+  general: { label: "General", icon: HelpCircle, color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300" },
+};
+
+const faqItems: FaqItem[] = [
+  { q: "How can I track my order?", a: "You can track your order by going to your Account > Orders section or using the Track Order page with your order number.", category: "orders" },
+  { q: "What is your return policy?", a: "We accept returns within 7 days of delivery. Items must be in original condition with tags attached. Visit our Returns page for more details.", category: "returns" },
+  { q: "How long does shipping take?", a: "Standard shipping takes 3-5 business days within Dhaka and 5-7 business days outside Dhaka.", category: "shipping" },
+  { q: "How do I contact customer support?", a: "You can reach us through this contact form, via phone, email, or WhatsApp. We respond within 24 hours.", category: "general" },
+  { q: "Can I change or cancel my order?", a: "You can modify or cancel your order within 1 hour of placing it. After that, please contact us immediately.", category: "orders" },
 ];
 
 const iconMap: Record<string, React.ElementType> = {

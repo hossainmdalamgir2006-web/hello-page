@@ -110,7 +110,6 @@ export default function FAQ() {
   return (
     <>
       <SEOHead title="FAQ" description={subtitle} canonicalPath="/faq" jsonLd={faqJsonLd} />
-      <StoreBreadcrumb />
 
       {/* Hero Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-accent/30 to-secondary/20 py-14 md:py-20">
