@@ -86,6 +86,9 @@ function BusinessHoursStatus() {
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [faqSearch, setFaqSearch] = useState("");
+  const [faqHelpful, setFaqHelpful] = useState<Record<number, "yes" | "no">>({});
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const { data: pageData, loading: pageLoading } = usePageContent("contact");
   const { t } = useLanguage();
   const form = useForm<ContactFormValues>({
