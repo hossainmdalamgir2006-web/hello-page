@@ -121,9 +121,9 @@ export default function StoreHome() {
               {features.map((feature: any) => {
                 const FeatureIcon = iconMap[feature.icon] || Truck;
                 return (
-                  <div key={feature.title} className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full bg-store-primary/10 flex items-center justify-center flex-shrink-0">
-                      <FeatureIcon className="h-5 w-5 text-store-primary" />
+                  <div key={feature.title} className="flex items-center gap-3 group cursor-default">
+                    <div className="w-11 h-11 rounded-full bg-store-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-store-primary/20 transition-colors duration-300 group-hover:animate-[bounce_0.6s_ease-in-out]">
+                      <FeatureIcon className="h-5 w-5 text-store-primary group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <div>
                       <p className="font-semibold text-foreground text-sm">{feature.title}</p>
