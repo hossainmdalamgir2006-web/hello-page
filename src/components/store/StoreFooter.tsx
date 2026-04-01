@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, Loader2 } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, Loader2, ShieldCheck, Truck, Headphones, ArrowUp, CreditCard } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -8,10 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePageContent } from "@/hooks/usePageContents";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
-const RATE_LIMIT_MS = 30_000; // 30 seconds between submissions
+const RATE_LIMIT_MS = 30_000;
 
 function NewsletterForm({ buttonText }: { buttonText: string }) {
   const [email, setEmail] = useState("");
@@ -23,13 +22,11 @@ function NewsletterForm({ buttonText }: { buttonText: string }) {
       toast.error("Please enter a valid email address");
       return;
     }
-
     const now = Date.now();
     if (now - lastSubmitRef.current < RATE_LIMIT_MS) {
       toast.info("Please wait before subscribing again.");
       return;
     }
-
     setLoading(true);
     lastSubmitRef.current = now;
     try {
@@ -37,11 +34,8 @@ function NewsletterForm({ buttonText }: { buttonText: string }) {
         .from("newsletter_subscribers" as any)
         .insert({ email: email.trim().toLowerCase() } as any);
       if (error) {
-        if (error.code === "23505") {
-          toast.info("You're already subscribed!");
-        } else {
-          throw error;
-        }
+        if (error.code === "23505") toast.info("You're already subscribed!");
+        else throw error;
       } else {
         toast.success("Subscribed successfully! 🎉");
       }
@@ -61,7 +55,7 @@ function NewsletterForm({ buttonText }: { buttonText: string }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSubscribe()}
-        className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus-visible:ring-store-accent"
       />
       <Button
         className="bg-store-accent text-store-accent-foreground hover:bg-store-accent/90 font-semibold px-8"
@@ -89,13 +83,43 @@ const defaultHelpLinks = [
   { label: "Size Guide", url: "/size-guide" },
 ];
 
+const trustBadges = [
+  { icon: ShieldCheck, label: "Secure Payment" },
+  { icon: Truck, label: "Fast Delivery" },
+  { icon: Headphones, label: "24/7 Support" },
+  { icon: CreditCard, label: "Easy Returns" },
+];
+
+const paymentIcons = ["bKash", "Nagad", "Visa", "Mastercard", "COD"];
+
+function FooterHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4 relative inline-block">
+      {children}
+      <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-store-accent rounded-full" />
+    </h3>
+  );
+}
+
+function SocialIcon({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="w-9 h-9 rounded-full bg-white/10 hover:bg-store-primary hover:shadow-[0_0_12px_hsl(var(--store-primary)/0.5)] flex items-center justify-center transition-all duration-300"
+    >
+      {children}
+    </a>
+  );
+}
+
 export function StoreFooter() {
-  const { data: settings, isLoading: settingsLoading } = useStoreSettingsCache();
+  const { data: settings } = useStoreSettingsCache();
   const { data: footerContent } = usePageContent("footer");
-  const { t } = useLanguage();
   const content = (footerContent?.content as any) || {};
 
-  // Use defaults immediately to prevent CLS — replace when data arrives
   const storeName = settings?.STORE_NAME || "Your Store";
   const storeLogo = settings?.STORE_LOGO || null;
   const storeDescription = settings?.STORE_DESCRIPTION || "Quality products at affordable prices.";
@@ -119,14 +143,37 @@ export function StoreFooter() {
   const newsletterButton = content.newsletter_button || "Subscribe";
   const copyrightText = content.copyright_text || "All rights reserved.";
 
-  const SocialIcon = ({ href, label, children }: { href: string; label: string; children: React.ReactNode }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="w-9 h-9 rounded-full bg-white/10 hover:bg-store-primary flex items-center justify-center transition-colors">
-      {children}
-    </a>
-  );
-
   return (
-    <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]" style={{ minHeight: "380px" }}>
+    <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]">
+      {/* Newsletter Section */}
+      <div className="bg-gradient-to-r from-store-primary/20 via-store-accent/10 to-store-primary/20 border-b border-white/5">
+        <div className="container mx-auto px-4 py-10 text-center">
+          <Mail className="h-8 w-8 mx-auto mb-3 text-store-accent opacity-80" />
+          <h3 className="font-display text-xl md:text-2xl font-bold mb-2">{newsletterTitle}</h3>
+          <p className="text-[hsl(215,16%,60%)] text-sm mb-5 max-w-md mx-auto">
+            Subscribe to get exclusive offers, new arrivals & more straight to your inbox.
+          </p>
+          <NewsletterForm buttonText={newsletterButton} />
+        </div>
+      </div>
+
+      {/* Trust Badges */}
+      <div className="border-b border-white/5">
+        <div className="container mx-auto px-4 py-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {trustBadges.map((badge, i) => (
+              <div key={i} className="flex items-center gap-3 justify-center md:justify-start">
+                <div className="w-10 h-10 rounded-full bg-store-accent/10 flex items-center justify-center flex-shrink-0">
+                  <badge.icon className="h-5 w-5 text-store-accent" />
+                </div>
+                <span className="text-sm font-medium text-[hsl(210,40%,90%)]">{badge.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Footer Grid */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -165,11 +212,14 @@ export function StoreFooter() {
 
           {/* Shop Links */}
           <div>
-            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Shop</h3>
-            <ul className="space-y-2 text-sm">
+            <FooterHeading>Shop</FooterHeading>
+            <ul className="space-y-2 text-sm mt-2">
               {shopLinks.map((link: any, i: number) => (
                 <li key={i}>
-                  <Link to={link.url} className="text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors">{link.label}</Link>
+                  <Link to={link.url} className="group text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors inline-flex items-center gap-1">
+                    <span className="w-0 group-hover:w-2 overflow-hidden transition-all duration-200 text-store-accent">→</span>
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -177,11 +227,14 @@ export function StoreFooter() {
 
           {/* Help Links */}
           <div>
-            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Help Center</h3>
-            <ul className="space-y-2 text-sm">
+            <FooterHeading>Help Center</FooterHeading>
+            <ul className="space-y-2 text-sm mt-2">
               {helpLinks.map((link: any, i: number) => (
                 <li key={i}>
-                  <Link to={link.url} className="text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors">{link.label}</Link>
+                  <Link to={link.url} className="group text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors inline-flex items-center gap-1">
+                    <span className="w-0 group-hover:w-2 overflow-hidden transition-all duration-200 text-store-accent">→</span>
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -189,23 +242,23 @@ export function StoreFooter() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-display font-semibold text-[hsl(210,40%,98%)] mb-4">Contact Us</h3>
-            <ul className="space-y-3 text-sm">
+            <FooterHeading>Contact Us</FooterHeading>
+            <ul className="space-y-3 text-sm mt-2">
               {storeAddress && (
                 <li className="flex items-start gap-2 text-[hsl(215,16%,60%)]">
-                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" aria-hidden="true" />
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-store-accent/60" aria-hidden="true" />
                   <span>{storeAddress}</span>
                 </li>
               )}
               {storePhone && (
                 <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
-                  <Phone className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                  <Phone className="h-4 w-4 flex-shrink-0 text-store-accent/60" aria-hidden="true" />
                   <span>{storePhone}</span>
                 </li>
               )}
               {storeEmail && (
                 <li className="flex items-center gap-2 text-[hsl(215,16%,60%)]">
-                  <Mail className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                  <Mail className="h-4 w-4 flex-shrink-0 text-store-accent/60" aria-hidden="true" />
                   <span>{storeEmail}</span>
                 </li>
               )}
@@ -215,11 +268,28 @@ export function StoreFooter() {
 
         <Separator className="my-8 bg-white/10" />
 
+        {/* Payment Methods */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+          <span className="text-xs text-[hsl(215,16%,50%)] mr-2">We Accept:</span>
+          {paymentIcons.map((name) => (
+            <span key={name} className="px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-xs font-medium text-[hsl(210,40%,80%)]">
+              {name}
+            </span>
+          ))}
+        </div>
+
+        {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[hsl(215,16%,60%)]">
           <p>© {new Date().getFullYear()} {storeName}. {copyrightText}</p>
-          <div className="flex gap-6">
-            <Link to="/privacy" className="hover:text-store-accent transition-colors">{t('store.privacyPolicy')}</Link>
-            <Link to="/terms" className="hover:text-store-accent transition-colors">{t('store.termsOfService')}</Link>
+          <div className="flex items-center gap-6">
+            <Link to="/privacy" className="hover:text-store-accent transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-store-accent transition-colors">Terms of Service</Link>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="hover:text-store-accent transition-colors inline-flex items-center gap-1"
+            >
+              <ArrowUp className="h-3.5 w-3.5" /> Back to Top
+            </button>
           </div>
         </div>
       </div>
