@@ -157,17 +157,43 @@ export default function ProductDetail() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const actionsRef = useRef<HTMLDivElement>(null);
 
-  // Live watching count (simulated)
-  const [watchingCount, setWatchingCount] = useState(() => Math.floor(Math.random() * 15) + 5);
+  // Live watching count - real data from analytics_events
+  const [watchingCount, setWatchingCount] = useState(0);
   useEffect(() => {
-    const interval = setInterval(() => {
-      setWatchingCount(prev => {
-        const delta = Math.random() > 0.5 ? 1 : -1;
-        return Math.max(3, Math.min(30, prev + delta));
-      });
-    }, 5000 + Math.random() * 3000);
+    if (!slug) return;
+    const sessionId = sessionStorage.getItem('session_id') || (() => {
+      const id = crypto.randomUUID();
+      sessionStorage.setItem('session_id', id);
+      return id;
+    })();
+
+    // Record this view
+    const trackView = () => {
+      supabase.from('analytics_events' as any).insert({
+        event_type: 'product_view',
+        page_url: `/product/${slug}`,
+        session_id: sessionId,
+      }).then(() => {});
+    };
+    trackView();
+
+    // Fetch active viewers (last 5 minutes)
+    const fetchViewers = async () => {
+      const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const { count } = await supabase
+        .from('analytics_events' as any)
+        .select('session_id', { count: 'exact', head: true })
+        .eq('event_type', 'product_view')
+        .eq('page_url', `/product/${slug}`)
+        .gte('created_at', fiveMinAgo);
+      setWatchingCount(count || 0);
+    };
+    fetchViewers();
+
+    // Refresh count every 15 seconds
+    const interval = setInterval(fetchViewers, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [slug]);
 
   const { variants } = useProductVariants(product?.id || null);
   const { getSettingValue } = useStoreSettings();
@@ -383,14 +409,16 @@ export default function ProductDetail() {
             </div>
 
             {/* Live watching indicator */}
-            <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-destructive/10 border border-destructive/20 w-fit">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-destructive"></span>
-              </span>
-              <Eye className="h-3.5 w-3.5 text-destructive" />
-              <span className="text-sm font-medium text-destructive">{watchingCount} people are viewing this right now</span>
-            </div>
+            {watchingCount > 0 && (
+              <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-destructive/10 border border-destructive/20 w-fit">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-destructive"></span>
+                </span>
+                <Eye className="h-3.5 w-3.5 text-destructive" />
+                <span className="text-sm font-medium text-destructive">{watchingCount} people are viewing this right now</span>
+              </div>
+            )}
 
             {product.short_description && (
               <div className="mb-4">
