@@ -314,9 +314,6 @@ export default function Contact() {
                               <><Send className="h-4 w-4" />{t('store.sendMessage')}</>
                             )}
                           </Button>
-                          <p className="text-xs text-muted-foreground text-center">
-                            Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">⌘</kbd> + <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">Enter</kbd> to send
-                          </p>
                         </form>
                       </Form>
                     </CardContent>
