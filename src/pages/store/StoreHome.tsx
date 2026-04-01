@@ -18,7 +18,7 @@ import { NewArrivalsSection } from "@/components/store/NewArrivalsSection";
 import { PromoBannerSection } from "@/components/store/PromoBannerSection";
 import { FlashSaleSection } from "@/components/store/FlashSaleSection";
 import { TestimonialsSection } from "@/components/store/TestimonialsSection";
-import { LookbookSection } from "@/components/store/LookbookSection";
+
 import { useSiteTitle } from "@/components/DynamicTitleProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 
