@@ -37,6 +37,7 @@ export function StoreHeader() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCategory, setSearchCategory] = useState("all");
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const { data: settings } = useStoreSettingsCache();
   const { data: headerContent } = usePageContent("header");
   const { itemCount, setIsOpen: setCartOpen } = useCart();
