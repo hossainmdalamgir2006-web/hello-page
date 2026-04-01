@@ -276,39 +276,39 @@ export default function StoreHome() {
 
       {/* 12. Newsletter */}
       {isEnabled(newsletter) && (
-        <section className="relative py-20 overflow-hidden">
+        <section className="relative py-10 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-store-primary via-store-primary/90 to-store-highlight" />
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-          
-          <div className="container mx-auto px-4 text-center max-w-2xl relative z-10">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-8">
-              {newsletter?.title || "Subscribe Newsletter"}
-            </h2>
-            <form
-              onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
-              className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-            >
-              <div className="flex-1 relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50 pointer-events-none" />
-                <Input
-                  type="email"
-                  placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
-                  className="w-full h-12 pl-12 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  disabled={newsletterLoading}
-                />
-              </div>
-              <Button
-                type="submit"
-                size="lg"
-                className="h-12 px-8 bg-white text-store-primary hover:bg-white/90 font-semibold"
-                disabled={newsletterLoading}
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 max-w-3xl mx-auto">
+              <h2 className="font-display text-xl md:text-2xl font-bold text-white whitespace-nowrap shrink-0">
+                {newsletter?.title || "Subscribe Newsletter"}
+              </h2>
+              <form
+                onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
+                className="flex w-full max-w-md"
               >
-                {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
-              </Button>
-            </form>
-            <p className="text-white/40 text-xs mt-4">Join 5,000+ subscribers. No spam, unsubscribe anytime.</p>
+                <div className="flex-1 relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
+                  <Input
+                    type="email"
+                    placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
+                    className="w-full h-10 pl-10 pr-3 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25 rounded-r-none"
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    disabled={newsletterLoading}
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="h-10 px-5 bg-white text-store-primary hover:bg-white/90 font-semibold rounded-l-none gap-2"
+                  disabled={newsletterLoading}
+                >
+                  <Mail className="h-4 w-4" />
+                  {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
+                </Button>
+              </form>
+            </div>
           </div>
         </section>
       )}
