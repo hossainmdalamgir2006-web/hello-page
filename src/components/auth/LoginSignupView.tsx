@@ -112,7 +112,7 @@ export function LoginSignupView({
                 </div>
                 <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={loading}>
                   {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  {loading ? t('store.creatingAccount') : t('store.createAccountBtn')}
+                  {loading ? t('store.creatingAccount') : 'Create Account'}
                 </Button>
               </form>
             </TabsContent>
