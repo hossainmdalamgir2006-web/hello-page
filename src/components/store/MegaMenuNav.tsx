@@ -83,7 +83,9 @@ export function MegaMenuNav() {
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, []);
 
-  const staticPages = [
+  const menuLinks = [
+    { label: "New Arrivals", href: "/products?sort=newest" },
+    { label: "Flash Sale", href: "/products?flash_sale=true" },
     { label: t('store.contactUs'), href: "/contact" },
     { label: t('store.trackOrder'), href: "/track-order" },
     { label: t('store.shippingInfo'), href: "/shipping-info" },
@@ -155,7 +157,7 @@ export function MegaMenuNav() {
         </div>
       ))}
 
-      {staticPages.map((page) => (
+      {menuLinks.map((page) => (
         <Link
           key={page.label}
           to={page.href}
@@ -235,6 +237,8 @@ export function MobileMegaMenu({ onClose }: MobileMegaMenuProps) {
 
       <div className="border-t border-store-muted mt-2 pt-2">
         {[
+          { label: "New Arrivals", href: "/products?sort=newest" },
+          { label: "Flash Sale", href: "/products?flash_sale=true" },
           { label: t('store.contactUs'), href: "/contact" },
           { label: t('store.trackOrder'), href: "/track-order" },
           { label: t('store.shippingInfo'), href: "/shipping-info" },
