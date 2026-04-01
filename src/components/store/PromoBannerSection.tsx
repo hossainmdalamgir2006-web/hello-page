@@ -33,7 +33,7 @@ export function PromoBannerSection({ banners: propBanners }: PromoBannerSectionP
   const items = propBanners && propBanners.length > 0 ? propBanners : defaultBanners;
 
   return (
-    <section className="py-16 bg-store-background">
+    <section className="py-10 bg-store-background">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-5">
           {items.slice(0, 2).map((banner: PromoBanner, i: number) => (

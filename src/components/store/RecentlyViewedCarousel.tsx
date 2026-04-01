@@ -11,7 +11,7 @@ export function RecentlyViewedCarousel() {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-14 bg-store-background">
+    <section className="py-10 bg-store-background">
       <div className="container mx-auto px-4">
         <div className="flex items-center gap-2 mb-6">
           <Clock className="h-5 w-5 text-muted-foreground" />
