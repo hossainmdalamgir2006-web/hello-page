@@ -36,6 +36,8 @@ export default function TrackOrder() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const orderFromUrl = searchParams.get('order');
   const [orderNumber, setOrderNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [orderError, setOrderError] = useState("");
