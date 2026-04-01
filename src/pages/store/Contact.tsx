@@ -130,21 +130,6 @@ export default function Contact() {
         }}
       />
 
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="container mx-auto px-4 py-3">
-        <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <li>
-            <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1">
-              <Home className="h-3.5 w-3.5" />
-              <span>Home</span>
-            </Link>
-          </li>
-          <li className="flex items-center gap-1.5">
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-foreground font-medium">Contact</span>
-          </li>
-        </ol>
-      </nav>
 
       {/* Hero Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
