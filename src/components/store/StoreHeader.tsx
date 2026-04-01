@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingBag, Search, Menu, User, Heart, LogOut, LayoutDashboard } from "lucide-react";
+import { ShoppingBag, Search, Menu, User, Heart, LogOut, LayoutDashboard, X } from "lucide-react";
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ export function StoreHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCategory, setSearchCategory] = useState("all");
+  const [bannerDismissed, setBannerDismissed] = useState(false);
   const { data: settings } = useStoreSettingsCache();
   const { data: headerContent } = usePageContent("header");
   const { itemCount, setIsOpen: setCartOpen } = useCart();
@@ -65,9 +66,16 @@ export function StoreHeader() {
   return (
     <header className="sticky top-0 z-50 bg-store-card/95 backdrop-blur-md border-b border-store-muted">
       {/* Top Banner */}
-      {(headerContent?.content as any)?.banner_enabled !== false && (
-        <div className="bg-gradient-to-r from-store-primary via-store-secondary to-store-accent text-store-primary-foreground py-2 text-center text-sm font-medium">
-          {(headerContent?.content as any)?.banner_text || "🔥 Free Shipping on Orders Over ৳2,000!"}
+      {(headerContent?.content as any)?.banner_enabled !== false && !bannerDismissed && (
+        <div className="bg-gradient-to-r from-store-primary via-store-secondary to-store-accent text-store-primary-foreground py-2 text-center text-sm font-medium relative">
+          <span>{(headerContent?.content as any)?.banner_text || "🔥 Free Shipping on Orders Over ৳2,000 | Use Code: EKTA20 for 20% Off"}</span>
+          <button
+            onClick={() => setBannerDismissed(true)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"
+            aria-label="Close banner"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       )}
 
@@ -115,15 +123,15 @@ export function StoreHeader() {
 
           {/* Center Search Bar — Desktop */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-4">
-            <div className="flex w-full rounded-lg border border-store-muted overflow-hidden bg-background">
+            <div className="flex w-full rounded-full border-2 border-store-primary/30 overflow-hidden bg-background shadow-sm hover:shadow-md hover:border-store-primary/50 transition-all">
               <Input
                 placeholder={t('store.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
+                className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none bg-transparent pl-5"
               />
               <Select value={searchCategory} onValueChange={setSearchCategory}>
-                <SelectTrigger className="w-[160px] border-0 border-l border-store-muted rounded-none focus:ring-0 focus:ring-offset-0 bg-store-muted/30 text-sm">
+                <SelectTrigger className="w-[160px] border-0 border-l border-store-muted/40 rounded-none focus:ring-0 focus:ring-offset-0 bg-store-muted/20 text-sm">
                   <SelectValue placeholder={t('store.allCategories')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -138,7 +146,7 @@ export function StoreHeader() {
               <Button
                 type="submit"
                 size="icon"
-                className="rounded-none bg-store-primary hover:bg-store-primary/90 text-store-primary-foreground shrink-0"
+                className="rounded-none rounded-r-full bg-store-primary hover:bg-store-primary/90 text-store-primary-foreground shrink-0 w-12"
               >
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>
