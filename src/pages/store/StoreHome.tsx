@@ -137,6 +137,9 @@ export default function StoreHome() {
         </section>
       )}
 
+      {/* Brand Logos Marquee */}
+      <BrandMarquee />
+
       {/* 3. Categories Grid */}
       {isEnabled(categoriesGrid) && (
         <CategoryGrid
