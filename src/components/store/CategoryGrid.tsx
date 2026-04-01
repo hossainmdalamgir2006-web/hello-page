@@ -42,7 +42,7 @@ export function CategoryGrid({ title, subtitle, categories }: CategoryGridProps)
   const cats = categories && categories.length > 0 ? categories : dbCategories;
 
   return (
-    <section className="py-16 bg-store-background">
+    <section className="py-10 bg-store-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-3 relative inline-block">

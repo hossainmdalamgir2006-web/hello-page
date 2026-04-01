@@ -22,7 +22,7 @@ export function BrandMarquee() {
   const items = [...brands, ...brands];
 
   return (
-    <section className="py-8 bg-store-card border-b border-store-muted overflow-hidden">
+    <section className="py-5 bg-store-card border-b border-store-muted overflow-hidden">
       <div className="container mx-auto px-4 mb-4">
         <p className="text-xs uppercase tracking-widest text-muted-foreground text-center font-medium">
           Trusted Brands

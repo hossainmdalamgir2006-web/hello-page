@@ -89,7 +89,7 @@ export function FlashSaleSection({
   if (expired && endTime) return null;
 
   return (
-    <section className="py-16 bg-gradient-to-br from-store-primary via-store-secondary to-store-primary text-white">
+    <section className="py-10 bg-gradient-to-br from-store-primary via-store-secondary to-store-primary text-white">
       <div className="container mx-auto px-4">
         {/* Header with countdown */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
