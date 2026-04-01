@@ -65,7 +65,7 @@
     --store-accent-foreground: 0 0% 10%;
     --store-highlight: 199 89% 48%;
     --store-background: 150 20% 97%;
-    --store-card: 0 0% 100%;
+    --store-card: 0 0% 99%;
     --store-muted: 150 14% 93%;
 
     --gradient-primary: linear-gradient(135deg, hsl(222 47% 20%) 0%, hsl(222 47% 30%) 100%);
