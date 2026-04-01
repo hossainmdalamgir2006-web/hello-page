@@ -1,47 +1,45 @@
 
 
-## Contact Page — Possible Updates
+## FAQ Page — Possible Updates
 
-Current page has a basic 2-column layout: form on left, info cards on right. Here are improvements you can choose from:
+Current page টা খুব basic — শুধু title, subtitle আর plain accordion। এগুলো improve করা যায়:
 
 ### 1. Visual Design Upgrade
-- Add a gradient/colored hero banner at the top with title & subtitle
-- Add decorative background elements (dots, circles, patterns)
-- Modernize the form card with subtle shadows, rounded corners, hover effects
-- Info cards-এ gradient icon backgrounds ও hover animations
+- Gradient hero banner with title & subtitle
+- Decorative background elements
+- Accordion cards-এ modern styling — rounded corners, shadows, hover effects, icon colors
 
-### 2. Google Map Embed
-- Info cards-এর নিচে বা page-এর শেষে একটি embedded Google Map যোগ করা
-- Store location visually দেখানো
+### 2. Category/Tab Filter
+- FAQ গুলো category অনুযায়ী ভাগ করা (Orders, Payment, Shipping, Returns, General)
+- Tab বা badge click করে filter করা যাবে
 
-### 3. FAQ Section
-- Contact form-এর নিচে frequently asked questions accordion যোগ করা
-- Common questions answer করলে support load কমবে
+### 3. Search Bar
+- FAQ-তে live search — type করলে matching questions filter হবে
+- "No results" state with suggestion
 
-### 4. Social Media Links
-- Info cards-এর সাথে social media icons (Facebook, Instagram, WhatsApp) যোগ করা
-- Direct WhatsApp chat button
+### 4. Contact CTA Section
+- FAQ-এর নিচে "Still have questions?" section
+- Contact page-এ redirect button
 
-### 5. Success Animation
-- Form submit হলে সুন্দর success animation (checkmark, confetti) দেখানো
-- AnimatePresence দিয়ে form → success state transition
+### 5. FAQ Item Icons
+- প্রতিটি FAQ item-এ category-based icon (Package, CreditCard, Truck, etc.)
 
-### 6. Character Counter
-- Message textarea-তে live character counter (e.g., "45/1000")
+### 6. Animated Transitions
+- Framer Motion দিয়ে smooth entry animations
+- Staggered accordion items
 
-### 7. Subject/Topic Dropdown
-- "What is this about?" dropdown যোগ করা (Order Issue, Return, General Query, etc.)
-- Admin panel-এ messages categorize করতে সুবিধা হবে
+### 7. "Was this helpful?" Feedback
+- প্রতিটি answer-এর নিচে thumbs up/down button
+- User feedback collect করা যাবে
 
-### 8. Mobile Layout Optimization
-- Mobile-এ info cards আগে, form পরে দেখানো
-- Sticky submit button on mobile
+### 8. Breadcrumb Navigation
+- Page top-এ Home > FAQ breadcrumb
 
-### 9. Business Hours Live Status
-- Clock card-এ "Open Now" / "Closed" live indicator দেখানো
+### 9. More Default FAQs
+- আরো relevant default questions যোগ করা (Shipping, Returns, Size Guide, Account, etc.)
 
-### 10. Breadcrumb Navigation
-- Page-এর top-এ Home > Contact breadcrumb যোগ করা
+### 10. Expand/Collapse All Button
+- একটা button দিয়ে সব FAQ একসাথে open/close করা
 
 ---
 
