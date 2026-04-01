@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, ChevronRight } from "lucide-react";
 import { useCategoriesCache, CategoryRow } from "@/hooks/useCategoriesCache";
 import { useLanguage } from "@/contexts/LanguageContext";
 
