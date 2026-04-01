@@ -55,13 +55,13 @@ export function LoginSignupView({
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">{t('store.signInTab')}</TabsTrigger>
-              <TabsTrigger value="signup">{t('store.signUpTab')}</TabsTrigger>
+              <TabsTrigger value="login">Sign In</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">{t('store.emailLabel')}</Label>
+                  <Label htmlFor="login-email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input id="login-email" type="email" placeholder="you@example.com" className="pl-10" value={loginData.email} onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))} required />
@@ -69,8 +69,8 @@ export function LoginSignupView({
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="login-password">{t('store.passwordLabel')}</Label>
-                    <button type="button" onClick={onForgotPassword} className="text-xs text-store-primary hover:underline">{t('store.forgotPasswordQ')}</button>
+                    <Label htmlFor="login-password">Password</Label>
+                    <button type="button" onClick={onForgotPassword} className="text-xs text-store-primary hover:underline">Forgot Password?</button>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -82,25 +82,25 @@ export function LoginSignupView({
                 </div>
                 <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={loading}>
                   {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  {loading ? t('store.signingIn') : t('store.signInTab')}
+                  {loading ? t('store.signingIn') : 'Sign In'}
                 </Button>
               </form>
             </TabsContent>
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">{t('store.fullNameLabel')}</Label>
+                  <Label htmlFor="signup-name">Full Name</Label>
                   <Input id="signup-name" type="text" placeholder="John Doe" value={signupData.fullName} onChange={(e) => setSignupData(prev => ({ ...prev, fullName: e.target.value }))} required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">{t('store.emailLabel')}</Label>
+                  <Label htmlFor="signup-email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input id="signup-email" type="email" placeholder="you@example.com" className="pl-10" value={signupData.email} onChange={(e) => setSignupData(prev => ({ ...prev, email: e.target.value }))} required />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">{t('store.passwordLabel')}</Label>
+                  <Label htmlFor="signup-password">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input id="signup-password" type={showPassword ? 'text' : 'password'} placeholder="••••••••" className="pl-10 pr-10" value={signupData.password} onChange={(e) => setSignupData(prev => ({ ...prev, password: e.target.value }))} required minLength={6} />
@@ -108,11 +108,11 @@ export function LoginSignupView({
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">{t('store.minChars')}</p>
+                  <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
                 </div>
                 <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={loading}>
                   {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  {loading ? t('store.creatingAccount') : t('store.createAccountBtn')}
+                  {loading ? t('store.creatingAccount') : 'Create Account'}
                 </Button>
               </form>
             </TabsContent>
@@ -128,7 +128,7 @@ export function LoginSignupView({
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
-            {t('store.continueGoogle')}
+            Continue with Google
           </Button>
           <p className="text-xs text-center text-muted-foreground mt-6">
             {t('store.byContinuing')}{" "}
