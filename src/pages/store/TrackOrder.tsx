@@ -162,7 +162,7 @@ export default function TrackOrder() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className="p-4 border rounded-xl hover:border-store-primary/50 cursor-pointer transition-all hover:shadow-md bg-card"
-      onClick={() => navigate(`/track/${order.orderNumber}`)}
+      onClick={() => navigate(`/track-order?order=${order.orderNumber}`)}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
