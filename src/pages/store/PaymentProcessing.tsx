@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Loader2, ShieldCheck, CreditCard, CheckCircle, ArrowRight } from "lucide-react";
+import { Loader2, ShieldCheck, CreditCard, CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { SEOHead } from "@/components/SEOHead";
 import { Progress } from "@/components/ui/progress";
@@ -8,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 interface PaymentProcessingState {
   gatewayName: string;
   gatewayLogo?: string | null;
-  orderData: any; // The full order confirmation state to forward
+  orderData: any;
 }
 
 const STEPS = [
@@ -48,7 +49,6 @@ export default function PaymentProcessing() {
     const runSteps = (stepIndex: number) => {
       if (stepIndex >= STEPS.length) {
         clearInterval(progressInterval);
-        // Navigate to order confirmation with full order data
         navigate("/order-confirmation", {
           state: state.orderData,
           replace: true,
@@ -75,7 +75,7 @@ export default function PaymentProcessing() {
       <div className="container mx-auto px-4 py-16 max-w-lg">
         <div className="text-center space-y-8">
           {/* Gateway Header */}
-          <div className="space-y-4">
+          <motion.div className="space-y-4" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
             <div className="w-20 h-20 mx-auto rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
               {gatewayLogo ? (
                 <img src={gatewayLogo} alt={gatewayName} className="w-12 h-12 object-contain" />
@@ -91,17 +91,20 @@ export default function PaymentProcessing() {
                 Secure Payment Processing
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Progress */}
-          <div className="space-y-4">
+          <motion.div className="space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Progress value={progress} className="h-2" />
             
             {/* Steps */}
             <div className="space-y-3">
               {STEPS.map((step, idx) => (
-                <div
+                <motion.div
                   key={idx}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: idx <= currentStep ? 1 : 0.3, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
                   className={`flex items-center gap-3 text-sm transition-all duration-300 ${
                     idx < currentStep
                       ? "text-green-600 dark:text-green-400"
@@ -120,10 +123,10 @@ export default function PaymentProcessing() {
                     )}
                   </div>
                   <span>{step.label}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Security Badge */}
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-4 border-t border-border">
