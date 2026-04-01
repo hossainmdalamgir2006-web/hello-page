@@ -300,6 +300,19 @@ const Index = () => {
       {/* Widget Grid */}
       <div className="grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {visibleWidgets.map((widget) => {
+          // Sales Chart + Top Products side by side (forced group)
+          if (widget.type === "salesChart") {
+            const topProductsWidget = visibleWidgets.find(w => w.type === "topProducts");
+            return (
+              <div key="charts-group" className="md:col-span-2 lg:col-span-4 grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-2">
+                {renderWidget({ ...widget, type: "salesChart__inner" as any })}
+                {topProductsWidget && renderWidget({ ...topProductsWidget, type: "topProducts__inner" as any })}
+              </div>
+            );
+          }
+          // Skip topProducts since it's rendered in the charts group above
+          if (widget.type === "topProducts") return null;
+
           // Group Goal Tracker, Activity Feed, Return Requests into a 3-col sub-grid
           if (widget.type === "goalTracker") {
             const activityWidget = visibleWidgets.find(w => w.type === "activityFeed");
