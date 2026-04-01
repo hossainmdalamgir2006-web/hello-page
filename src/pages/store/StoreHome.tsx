@@ -276,37 +276,55 @@ export default function StoreHome() {
 
       {/* 12. Newsletter */}
       {isEnabled(newsletter) && (
-        <section className="relative py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-store-primary via-store-primary/90 to-store-highlight" />
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-          
-          <div className="container mx-auto px-4 text-center max-w-2xl relative z-10">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-8">
-              {newsletter?.title || "Subscribe Newsletter"}
-            </h2>
-            <form
-              onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
-              className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-            >
-              <Mail className="h-6 w-6 text-white/70 shrink-0" />
-              <Input
-                type="email"
-                placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
-                className="flex-1 h-12 bg-white/15 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm focus:bg-white/25"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                disabled={newsletterLoading}
-              />
-              <Button
-                type="submit"
-                size="lg"
-                className="h-12 px-8 bg-white text-store-primary hover:bg-white/90 font-semibold"
-                disabled={newsletterLoading}
-              >
-                {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
-              </Button>
-            </form>
-            <p className="text-white/40 text-xs mt-4">Join 5,000+ subscribers. No spam, unsubscribe anytime.</p>
+        <section className="relative py-16 md:py-20 overflow-hidden bg-store-background">
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden">
+              {/* Card background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-store-primary via-store-highlight to-store-secondary" />
+              <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
+              {/* Glow effects */}
+              <div className="absolute -top-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-store-accent/15 rounded-full blur-3xl" />
+
+              <div className="relative z-10 px-6 py-12 md:px-16 md:py-14 flex flex-col md:flex-row items-center gap-8">
+                {/* Left content */}
+                <div className="flex-1 text-center md:text-left">
+                  <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 mb-4 border border-white/20">
+                    <Mail className="h-3.5 w-3.5 text-white" />
+                    <span className="text-white/80 text-xs font-medium uppercase tracking-wider">Newsletter</span>
+                  </div>
+                  <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-2">
+                    {newsletter?.title || "Subscribe Newsletter"}
+                  </h2>
+                  <p className="text-white/55 text-sm">Get exclusive deals, new arrivals & style tips delivered weekly.</p>
+                </div>
+
+                {/* Right form */}
+                <div className="w-full md:w-auto md:min-w-[340px]">
+                  <form
+                    onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}
+                    className="flex rounded-xl overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 p-1.5"
+                  >
+                    <Input
+                      type="email"
+                      placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
+                      className="flex-1 h-10 border-0 bg-transparent text-white placeholder:text-white/40 focus-visible:ring-0 focus-visible:ring-offset-0 pl-3 text-sm"
+                      value={newsletterEmail}
+                      onChange={(e) => setNewsletterEmail(e.target.value)}
+                      disabled={newsletterLoading}
+                    />
+                    <Button
+                      type="submit"
+                      className="h-10 px-5 rounded-lg bg-white text-store-primary hover:bg-white/90 font-semibold text-sm shadow-lg transition-transform hover:scale-[1.02]"
+                      disabled={newsletterLoading}
+                    >
+                      {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
+                    </Button>
+                  </form>
+                  <p className="text-white/30 text-[11px] mt-2.5 text-center md:text-left pl-1">Join 5,000+ subscribers · No spam · Unsubscribe anytime</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       )}
