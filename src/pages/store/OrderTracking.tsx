@@ -310,8 +310,10 @@ export default function OrderTracking() {
     <>
       <SEOHead title={`Track Order ${order.order_number}`} description="Track your order status and delivery progress." noIndex={true} />
       {/* Header */}
-      <section className="bg-gradient-to-r from-store-primary to-store-secondary py-6">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-8 overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"

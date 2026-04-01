@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { SEOHead } from "@/components/SEOHead";
 import { CheckCircle, XCircle, AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,9 +30,15 @@ export default function PaymentCallback() {
       <>
         <SEOHead title="Payment Status" description="Payment result" noIndex={true} />
         <div className="container mx-auto px-4 py-16 max-w-lg text-center space-y-6">
-          <div className="w-20 h-20 mx-auto rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center"><CheckCircle className="w-10 h-10 text-green-600" /></div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Payment Successful!</h1>
-          <p className="text-muted-foreground">Your payment has been processed successfully. Redirecting to order confirmation...</p>
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
+            <div className="w-20 h-20 mx-auto rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 text-green-600" />
+            </div>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+            <h1 className="font-display text-2xl font-bold text-foreground">Payment Successful!</h1>
+            <p className="text-muted-foreground mt-2">Your payment has been processed successfully. Redirecting to order confirmation...</p>
+          </motion.div>
           <Loader2 className="w-6 h-6 mx-auto animate-spin text-muted-foreground" />
         </div>
       </>
@@ -41,13 +48,19 @@ export default function PaymentCallback() {
   if (status === "fail") {
     return (
       <div className="container mx-auto px-4 py-16 max-w-lg text-center space-y-6">
-        <div className="w-20 h-20 mx-auto rounded-full bg-destructive/10 flex items-center justify-center"><XCircle className="w-10 h-10 text-destructive" /></div>
-        <h1 className="font-display text-2xl font-bold text-foreground">Payment Failed</h1>
-        <p className="text-muted-foreground">Your payment could not be processed. Please try again or use a different payment method.</p>
-        <div className="flex gap-3 justify-center">
-          <Button variant="outline" onClick={() => navigate("/")}>Go Home</Button>
-          <Button onClick={() => navigate("/checkout")}>Try Again</Button>
-        </div>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
+          <div className="w-20 h-20 mx-auto rounded-full bg-destructive/10 flex items-center justify-center">
+            <XCircle className="w-10 h-10 text-destructive" />
+          </div>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <h1 className="font-display text-2xl font-bold text-foreground">Payment Failed</h1>
+          <p className="text-muted-foreground mt-2">Your payment could not be processed. Please try again or use a different payment method.</p>
+          <div className="flex gap-3 justify-center mt-6">
+            <Button variant="outline" onClick={() => navigate("/")}>Go Home</Button>
+            <Button onClick={() => navigate("/checkout")}>Try Again</Button>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -55,13 +68,19 @@ export default function PaymentCallback() {
   if (status === "cancel") {
     return (
       <div className="container mx-auto px-4 py-16 max-w-lg text-center space-y-6">
-        <div className="w-20 h-20 mx-auto rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center"><AlertTriangle className="w-10 h-10 text-amber-600" /></div>
-        <h1 className="font-display text-2xl font-bold text-foreground">Payment Cancelled</h1>
-        <p className="text-muted-foreground">You have cancelled the payment. Your order has been saved — you can try paying again.</p>
-        <div className="flex gap-3 justify-center">
-          <Button variant="outline" onClick={() => navigate("/")}>Go Home</Button>
-          <Button onClick={() => navigate("/checkout")}>Back to Checkout</Button>
-        </div>
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
+          <div className="w-20 h-20 mx-auto rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+            <AlertTriangle className="w-10 h-10 text-amber-600" />
+          </div>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <h1 className="font-display text-2xl font-bold text-foreground">Payment Cancelled</h1>
+          <p className="text-muted-foreground mt-2">You have cancelled the payment. Your order has been saved — you can try paying again.</p>
+          <div className="flex gap-3 justify-center mt-6">
+            <Button variant="outline" onClick={() => navigate("/")}>Go Home</Button>
+            <Button onClick={() => navigate("/checkout")}>Back to Checkout</Button>
+          </div>
+        </motion.div>
       </div>
     );
   }

@@ -158,11 +158,21 @@ export default function Cart() {
     <>
       <SEOHead title={t('store.shoppingCart')} description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
       {/* Page Header */}
-      <section className="bg-gradient-to-r from-store-primary to-store-secondary py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">
-            {t('store.shoppingCart')}
-          </h1>
+      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-10 overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <ShoppingBag className="h-5 w-5 text-store-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">
+                {t('store.shoppingCart')}
+              </h1>
+              <p className="text-store-primary-foreground/70 text-sm">{items.length} {items.length === 1 ? 'item' : 'items'} in your bag</p>
+            </div>
+          </div>
         </div>
       </section>
 
