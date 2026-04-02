@@ -111,13 +111,10 @@ export default function Contact() {
 
   const title = pageData?.title || t('store.contactTitle');
   const subtitle = pageData?.subtitle || t('store.contactSubtitle');
-  const formTitle = (pageData?.content as any)?.form_title || t('store.sendUsMessage');
-  const cards = (pageData?.content as any)?.cards || [
-    { icon: "map-pin", title: "Visit Us", text: "Dhaka, Bangladesh" },
-    { icon: "phone", title: "Call Us", text: "+880 1XXX-XXXXXX" },
-    { icon: "mail", title: "Email Us", text: "hello@gmail.com" },
-    { icon: "clock", title: "Business Hours", text: "Sun - Thu: 10AM - 8PM\nFri - Sat: Closed" },
-  ];
+  const contentData = (pageData?.content || {}) as any;
+  const formTitle = contentData.form_title || t('store.sendUsMessage');
+  const cards = contentData.cards || [];
+  const faqItems: FaqItem[] = contentData.faqs || [];
 
   if (pageLoading) {
     return (

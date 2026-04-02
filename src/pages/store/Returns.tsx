@@ -242,7 +242,7 @@ export default function Returns() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
             <h2 className="font-display text-2xl font-bold mb-6">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="space-y-3">
-              {defaultFaqs.map((faq, i) => (
+              {faqs.map((faq: any, i: number) => (
                 <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-5 bg-card shadow-sm">
                   <AccordionTrigger className="hover:no-underline text-left">
                     <div className="flex items-center gap-3">

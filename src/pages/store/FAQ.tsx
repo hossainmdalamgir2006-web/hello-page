@@ -39,27 +39,12 @@ const categoryConfig: Record<Exclude<FaqCategory, "all">, { label: string; icon:
   general: { label: "General", icon: HelpCircle, color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300" },
 };
 
-const defaultFaqs: FaqItem[] = [
-  { question: "How do I track my order?", answer: "You can track your order by visiting our Track Order page and entering your order number. You'll receive tracking updates via email and SMS.", category: "orders" },
-  { question: "How long does delivery take?", answer: "Inside Dhaka delivery takes 1-2 business days. Outside Dhaka takes 3-5 business days. You'll get an estimated delivery date at checkout.", category: "shipping" },
-  { question: "What payment methods do you accept?", answer: "We accept bKash, Nagad, Rocket, bank transfers, and Cash on Delivery (COD). All digital payments are secured and encrypted.", category: "payment" },
-  { question: "Can I pay Cash on Delivery?", answer: "Yes! COD is available for most locations. A small COD fee may apply depending on your area.", category: "payment" },
-  { question: "How do I return a product?", answer: "You can initiate a return within 7 days of delivery from your account dashboard. The product must be unused and in original packaging.", category: "returns" },
-  { question: "When will I get my refund?", answer: "Refunds are processed within 5-7 business days after we receive and inspect the returned item. The amount will be credited to your original payment method.", category: "returns" },
-  { question: "How do I find my size?", answer: "Check our Size Guide page for detailed measurements. Each product page also has a size chart specific to that item.", category: "general" },
-  { question: "Can I change or cancel my order?", answer: "You can modify or cancel your order within 1 hour of placing it. After that, the order enters processing and cannot be changed.", category: "orders" },
-  { question: "How do I create an account?", answer: "Click the Login button at the top of the page and select 'Sign Up'. You can register with your email address and set a password.", category: "account" },
-  { question: "Is my personal information safe?", answer: "Yes, we use industry-standard encryption to protect your data. We never share your personal information with third parties without consent.", category: "account" },
-  { question: "Do you offer free shipping?", answer: "Yes! Orders above ৳1,500 qualify for free shipping inside Dhaka. Outside Dhaka, free shipping applies on orders above ৳2,500.", category: "shipping" },
-  { question: "How do I apply a coupon code?", answer: "Enter your coupon code in the 'Promo Code' field at checkout and click Apply. The discount will be reflected in your order total.", category: "payment" },
-];
-
 export default function FAQ() {
   const { data, loading } = usePageContent("faq");
   const { t } = useLanguage();
   const title = data?.title || t("store.faqTitle");
   const subtitle = data?.subtitle || t("store.faqSubtitle");
-  const faqs: FaqItem[] = (data?.content as any)?.faqs || defaultFaqs;
+  const faqs: FaqItem[] = (data?.content as any)?.faqs || [];
 
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<FaqCategory>("all");
