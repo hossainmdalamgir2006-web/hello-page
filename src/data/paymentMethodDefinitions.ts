@@ -704,7 +704,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
         label_bn: "চার্জের ধরন",
         type: "select",
         options: [
-          { value: "fixed", label: "Fixed Amount (৳)" },
+          { value: "fixed", label: "Fixed Amount (BDT)" },
           { value: "percentage", label: "Percentage (%)" },
         ],
         dependsOn: "cod_charge_enabled",
