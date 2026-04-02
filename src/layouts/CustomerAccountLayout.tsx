@@ -24,7 +24,7 @@ const pageTitles: Record<string, { title: string; description: string }> = {
   "/myaccount/notification-preferences": { title: "Notification Preferences", description: "Manage your notification settings" },
   "/myaccount/personal-info": { title: "Settings", description: "Account preferences" },
   "/myaccount/password": { title: "Change Password", description: "Update your account password" },
-  "/myaccount/payment-methods": { title: "Payment Methods", description: "Manage your saved payment methods" },
+  
   "/myaccount/invoices": { title: "Invoices", description: "Download your order invoices" },
 };
 
