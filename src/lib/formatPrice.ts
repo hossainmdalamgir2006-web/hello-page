@@ -4,7 +4,7 @@
  * Format a BDT amount.
  */
 export function formatPrice(amountInBDT: number): string {
-  return `৳${amountInBDT.toLocaleString("en-BD")}`;
+  return `BDT ${amountInBDT.toLocaleString("en-BD")}`;
 }
 
 export function getSelectedCurrencyCode(): string {
