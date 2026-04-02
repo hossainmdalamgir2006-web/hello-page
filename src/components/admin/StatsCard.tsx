@@ -23,15 +23,23 @@ const borderAccent = {
   warning: "border-l-warning",
 };
 
+const cardBgClasses = {
+  primary: "bg-primary/5 dark:bg-primary/10",
+  accent: "bg-accent/5 dark:bg-accent/10",
+  success: "bg-success/5 dark:bg-success/10",
+  warning: "bg-warning/5 dark:bg-warning/10",
+};
+
 export function StatsCard({ title, value, change, icon: Icon, iconBg = "primary" }: StatsCardProps) {
   const isPositive = change >= 0;
 
   return (
     <div className={cn(
-      "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+      "group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300",
       "hover:shadow-md hover:border-border hover:-translate-y-0.5",
       "border-l-[3px]",
       borderAccent[iconBg],
+      cardBgClasses[iconBg],
       "animate-fade-in"
     )}>
       <div className="flex items-center justify-between gap-2">
