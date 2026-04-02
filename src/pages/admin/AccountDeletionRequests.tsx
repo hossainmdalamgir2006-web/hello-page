@@ -139,45 +139,26 @@ export default function AccountDeletionRequests() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardContent className="pt-6">
+        {[
+          { label: "Pending", value: pendingCount, icon: Clock, border: "border-l-warning", iconBg: "bg-warning/10 text-warning", cardBg: "bg-warning/5 dark:bg-warning/10" },
+          { label: "Approved", value: requests.filter(r => r.status === 'approved').length, icon: CheckCircle, border: "border-l-success", iconBg: "bg-success/10 text-success", cardBg: "bg-success/5 dark:bg-success/10" },
+          { label: "Rejected", value: requests.filter(r => r.status === 'rejected').length, icon: XCircle, border: "border-l-destructive", iconBg: "bg-destructive/10 text-destructive", cardBg: "bg-destructive/5 dark:bg-destructive/10" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className={`rounded-xl border border-border/50 p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border} ${stat.cardBg}`}
+          >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-950/30">
-                <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+              <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <div>
-                <p className="text-2xl font-bold">{pendingCount}</p>
-                <p className="text-sm text-muted-foreground">Pending</p>
+              <div className="min-w-0">
+                <p className="text-xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{stat.label}</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-950/30">
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{requests.filter(r => r.status === 'approved').length}</p>
-                <p className="text-sm text-muted-foreground">Approved</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-950/30">
-                <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{requests.filter(r => r.status === 'rejected').length}</p>
-                <p className="text-sm text-muted-foreground">Rejected</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
 
       {/* Requests Table */}
