@@ -14,56 +14,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { formatPrice } from "@/lib/formatPrice";
 
-const defaultDeliveryOptions = [
-  { title: "Standard Delivery", text: "3-5 business days for orders within Dhaka. 5-7 business days for outside Dhaka." },
-  { title: "Express Delivery", text: "1-2 business days. Available for Dhaka city only. Additional charges apply." },
-  { title: "Same Day Delivery", text: "Order before 12 PM for same-day delivery within Dhaka. Subject to availability." },
-];
-
-const defaultDeliveryAreas = [
-  { title: "Inside Dhaka", text: "All areas within Dhaka city corporation. Delivery within 2-3 business days." },
-  { title: "Outside Dhaka", text: "All major districts across Bangladesh. Delivery within 5-7 business days." },
-  { title: "Remote Areas", text: "Char, Haor, and hill tract areas may take 7-10 business days." },
-];
-
-const shippingCosts = [
-  { area: "inside_dhaka", label: "Inside Dhaka", cost: 60, days: "2-3 days" },
-  { area: "outside_dhaka", label: "Outside Dhaka (Division Cities)", cost: 120, days: "3-5 days" },
-  { area: "suburban", label: "Suburban Areas", cost: 150, days: "5-7 days" },
-  { area: "remote", label: "Remote / Hill Tract Areas", cost: 200, days: "7-10 days" },
-];
-
-const timelineSteps = [
-  { icon: Package, label: "Order Placed", desc: "Your order is confirmed", day: "Day 0" },
-  { icon: Clock, label: "Processing", desc: "We're preparing your package", day: "Day 1" },
-  { icon: Truck, label: "Shipped", desc: "Handed to courier partner", day: "Day 1-2" },
-  { icon: CheckCircle2, label: "Delivered", desc: "At your doorstep!", day: "Day 2-7" },
-];
-
-const courierPartners = [
-  { name: "Steadfast", logo: "/logos/steadfast.svg" },
-  { name: "Pathao", logo: "/logos/pathao.svg" },
-  { name: "RedX", logo: "/logos/redx.svg" },
-  { name: "Paperfly", logo: "/logos/paperfly.svg" },
-  { name: "eCourier", logo: "/logos/ecourier.svg" },
-];
-
-const shippingFaqs = [
-  { q: "How much does shipping cost?", a: "Shipping costs vary by location. Inside Dhaka starts at ৳60, and outside Dhaka starts at ৳120. Free shipping on orders over ৳2,000.", category: "cost" as const },
-  { q: "How long does delivery take?", a: "Inside Dhaka: 2-3 business days. Outside Dhaka: 3-7 business days. Remote areas may take up to 10 days.", category: "time" as const },
-  { q: "Can I track my order?", a: "Yes! Once your order is shipped, you'll receive a tracking number via SMS and email. You can also track it on our Track Order page.", category: "tracking" as const },
-  { q: "Do you deliver outside Bangladesh?", a: "Currently we only deliver within Bangladesh. International shipping is coming soon!", category: "area" as const },
-  { q: "What if my package is damaged?", a: "If your package arrives damaged, please contact us within 24 hours with photos. We'll arrange a replacement or refund.", category: "issue" as const },
-  { q: "Can I change my delivery address?", a: "You can change your delivery address before the order is shipped. Contact our support team immediately.", category: "issue" as const },
-];
-
-const faqCategoryConfig: Record<string, { icon: any; color: string; label: string }> = {
-  cost: { icon: Calculator, color: "bg-green-100 text-green-700", label: "Cost" },
-  time: { icon: Clock, color: "bg-blue-100 text-blue-700", label: "Delivery Time" },
-  tracking: { icon: SearchIcon, color: "bg-purple-100 text-purple-700", label: "Tracking" },
-  area: { icon: MapPin, color: "bg-orange-100 text-orange-700", label: "Coverage" },
-  issue: { icon: HelpCircle, color: "bg-red-100 text-red-700", label: "Issues" },
-};
 
 export default function ShippingInfo() {
   const { data, loading } = usePageContent("shipping-info");
@@ -75,15 +25,28 @@ export default function ShippingInfo() {
   const [selectedArea, setSelectedArea] = useState("");
   const [helpfulFaqs, setHelpfulFaqs] = useState<Record<number, boolean | null>>({});
 
-  const deliveryOptions = (c.delivery_options?.length > 0) ? c.delivery_options : defaultDeliveryOptions;
-  const deliveryAreas = (c.delivery_areas?.length > 0) ? c.delivery_areas : defaultDeliveryAreas;
-  const processingText = c.processing_text || "Orders are typically processed within 24 hours during business days. Orders placed on weekends or holidays will be processed on the next business day.";
-  const trackingText = c.tracking_text || "Once your order is shipped, you'll receive an SMS and email with your tracking number. Use our Track Order page to get real-time updates on your delivery status.";
-  const notes = c.notes?.length > 0 ? c.notes : [
-    "Delivery times are estimates and may vary during peak seasons or holidays.",
-    "Cash on delivery (COD) is available for all areas.",
-    "Free shipping on orders above ৳2,000.",
-    "Fragile items are packaged with extra care at no additional cost.",
+  const deliveryOptions = c.delivery_options || [];
+  const deliveryAreas = c.delivery_areas || [];
+  const shippingCosts = c.shipping_costs || [];
+  const courierPartners = c.courier_partners || [];
+  const shippingFaqs = c.faqs || [];
+  const processingText = c.processing_text || "";
+  const trackingText = c.tracking_text || "";
+  const notes = c.notes || [];
+
+  const faqCategoryConfig: Record<string, { icon: any; color: string; label: string }> = {
+    cost: { icon: Calculator, color: "bg-green-100 text-green-700", label: "Cost" },
+    time: { icon: Clock, color: "bg-blue-100 text-blue-700", label: "Delivery Time" },
+    tracking: { icon: SearchIcon, color: "bg-purple-100 text-purple-700", label: "Tracking" },
+    area: { icon: MapPin, color: "bg-orange-100 text-orange-700", label: "Coverage" },
+    issue: { icon: HelpCircle, color: "bg-red-100 text-red-700", label: "Issues" },
+  };
+
+  const timelineSteps = [
+    { icon: Package, label: "Order Placed", desc: "Your order is confirmed", day: "Day 0" },
+    { icon: Clock, label: "Processing", desc: "We're preparing your package", day: "Day 1" },
+    { icon: Truck, label: "Shipped", desc: "Handed to courier partner", day: "Day 1-2" },
+    { icon: CheckCircle2, label: "Delivered", desc: "At your doorstep!", day: "Day 2-7" },
   ];
 
   const selectedCost = shippingCosts.find(s => s.area === selectedArea);
@@ -180,7 +143,7 @@ export default function ShippingInfo() {
                     <SelectValue placeholder="Select delivery area..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {shippingCosts.map(s => (
+                    {shippingCosts.map((s: any) => (
                       <SelectItem key={s.area} value={s.area}>{s.label}</SelectItem>
                     ))}
                   </SelectContent>
@@ -251,7 +214,7 @@ export default function ShippingInfo() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }} className="max-w-4xl mx-auto mb-12">
           <h2 className="font-display text-2xl font-bold mb-6 text-center">Our Courier Partners</h2>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-            {courierPartners.map((cp, i) => (
+            {courierPartners.map((cp: any, i: number) => (
               <motion.div key={cp.name} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 + i * 0.05 }} className="flex flex-col items-center gap-2 p-4 rounded-xl border bg-card hover:shadow-md transition-shadow">
                 <div className="w-16 h-12 flex items-center justify-center">
                   <img src={cp.logo} alt={cp.name} className="max-h-10 max-w-full object-contain" />
@@ -266,7 +229,7 @@ export default function ShippingInfo() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }} className="max-w-4xl mx-auto mb-12">
           <h2 className="font-display text-2xl font-bold mb-6 text-center">Shipping FAQ</h2>
           <Accordion type="single" collapsible className="space-y-3">
-            {shippingFaqs.map((faq, i) => {
+            {shippingFaqs.map((faq: any, i: number) => {
               const catConfig = faqCategoryConfig[faq.category];
               const CatIcon = catConfig?.icon || HelpCircle;
               return (

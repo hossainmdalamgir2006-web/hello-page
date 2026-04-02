@@ -78,10 +78,11 @@ export default function Returns() {
   const subtitle = data?.subtitle || t('store.returnsSubtitle') !== 'store.returnsSubtitle' ? (data?.subtitle || t('store.returnsSubtitle')) : "Easy returns and exchanges within 7 days. Your satisfaction is our priority.";
   const c = (data?.content || {}) as any;
 
-  const eligible = c.eligible?.length ? c.eligible : defaultEligible;
-  const notEligible = c.not_eligible?.length ? c.not_eligible : defaultNotEligible;
-  const steps = c.steps?.length ? c.steps : defaultSteps;
-  const refundInfo = c.refund_info?.length ? c.refund_info : defaultRefundInfo;
+  const eligible = c.eligible || [];
+  const notEligible = c.not_eligible || [];
+  const steps = c.steps || [];
+  const refundInfo = c.refund_info || [];
+  const faqs = c.faqs || [];
 
   if (loading) {
     return <div className="container mx-auto px-4 py-12"><Skeleton className="h-10 w-48 mx-auto" /></div>;
@@ -241,7 +242,7 @@ export default function Returns() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
             <h2 className="font-display text-2xl font-bold mb-6">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="space-y-3">
-              {defaultFaqs.map((faq, i) => (
+              {faqs.map((faq: any, i: number) => (
                 <AccordionItem key={i} value={`faq-${i}`} className="border rounded-xl px-5 bg-card shadow-sm">
                   <AccordionTrigger className="hover:no-underline text-left">
                     <div className="flex items-center gap-3">

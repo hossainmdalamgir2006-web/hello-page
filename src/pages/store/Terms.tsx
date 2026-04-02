@@ -28,75 +28,13 @@ interface Section {
   icon?: string;
 }
 
-const defaultSections: Section[] = [
-  {
-    heading: "Account Terms",
-    body: "By creating an account on our platform, you agree to the following terms and conditions.",
-    list: [
-      "You must be at least 18 years old to create an account",
-      "You are responsible for maintaining account security",
-      "One account per person — duplicate accounts may be removed",
-      "You must provide accurate and up-to-date information",
-    ],
-    icon: "usercheck",
-  },
-  {
-    heading: "Orders & Payments",
-    body: "All orders are subject to product availability and confirmation of the order price.",
-    list: [
-      "Prices are displayed in BDT and include applicable taxes",
-      "We reserve the right to refuse or cancel any order",
-      "Payment must be completed before order processing",
-      "Digital payment transactions are processed through secure third-party providers",
-    ],
-    icon: "creditcard",
-  },
-  {
-    heading: "Shipping & Delivery",
-    body: "We strive to deliver your orders within the estimated delivery time, but delays may occasionally occur.",
-    list: [
-      "Delivery times are estimates, not guarantees",
-      "Shipping costs are calculated at checkout based on location",
-      "Risk of loss transfers to you upon delivery",
-      "You must provide accurate delivery address information",
-    ],
-    icon: "truck",
-  },
-  {
-    heading: "Returns & Refunds",
-    body: "We want you to be completely satisfied with your purchase. Our return policy allows returns within the specified period.",
-    list: [
-      "Items must be returned within 7 days of delivery",
-      "Products must be unused and in original packaging",
-      "Refunds are processed within 5-7 business days",
-      "Certain items (undergarments, customized products) are non-returnable",
-    ],
-    icon: "rotateccw",
-  },
-  {
-    heading: "Intellectual Property",
-    body: "All content on this website, including text, graphics, logos, and images, is the property of our company and protected by intellectual property laws.",
-    list: [
-      "Content may not be reproduced without written permission",
-      "Our trademarks may not be used without authorization",
-      "User-generated content grants us a non-exclusive license",
-    ],
-    icon: "bookopen",
-  },
-  {
-    heading: "Limitation of Liability",
-    body: "To the fullest extent permitted by law, we shall not be liable for any indirect, incidental, or consequential damages arising from your use of our services.",
-    extra: "This limitation applies to damages of any kind, including but not limited to, loss of revenue, data, or profits.",
-    icon: "shieldcheck",
-  },
-];
-
 export default function Terms() {
   const { data, loading } = usePageContent("terms");
   const title = data?.title || "Terms of Service";
   const subtitle = data?.subtitle || "Please read these terms carefully before using our services.";
-  const sections: Section[] = (data?.content as any)?.sections || defaultSections;
-  const lastUpdated = "January 2024";
+  const contentData = (data?.content || {}) as any;
+  const sections: Section[] = contentData.sections || [];
+  const lastUpdated = contentData.last_updated || "January 2024";
 
   const scrollToSection = (index: number) => {
     document.getElementById(`terms-section-${index}`)?.scrollIntoView({ behavior: "smooth", block: "start" });

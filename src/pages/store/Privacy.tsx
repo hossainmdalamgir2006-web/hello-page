@@ -27,78 +27,13 @@ interface Section {
   icon?: string;
 }
 
-const defaultSections: Section[] = [
-  {
-    heading: "Information We Collect",
-    body: "We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us for support.",
-    list: [
-      "Personal details (name, email, phone number, address)",
-      "Payment information (processed securely, never stored on our servers)",
-      "Order history and preferences",
-      "Device information and browsing data",
-    ],
-    icon: "database",
-  },
-  {
-    heading: "How We Use Your Information",
-    body: "We use the information we collect to provide, maintain, and improve our services.",
-    list: [
-      "Process and fulfill your orders",
-      "Send order confirmations and shipping updates",
-      "Respond to your comments and questions",
-      "Personalize your shopping experience",
-      "Send promotional communications (with your consent)",
-    ],
-    icon: "eye",
-  },
-  {
-    heading: "Cookies & Tracking",
-    body: "We use cookies and similar tracking technologies to enhance your browsing experience and analyze site traffic.",
-    list: [
-      "Essential cookies for site functionality",
-      "Analytics cookies to understand usage patterns",
-      "Preference cookies to remember your settings",
-    ],
-    extra: "You can manage cookie preferences through your browser settings at any time.",
-    icon: "cookie",
-  },
-  {
-    heading: "Your Rights",
-    body: "You have the right to access, correct, or delete your personal information at any time.",
-    list: [
-      "Request a copy of your personal data",
-      "Update or correct inaccurate information",
-      "Request deletion of your account and data",
-      "Opt out of marketing communications",
-      "Withdraw consent for data processing",
-    ],
-    icon: "usercheck",
-  },
-  {
-    heading: "Data Security",
-    body: "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, or destruction.",
-    list: [
-      "SSL/TLS encryption for all data transfers",
-      "Secure payment processing through trusted providers",
-      "Regular security audits and updates",
-      "Limited employee access to personal data",
-    ],
-    icon: "shield",
-  },
-  {
-    heading: "Contact Us",
-    body: "If you have any questions about this Privacy Policy or our data practices, please contact us.",
-    extra: "Email: hello@gmail.com",
-    icon: "mail",
-  },
-];
-
 export default function Privacy() {
   const { data, loading } = usePageContent("privacy");
   const title = data?.title || "Privacy Policy";
   const subtitle = data?.subtitle || "Your privacy is important to us. Learn how we collect, use, and protect your personal information.";
-  const sections: Section[] = (data?.content as any)?.sections || defaultSections;
-  const lastUpdated = "January 2024";
+  const contentData = (data?.content || {}) as any;
+  const sections: Section[] = contentData.sections || [];
+  const lastUpdated = contentData.last_updated || "January 2024";
 
   const scrollToSection = (index: number) => {
     document.getElementById(`privacy-section-${index}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
