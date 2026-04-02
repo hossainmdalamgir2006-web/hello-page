@@ -465,7 +465,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Size Guide",
         defaultSubtitle: "Find your perfect fit with our comprehensive size charts and measurement guide.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { mens_sizes: "json", womens_sizes: "json", how_to_measure: "json", tips: "json", faqs: "json" },
+        contentSchema: { mens_sizes: "size_table", womens_sizes: "size_table", how_to_measure: "step_list", tips: "string_list", faqs: "faq_list" },
         defaultContent: {
           mens_sizes: [
             { size: "S", chest: "36\"", waist: "30\"", hip: "37\"", chest_cm: "91", waist_cm: "76", hip_cm: "94" },
