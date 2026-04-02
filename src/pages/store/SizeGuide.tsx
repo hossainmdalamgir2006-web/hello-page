@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Ruler, Info, ArrowRightLeft, Mail, Phone, ThumbsUp, ThumbsDown, Calculator } from "lucide-react";
-import { useSiteContent } from "@/hooks/useSiteContent";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";

@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useSiteContent } from "@/hooks/useSiteContent";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";

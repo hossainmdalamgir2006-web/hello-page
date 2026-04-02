@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
-import { useSiteContent } from "@/hooks/useSiteContent";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { toast } from "sonner";

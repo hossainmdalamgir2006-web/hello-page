@@ -27,7 +27,7 @@ import { CartDrawer } from "./CartDrawer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 import { MegaMenuNav, MobileMegaMenu, useDynamicCategories } from "./MegaMenuNav";
-import { useSiteContent } from "@/hooks/useSiteContent";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { SearchSuggestions } from "./SearchSuggestions";

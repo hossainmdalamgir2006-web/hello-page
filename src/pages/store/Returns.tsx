@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CheckCircle, XCircle, RefreshCw, Package, Clock, Shield, ArrowRightLeft, MessageCircle, ThumbsUp, ThumbsDown, ChevronRight, Phone, Mail } from "lucide-react";
-import { useSiteContent } from "@/hooks/useSiteContent";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
