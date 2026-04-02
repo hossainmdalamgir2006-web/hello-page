@@ -18,7 +18,7 @@ import { SteadfastTab } from "@/components/shipping/SteadfastTab";
 import { PathaoTab } from "@/components/shipping/PathaoTab";
 import { RedXTab } from "@/components/shipping/RedXTab";
 import { PaperflyTab } from "@/components/shipping/PaperflyTab";
-import { ECourierTab } from "@/components/shipping/ECourierTab";
+
 import { Loader2 } from "lucide-react";
 import { 
   MapPin, 
