@@ -161,7 +161,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Frequently Asked Questions",
         defaultSubtitle: "Find answers to the most common questions about our products, shipping, payments, and more.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { hero_badge: "text", faqs: "json" },
+        contentSchema: { hero_badge: "text", faqs: "faq_list" },
         defaultContent: {
           hero_badge: "Help Center",
           faqs: [
