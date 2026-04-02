@@ -143,7 +143,7 @@ export default function ShippingInfo() {
                     <SelectValue placeholder="Select delivery area..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {shippingCosts.map(s => (
+                    {shippingCosts.map((s: any) => (
                       <SelectItem key={s.area} value={s.area}>{s.label}</SelectItem>
                     ))}
                   </SelectContent>
