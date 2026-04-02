@@ -23,6 +23,13 @@ const borderAccent = {
   warning: "border-l-warning",
 };
 
+const cardBgClasses = {
+  primary: "bg-primary/5 dark:bg-primary/10",
+  accent: "bg-accent/5 dark:bg-accent/10",
+  success: "bg-success/5 dark:bg-success/10",
+  warning: "bg-warning/5 dark:bg-warning/10",
+};
+
 export function StatsCard({ title, value, change, icon: Icon, iconBg = "primary" }: StatsCardProps) {
   const isPositive = change >= 0;
 

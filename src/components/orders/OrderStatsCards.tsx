@@ -28,6 +28,13 @@ const borderAccent: Record<string, string> = {
   success: "border-l-success",
 };
 
+const cardBgClasses: Record<string, string> = {
+  primary: "bg-primary/5 dark:bg-primary/10",
+  accent: "bg-accent/5 dark:bg-accent/10",
+  warning: "bg-warning/5 dark:bg-warning/10",
+  success: "bg-success/5 dark:bg-success/10",
+};
+
 interface StatItem {
   label: string;
   value: string;
