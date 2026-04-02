@@ -70,8 +70,9 @@ export function useLiveChat() {
 
   // Subscribe to realtime changes for conversations
   useEffect(() => {
+    const channelName = `live-chat-conversations-changes-${Date.now()}`;
     const channel = supabase
-      .channel("live-chat-conversations-changes")
+      .channel(channelName)
       .on(
         "postgres_changes",
         {
