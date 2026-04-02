@@ -56,13 +56,6 @@ const faqCategoryConfig: Record<FaqCategory, { label: string; icon: React.Elemen
   general: { label: "General", icon: HelpCircle, color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300" },
 };
 
-const faqItems: FaqItem[] = [
-  { q: "How can I track my order?", a: "You can track your order by going to your Account > Orders section or using the Track Order page with your order number.", category: "orders" },
-  { q: "What is your return policy?", a: "We accept returns within 7 days of delivery. Items must be in original condition with tags attached. Visit our Returns page for more details.", category: "returns" },
-  { q: "How long does shipping take?", a: "Standard shipping takes 3-5 business days within Dhaka and 5-7 business days outside Dhaka.", category: "shipping" },
-  { q: "How do I contact customer support?", a: "You can reach us through this contact form, via phone, email, or WhatsApp. We respond within 24 hours.", category: "general" },
-  { q: "Can I change or cancel my order?", a: "You can modify or cancel your order within 1 hour of placing it. After that, please contact us immediately.", category: "orders" },
-];
 
 const iconMap: Record<string, React.ElementType> = {
   "map-pin": MapPin, phone: Phone, mail: Mail, clock: Clock,
