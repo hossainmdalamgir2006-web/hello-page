@@ -243,7 +243,7 @@ export default function ShippingInfo() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-muted-foreground pb-4">
-                      <p>{faq.a}</p>
+                      <p>{faq.a ?? faq.answer ?? ""}</p>
                       <div className="flex items-center gap-3 mt-3 pt-3 border-t">
                         <span className="text-xs text-muted-foreground">Was this helpful?</span>
                         <button onClick={() => setHelpfulFaqs(p => ({ ...p, [i]: true }))} className={`p-1.5 rounded-full transition-colors ${helpfulFaqs[i] === true ? 'bg-green-100 text-green-600' : 'hover:bg-muted'}`}>
