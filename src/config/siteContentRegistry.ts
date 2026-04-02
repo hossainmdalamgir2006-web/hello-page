@@ -406,7 +406,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Shipping Information",
         defaultSubtitle: "Everything you need to know about our delivery process",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { delivery_options: "json", delivery_areas: "json", processing_text: "textarea", tracking_text: "textarea", notes: "json", faqs: "json", shipping_costs: "json", courier_partners: "json" },
+        contentSchema: { delivery_options: "step_list", delivery_areas: "step_list", processing_text: "textarea", tracking_text: "textarea", notes: "string_list", faqs: "faq_list", shipping_costs: "shipping_rate_list", courier_partners: "courier_list" },
         defaultContent: {
           delivery_options: [
             { title: "Standard Delivery", text: "3-5 business days for orders within Dhaka. 5-7 business days for outside Dhaka." },
