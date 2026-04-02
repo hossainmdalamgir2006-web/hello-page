@@ -2,7 +2,7 @@ import { useState } from "react";
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut,
   Tag, Award, Truck, MessageSquare, FileText, Ticket, UserCog, User,
-  ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Home, Star,
+  ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Star,
   ChevronDown, HardDrive, Plug, Shield, ClipboardList, Mail, Bell,
   Store, CreditCard, Lock, ShieldCheck, KeyRound, Smartphone, Monitor, History,
 } from "lucide-react";
