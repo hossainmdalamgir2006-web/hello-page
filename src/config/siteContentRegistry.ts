@@ -230,7 +230,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Privacy Policy",
         defaultSubtitle: "Your privacy is important to us. Learn how we collect, use, and protect your personal information.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { sections: "json", last_updated: "text" },
+        contentSchema: { sections: "section_list", last_updated: "text" },
         defaultContent: {
           last_updated: "January 2024",
           sections: [
