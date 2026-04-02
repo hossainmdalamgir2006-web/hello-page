@@ -61,6 +61,14 @@ export function SortablePaymentMethod({
             src={method.logo_url} 
             alt={method.name} 
             className="h-10 w-10 object-contain rounded"
+            loading="lazy"
+          />
+        ) : method.default_logo ? (
+          <img 
+            src={method.default_logo} 
+            alt={method.name} 
+            className="h-10 w-10 object-contain rounded"
+            loading="lazy"
           />
         ) : (
           <span className="text-2xl">{method.icon}</span>
@@ -68,9 +76,6 @@ export function SortablePaymentMethod({
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <p className="font-medium">{method.name}</p>
-            {method.name_bn && (
-              <span className="text-sm text-muted-foreground">({method.name_bn})</span>
-            )}
             {method.is_configured ? (
               <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-xs">
                 <CheckCircle2 className="mr-1 h-3 w-3" />
