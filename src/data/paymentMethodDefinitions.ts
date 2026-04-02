@@ -203,6 +203,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "Rocket",
     name_bn: "রকেট",
     icon: "🚀",
+    default_logo: "/logos/rocket.png",
     description: "Pay with Rocket (DBBL) mobile wallet",
     description_bn: "রকেট (ডাচ-বাংলা) মোবাইল ওয়ালেটে পেমেন্ট করুন",
     type: "mobile",
