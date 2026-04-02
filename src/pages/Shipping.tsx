@@ -226,7 +226,7 @@ export default function Shipping() {
             <TabsTrigger value="pathao">🚴 Pathao</TabsTrigger>
             <TabsTrigger value="redx">🔴 RedX</TabsTrigger>
             <TabsTrigger value="paperfly">🦋 Paperfly</TabsTrigger>
-            <TabsTrigger value="ecourier">📬 eCourier</TabsTrigger>
+            
             <TabsTrigger value="zones">Shipping Zones</TabsTrigger>
             <TabsTrigger value="rates">Rate Config</TabsTrigger>
             <TabsTrigger value="tracking">Tracking</TabsTrigger>
