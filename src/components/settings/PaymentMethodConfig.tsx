@@ -121,10 +121,18 @@ export function PaymentMethodConfig({ method, open, onOpenChange, onSave, onUplo
       }
     });
 
-    const success = await onSave(method.id, {
+    // Build the update payload
+    const updatePayload: any = {
       account_details: newAccountDetails,
       config: newConfig,
-    } as any);
+    };
+
+    // logo_url is a top-level column, not nested in JSON
+    if (formData.logo_url !== undefined) {
+      updatePayload.logo_url = formData.logo_url || null;
+    }
+
+    const success = await onSave(method.id, updatePayload);
     setSaving(false);
     
     if (success) {
