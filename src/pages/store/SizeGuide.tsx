@@ -15,43 +15,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-const defaultMensSizes = [
-  { size: "S", chest: "36\"", waist: "30\"", hip: "37\"", chest_cm: "91", waist_cm: "76", hip_cm: "94" },
-  { size: "M", chest: "38\"", waist: "32\"", hip: "39\"", chest_cm: "97", waist_cm: "81", hip_cm: "99" },
-  { size: "L", chest: "40\"", waist: "34\"", hip: "41\"", chest_cm: "102", waist_cm: "86", hip_cm: "104" },
-  { size: "XL", chest: "42\"", waist: "36\"", hip: "43\"", chest_cm: "107", waist_cm: "91", hip_cm: "109" },
-  { size: "XXL", chest: "44\"", waist: "38\"", hip: "45\"", chest_cm: "112", waist_cm: "97", hip_cm: "114" },
-];
-
-const defaultWomensSizes = [
-  { size: "S", bust: "32\"", waist: "26\"", hip: "35\"", bust_cm: "81", waist_cm: "66", hip_cm: "89" },
-  { size: "M", bust: "34\"", waist: "28\"", hip: "37\"", bust_cm: "86", waist_cm: "71", hip_cm: "94" },
-  { size: "L", bust: "36\"", waist: "30\"", hip: "39\"", bust_cm: "91", waist_cm: "76", hip_cm: "99" },
-  { size: "XL", bust: "38\"", waist: "32\"", hip: "41\"", bust_cm: "97", waist_cm: "81", hip_cm: "104" },
-  { size: "XXL", bust: "40\"", waist: "34\"", hip: "43\"", bust_cm: "102", waist_cm: "86", hip_cm: "109" },
-];
-
-const defaultHowToMeasure = [
-  { title: "Chest / Bust", text: "Measure around the fullest part of your chest/bust, keeping the tape parallel to the floor." },
-  { title: "Waist", text: "Measure around the narrowest part of your natural waistline, usually just above the belly button." },
-  { title: "Hip", text: "Stand with feet together and measure around the fullest part of your hips and buttocks." },
-];
-
-const defaultTips = [
-  "Wear lightweight clothing or measure over undergarments for the most accurate results",
-  "Keep the measuring tape snug but not tight — you should be able to fit one finger underneath",
-  "If you're between sizes, we recommend sizing up for a more comfortable fit",
-  "For tops, focus on chest/bust measurement; for bottoms, focus on waist and hip",
-  "Measurements may vary slightly between styles — check product-specific size notes if available",
-];
-
-const defaultFaqs = [
-  { question: "What if I'm between two sizes?", answer: "If you're between sizes, we recommend going with the larger size for a comfortable fit. You can always exchange if it doesn't fit right.", category: "Fit" },
-  { question: "How do I measure myself at home?", answer: "Use a soft measuring tape. Stand straight and measure around the fullest part of your body. For best results, have someone else take the measurements for you.", category: "Measuring" },
-  { question: "Do sizes vary between products?", answer: "Sizes may vary slightly between different styles and product types. Always check the product-specific size notes when available.", category: "Fit" },
-  { question: "Can I exchange if the size doesn't fit?", answer: "Yes! We offer free exchanges within 7 days of delivery. Visit our Returns page for more details.", category: "Exchange" },
-  { question: "Are measurements in cm or inches?", answer: "Our size charts show both cm and inches. Use the toggle on the size chart to switch between units.", category: "Measuring" },
-];
 
 function getSizeRecommendation(heightCm: number, weightKg: number, gender: string): string {
   if (!heightCm || !weightKg) return "";

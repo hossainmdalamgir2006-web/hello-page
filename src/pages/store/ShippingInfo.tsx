@@ -14,56 +14,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { formatPrice } from "@/lib/formatPrice";
 
-const defaultDeliveryOptions = [
-  { title: "Standard Delivery", text: "3-5 business days for orders within Dhaka. 5-7 business days for outside Dhaka." },
-  { title: "Express Delivery", text: "1-2 business days. Available for Dhaka city only. Additional charges apply." },
-  { title: "Same Day Delivery", text: "Order before 12 PM for same-day delivery within Dhaka. Subject to availability." },
-];
-
-const defaultDeliveryAreas = [
-  { title: "Inside Dhaka", text: "All areas within Dhaka city corporation. Delivery within 2-3 business days." },
-  { title: "Outside Dhaka", text: "All major districts across Bangladesh. Delivery within 5-7 business days." },
-  { title: "Remote Areas", text: "Char, Haor, and hill tract areas may take 7-10 business days." },
-];
-
-const shippingCosts = [
-  { area: "inside_dhaka", label: "Inside Dhaka", cost: 60, days: "2-3 days" },
-  { area: "outside_dhaka", label: "Outside Dhaka (Division Cities)", cost: 120, days: "3-5 days" },
-  { area: "suburban", label: "Suburban Areas", cost: 150, days: "5-7 days" },
-  { area: "remote", label: "Remote / Hill Tract Areas", cost: 200, days: "7-10 days" },
-];
-
-const timelineSteps = [
-  { icon: Package, label: "Order Placed", desc: "Your order is confirmed", day: "Day 0" },
-  { icon: Clock, label: "Processing", desc: "We're preparing your package", day: "Day 1" },
-  { icon: Truck, label: "Shipped", desc: "Handed to courier partner", day: "Day 1-2" },
-  { icon: CheckCircle2, label: "Delivered", desc: "At your doorstep!", day: "Day 2-7" },
-];
-
-const courierPartners = [
-  { name: "Steadfast", logo: "/logos/steadfast.svg" },
-  { name: "Pathao", logo: "/logos/pathao.svg" },
-  { name: "RedX", logo: "/logos/redx.svg" },
-  { name: "Paperfly", logo: "/logos/paperfly.svg" },
-  { name: "eCourier", logo: "/logos/ecourier.svg" },
-];
-
-const shippingFaqs = [
-  { q: "How much does shipping cost?", a: "Shipping costs vary by location. Inside Dhaka starts at ৳60, and outside Dhaka starts at ৳120. Free shipping on orders over ৳2,000.", category: "cost" as const },
-  { q: "How long does delivery take?", a: "Inside Dhaka: 2-3 business days. Outside Dhaka: 3-7 business days. Remote areas may take up to 10 days.", category: "time" as const },
-  { q: "Can I track my order?", a: "Yes! Once your order is shipped, you'll receive a tracking number via SMS and email. You can also track it on our Track Order page.", category: "tracking" as const },
-  { q: "Do you deliver outside Bangladesh?", a: "Currently we only deliver within Bangladesh. International shipping is coming soon!", category: "area" as const },
-  { q: "What if my package is damaged?", a: "If your package arrives damaged, please contact us within 24 hours with photos. We'll arrange a replacement or refund.", category: "issue" as const },
-  { q: "Can I change my delivery address?", a: "You can change your delivery address before the order is shipped. Contact our support team immediately.", category: "issue" as const },
-];
-
-const faqCategoryConfig: Record<string, { icon: any; color: string; label: string }> = {
-  cost: { icon: Calculator, color: "bg-green-100 text-green-700", label: "Cost" },
-  time: { icon: Clock, color: "bg-blue-100 text-blue-700", label: "Delivery Time" },
-  tracking: { icon: SearchIcon, color: "bg-purple-100 text-purple-700", label: "Tracking" },
-  area: { icon: MapPin, color: "bg-orange-100 text-orange-700", label: "Coverage" },
-  issue: { icon: HelpCircle, color: "bg-red-100 text-red-700", label: "Issues" },
-};
 
 export default function ShippingInfo() {
   const { data, loading } = usePageContent("shipping-info");
