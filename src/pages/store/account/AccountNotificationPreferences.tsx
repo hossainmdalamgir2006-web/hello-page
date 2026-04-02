@@ -93,7 +93,7 @@ export default function AccountNotificationPreferences() {
                   ]).map((item) => (
                     <div key={item.key}>
                       <div className="flex items-center justify-between">
-                        <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
+                        <Label htmlFor={item.key}>{item.label}</Label>
                         <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleChange(item.key, checked)} disabled={saving} />
                       </div>
                       <Separator className="mt-3" />
@@ -107,13 +107,13 @@ export default function AccountNotificationPreferences() {
                 <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Tag className="h-4 w-4" />{t('account.marketingPromotions')}</h3>
                 <div className="space-y-3">
                   {([
-                    { key: "promotions" as const, label: t('account.promotionsOffers'), desc: t('account.promotionsDesc') },
-                    { key: "new_arrivals" as const, label: t('account.newArrivals'), desc: t('account.newArrivalsDesc') },
-                    { key: "price_drops" as const, label: t('account.priceDrops'), desc: t('account.priceDropsDesc') },
+                    { key: "promotions" as const, label: t('account.promotionsOffers') },
+                    { key: "new_arrivals" as const, label: t('account.newArrivals') },
+                    { key: "price_drops" as const, label: t('account.priceDrops') },
                   ]).map((item) => (
                     <div key={item.key}>
                       <div className="flex items-center justify-between">
-                        <div className="space-y-0.5"><Label htmlFor={item.key}>{item.label}</Label><p className="text-xs text-muted-foreground">{item.desc}</p></div>
+                        <Label htmlFor={item.key}>{item.label}</Label>
                         <Switch id={item.key} checked={notifications[item.key]} onCheckedChange={(checked) => handleChange(item.key, checked)} disabled={saving} />
                       </div>
                       <Separator className="mt-3" />
@@ -126,7 +126,7 @@ export default function AccountNotificationPreferences() {
               <div className="space-y-4">
                 <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Lock className="h-4 w-4" />{t('account.accountSecurity')}</h3>
                 <div className="flex items-center justify-between">
-                  <div className="space-y-0.5"><Label htmlFor="account_activity">{t('account.accountActivity')}</Label><p className="text-xs text-muted-foreground">{t('account.accountActivityDesc')}</p></div>
+                  <Label htmlFor="account_activity">{t('account.accountActivity')}</Label>
                   <Switch id="account_activity" checked={notifications.account_activity} onCheckedChange={(checked) => handleChange("account_activity", checked)} disabled={saving} />
                 </div>
               </div>
