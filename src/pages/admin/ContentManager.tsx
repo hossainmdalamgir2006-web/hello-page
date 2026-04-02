@@ -58,19 +58,16 @@ export default function ContentManager() {
 
     if (def.editableFields.includes("content") && def.contentSchema) {
       const contentObj: Record<string, any> = {};
+      const structuredTypes = ["faq_list", "card_list", "section_list", "step_list", "string_list", "size_table", "shipping_rate_list", "courier_list", "link_list"];
       for (const key of Object.keys(def.contentSchema)) {
         if (editForm[key] !== undefined) {
           const schemaType = def.contentSchema[key];
-          if (schemaType === "number") {
+          if (structuredTypes.includes(schemaType)) {
+            contentObj[key] = editForm[key];
+          } else if (schemaType === "number") {
             contentObj[key] = Number(editForm[key]) || 0;
           } else if (schemaType === "boolean") {
             contentObj[key] = editForm[key] === true || editForm[key] === "true";
-          } else if (schemaType === "json") {
-            try {
-              contentObj[key] = typeof editForm[key] === "string" ? JSON.parse(editForm[key]) : editForm[key];
-            } catch {
-              contentObj[key] = editForm[key];
-            }
           } else {
             contentObj[key] = editForm[key];
           }
