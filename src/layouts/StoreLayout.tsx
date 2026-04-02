@@ -11,8 +11,7 @@ import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
-import { useQueryClient } from "@tanstack/react-query";
-import { useSiteContent, type SiteContentOverride } from "@/hooks/useSiteContent";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { X } from "lucide-react";
 import { Suspense } from "react";
 
