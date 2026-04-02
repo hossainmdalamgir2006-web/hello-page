@@ -44,6 +44,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "bKash",
     name_bn: "বিকাশ",
     icon: "📱",
+    default_logo: "/logos/bkash.png",
     description: "Pay with bKash mobile wallet",
     description_bn: "বিকাশ মোবাইল ওয়ালেটে পেমেন্ট করুন",
     type: "mobile",
