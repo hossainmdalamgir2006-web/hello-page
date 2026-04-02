@@ -229,7 +229,7 @@ export default function ShippingInfo() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }} className="max-w-4xl mx-auto mb-12">
           <h2 className="font-display text-2xl font-bold mb-6 text-center">Shipping FAQ</h2>
           <Accordion type="single" collapsible className="space-y-3">
-            {shippingFaqs.map((faq, i) => {
+            {shippingFaqs.map((faq: any, i: number) => {
               const catConfig = faqCategoryConfig[faq.category];
               const CatIcon = catConfig?.icon || HelpCircle;
               return (
