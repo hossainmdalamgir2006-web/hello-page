@@ -35,10 +35,11 @@ export function StatsCard({ title, value, change, icon: Icon, iconBg = "primary"
 
   return (
     <div className={cn(
-      "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+      "group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300",
       "hover:shadow-md hover:border-border hover:-translate-y-0.5",
       "border-l-[3px]",
       borderAccent[iconBg],
+      cardBgClasses[iconBg],
       "animate-fade-in"
     )}>
       <div className="flex items-center justify-between gap-2">
