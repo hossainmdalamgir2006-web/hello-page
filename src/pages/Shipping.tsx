@@ -18,7 +18,7 @@ import { SteadfastTab } from "@/components/shipping/SteadfastTab";
 import { PathaoTab } from "@/components/shipping/PathaoTab";
 import { RedXTab } from "@/components/shipping/RedXTab";
 import { PaperflyTab } from "@/components/shipping/PaperflyTab";
-import { ECourierTab } from "@/components/shipping/ECourierTab";
+
 import { Loader2 } from "lucide-react";
 import { 
   MapPin, 
@@ -226,7 +226,7 @@ export default function Shipping() {
             <TabsTrigger value="pathao">🚴 Pathao</TabsTrigger>
             <TabsTrigger value="redx">🔴 RedX</TabsTrigger>
             <TabsTrigger value="paperfly">🦋 Paperfly</TabsTrigger>
-            <TabsTrigger value="ecourier">📬 eCourier</TabsTrigger>
+            
             <TabsTrigger value="zones">Shipping Zones</TabsTrigger>
             <TabsTrigger value="rates">Rate Config</TabsTrigger>
             <TabsTrigger value="tracking">Tracking</TabsTrigger>
@@ -252,10 +252,6 @@ export default function Shipping() {
             <PaperflyTab pendingOrders={pendingOrders} />
           </TabsContent>
 
-          {/* eCourier Tab */}
-          <TabsContent value="ecourier" className="space-y-4">
-            <ECourierTab pendingOrders={pendingOrders} />
-          </TabsContent>
 
           {/* Shipping Zones Tab */}
           <TabsContent value="zones" className="space-y-4">
@@ -484,7 +480,7 @@ export default function Shipping() {
                                   : shipment.courier === 'pathao' ? 'https://merchant.pathao.com'
                                   : shipment.courier === 'redx' ? 'https://merchant.redx.com.bd'
                                   : shipment.courier === 'paperfly' ? 'https://merchant.paperfly.com.bd'
-                                  : 'https://backoffice.ecourier.com.bd'} 
+                                  : '#'} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                               >
