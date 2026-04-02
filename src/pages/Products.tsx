@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
+import { motion } from "framer-motion";
 
 import { ProductCard } from "@/components/products/ProductCard";
 import { ProductFilters, type FilterState } from "@/components/products/ProductFilters";
@@ -16,7 +17,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, Package, Trash2, ChevronDown, Eye, EyeOff, ImageIcon, Loader2 } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Package, Trash2, ChevronDown, Eye, EyeOff } from "lucide-react";
 import { useProductsData, type Product } from "@/hooks/useProductsData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -53,33 +69,15 @@ interface ProductCardData {
   video_thumbnail?: string | null;
 }
 
-function MigrateImagesButton() {
-  const [migrating, setMigrating] = useState(false);
+const gridContainerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.04 } },
+};
 
-  const handleMigrate = async () => {
-    setMigrating(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('migrate-product-images');
-      if (error) throw error;
-      if (data?.success) {
-        toast.success(`Migrated ${data.migratedImages} images from ${data.migratedProducts} products to Storage`);
-      } else {
-        toast.error(data?.error || 'Migration failed');
-      }
-    } catch (err: any) {
-      toast.error('Migration failed: ' + (err.message || 'Unknown error'));
-    } finally {
-      setMigrating(false);
-    }
-  };
-
-  return (
-    <Button variant="outline" size="sm" onClick={handleMigrate} disabled={migrating} className="gap-2">
-      {migrating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4" />}
-      {migrating ? 'Migrating...' : 'Migrate Images'}
-    </Button>
-  );
-}
+const gridItemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 26 } },
+};
 
 export default function Products() {
   const { products, loading, createProduct, updateProduct, deleteProduct, duplicateProduct, bulkDelete, bulkImport, trashProduct, bulkTrash, bulkPublish, bulkUnpublish } = useProductsData();
@@ -200,7 +198,7 @@ export default function Products() {
     totalItems,
     goToPage,
     changePageSize,
-  } = usePagination(filteredProducts, { initialPageSize: 10 });
+  } = usePagination(filteredProducts, { initialPageSize: 12 });
 
   const handleAddProduct = () => {
     setEditingProduct(null);
@@ -328,70 +326,101 @@ export default function Products() {
 
   if (loading || categoriesLoading) {
     return (
-      <>
-        <div className="space-y-6">
-          <div className="flex justify-between">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-10 w-32" />
-          </div>
-          <Skeleton className="h-12 w-full" />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {[...Array(8)].map((_, i) => (
-              <Skeleton key={i} className="h-64 w-full" />
-            ))}
-          </div>
+      <div className="space-y-6">
+        <div className="flex justify-between">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-32" />
         </div>
-      </>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+          ))}
+        </div>
+        <Skeleton className="h-12 w-full" />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[...Array(8)].map((_, i) => (
+            <Skeleton key={i} className="h-72 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
     );
   }
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages: (number | "ellipsis")[] = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("ellipsis");
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push("ellipsis");
+      pages.push(totalPages);
+    }
+    return pages;
+  };
 
   return (
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Products</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage your product inventory ({filteredProducts.length} products)
-            </p>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card via-card to-primary/5 p-6"
+        >
+          {/* Decorative blur elements */}
+          <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+          <div className="pointer-events-none absolute -left-8 bottom-0 h-28 w-28 rounded-full bg-primary/5 blur-2xl" />
+
+          <div className="relative flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Products</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Manage your product inventory ({filteredProducts.length} products)
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {selectedProducts.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      Bulk Actions ({selectedProducts.length})
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-popover">
+                    <DropdownMenuItem onClick={handleBulkPublish}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      Publish
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleBulkUnpublish}>
+                      <EyeOff className="mr-2 h-4 w-4" />
+                      Unpublish (Draft)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleBulkTrash} className="text-destructive focus:text-destructive">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Move to Trash
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <ProductImportExport 
+                products={uiProducts} 
+                onImport={handleImport} 
+              />
+              <Button onClick={handleAddProduct} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Add Product
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {selectedProducts.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    Bulk Actions ({selectedProducts.length})
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-popover">
-                  <DropdownMenuItem onClick={handleBulkPublish}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    Publish
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleBulkUnpublish}>
-                    <EyeOff className="mr-2 h-4 w-4" />
-                    Unpublish (Draft)
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleBulkTrash} className="text-destructive focus:text-destructive">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Move to Trash
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-            <ProductImportExport 
-              products={uiProducts} 
-              onImport={handleImport} 
-            />
-            <MigrateImagesButton />
-            <Button onClick={handleAddProduct} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Product
-            </Button>
-          </div>
-        </div>
+        </motion.div>
+
         {/* Status Summary */}
         <ProductStatusBar products={uiProducts} />
 
@@ -406,29 +435,96 @@ export default function Products() {
 
         {/* Products */}
         {filteredProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card py-16">
-            <Package className="mb-4 h-12 w-12 text-muted-foreground" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-gradient-to-br from-card to-muted/30 py-20"
+          >
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+              <Package className="h-8 w-8 text-primary" />
+            </div>
             <h3 className="mb-2 text-lg font-semibold text-foreground">No products found</h3>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Try adjusting your filters or add a new product
+            <p className="mb-6 text-sm text-muted-foreground max-w-xs text-center">
+              Try adjusting your filters or add a new product to get started
             </p>
             <Button onClick={handleAddProduct} className="gap-2">
               <Plus className="h-4 w-4" />
               Add Product
             </Button>
-          </div>
+          </motion.div>
         ) : viewMode === "grid" ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onEdit={handleEditProduct}
-                onDelete={handleDeleteProduct}
-                onView={handleViewProduct}
-                onDuplicate={handleDuplicateProduct}
-              />
-            ))}
+          <div className="space-y-6">
+            <motion.div
+              variants={gridContainerVariants}
+              initial="hidden"
+              animate="show"
+              key={currentPage}
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
+              {paginatedProducts.map((product) => (
+                <motion.div key={product.id} variants={gridItemVariants}>
+                  <ProductCard
+                    product={product}
+                    onEdit={handleEditProduct}
+                    onDelete={handleDeleteProduct}
+                    onView={handleViewProduct}
+                    onDuplicate={handleDuplicateProduct}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Grid Pagination */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span>Showing {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, totalItems)} of {totalItems}</span>
+                  <Select value={String(pageSize)} onValueChange={(v) => changePageSize(Number(v))}>
+                    <SelectTrigger className="h-8 w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[12, 24, 48, 96].map(s => (
+                        <SelectItem key={s} value={String(s)}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <span>per page</span>
+                </div>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => goToPage(currentPage - 1)} 
+                        className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+                      />
+                    </PaginationItem>
+                    {getPageNumbers().map((page, idx) => (
+                      <PaginationItem key={idx}>
+                        {page === "ellipsis" ? (
+                          <span className="px-2 text-muted-foreground">…</span>
+                        ) : (
+                          <PaginationLink
+                            isActive={page === currentPage}
+                            onClick={() => goToPage(page)}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        )}
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => goToPage(currentPage + 1)} 
+                        className={currentPage >= totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
           </div>
         ) : (
           <ProductTable
