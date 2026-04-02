@@ -570,7 +570,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "Payoneer",
     name_bn: "পেওনিয়ার",
     icon: "💳",
-    default_logo: "/logos/payoneer.png",
+    default_logo: "/logos/payoneer.svg",
     description: "Pay with Payoneer card",
     description_bn: "পেওনিয়ার কার্ড দিয়ে পেমেন্ট করুন",
     type: "gateway",
