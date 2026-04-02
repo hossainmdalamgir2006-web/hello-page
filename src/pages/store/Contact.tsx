@@ -130,7 +130,7 @@ export default function Contact() {
   const contentData = (pageData?.content || {}) as any;
   const formTitle = contentData.form_title || t('store.sendUsMessage');
   const cards = contentData.cards || [];
-  const faqItems: FaqItem[] = contentData.faqs || [];
+  const faqItems: FaqItem[] = (contentData.faqs || []).map(normalizeFaq);
 
   if (pageLoading) {
     return (
