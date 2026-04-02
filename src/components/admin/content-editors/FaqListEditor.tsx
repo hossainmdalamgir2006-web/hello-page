@@ -22,9 +22,15 @@ export function FaqListEditor({ label, value, onChange }: Props) {
   const items: FaqItem[] = Array.isArray(value) ? value : [];
   const [expanded, setExpanded] = useState<number | null>(null);
 
+  const normalize = (item: FaqItem): FaqItem => ({
+    question: item.question ?? item.q ?? "",
+    answer: item.answer ?? item.a ?? "",
+    category: item.category ?? "",
+  });
+
   const update = (i: number, patch: Partial<FaqItem>) => {
     const next = [...items];
-    next[i] = { ...next[i], ...patch };
+    next[i] = normalize({ ...next[i], ...patch });
     onChange(next);
   };
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
