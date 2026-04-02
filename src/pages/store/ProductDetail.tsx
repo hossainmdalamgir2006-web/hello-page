@@ -586,18 +586,28 @@ export default function ProductDetail() {
               <TabsTrigger value="reviews" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">{t('store.reviews')} ({reviewSummary.totalReviews})</TabsTrigger>
               <TabsTrigger value="qa" className="rounded-none border-b-2 border-transparent data-[state=active]:border-store-primary data-[state=active]:bg-transparent">Q&A</TabsTrigger>
             </TabsList>
-            <TabsContent value="description" className="py-6">
+            <TabsContent value="description" className="py-8">
               {product.description ? (
                 <div
-                  className="prose prose-sm sm:prose-base max-w-none dark:prose-invert text-foreground
+                  className="prose prose-base sm:prose-lg max-w-none dark:prose-invert text-foreground
+                    prose-headings:font-bold prose-headings:text-foreground prose-headings:tracking-tight
+                    prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-border
+                    prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3
+                    prose-h4:text-lg sm:prose-h4:text-xl prose-h4:mt-6 prose-h4:mb-2
+                    prose-p:leading-relaxed prose-p:text-muted-foreground prose-p:mb-4
+                    prose-li:text-muted-foreground prose-li:leading-relaxed prose-li:my-1
+                    prose-ul:my-4 prose-ul:space-y-1 prose-ol:my-4 prose-ol:space-y-1
+                    prose-strong:text-foreground prose-strong:font-semibold
                     prose-img:rounded-xl prose-img:shadow-md prose-img:mx-auto prose-img:max-w-2xl prose-img:h-auto prose-img:block prose-img:my-6 prose-img:object-contain
                     prose-video:rounded-xl prose-video:shadow-md prose-video:mx-auto prose-video:max-w-2xl prose-video:block prose-video:my-6
-                    prose-table:border prose-table:border-border prose-table:rounded-lg prose-table:overflow-hidden
-                    prose-th:bg-muted prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:border prose-th:border-border
-                    prose-td:p-3 prose-td:border prose-td:border-border
+                    prose-table:w-full prose-table:border-collapse prose-table:rounded-lg prose-table:overflow-hidden prose-table:my-6 prose-table:shadow-sm prose-table:border prose-table:border-border
+                    prose-thead:bg-muted/80
+                    prose-th:p-3.5 prose-th:text-left prose-th:font-semibold prose-th:text-foreground prose-th:border prose-th:border-border prose-th:text-sm
+                    prose-td:p-3.5 prose-td:border prose-td:border-border prose-td:text-sm prose-td:text-muted-foreground
+                    [&_tbody_tr:nth-child(even)]:bg-muted/30
+                    [&_tbody_tr:hover]:bg-muted/50 [&_tbody_tr]:transition-colors
                     prose-blockquote:border-l-4 prose-blockquote:border-primary/30 prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4
                     prose-a:text-primary prose-a:underline-offset-2 hover:prose-a:text-primary/80
-                    prose-headings:font-display prose-headings:text-foreground
                     [&_iframe]:w-full [&_iframe]:max-w-2xl [&_iframe]:mx-auto [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:shadow-md [&_iframe]:my-6 [&_iframe]:block
                     [&_video]:w-full [&_video]:max-w-2xl [&_video]:mx-auto [&_video]:rounded-xl [&_video]:shadow-md [&_video]:my-6
                     [&_.ql-video]:w-full [&_.ql-video]:aspect-video [&_.ql-video]:rounded-xl
