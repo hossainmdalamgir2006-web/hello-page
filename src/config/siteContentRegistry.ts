@@ -63,7 +63,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultEnabled: true,
         defaultTitle: "Shop by Category",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { categories: "json" },
+        contentSchema: { categories: "card_list" },
       },
       {
         key: "new_arrivals",
