@@ -685,6 +685,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "Cash on Delivery",
     name_bn: "ক্যাশ অন ডেলিভারি",
     icon: "💵",
+    default_logo: "/logos/cod.png",
     description: "Pay when you receive your order",
     description_bn: "অর্ডার গ্রহণের সময় টাকা দিন",
     type: "manual",
