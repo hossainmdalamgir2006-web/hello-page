@@ -6,6 +6,7 @@ export interface PaymentMethodDefinition {
   name: string;
   name_bn: string;
   icon: string;
+  default_logo?: string;
   description: string;
   description_bn: string;
   type: "mobile" | "gateway" | "manual" | "custom";

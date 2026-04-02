@@ -30,6 +30,7 @@ export interface PaymentMethodConfig {
 export interface PaymentMethod extends PaymentMethodConfig {
   name_bn: string;
   icon: string;
+  default_logo?: string;
   type: PaymentMethodDefinition["type"];
   configFields: PaymentMethodDefinition["configFields"];
   instructions_bn?: string;
