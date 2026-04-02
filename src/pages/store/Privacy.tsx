@@ -1,6 +1,6 @@
 
 import { SEOHead } from "@/components/SEOHead";
-import { usePageContent } from "@/hooks/usePageContents";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
