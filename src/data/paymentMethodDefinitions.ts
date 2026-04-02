@@ -484,7 +484,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "PayPal",
     name_bn: "পেপাল",
     icon: "🅿️",
-    default_logo: "/logos/paypal.svg",
+    default_logo: "/logos/paypal.png",
     description: "Pay with PayPal",
     description_bn: "পেপাল দিয়ে পেমেন্ট করুন",
     type: "gateway",
