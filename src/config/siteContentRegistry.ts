@@ -196,7 +196,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Contact Us",
         defaultSubtitle: "Have a question or need help? We'd love to hear from you.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { cards: "json", form_title: "text", faqs: "json" },
+        contentSchema: { cards: "card_list", form_title: "text", faqs: "faq_list" },
         defaultContent: {
           form_title: "Send Us a Message",
           cards: [
