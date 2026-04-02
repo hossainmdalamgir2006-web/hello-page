@@ -527,6 +527,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "2Checkout",
     name_bn: "২চেকআউট",
     icon: "💳",
+    default_logo: "/logos/2checkout.png",
     description: "Pay via 2Checkout payment gateway",
     description_bn: "2Checkout পেমেন্ট গেটওয়ে দিয়ে পেমেন্ট করুন",
     type: "gateway",
