@@ -349,7 +349,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Returns & Exchange Policy",
         defaultSubtitle: "Easy returns and exchanges within 7 days. Your satisfaction is our priority.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { eligible: "json", not_eligible: "json", steps: "json", refund_info: "json", exchange_text: "textarea", faqs: "json" },
+        contentSchema: { eligible: "string_list", not_eligible: "string_list", steps: "step_list", refund_info: "string_list", exchange_text: "textarea", faqs: "faq_list" },
         defaultContent: {
           eligible: [
             "Unused items with original tags and packaging",
