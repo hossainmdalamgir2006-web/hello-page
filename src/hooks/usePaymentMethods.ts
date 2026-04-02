@@ -164,12 +164,13 @@ export function usePaymentMethods() {
           api_password: parsedConfig.api_password ?? null,
           // Cheque fields
           auto_processing_enabled: parsedConfig.auto_processing_enabled ?? null,
-          // Definition fields
-          name_bn: definition.name_bn,
-          icon: definition.icon,
-          type: definition.type,
-          configFields: definition.configFields,
-          instructions_bn: definition.instructions_bn,
+           // Definition fields
+           name_bn: definition.name_bn,
+           icon: definition.icon,
+           default_logo: definition.default_logo,
+           type: definition.type,
+           configFields: definition.configFields,
+           instructions_bn: definition.instructions_bn,
         };
       });
 
