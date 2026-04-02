@@ -58,10 +58,12 @@ interface FaqItem {
 }
 
 function normalizeFaq(raw: FaqItemRaw): FaqItem {
+  const cat = raw.category as FaqCategory;
+  const validCategories: FaqCategory[] = ["orders", "returns", "shipping", "general"];
   return {
     q: raw.q ?? raw.question ?? "",
     a: raw.a ?? raw.answer ?? "",
-    category: raw.category,
+    category: validCategories.includes(cat) ? cat : "general",
   };
 }
 
