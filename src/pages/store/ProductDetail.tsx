@@ -589,29 +589,31 @@ export default function ProductDetail() {
             <TabsContent value="description" className="py-8">
               {product.description ? (
                 <div
-                  className="prose prose-base sm:prose-lg max-w-none dark:prose-invert text-foreground
-                    prose-headings:font-bold prose-headings:text-foreground prose-headings:tracking-tight
-                    prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-border
-                    prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-3
-                    prose-h4:text-lg sm:prose-h4:text-xl prose-h4:mt-6 prose-h4:mb-2
-                    prose-p:leading-relaxed prose-p:text-muted-foreground prose-p:mb-4
-                    prose-li:text-muted-foreground prose-li:leading-relaxed prose-li:my-1
-                    prose-ul:my-4 prose-ul:space-y-1 prose-ol:my-4 prose-ol:space-y-1
+                   className="prose prose-sm sm:prose-base max-w-none dark:prose-invert text-foreground
+                    prose-headings:font-semibold prose-headings:text-foreground prose-headings:tracking-tight prose-headings:no-underline prose-headings:[text-decoration:none]
+                    [&_h1]:text-xl sm:[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mt-0 [&_h1]:mb-4 [&_h1]:no-underline [&_h1]:[text-decoration:none] [&_h1]:leading-tight
+                    prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-3 prose-h2:pb-1.5 prose-h2:border-b prose-h2:border-border
+                    prose-h3:text-base sm:prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2 prose-h3:font-semibold
+                    prose-h4:text-sm sm:prose-h4:text-base prose-h4:mt-4 prose-h4:mb-1.5
+                    prose-p:leading-relaxed prose-p:text-muted-foreground prose-p:mb-3 prose-p:text-sm
+                    prose-li:text-muted-foreground prose-li:leading-relaxed prose-li:my-0.5 prose-li:text-sm
+                    [&_ul]:my-3 [&_ul]:pl-5 [&_ul]:list-disc [&_ul_li::marker]:text-foreground/60
+                    [&_ol]:my-3 [&_ol]:pl-5 [&_ol]:list-decimal
                     prose-strong:text-foreground prose-strong:font-semibold
-                    prose-img:rounded-xl prose-img:shadow-md prose-img:mx-auto prose-img:max-w-2xl prose-img:h-auto prose-img:block prose-img:my-6 prose-img:object-contain
-                    prose-video:rounded-xl prose-video:shadow-md prose-video:mx-auto prose-video:max-w-2xl prose-video:block prose-video:my-6
-                    prose-table:w-full prose-table:border-collapse prose-table:rounded-lg prose-table:overflow-hidden prose-table:my-6 prose-table:shadow-sm prose-table:border prose-table:border-border
-                    prose-thead:bg-muted/80
-                    prose-th:p-3.5 prose-th:text-left prose-th:font-semibold prose-th:text-foreground prose-th:border prose-th:border-border prose-th:text-sm
-                    prose-td:p-3.5 prose-td:border prose-td:border-border prose-td:text-sm prose-td:text-muted-foreground
-                    [&_tbody_tr:nth-child(even)]:bg-muted/30
-                    [&_tbody_tr:hover]:bg-muted/50 [&_tbody_tr]:transition-colors
-                    prose-blockquote:border-l-4 prose-blockquote:border-primary/30 prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-4
+                    prose-img:rounded-lg prose-img:shadow-sm prose-img:mx-auto prose-img:max-w-2xl prose-img:h-auto prose-img:block prose-img:my-4 prose-img:object-contain
+                    prose-video:rounded-lg prose-video:shadow-sm prose-video:mx-auto prose-video:max-w-2xl prose-video:block prose-video:my-4
+                    prose-table:w-full prose-table:border-collapse prose-table:my-4 prose-table:border prose-table:border-border prose-table:text-sm
+                    prose-thead:bg-muted/60
+                    prose-th:px-3 prose-th:py-2.5 prose-th:text-left prose-th:font-semibold prose-th:text-foreground prose-th:border prose-th:border-border prose-th:text-sm
+                    prose-td:px-3 prose-td:py-2.5 prose-td:border prose-td:border-border prose-td:text-sm prose-td:text-muted-foreground
+                    [&_tbody_tr:nth-child(even)]:bg-muted/20
+                    [&_tbody_tr:hover]:bg-muted/40 [&_tbody_tr]:transition-colors
+                    prose-blockquote:border-l-4 prose-blockquote:border-primary/30 prose-blockquote:bg-muted/20 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:px-3
                     prose-a:text-primary prose-a:underline-offset-2 hover:prose-a:text-primary/80
-                    [&_iframe]:w-full [&_iframe]:max-w-2xl [&_iframe]:mx-auto [&_iframe]:aspect-video [&_iframe]:rounded-xl [&_iframe]:shadow-md [&_iframe]:my-6 [&_iframe]:block
-                    [&_video]:w-full [&_video]:max-w-2xl [&_video]:mx-auto [&_video]:rounded-xl [&_video]:shadow-md [&_video]:my-6
-                    [&_.ql-video]:w-full [&_.ql-video]:aspect-video [&_.ql-video]:rounded-xl
-                    [&_div[style*='padding-bottom']]:relative [&_div[style*='padding-bottom']]:max-w-2xl [&_div[style*='padding-bottom']]:mx-auto [&_div[style*='padding-bottom']]:my-6 [&_div[style*='padding-bottom']]:rounded-xl [&_div[style*='padding-bottom']]:overflow-hidden"
+                    [&_iframe]:w-full [&_iframe]:max-w-2xl [&_iframe]:mx-auto [&_iframe]:aspect-video [&_iframe]:rounded-lg [&_iframe]:shadow-sm [&_iframe]:my-4 [&_iframe]:block
+                    [&_video]:w-full [&_video]:max-w-2xl [&_video]:mx-auto [&_video]:rounded-lg [&_video]:shadow-sm [&_video]:my-4
+                    [&_.ql-video]:w-full [&_.ql-video]:aspect-video [&_.ql-video]:rounded-lg
+                    [&_div[style*='padding-bottom']]:relative [&_div[style*='padding-bottom']]:max-w-2xl [&_div[style*='padding-bottom']]:mx-auto [&_div[style*='padding-bottom']]:my-4 [&_div[style*='padding-bottom']]:rounded-lg [&_div[style*='padding-bottom']]:overflow-hidden"
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
               ) : (
