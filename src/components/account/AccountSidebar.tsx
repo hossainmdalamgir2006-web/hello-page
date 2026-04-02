@@ -105,7 +105,7 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
         { titleKey: "account.password", url: "/myaccount/password", icon: KeyRound },
         { titleKey: "account.addresses", url: "/myaccount/addresses", icon: MapPin },
         { titleKey: "account.security", url: "/myaccount/security", icon: Shield },
-        { titleKey: "account.paymentMethods", url: "/myaccount/payment-methods", icon: CreditCard },
+        
         { titleKey: "account.notificationPreferences", url: "/myaccount/notification-preferences", icon: Bell },
       ],
     },
