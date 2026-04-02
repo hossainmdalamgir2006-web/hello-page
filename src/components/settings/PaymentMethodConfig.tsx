@@ -161,8 +161,8 @@ export function PaymentMethodConfig({ method, open, onOpenChange, onSave, onUplo
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 flex-wrap">
-            {formData.logo_url ? (
-              <img src={formData.logo_url} alt={method.name} className="h-8 w-8 object-contain rounded" />
+            {formData.logo_url || method.default_logo ? (
+              <img src={formData.logo_url || method.default_logo || ""} alt={method.name} className="h-8 w-8 object-contain rounded" />
             ) : (
               <span className="text-2xl">{method.icon}</span>
             )}
