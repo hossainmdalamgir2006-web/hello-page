@@ -157,6 +157,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "Nagad",
     name_bn: "নগদ",
     icon: "📱",
+    default_logo: "/logos/nagad.png",
     description: "Pay with Nagad mobile wallet",
     description_bn: "নগদ মোবাইল ওয়ালেটে পেমেন্ট করুন",
     type: "mobile",
