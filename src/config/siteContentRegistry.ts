@@ -119,7 +119,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultEnabled: true,
         defaultTitle: "What Customers Say",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { testimonials: "json" },
+        contentSchema: { testimonials: "card_list" },
       },
       {
         key: "recently_viewed",
