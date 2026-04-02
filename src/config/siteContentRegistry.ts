@@ -290,7 +290,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Terms of Service",
         defaultSubtitle: "Please read these terms carefully before using our services.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { sections: "json", last_updated: "text" },
+        contentSchema: { sections: "section_list", last_updated: "text" },
         defaultContent: {
           last_updated: "January 2024",
           sections: [
