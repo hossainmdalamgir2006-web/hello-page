@@ -47,7 +47,7 @@ export const siteContentRegistry: PageDef[] = [
         icon: Truck,
         defaultEnabled: true,
         editableFields: ["content"],
-        contentSchema: { features: "json" },
+        contentSchema: { features: "card_list" },
       },
       {
         key: "brand_marquee",
