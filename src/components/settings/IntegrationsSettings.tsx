@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { PathaoSettings } from "./PathaoSettings";
 import { RedXSettings } from "./RedXSettings";
 import { PaperflySettings } from "./PaperflySettings";
-import { ECourierSettings } from "./ECourierSettings";
+
 import { GoogleAnalyticsSettings } from "./GoogleAnalyticsSettings";
 import { GoogleTagManagerSettings } from "./GoogleTagManagerSettings";
 import { MetaPixelSettings } from "./MetaPixelSettings";
