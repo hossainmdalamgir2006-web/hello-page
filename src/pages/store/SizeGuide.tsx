@@ -45,10 +45,11 @@ export default function SizeGuide() {
   const subtitle = data?.subtitle || "Find your perfect fit with our comprehensive size charts and measurement guide.";
   const c = (data?.content || {}) as any;
 
-  const mensSizes = c.mens_sizes?.length ? c.mens_sizes : defaultMensSizes;
-  const womensSizes = c.womens_sizes?.length ? c.womens_sizes : defaultWomensSizes;
-  const howToMeasure = c.how_to_measure?.length ? c.how_to_measure : defaultHowToMeasure;
-  const tips = c.tips?.length ? c.tips : defaultTips;
+  const mensSizes = c.mens_sizes || [];
+  const womensSizes = c.womens_sizes || [];
+  const howToMeasure = c.how_to_measure || [];
+  const tips = c.tips || [];
+  const faqs = c.faqs || [];
 
   const recommendation = getSizeRecommendation(Number(height), Number(weight), recGender);
 
