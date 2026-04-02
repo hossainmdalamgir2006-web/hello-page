@@ -82,7 +82,7 @@ export const siteContentRegistry: PageDef[] = [
         icon: Layout,
         defaultEnabled: true,
         editableFields: ["content"],
-        contentSchema: { banners: "json" },
+        contentSchema: { banners: "card_list" },
       },
       {
         key: "trending_products",
