@@ -589,12 +589,13 @@ export default function Categories() {
             const borderMap: Record<string, string> = { primary: "border-l-primary", accent: "border-l-accent", success: "border-l-success", warning: "border-l-yellow-500" };
             const bgMap: Record<string, string> = { primary: "bg-primary/10", accent: "bg-accent/10", success: "bg-success/10", warning: "bg-yellow-500/10" };
             const textMap: Record<string, string> = { primary: "text-primary", accent: "text-accent", success: "text-success", warning: "text-yellow-500" };
+            const cardBgMap: Record<string, string> = { primary: "bg-primary/5 dark:bg-primary/10", accent: "bg-accent/5 dark:bg-accent/10", success: "bg-success/5 dark:bg-success/10", warning: "bg-yellow-500/5 dark:bg-yellow-500/10" };
             const IconComp = card.icon;
             return (
               <div key={card.label} className={cn(
-                "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+                "group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300",
                 "hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px]",
-                borderMap[card.color], "animate-fade-in"
+                borderMap[card.color], cardBgMap[card.color], "animate-fade-in"
               )}>
                 <div className="flex items-center justify-between">
                   <div>

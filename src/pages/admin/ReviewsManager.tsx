@@ -263,14 +263,15 @@ export default function ReviewsManager() {
             const borderMap: Record<string, string> = { primary: "border-l-primary", yellow: "border-l-yellow-500", success: "border-l-success" };
             const bgMap: Record<string, string> = { primary: "bg-primary/10", yellow: "bg-yellow-500/10", success: "bg-success/10" };
             const textMap: Record<string, string> = { primary: "text-primary", yellow: "text-yellow-500", success: "text-success" };
+            const cardBgMap: Record<string, string> = { primary: "bg-primary/5 dark:bg-primary/10", yellow: "bg-yellow-500/5 dark:bg-yellow-500/10", success: "bg-success/5 dark:bg-success/10" };
             const IconComp = card.icon;
             return (
               <div
                 key={card.label}
                 className={cn(
-                  "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+                  "group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300",
                   "hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px]",
-                  borderMap[card.color], "animate-fade-in"
+                  borderMap[card.color], cardBgMap[card.color], "animate-fade-in"
                 )}
               >
                 <div className="flex items-center justify-between">
