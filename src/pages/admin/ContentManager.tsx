@@ -17,6 +17,10 @@ import {
   Save, ExternalLink, Eye, EyeOff, ChevronDown, ChevronRight, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  StringListEditor, FaqListEditor, CardListEditor, SectionListEditor,
+  StepListEditor, SizeTableEditor, ShippingRateListEditor, LinkListEditor,
+} from "@/components/admin/content-editors";
 
 export default function ContentManager() {
   const [selectedPage, setSelectedPage] = useState(siteContentRegistry[0].slug);
