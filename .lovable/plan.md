@@ -1,57 +1,76 @@
 
 
-## Plan: Make All Page Content Editable from Content Manager
+## Plan: Replace Raw JSON Editors with Structured Form Editors
 
 ### Problem
-Currently, each store page (FAQ, Contact, Privacy, Terms, Returns, Shipping Info, Size Guide) has rich hardcoded default content (FAQ items, contact cards, privacy sections, size charts, return policies, etc.) but the registry only exposes basic `title`/`subtitle` fields. The actual page data isn't available for editing in the Content Manager.
+Currently, all complex content fields (FAQs, contact cards, size charts, policy sections, etc.) are rendered as raw JSON textareas in the Content Manager. This is not user-friendly — admins have to manually edit JSON, which is error-prone and confusing.
+
+### Solution
+Replace the `"json"` schema type rendering in `ContentManager.tsx` with **structured form editors** that detect the data shape and render appropriate UI controls. No raw JSON editing anywhere.
 
 ### What Changes
 
-#### 1. Update `src/config/siteContentRegistry.ts`
-Add `defaultContent` and expanded `contentSchema` for every page so all the hardcoded data becomes editable:
+#### 1. Update `src/config/siteContentRegistry.ts` — New Schema Types
+Replace generic `"json"` with specific typed schemas so the editor knows what UI to render:
 
-- **FAQ**: `defaultContent.faqs` (the 12 FAQ items with question/answer/category), `contentSchema: { faqs: "json" }`
-- **Contact**: `defaultContent.cards` (4 info cards), `defaultContent.form_title`, social links, FAQ items. `contentSchema: { cards: "json", form_title: "text", social_links: "json", faqs: "json" }`
-- **Privacy**: `defaultContent.sections` (6 policy sections with heading/body/list/icon). `contentSchema: { sections: "json", last_updated: "text" }`
-- **Terms**: `defaultContent.sections` (6 terms sections). `contentSchema: { sections: "json", last_updated: "text" }`
-- **Returns**: `defaultContent.eligible`, `defaultContent.not_eligible`, `defaultContent.steps`, `defaultContent.refund_info`, `defaultContent.exchange_text`, `defaultContent.faqs`. `contentSchema: { eligible: "json", not_eligible: "json", steps: "json", refund_info: "json", exchange_text: "textarea", faqs: "json" }`
-- **Shipping Info**: `defaultContent.delivery_options`, `defaultContent.delivery_areas`, `defaultContent.processing_text`, `defaultContent.tracking_text`, `defaultContent.notes`, `defaultContent.faqs`. `contentSchema: { delivery_options: "json", delivery_areas: "json", processing_text: "textarea", tracking_text: "textarea", notes: "json", faqs: "json" }`
-- **Size Guide**: `defaultContent.mens_sizes`, `defaultContent.womens_sizes`, `defaultContent.how_to_measure`, `defaultContent.tips`, `defaultContent.faqs`. `contentSchema: { mens_sizes: "json", womens_sizes: "json", how_to_measure: "json", tips: "json", faqs: "json" }`
-- **Header**: Add `defaultContent` for announcement text
-- **Footer**: Add `defaultContent` for social/shop/help links
+- `"faq_list"` — FAQ items (question + answer + category) with add/remove
+- `"card_list"` — Cards (icon + title + text) with add/remove  
+- `"section_list"` — Policy sections (heading + body + list + icon + extra) with add/remove
+- `"step_list"` — Numbered steps (title + text) with add/remove
+- `"string_list"` — Simple text list with add/remove
+- `"size_table"` — Size chart rows with fixed columns
+- `"shipping_rate_list"` — Shipping cost rows (area + label + cost + days)
+- `"courier_list"` — Courier partners (name + logo)
+- `"link_list"` — Links (label + href) for footer
 
-Each page's `defaultSubtitle` will also be set to match the current hardcoded subtitle.
+Each page's `contentSchema` entries change from `"json"` to the appropriate type.
 
-#### 2. Update Store Pages to Read from Merged Content
-Each store page already uses `usePageContent(slug)` and falls back to defaults. The key change: move the hardcoded defaults OUT of each page file and INTO the registry's `defaultContent`. The pages will then read from `data.content` which auto-merges registry defaults with DB overrides.
+#### 2. Update `src/pages/admin/ContentManager.tsx` — Structured Renderers
+Replace the single `renderFieldEditor` function's JSON branch with type-specific renderers:
 
-Files to update:
-- `src/pages/store/FAQ.tsx` — remove `defaultFaqs` array, read from content
-- `src/pages/store/Contact.tsx` — remove hardcoded cards/FAQ, read from content
-- `src/pages/store/Privacy.tsx` — remove `defaultSections`, read from content
-- `src/pages/store/Terms.tsx` — remove `defaultSections`, read from content
-- `src/pages/store/Returns.tsx` — remove all default arrays, read from content
-- `src/pages/store/ShippingInfo.tsx` — remove default arrays, read from content
-- `src/pages/store/SizeGuide.tsx` — remove default arrays, read from content
+- **`string_list`**: Each item as an Input with delete button + "Add Item" button
+- **`faq_list`**: Accordion/collapsible cards, each with Question (Input), Answer (Textarea), Category (Input), delete button + "Add FAQ"
+- **`card_list`**: Each card with Icon (select/input), Title (Input), Text (Textarea), delete + "Add Card"
+- **`section_list`**: Each section with Heading, Body (Textarea), List items (nested string_list), Icon, Extra text, delete + "Add Section"
+- **`step_list`**: Each step with Title + Text + delete + "Add Step"
+- **`size_table`**: Table with editable cells, "Add Row" button
+- **`shipping_rate_list`**: Each row with Area, Label, Cost, Days fields + delete + "Add Rate"
+- **`courier_list`**: Each with Name + Logo URL + delete + "Add Courier"
+- **`link_list`**: Each with Label + URL + delete + "Add Link"
 
-#### 3. No DB or Migration Changes Needed
-The existing `site_content_overrides` table already supports JSONB `content` column. The registry defaults serve as fallbacks — admin edits are saved as overrides.
+All structured editors will have drag-to-reorder (optional, can use move up/down buttons) and inline add/remove.
 
-### How It Works
-1. Registry defines ALL default data per page (FAQs, cards, sections, size charts, etc.)
-2. `useSiteContent` hook merges: `{ ...registryDefaults, ...dbOverrides }`
-3. Store pages read merged content — works out of the box without DB data
-4. Admin edits via Content Manager save only the changed fields to DB
-5. Content Manager shows JSON editors for complex fields (FAQ lists, size tables, etc.)
+#### 3. No DB Changes
+The data shape in the JSONB column stays identical — only the admin UI rendering changes.
+
+### Mapping Summary
+
+| Old Schema | New Schema | Fields per Item |
+|---|---|---|
+| `faqs: "json"` | `faqs: "faq_list"` | question, answer, category |
+| `cards: "json"` | `cards: "card_list"` | icon, title, text |
+| `sections: "json"` | `sections: "section_list"` | heading, body, list[], icon, extra |
+| `steps: "json"` | `steps: "step_list"` | title, text |
+| `eligible: "json"` | `eligible: "string_list"` | (plain string) |
+| `not_eligible: "json"` | `not_eligible: "string_list"` | (plain string) |
+| `refund_info: "json"` | `refund_info: "string_list"` | (plain string) |
+| `notes: "json"` | `notes: "string_list"` | (plain string) |
+| `tips: "json"` | `tips: "string_list"` | (plain string) |
+| `mens_sizes: "json"` | `mens_sizes: "size_table"` | size, chest, waist, hip, *_cm |
+| `womens_sizes: "json"` | `womens_sizes: "size_table"` | size, bust, waist, hip, *_cm |
+| `how_to_measure: "json"` | `how_to_measure: "step_list"` | title, text |
+| `delivery_options: "json"` | `delivery_options: "step_list"` | title, text |
+| `delivery_areas: "json"` | `delivery_areas: "step_list"` | title, text |
+| `shipping_costs: "json"` | `shipping_costs: "shipping_rate_list"` | area, label, cost, days |
+| `courier_partners: "json"` | `courier_partners: "courier_list"` | name, logo |
+| `features: "json"` | `features: "card_list"` | icon, title, text |
+| `shop_links: "json"` | `shop_links: "link_list"` | label, href |
+| `help_links: "json"` | `help_links: "link_list"` | label, href |
+| `social_links: "json"` | `social_links: "link_list"` | label, href |
+
+### Files to Modify: 2
+- `src/config/siteContentRegistry.ts` — update `contentSchema` types
+- `src/pages/admin/ContentManager.tsx` — add structured form renderers for each new type
 
 ### Files to Create: 0
-### Files to Modify: 8
-- `src/config/siteContentRegistry.ts` (add all defaultContent + contentSchema)
-- `src/pages/store/FAQ.tsx`
-- `src/pages/store/Contact.tsx`
-- `src/pages/store/Privacy.tsx`
-- `src/pages/store/Terms.tsx`
-- `src/pages/store/Returns.tsx`
-- `src/pages/store/ShippingInfo.tsx`
-- `src/pages/store/SizeGuide.tsx`
 
