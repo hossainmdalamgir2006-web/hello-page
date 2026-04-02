@@ -11,7 +11,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import { FeaturedProductCard } from "@/components/store/FeaturedProductCard";
 import { FeaturedProductsSkeleton } from "@/components/store/FeaturedProductsSkeleton";
-import { useHomepageSections } from "@/hooks/useHomepageSections";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { HeroCarousel } from "@/components/store/HeroCarousel";
 import { CategoryGrid } from "@/components/store/CategoryGrid";
 import { NewArrivalsSection } from "@/components/store/NewArrivalsSection";
@@ -41,7 +41,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 export default function StoreHome() {
   const { products, loading: productsLoading, isNewProduct } = useFeaturedProducts(8);
-  const { getSection, loading: cmsLoading } = useHomepageSections();
+  const { section, loading: cmsLoading } = useSiteContent("homepage");
   const { storeName } = useSiteTitle();
   const { t } = useLanguage();
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -86,18 +86,20 @@ export default function StoreHome() {
     url: window.location.origin,
   };
 
-  const heroCarousel = getSection("hero_carousel");
-  const featureBar = getSection("feature_bar");
-  const categoriesGrid = getSection("categories_grid");
-  const newArrivals = getSection("new_arrivals");
-  const promoBanners = getSection("promo_banners");
-  const bestSellers = getSection("best_sellers");
-  const flashSale = getSection("flash_sale");
-  const testimonials = getSection("testimonials");
-  const newsletter = getSection("newsletter");
+  const heroCarousel = section("hero_carousel");
+  const featureBar = section("feature_bar");
+  const categoriesGrid = section("categories_grid");
+  const newArrivals = section("new_arrivals");
+  const promoBanners = section("promo_banners");
+  const bestSellers = section("best_sellers");
+  const flashSale = section("flash_sale");
+  const testimonials = section("testimonials");
+  const newsletter = section("newsletter");
+  const brandMarquee = section("brand_marquee");
+  const trendingProducts = section("trending_products");
+  const recentlyViewed = section("recently_viewed");
 
   const features = featureBar?.content?.features || defaultFeatures;
-  const isEnabled = (s: ReturnType<typeof getSection>) => !s || s.is_enabled !== false;
 
   return (
     <>
@@ -108,7 +110,7 @@ export default function StoreHome() {
       />
 
       {/* 1. Hero Carousel */}
-      {isEnabled(heroCarousel) && (
+      {heroCarousel?.isEnabled !== false && (
         <HeroCarousel
           autoplay={heroCarousel?.content?.autoplay !== false}
           autoplayDelay={heroCarousel?.content?.autoplay_delay || 5000}
@@ -116,11 +118,10 @@ export default function StoreHome() {
         />
       )}
 
-      {/* ── Divider: Hero → Feature Bar ── */}
       <WaveDivider fillClass="fill-store-card" />
 
       {/* 2. Trust / Features Bar */}
-      {isEnabled(featureBar) && (
+      {featureBar?.isEnabled !== false && (
         <section className="bg-store-card py-5 border-b border-store-muted/50">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -133,7 +134,6 @@ export default function StoreHome() {
                     </div>
                     <div>
                       <p className="font-semibold text-foreground text-sm">{feature.title}</p>
-                      
                     </div>
                   </div>
                 );
@@ -143,17 +143,15 @@ export default function StoreHome() {
         </section>
       )}
 
-      {/* ── Divider: Feature Bar → Brand Marquee ── */}
       <ZigzagDivider fillClass="fill-store-background" />
 
       {/* 3. Brand Logos Marquee */}
-      <BrandMarquee />
+      {brandMarquee?.isEnabled !== false && <BrandMarquee />}
 
-      {/* ── Divider: Brand Marquee → Categories ── */}
       <SlantDivider fillClass="fill-store-background" direction="right" />
 
       {/* 4. Categories Grid */}
-      {isEnabled(categoriesGrid) && (
+      {categoriesGrid?.isEnabled !== false && (
         <CategoryGrid
           title={categoriesGrid?.title || t('store.shopByCategory')}
           subtitle={categoriesGrid?.subtitle || undefined}
@@ -161,45 +159,43 @@ export default function StoreHome() {
         />
       )}
 
-      {/* ── Divider: Categories → New Arrivals ── */}
       <CurveDivider fillClass="fill-store-card" />
 
       {/* 5. New Arrivals */}
-      {isEnabled(newArrivals) && (
+      {newArrivals?.isEnabled !== false && (
         <NewArrivalsSection
           title={newArrivals?.title || t('store.newArrivals')}
           subtitle={newArrivals?.subtitle || undefined}
-          badge={newArrivals?.badge_text || t('store.new')}
+          badge={newArrivals?.badgeText || t('store.new')}
           count={newArrivals?.content?.product_count || 8}
         />
       )}
 
-      {/* ── Divider: New Arrivals → Promo Banners ── */}
       <DoubleWaveDivider fillClass="fill-store-background" accentClass="fill-store-primary/5" />
 
       {/* 6. Promo Banners */}
-      {isEnabled(promoBanners) && (
+      {promoBanners?.isEnabled !== false && (
         <PromoBannerSection banners={promoBanners?.content?.banners} />
       )}
 
-      {/* ── Divider: Promo → Trending ── */}
       <TiltCurveDivider fillClass="fill-store-background" />
 
       {/* 7. Trending Products */}
-      <TrendingProductsSection count={4} />
+      {trendingProducts?.isEnabled !== false && (
+        <TrendingProductsSection count={trendingProducts?.content?.count || 4} />
+      )}
 
-      {/* ── Divider: Trending → Best Sellers ── */}
       <ScallopDivider fillClass="fill-store-muted" />
 
       {/* 8. Best Sellers / Featured Products */}
-      {isEnabled(bestSellers) && (
+      {bestSellers?.isEnabled !== false && (
         <section className="py-10 bg-store-muted">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <div>
-                {bestSellers?.badge_text && (
+                {bestSellers?.badgeText && (
                   <Badge className="bg-store-secondary/15 text-store-secondary border-0 text-xs uppercase tracking-wider mb-2">
-                    {bestSellers.badge_text}
+                    {bestSellers.badgeText}
                   </Badge>
                 )}
                 <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
@@ -239,25 +235,23 @@ export default function StoreHome() {
         </section>
       )}
 
-      {/* ── Divider: Best Sellers → Flash Sale ── */}
       <ArrowDivider fillClass="fill-store-primary" />
 
       {/* 9. Flash Sale */}
-      {isEnabled(flashSale) && (
+      {flashSale?.isEnabled !== false && (
         <FlashSaleSection
           title={flashSale?.title || t('store.flashSale')}
           subtitle={flashSale?.subtitle || undefined}
-          badge={flashSale?.badge_text || `⚡ ${t('store.flashSale')}`}
+          badge={flashSale?.badgeText || `⚡ ${t('store.flashSale')}`}
           endTime={flashSale?.content?.end_time || null}
           count={flashSale?.content?.product_count || 4}
         />
       )}
 
-      {/* ── Divider: Flash Sale → Testimonials ── */}
       <WaveDivider fillClass="fill-store-muted" flip />
 
       {/* 10. Testimonials */}
-      {isEnabled(testimonials) && (
+      {testimonials?.isEnabled !== false && (
         <TestimonialsSection
           title={testimonials?.title || t('store.whatCustomersSay')}
           subtitle={testimonials?.subtitle || undefined}
@@ -265,27 +259,21 @@ export default function StoreHome() {
         />
       )}
 
-      {/* ── Divider: Testimonials → Recently Viewed ── */}
       <SlantDivider fillClass="fill-store-background" direction="left" />
 
       {/* 11. Recently Viewed */}
-      <RecentlyViewedCarousel />
-
+      {recentlyViewed?.isEnabled !== false && <RecentlyViewedCarousel />}
 
       {/* 12. Newsletter */}
-      {isEnabled(newsletter) && (
+      {newsletter?.isEnabled !== false && (
         <section className="relative py-12 md:py-14 overflow-hidden bg-store-background">
           <div className="container mx-auto px-4 relative z-10">
             <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden">
-              {/* Card background */}
               <div className="absolute inset-0 bg-gradient-to-r from-store-primary via-store-highlight to-store-secondary" />
               <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
-              {/* Glow effects */}
               <div className="absolute -top-20 -left-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
               <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-store-accent/15 rounded-full blur-3xl" />
-
               <div className="relative z-10 px-6 py-12 md:px-16 md:py-14 flex flex-col md:flex-row items-center gap-8">
-                {/* Left content */}
                 <div className="flex-1 text-center md:text-left">
                   <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 mb-4 border border-white/20">
                     <Mail className="h-3.5 w-3.5 text-white" />
@@ -296,8 +284,6 @@ export default function StoreHome() {
                   </h2>
                   <p className="text-white/55 text-sm">Get exclusive deals, new arrivals & style tips delivered weekly.</p>
                 </div>
-
-                {/* Right form */}
                 <div className="w-full md:w-auto md:min-w-[340px]">
                   <form
                     onSubmit={(e) => { e.preventDefault(); handleNewsletterSubmit(); }}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Truck, Clock, MapPin, Package, ArrowRight, Calculator, CheckCircle2, HelpCircle, ThumbsUp, ThumbsDown, Search as SearchIcon } from "lucide-react";
-import { usePageContent } from "@/hooks/usePageContents";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";

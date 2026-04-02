@@ -11,8 +11,7 @@ import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
-import { useQueryClient } from "@tanstack/react-query";
-import { HomepageSection } from "@/hooks/useHomepageSections";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { X } from "lucide-react";
 import { Suspense } from "react";
 
@@ -29,12 +28,10 @@ export function StoreLayout({ children }: StoreLayoutProps) {
   const [announcementDismissed, setAnnouncementDismissed] = useState(false);
   const { data: settings } = useStoreSettingsCache();
 
-  // Read announcement from cached homepage-sections (no extra API call)
-  const queryClient = useQueryClient();
-  const cachedSections = queryClient.getQueryData<HomepageSection[]>(["homepage-sections"]);
-  const announcement = cachedSections?.find(
-    (s) => s.section_type === "announcement" && s.is_enabled
-  ) || null;
+  // Read announcement from site content overrides
+  const { getSectionConfig } = useSiteContent();
+  const announcementSection = getSectionConfig("homepage", "announcement");
+  const announcement = announcementSection?.isEnabled ? announcementSection : null;
 
   // Favicon: read from shared store settings cache
   useEffect(() => {

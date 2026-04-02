@@ -2,7 +2,7 @@ import { useState } from "react";
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, LogOut,
   Tag, Award, Truck, MessageSquare, FileText, Ticket, UserCog, User,
-  ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Home, Star,
+  ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Star,
   ChevronDown, HardDrive, Plug, Shield, ClipboardList, Mail, Bell,
   Store, CreditCard, Lock, ShieldCheck, KeyRound, Smartphone, Monitor, History,
 } from "lucide-react";
@@ -103,8 +103,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
     {
       label: "Content",
       items: [
-        { title: "Homepage", url: "/admin/homepage", icon: Home, roles: ['admin'] },
-        { title: "Page Content", url: "/admin/page-content", icon: FileText, roles: ['admin'] },
+        { title: "Content Manager", url: "/admin/content", icon: FileText, roles: ['admin'] },
         { title: "Appearance", url: "/admin/appearance", icon: Paintbrush, roles: ['admin'] },
         { title: "Reviews", url: "/admin/reviews", icon: Star, roles: ['admin'] },
       ],

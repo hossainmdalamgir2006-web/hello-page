@@ -86,9 +86,8 @@ const RoleManagement = lazy(() => import("./pages/RoleManagement"));
 const RoleDashboard = lazy(() => import("./pages/RoleDashboard"));
 const ManagerSettings = lazy(() => import("./pages/ManagerSettings"));
 const GlobalTrash = lazy(() => import("./pages/GlobalTrash"));
-const HomepageManager = lazy(() => import("./pages/admin/HomepageManager"));
+const ContentManager = lazy(() => import("./pages/admin/ContentManager"));
 const AppearanceManager = lazy(() => import("./pages/admin/AppearanceManager"));
-const PageContentManager = lazy(() => import("./pages/admin/PageContentManager"));
 const ReviewsManager = lazy(() => import("./pages/admin/ReviewsManager"));
 const AccountDeletionRequests = lazy(() => import("./pages/admin/AccountDeletionRequests"));
 const SupportSettings = lazy(() => import("./pages/SupportSettings"));
@@ -187,9 +186,10 @@ const App = () => (
             
             <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
             <Route path="/admin/role-management" element={<RoleManagement />} />
-            <Route path="/admin/homepage" element={<HomepageManager />} />
+            <Route path="/admin/content" element={<ContentManager />} />
+            <Route path="/admin/homepage" element={<Navigate to="/admin/content" replace />} />
+            <Route path="/admin/page-content" element={<Navigate to="/admin/content" replace />} />
             <Route path="/admin/appearance" element={<AppearanceManager />} />
-            <Route path="/admin/page-content" element={<PageContentManager />} />
             <Route path="/admin/reviews" element={<ReviewsManager />} />
             <Route path="/admin/trash" element={<GlobalTrash />} />
             <Route path="/admin/account-deletion-requests" element={<AccountDeletionRequests />} />
