@@ -22,9 +22,15 @@ export function FaqListEditor({ label, value, onChange }: Props) {
   const items: FaqItem[] = Array.isArray(value) ? value : [];
   const [expanded, setExpanded] = useState<number | null>(null);
 
+  const normalize = (item: FaqItem): FaqItem => ({
+    question: item.question ?? item.q ?? "",
+    answer: item.answer ?? item.a ?? "",
+    category: item.category ?? "",
+  });
+
   const update = (i: number, patch: Partial<FaqItem>) => {
     const next = [...items];
-    next[i] = { ...next[i], ...patch };
+    next[i] = normalize({ ...next[i], ...patch });
     onChange(next);
   };
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
@@ -56,11 +62,11 @@ export function FaqListEditor({ label, value, onChange }: Props) {
             <CardContent className="p-3 pt-0 space-y-3">
               <div className="space-y-1">
                 <Label className="text-xs">Question</Label>
-                <Input value={getQ(item)} onChange={(e) => update(i, item.question !== undefined ? { question: e.target.value } : { q: e.target.value })} className="text-sm" />
+                <Input value={getQ(item)} onChange={(e) => update(i, { question: e.target.value })} className="text-sm" />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Answer</Label>
-                <Textarea value={getA(item)} onChange={(e) => update(i, item.answer !== undefined ? { answer: e.target.value } : { a: e.target.value })} rows={3} className="text-sm" />
+                <Textarea value={getA(item)} onChange={(e) => update(i, { answer: e.target.value })} rows={3} className="text-sm" />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Category</Label>

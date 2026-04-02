@@ -43,10 +43,26 @@ const subjectOptions = [
 
 type FaqCategory = "orders" | "returns" | "shipping" | "general";
 
+interface FaqItemRaw {
+  q?: string;
+  a?: string;
+  question?: string;
+  answer?: string;
+  category: FaqCategory;
+}
+
 interface FaqItem {
   q: string;
   a: string;
   category: FaqCategory;
+}
+
+function normalizeFaq(raw: FaqItemRaw): FaqItem {
+  return {
+    q: raw.q ?? raw.question ?? "",
+    a: raw.a ?? raw.answer ?? "",
+    category: raw.category,
+  };
 }
 
 const faqCategoryConfig: Record<FaqCategory, { label: string; icon: React.ElementType; color: string }> = {
@@ -114,7 +130,7 @@ export default function Contact() {
   const contentData = (pageData?.content || {}) as any;
   const formTitle = contentData.form_title || t('store.sendUsMessage');
   const cards = contentData.cards || [];
-  const faqItems: FaqItem[] = contentData.faqs || [];
+  const faqItems: FaqItem[] = (contentData.faqs || []).map(normalizeFaq);
 
   if (pageLoading) {
     return (
