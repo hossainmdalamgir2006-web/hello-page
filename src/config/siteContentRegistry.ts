@@ -532,7 +532,7 @@ export const siteContentRegistry: PageDef[] = [
         icon: FileText,
         defaultEnabled: true,
         editableFields: ["content"],
-        contentSchema: { shop_links: "json", help_links: "json", social_links: "json" },
+        contentSchema: { shop_links: "link_list", help_links: "link_list", social_links: "link_list" },
       },
     ],
   },
