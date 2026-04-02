@@ -433,7 +433,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "Stripe",
     name_bn: "স্ট্রাইপ",
     icon: "💳",
-    default_logo: "/logos/stripe.png",
+    default_logo: "/logos/stripe.svg",
     description: "Pay with credit/debit card via Stripe",
     description_bn: "Stripe এর মাধ্যমে ক্রেডিট/ডেবিট কার্ডে পেমেন্ট করুন",
     type: "gateway",
