@@ -390,6 +390,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "aamarPay",
     name_bn: "আমার পে",
     icon: "💳",
+    default_logo: "/logos/aamarpay.png",
     description: "Pay with aamarPay payment gateway",
     description_bn: "aamarPay পেমেন্ট গেটওয়ে দিয়ে পেমেন্ট করুন",
     type: "gateway",
