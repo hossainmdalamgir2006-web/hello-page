@@ -186,9 +186,10 @@ const App = () => (
             
             <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
             <Route path="/admin/role-management" element={<RoleManagement />} />
-            <Route path="/admin/homepage" element={<HomepageManager />} />
+            <Route path="/admin/content" element={<ContentManager />} />
+            <Route path="/admin/homepage" element={<Navigate to="/admin/content" replace />} />
+            <Route path="/admin/page-content" element={<Navigate to="/admin/content" replace />} />
             <Route path="/admin/appearance" element={<AppearanceManager />} />
-            <Route path="/admin/page-content" element={<PageContentManager />} />
             <Route path="/admin/reviews" element={<ReviewsManager />} />
             <Route path="/admin/trash" element={<GlobalTrash />} />
             <Route path="/admin/account-deletion-requests" element={<AccountDeletionRequests />} />

@@ -103,8 +103,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
     {
       label: "Content",
       items: [
-        { title: "Homepage", url: "/admin/homepage", icon: Home, roles: ['admin'] },
-        { title: "Page Content", url: "/admin/page-content", icon: FileText, roles: ['admin'] },
+        { title: "Content Manager", url: "/admin/content", icon: FileText, roles: ['admin'] },
         { title: "Appearance", url: "/admin/appearance", icon: Paintbrush, roles: ['admin'] },
         { title: "Reviews", url: "/admin/reviews", icon: Star, roles: ['admin'] },
       ],
