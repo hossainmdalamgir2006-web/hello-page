@@ -252,10 +252,6 @@ export default function Shipping() {
             <PaperflyTab pendingOrders={pendingOrders} />
           </TabsContent>
 
-          {/* eCourier Tab */}
-          <TabsContent value="ecourier" className="space-y-4">
-            <ECourierTab pendingOrders={pendingOrders} />
-          </TabsContent>
 
           {/* Shipping Zones Tab */}
           <TabsContent value="zones" className="space-y-4">
