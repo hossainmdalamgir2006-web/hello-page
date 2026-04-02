@@ -3,16 +3,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, CreditCard, Plus, Trash2, Star } from "lucide-react";
+import { CreditCard, Trash2, Star } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericCardGridSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useEnabledPaymentMethods } from "@/hooks/useEnabledPaymentMethods";
 import { motion } from "framer-motion";
@@ -32,11 +28,6 @@ export default function AccountPaymentMethods() {
   const { paymentMethods: enabledMethods, loading: loadingMethods } = useEnabledPaymentMethods();
   const [methods, setMethods] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [methodType, setMethodType] = useState("");
-  const [label, setLabel] = useState("");
-  const [lastFour, setLastFour] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   const fetchMethods = async () => {
     if (!user) return;
@@ -47,21 +38,6 @@ export default function AccountPaymentMethods() {
   };
 
   useEffect(() => { fetchMethods(); }, [user]);
-
-  const handleAdd = async () => {
-    if (!methodType || !label) { toast.error(t('account.fillAllFields')); return; }
-    setSubmitting(true);
-    const { error } = await supabase.from("saved_payment_methods").insert({
-      user_id: user!.id, method_type: methodType, label, last_four: lastFour || null, is_default: methods.length === 0,
-    });
-    if (error) { toast.error(t('account.failedToAdd')); }
-    else {
-      toast.success(t('account.paymentMethodAdded'));
-      setOpen(false); setMethodType(""); setLabel(""); setLastFour("");
-      fetchMethods();
-    }
-    setSubmitting(false);
-  };
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("saved_payment_methods").delete().eq("id", id);
@@ -84,42 +60,6 @@ export default function AccountPaymentMethods() {
     <>
     <SEOHead title="Payment Methods" noIndex />
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants} className="flex justify-end">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />{t('account.addMethod')}</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>{t('account.addPaymentMethod')}</DialogTitle></DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>{t('account.type')}</Label>
-                <Select value={methodType} onValueChange={setMethodType}>
-                  <SelectTrigger><SelectValue placeholder={t('account.selectType')} /></SelectTrigger>
-                  <SelectContent>
-                    {enabledMethods.map((m) => (
-                      <SelectItem key={m.code} value={m.code}>{m.icon} {m.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>{t('account.labelAccountName')}</Label>
-                <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Personal bKash" />
-              </div>
-              <div>
-                <Label>{t('account.lastFourDigits')}</Label>
-                <Input value={lastFour} onChange={(e) => setLastFour(e.target.value)} placeholder="1234" maxLength={4} />
-              </div>
-              <Button onClick={handleAdd} disabled={submitting} className="w-full">
-                {submitting && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
-                {t('common.save')}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </motion.div>
-
       {methods.length === 0 ? (
         <motion.div variants={itemVariants}>
           <Card className="border-dashed">
@@ -128,7 +68,7 @@ export default function AccountPaymentMethods() {
                 <CreditCard className="h-8 w-8 text-primary" />
               </div>
               <h3 className="font-semibold text-lg mb-1">{t('account.noSavedPayments')}</h3>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">Save your preferred payment methods for faster checkout</p>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">Your payment methods from orders will appear here</p>
             </CardContent>
           </Card>
         </motion.div>
