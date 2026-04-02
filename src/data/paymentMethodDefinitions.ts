@@ -347,6 +347,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "ShurjoPay",
     name_bn: "শুরজোপে",
     icon: "💳",
+    default_logo: "/logos/shurjopay.png",
     description: "Pay via ShurjoPay payment gateway",
     description_bn: "ShurjoPay পেমেন্ট গেটওয়ে দিয়ে পেমেন্ট করুন",
     type: "gateway",
