@@ -87,9 +87,9 @@ export default function AccountNotificationPreferences() {
                 <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" />{t('account.orderNotifications')}</h3>
                 <div className="space-y-3">
                   {([
-                    { key: "order_updates" as const, label: t('account.orderUpdates'), desc: t('account.orderUpdatesDesc') },
-                    { key: "order_shipped" as const, label: t('account.shippingNotifications'), desc: t('account.shippingNotificationsDesc') },
-                    { key: "order_delivered" as const, label: t('account.deliveryNotifications'), desc: t('account.deliveryNotificationsDesc') },
+                    { key: "order_updates" as const, label: t('account.orderUpdates') },
+                    { key: "order_shipped" as const, label: t('account.shippingNotifications') },
+                    { key: "order_delivered" as const, label: t('account.deliveryNotifications') },
                   ]).map((item) => (
                     <div key={item.key}>
                       <div className="flex items-center justify-between">
