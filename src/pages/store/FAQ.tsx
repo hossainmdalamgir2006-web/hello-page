@@ -52,7 +52,7 @@ export default function FAQ() {
   const { t } = useLanguage();
   const title = data?.title || t("store.faqTitle");
   const subtitle = data?.subtitle || t("store.faqSubtitle");
-  const faqs: FaqItem[] = (data?.content as any)?.faqs || [];
+  const faqs: FaqItem[] = ((data?.content as any)?.faqs || []).map(normalizeFaqItem);
 
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<FaqCategory>("all");
