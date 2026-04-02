@@ -25,15 +25,28 @@ export default function ShippingInfo() {
   const [selectedArea, setSelectedArea] = useState("");
   const [helpfulFaqs, setHelpfulFaqs] = useState<Record<number, boolean | null>>({});
 
-  const deliveryOptions = (c.delivery_options?.length > 0) ? c.delivery_options : defaultDeliveryOptions;
-  const deliveryAreas = (c.delivery_areas?.length > 0) ? c.delivery_areas : defaultDeliveryAreas;
-  const processingText = c.processing_text || "Orders are typically processed within 24 hours during business days. Orders placed on weekends or holidays will be processed on the next business day.";
-  const trackingText = c.tracking_text || "Once your order is shipped, you'll receive an SMS and email with your tracking number. Use our Track Order page to get real-time updates on your delivery status.";
-  const notes = c.notes?.length > 0 ? c.notes : [
-    "Delivery times are estimates and may vary during peak seasons or holidays.",
-    "Cash on delivery (COD) is available for all areas.",
-    "Free shipping on orders above ৳2,000.",
-    "Fragile items are packaged with extra care at no additional cost.",
+  const deliveryOptions = c.delivery_options || [];
+  const deliveryAreas = c.delivery_areas || [];
+  const shippingCosts = c.shipping_costs || [];
+  const courierPartners = c.courier_partners || [];
+  const shippingFaqs = c.faqs || [];
+  const processingText = c.processing_text || "";
+  const trackingText = c.tracking_text || "";
+  const notes = c.notes || [];
+
+  const faqCategoryConfig: Record<string, { icon: any; color: string; label: string }> = {
+    cost: { icon: Calculator, color: "bg-green-100 text-green-700", label: "Cost" },
+    time: { icon: Clock, color: "bg-blue-100 text-blue-700", label: "Delivery Time" },
+    tracking: { icon: SearchIcon, color: "bg-purple-100 text-purple-700", label: "Tracking" },
+    area: { icon: MapPin, color: "bg-orange-100 text-orange-700", label: "Coverage" },
+    issue: { icon: HelpCircle, color: "bg-red-100 text-red-700", label: "Issues" },
+  };
+
+  const timelineSteps = [
+    { icon: Package, label: "Order Placed", desc: "Your order is confirmed", day: "Day 0" },
+    { icon: Clock, label: "Processing", desc: "We're preparing your package", day: "Day 1" },
+    { icon: Truck, label: "Shipped", desc: "Handed to courier partner", day: "Day 1-2" },
+    { icon: CheckCircle2, label: "Delivered", desc: "At your doorstep!", day: "Day 2-7" },
   ];
 
   const selectedCost = shippingCosts.find(s => s.area === selectedArea);
