@@ -24,9 +24,10 @@ export const ToolBtn = ({ icon: Icon, command, value: cmdValue, label, active, d
             if (command) execCommand(command, cmdValue);
           }}
           className={cn(
-            "h-7 w-7 flex items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
+            "h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground transition-all duration-150",
+            "hover:bg-accent hover:text-accent-foreground hover:shadow-sm",
             "disabled:opacity-40 disabled:pointer-events-none",
-            active && "bg-accent text-accent-foreground"
+            active && "bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20"
           )}
         >
           <Icon className="h-3.5 w-3.5" />
@@ -37,4 +38,15 @@ export const ToolBtn = ({ icon: Icon, command, value: cmdValue, label, active, d
   </TooltipProvider>
 );
 
-export const Divider = () => <div className="mx-1 h-5 w-px bg-border self-center" />;
+export const Divider = () => <div className="mx-0.5 h-5 w-px bg-border/60 self-center" />;
+
+interface ToolGroupProps {
+  children: React.ReactNode;
+  label?: string;
+}
+
+export const ToolGroup = ({ children, label }: ToolGroupProps) => (
+  <div className="flex items-center gap-0.5 px-1 py-0.5 rounded-md bg-muted/40" title={label}>
+    {children}
+  </div>
+);

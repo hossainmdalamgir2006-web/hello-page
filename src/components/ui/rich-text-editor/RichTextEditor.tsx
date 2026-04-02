@@ -306,16 +306,33 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorProps>(
           </div>
         )}
 
-        <div className="flex justify-between px-3 py-1 border-t border-input bg-muted/20">
-          <span className="text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 px-3 py-1.5 border-t border-input bg-muted/20">
+          <span className="text-[11px] text-muted-foreground tabular-nums">
             {wordCount} word{wordCount !== 1 ? "s" : ""}
           </span>
-          {maxLength ? (
-            <span className={cn("text-xs", charCount > maxLength ? "text-destructive" : "text-muted-foreground")}>
-              {charCount}/{maxLength}
-            </span>
-          ) : (
-            <span className="text-xs text-muted-foreground">{charCount} chars</span>
+          <span className="text-border">·</span>
+          <span className="text-[11px] text-muted-foreground tabular-nums">{charCount} chars</span>
+          {maxLength && (
+            <>
+              <div className="flex-1 flex items-center gap-2 max-w-[200px] ml-auto">
+                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full rounded-full transition-all duration-300",
+                      charCount / maxLength > 0.9
+                        ? "bg-destructive"
+                        : charCount / maxLength > 0.7
+                          ? "bg-warning"
+                          : "bg-primary"
+                    )}
+                    style={{ width: `${Math.min((charCount / maxLength) * 100, 100)}%` }}
+                  />
+                </div>
+                <span className={cn("text-[11px] tabular-nums whitespace-nowrap", charCount > maxLength ? "text-destructive font-medium" : "text-muted-foreground")}>
+                  {charCount}/{maxLength}
+                </span>
+              </div>
+            </>
           )}
         </div>
       </div>
