@@ -249,6 +249,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "Upay",
     name_bn: "উপায়",
     icon: "💸",
+    default_logo: "/logos/upay.png",
     description: "Pay with Upay mobile wallet",
     description_bn: "উপায় মোবাইল ওয়ালেটে পেমেন্ট করুন",
     type: "mobile",
