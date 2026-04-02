@@ -238,7 +238,7 @@ export default function ShippingInfo() {
                     <AccordionTrigger className="hover:no-underline py-4">
                       <div className="flex items-center gap-3 text-left">
                         <CatIcon className="h-4 w-4 text-store-primary shrink-0" />
-                        <span className="font-medium">{faq.q}</span>
+                        <span className="font-medium">{faq.q ?? faq.question ?? ""}</span>
                         {catConfig && <Badge variant="secondary" className={`${catConfig.color} text-xs ml-auto mr-2 shrink-0`}>{catConfig.label}</Badge>}
                       </div>
                     </AccordionTrigger>
