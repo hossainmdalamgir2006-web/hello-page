@@ -297,6 +297,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     name: "SSLCommerz",
     name_bn: "এসএসএল কমার্জ",
     icon: "💳",
+    default_logo: "/logos/sslcommerz.png",
     description: "Pay with credit/debit card via SSLCommerz",
     description_bn: "SSLCommerz এর মাধ্যমে ক্রেডিট/ডেবিট কার্ডে পেমেন্ট করুন",
     type: "gateway",
