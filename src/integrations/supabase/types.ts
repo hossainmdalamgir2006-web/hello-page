@@ -3048,6 +3048,51 @@ export type Database = {
         }
         Relationships: []
       }
+      site_content_overrides: {
+        Row: {
+          badge_text: string | null
+          content: Json | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_enabled: boolean | null
+          page_slug: string
+          section_key: string
+          sort_order: number | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          badge_text?: string | null
+          content?: Json | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_enabled?: boolean | null
+          page_slug: string
+          section_key: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          badge_text?: string | null
+          content?: Json | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_enabled?: boolean | null
+          page_slug?: string
+          section_key?: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_theme_settings: {
         Row: {
           category: string
