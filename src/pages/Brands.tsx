@@ -363,12 +363,13 @@ export default function Brands() {
             const borderMap: Record<string, string> = { primary: "border-l-primary", success: "border-l-success", accent: "border-l-accent" };
             const bgMap: Record<string, string> = { primary: "bg-primary/10", success: "bg-success/10", accent: "bg-accent/10" };
             const textMap: Record<string, string> = { primary: "text-primary", success: "text-success", accent: "text-accent" };
+            const cardBgMap: Record<string, string> = { primary: "bg-primary/5 dark:bg-primary/10", success: "bg-success/5 dark:bg-success/10", accent: "bg-accent/5 dark:bg-accent/10" };
             const IconComp = card.icon;
             return (
               <div key={card.label} className={cn(
-                "group relative rounded-xl border border-border/50 bg-card p-4 sm:p-5 transition-all duration-300",
+                "group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300",
                 "hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px]",
-                borderMap[card.color], "animate-fade-in"
+                borderMap[card.color], cardBgMap[card.color], "animate-fade-in"
               )}>
                 <div className="flex items-center justify-between">
                   <div>
