@@ -214,7 +214,7 @@ export default function ShippingInfo() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }} className="max-w-4xl mx-auto mb-12">
           <h2 className="font-display text-2xl font-bold mb-6 text-center">Our Courier Partners</h2>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-            {courierPartners.map((cp, i) => (
+            {courierPartners.map((cp: any, i: number) => (
               <motion.div key={cp.name} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 + i * 0.05 }} className="flex flex-col items-center gap-2 p-4 rounded-xl border bg-card hover:shadow-md transition-shadow">
                 <div className="w-16 h-12 flex items-center justify-center">
                   <img src={cp.logo} alt={cp.name} className="max-h-10 max-w-full object-contain" />
