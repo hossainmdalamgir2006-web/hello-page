@@ -480,7 +480,7 @@ export default function Shipping() {
                                   : shipment.courier === 'pathao' ? 'https://merchant.pathao.com'
                                   : shipment.courier === 'redx' ? 'https://merchant.redx.com.bd'
                                   : shipment.courier === 'paperfly' ? 'https://merchant.paperfly.com.bd'
-                                  : 'https://backoffice.ecourier.com.bd'} 
+                                  : '#'} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                               >

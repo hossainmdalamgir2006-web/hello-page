@@ -248,8 +248,6 @@ export function IntegrationsSettings() {
       {/* Paperfly Courier Integration */}
       <PaperflySettings />
 
-      {/* eCourier Integration */}
-      <ECourierSettings />
 
       {/* Google Analytics 4 Integration */}
       <GoogleAnalyticsSettings />
