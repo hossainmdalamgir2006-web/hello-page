@@ -195,9 +195,8 @@ export function usePaymentMethods() {
 
       if (error) throw error;
 
-      setPaymentMethods((prev) =>
-        prev.map((pm) => (pm.id === id ? { ...pm, ...updates } : pm))
-      );
+      // Refetch to get fully merged data with definitions
+      await fetchPaymentMethods();
       
       toast.success("Payment method updated");
       return true;
