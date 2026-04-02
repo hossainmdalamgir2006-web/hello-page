@@ -17,6 +17,10 @@ import {
   Save, ExternalLink, Eye, EyeOff, ChevronDown, ChevronRight, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  StringListEditor, FaqListEditor, CardListEditor, SectionListEditor,
+  StepListEditor, SizeTableEditor, ShippingRateListEditor, LinkListEditor,
+} from "@/components/admin/content-editors";
 
 export default function ContentManager() {
   const [selectedPage, setSelectedPage] = useState(siteContentRegistry[0].slug);
@@ -54,19 +58,16 @@ export default function ContentManager() {
 
     if (def.editableFields.includes("content") && def.contentSchema) {
       const contentObj: Record<string, any> = {};
+      const structuredTypes = ["faq_list", "card_list", "section_list", "step_list", "string_list", "size_table", "shipping_rate_list", "courier_list", "link_list"];
       for (const key of Object.keys(def.contentSchema)) {
         if (editForm[key] !== undefined) {
           const schemaType = def.contentSchema[key];
-          if (schemaType === "number") {
+          if (structuredTypes.includes(schemaType)) {
+            contentObj[key] = editForm[key];
+          } else if (schemaType === "number") {
             contentObj[key] = Number(editForm[key]) || 0;
           } else if (schemaType === "boolean") {
             contentObj[key] = editForm[key] === true || editForm[key] === "true";
-          } else if (schemaType === "json") {
-            try {
-              contentObj[key] = typeof editForm[key] === "string" ? JSON.parse(editForm[key]) : editForm[key];
-            } catch {
-              contentObj[key] = editForm[key];
-            }
           } else {
             contentObj[key] = editForm[key];
           }
@@ -85,32 +86,35 @@ export default function ContentManager() {
   const renderFieldEditor = (fieldKey: string, schemaType: string) => {
     const value = editForm[fieldKey] ?? "";
     const label = fieldKey.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const updateField = (v: any) => setEditForm((f) => ({ ...f, [fieldKey]: v }));
 
     if (schemaType === "boolean") {
       return (
         <div key={fieldKey} className="flex items-center gap-3">
-          <Switch
-            checked={value === true || value === "true"}
-            onCheckedChange={(v) => setEditForm((f) => ({ ...f, [fieldKey]: v }))}
-          />
+          <Switch checked={value === true || value === "true"} onCheckedChange={updateField} />
           <Label className="text-sm">{label}</Label>
         </div>
       );
     }
 
-    if (schemaType === "textarea" || schemaType === "json") {
+    if (schemaType === "textarea") {
       return (
         <div key={fieldKey} className="space-y-1.5">
           <Label className="text-xs font-medium">{label}</Label>
-          <Textarea
-            value={typeof value === "object" ? JSON.stringify(value, null, 2) : value}
-            onChange={(e) => setEditForm((f) => ({ ...f, [fieldKey]: e.target.value }))}
-            rows={4}
-            className="text-sm"
-          />
+          <Textarea value={value} onChange={(e) => updateField(e.target.value)} rows={4} className="text-sm" />
         </div>
       );
     }
+
+    if (schemaType === "string_list") return <StringListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} />;
+    if (schemaType === "faq_list") return <FaqListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} />;
+    if (schemaType === "card_list") return <CardListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} />;
+    if (schemaType === "section_list") return <SectionListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} />;
+    if (schemaType === "step_list") return <StepListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} />;
+    if (schemaType === "size_table") return <SizeTableEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} />;
+    if (schemaType === "shipping_rate_list") return <ShippingRateListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} />;
+    if (schemaType === "courier_list") return <LinkListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} type="courier" />;
+    if (schemaType === "link_list") return <LinkListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} type="link" />;
 
     return (
       <div key={fieldKey} className="space-y-1.5">
@@ -118,7 +122,7 @@ export default function ContentManager() {
         <Input
           type={schemaType === "number" ? "number" : "text"}
           value={value}
-          onChange={(e) => setEditForm((f) => ({ ...f, [fieldKey]: e.target.value }))}
+          onChange={(e) => updateField(e.target.value)}
           className="text-sm"
         />
       </div>

@@ -14,7 +14,7 @@ export interface SectionDef {
   defaultBadge?: string;
   defaultContent?: Record<string, any>;
   editableFields: ("title" | "subtitle" | "badge" | "image" | "content")[];
-  contentSchema?: Record<string, "text" | "textarea" | "number" | "boolean" | "json">;
+  contentSchema?: Record<string, "text" | "textarea" | "number" | "boolean" | "json" | "faq_list" | "card_list" | "section_list" | "step_list" | "string_list" | "size_table" | "shipping_rate_list" | "courier_list" | "link_list">;
 }
 
 export interface PageDef {
@@ -47,7 +47,7 @@ export const siteContentRegistry: PageDef[] = [
         icon: Truck,
         defaultEnabled: true,
         editableFields: ["content"],
-        contentSchema: { features: "json" },
+        contentSchema: { features: "card_list" },
       },
       {
         key: "brand_marquee",
@@ -63,7 +63,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultEnabled: true,
         defaultTitle: "Shop by Category",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { categories: "json" },
+        contentSchema: { categories: "card_list" },
       },
       {
         key: "new_arrivals",
@@ -82,7 +82,7 @@ export const siteContentRegistry: PageDef[] = [
         icon: Layout,
         defaultEnabled: true,
         editableFields: ["content"],
-        contentSchema: { banners: "json" },
+        contentSchema: { banners: "card_list" },
       },
       {
         key: "trending_products",
@@ -119,7 +119,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultEnabled: true,
         defaultTitle: "What Customers Say",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { testimonials: "json" },
+        contentSchema: { testimonials: "card_list" },
       },
       {
         key: "recently_viewed",
@@ -161,7 +161,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Frequently Asked Questions",
         defaultSubtitle: "Find answers to the most common questions about our products, shipping, payments, and more.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { hero_badge: "text", faqs: "json" },
+        contentSchema: { hero_badge: "text", faqs: "faq_list" },
         defaultContent: {
           hero_badge: "Help Center",
           faqs: [
@@ -196,7 +196,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Contact Us",
         defaultSubtitle: "Have a question or need help? We'd love to hear from you.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { cards: "json", form_title: "text", faqs: "json" },
+        contentSchema: { cards: "card_list", form_title: "text", faqs: "faq_list" },
         defaultContent: {
           form_title: "Send Us a Message",
           cards: [
@@ -230,7 +230,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Privacy Policy",
         defaultSubtitle: "Your privacy is important to us. Learn how we collect, use, and protect your personal information.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { sections: "json", last_updated: "text" },
+        contentSchema: { sections: "section_list", last_updated: "text" },
         defaultContent: {
           last_updated: "January 2024",
           sections: [
@@ -290,7 +290,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Terms of Service",
         defaultSubtitle: "Please read these terms carefully before using our services.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { sections: "json", last_updated: "text" },
+        contentSchema: { sections: "section_list", last_updated: "text" },
         defaultContent: {
           last_updated: "January 2024",
           sections: [
@@ -349,7 +349,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Returns & Exchange Policy",
         defaultSubtitle: "Easy returns and exchanges within 7 days. Your satisfaction is our priority.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { eligible: "json", not_eligible: "json", steps: "json", refund_info: "json", exchange_text: "textarea", faqs: "json" },
+        contentSchema: { eligible: "string_list", not_eligible: "string_list", steps: "step_list", refund_info: "string_list", exchange_text: "textarea", faqs: "faq_list" },
         defaultContent: {
           eligible: [
             "Unused items with original tags and packaging",
@@ -406,7 +406,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Shipping Information",
         defaultSubtitle: "Everything you need to know about our delivery process",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { delivery_options: "json", delivery_areas: "json", processing_text: "textarea", tracking_text: "textarea", notes: "json", faqs: "json", shipping_costs: "json", courier_partners: "json" },
+        contentSchema: { delivery_options: "step_list", delivery_areas: "step_list", processing_text: "textarea", tracking_text: "textarea", notes: "string_list", faqs: "faq_list", shipping_costs: "shipping_rate_list", courier_partners: "courier_list" },
         defaultContent: {
           delivery_options: [
             { title: "Standard Delivery", text: "3-5 business days for orders within Dhaka. 5-7 business days for outside Dhaka." },
@@ -465,7 +465,7 @@ export const siteContentRegistry: PageDef[] = [
         defaultTitle: "Size Guide",
         defaultSubtitle: "Find your perfect fit with our comprehensive size charts and measurement guide.",
         editableFields: ["title", "subtitle", "content"],
-        contentSchema: { mens_sizes: "json", womens_sizes: "json", how_to_measure: "json", tips: "json", faqs: "json" },
+        contentSchema: { mens_sizes: "size_table", womens_sizes: "size_table", how_to_measure: "step_list", tips: "string_list", faqs: "faq_list" },
         defaultContent: {
           mens_sizes: [
             { size: "S", chest: "36\"", waist: "30\"", hip: "37\"", chest_cm: "91", waist_cm: "76", hip_cm: "94" },
@@ -532,7 +532,7 @@ export const siteContentRegistry: PageDef[] = [
         icon: FileText,
         defaultEnabled: true,
         editableFields: ["content"],
-        contentSchema: { shop_links: "json", help_links: "json", social_links: "json" },
+        contentSchema: { shop_links: "link_list", help_links: "link_list", social_links: "link_list" },
       },
     ],
   },
