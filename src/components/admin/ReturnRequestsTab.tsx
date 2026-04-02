@@ -206,15 +206,15 @@ export function ReturnRequestsTab() {
       {/* Stats */}
       <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3">
         {[
-          { label: "Pending", value: counts.pending, icon: Clock, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
-          { label: "Completed", value: counts.completed, icon: CheckCircle2, iconBg: "bg-success/10 text-success", border: "border-l-success" },
-          { label: "Total Refunded", value: `${formatPrice(refundStats.totalRefunded)}`, icon: DollarSign, iconBg: "bg-accent/10 text-accent-foreground", border: "border-l-accent" },
+          { label: "Pending", value: counts.pending, icon: Clock, iconBg: "bg-warning/10 text-warning", border: "border-l-warning", cardBg: "bg-warning/5 dark:bg-warning/10" },
+          { label: "Completed", value: counts.completed, icon: CheckCircle2, iconBg: "bg-success/10 text-success", border: "border-l-success", cardBg: "bg-success/5 dark:bg-success/10" },
+          { label: "Total Refunded", value: `${formatPrice(refundStats.totalRefunded)}`, icon: DollarSign, iconBg: "bg-accent/10 text-accent-foreground", border: "border-l-accent", cardBg: "bg-accent/5 dark:bg-accent/10" },
         ].map((stat) => (
           <div
             key={stat.label}
             className={cn(
-              "rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5",
-              stat.border
+              "rounded-xl border border-border/50 p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5",
+              stat.border, stat.cardBg
             )}
           >
             <div className="flex items-center gap-3">

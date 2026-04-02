@@ -140,14 +140,14 @@ export function BlockedLoginAttempts() {
       {/* Stats Cards */}
       <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
         {[
-          { label: "Total Blocked", value: stats.total, icon: ShieldAlert, iconBg: "bg-primary/10 text-primary", border: "border-l-primary" },
-          { label: "Active Blocks", value: stats.active, icon: ShieldX, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive" },
-          { label: "Expired", value: stats.expired, icon: Clock, iconBg: "bg-muted text-muted-foreground", border: "border-l-muted-foreground" },
-          { label: "Permanent", value: stats.permanent, icon: Shield, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
+          { label: "Total Blocked", value: stats.total, icon: ShieldAlert, iconBg: "bg-primary/10 text-primary", border: "border-l-primary", cardBg: "bg-primary/5 dark:bg-primary/10" },
+          { label: "Active Blocks", value: stats.active, icon: ShieldX, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive", cardBg: "bg-destructive/5 dark:bg-destructive/10" },
+          { label: "Expired", value: stats.expired, icon: Clock, iconBg: "bg-muted text-muted-foreground", border: "border-l-muted-foreground", cardBg: "bg-muted/30 dark:bg-muted/20" },
+          { label: "Permanent", value: stats.permanent, icon: Shield, iconBg: "bg-warning/10 text-warning", border: "border-l-warning", cardBg: "bg-warning/5 dark:bg-warning/10" },
         ].map((stat) => (
           <div
             key={stat.label}
-            className={`rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border}`}
+            className={`rounded-xl border border-border/50 p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border} ${stat.cardBg}`}
           >
             <div className="flex items-center gap-3">
               <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>
