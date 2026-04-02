@@ -161,3 +161,24 @@ export function useSiteContent(pageSlug?: string) {
     registry: siteContentRegistry,
   };
 }
+
+/**
+ * Backward-compatible hook for store pages that used usePageContent(slug).
+ * Returns { data, loading } where data has title, subtitle, content shape.
+ */
+export function usePageContent(slug: string) {
+  const { section, loading } = useSiteContent(slug);
+  const mainContent = section("main_content");
+
+  const data = mainContent
+    ? {
+        title: mainContent.title,
+        subtitle: mainContent.subtitle,
+        content: mainContent.content,
+        is_enabled: mainContent.isEnabled,
+      }
+    : null;
+
+  return { data, loading };
+}
+
