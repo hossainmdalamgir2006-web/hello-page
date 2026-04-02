@@ -179,14 +179,14 @@ export function ContactMessagesTab() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: "Total Messages", value: messages.length, icon: MessageSquare, iconBg: "bg-primary/10 text-primary", border: "border-l-primary" },
-          { label: "Unread", value: unreadCount, icon: Mail, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive" },
-          { label: "Unreplied", value: unrepliedCount, icon: Reply, iconBg: "bg-warning/10 text-warning", border: "border-l-warning" },
-          { label: "Replied", value: repliedCount, icon: CheckCircle2, iconBg: "bg-success/10 text-success", border: "border-l-success" },
+          { label: "Total Messages", value: messages.length, icon: MessageSquare, iconBg: "bg-primary/10 text-primary", border: "border-l-primary", cardBg: "bg-primary/5 dark:bg-primary/10" },
+          { label: "Unread", value: unreadCount, icon: Mail, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive", cardBg: "bg-destructive/5 dark:bg-destructive/10" },
+          { label: "Unreplied", value: unrepliedCount, icon: Reply, iconBg: "bg-warning/10 text-warning", border: "border-l-warning", cardBg: "bg-warning/5 dark:bg-warning/10" },
+          { label: "Replied", value: repliedCount, icon: CheckCircle2, iconBg: "bg-success/10 text-success", border: "border-l-success", cardBg: "bg-success/5 dark:bg-success/10" },
         ].map((stat) => (
           <div
             key={stat.label}
-            className={`rounded-xl border border-border/50 bg-card p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border}`}
+            className={`rounded-xl border border-border/50 p-4 border-l-[3px] transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 ${stat.border} ${stat.cardBg}`}
           >
             <div className="flex items-center gap-3">
               <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${stat.iconBg}`}>

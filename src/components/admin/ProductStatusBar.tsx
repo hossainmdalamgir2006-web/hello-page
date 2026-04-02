@@ -26,10 +26,10 @@ export function ProductStatusBar({ products }: ProductStatusBarProps) {
   const lowStock = products.filter(p => p.stock > 0 && p.stock <= (p.low_stock_threshold ?? 10)).length;
 
   const items = [
-    { label: "Active", count: active, icon: CheckCircle2, border: "border-l-emerald-500", iconClass: "text-emerald-500", bgClass: "bg-emerald-500/10" },
-    { label: "Draft", count: draft, icon: FileEdit, border: "border-l-slate-400", iconClass: "text-slate-400", bgClass: "bg-slate-400/10" },
-    { label: "Out of Stock", count: outOfStock, icon: AlertTriangle, border: "border-l-red-500", iconClass: "text-red-500", bgClass: "bg-red-500/10" },
-    { label: "Low Stock", count: lowStock, icon: Package, border: "border-l-amber-500", iconClass: "text-amber-500", bgClass: "bg-amber-500/10" },
+    { label: "Active", count: active, icon: CheckCircle2, border: "border-l-emerald-500", iconClass: "text-emerald-500", bgClass: "bg-emerald-500/10", cardBg: "bg-emerald-500/5 dark:bg-emerald-500/10" },
+    { label: "Draft", count: draft, icon: FileEdit, border: "border-l-slate-400", iconClass: "text-slate-400", bgClass: "bg-slate-400/10", cardBg: "bg-slate-400/5 dark:bg-slate-400/10" },
+    { label: "Out of Stock", count: outOfStock, icon: AlertTriangle, border: "border-l-red-500", iconClass: "text-red-500", bgClass: "bg-red-500/10", cardBg: "bg-red-500/5 dark:bg-red-500/10" },
+    { label: "Low Stock", count: lowStock, icon: Package, border: "border-l-amber-500", iconClass: "text-amber-500", bgClass: "bg-amber-500/10", cardBg: "bg-amber-500/5 dark:bg-amber-500/10" },
   ];
 
   return (
@@ -44,7 +44,7 @@ export function ProductStatusBar({ products }: ProductStatusBarProps) {
           key={item.label}
           variants={cardVariants}
           whileHover={{ y: -2, boxShadow: "0 4px 20px -4px hsl(var(--primary) / 0.10)" }}
-          className={`relative rounded-xl border border-border/50 bg-card p-4 border-l-[3px] ${item.border} transition-colors`}
+          className={`relative rounded-xl border border-border/50 p-4 border-l-[3px] ${item.border} ${item.cardBg} transition-colors`}
         >
           <div className="flex items-center gap-3">
             <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${item.bgClass}`}>
