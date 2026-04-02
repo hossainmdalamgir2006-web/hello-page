@@ -25,6 +25,7 @@ function StatCard({ title, value, icon: Icon, trend = "neutral", subtitle }: Sta
   const borderColor = trend === "positive" ? "border-l-success" : trend === "negative" ? "border-l-destructive" : "border-l-muted-foreground";
   const bgColor = trend === "positive" ? "bg-success/10" : trend === "negative" ? "bg-destructive/10" : "bg-muted";
   const textColor = trend === "positive" ? "text-success" : trend === "negative" ? "text-destructive" : "text-muted-foreground";
+  const cardBg = trend === "positive" ? "bg-success/5 dark:bg-success/10" : trend === "negative" ? "bg-destructive/5 dark:bg-destructive/10" : "bg-muted/30 dark:bg-muted/20";
 
   return (
     <div className={cn(
