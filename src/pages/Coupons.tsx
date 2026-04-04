@@ -250,9 +250,10 @@ export default function Coupons() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
       setCouponDialogOpen(false);
+      logAuditAction({ action: "create", resource_type: "coupon", resource_id: data.code, description: `Coupon "${data.code}" created`, new_value: data });
       setNewCoupon({
         code: "",
         title: "",
