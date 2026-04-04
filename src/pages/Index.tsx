@@ -134,7 +134,7 @@ const Index = () => {
     { title: "Low Stock", value: stats.lowStockProducts.toString(), change: 0, icon: PackageX, iconBg: "warning" as const },
     { title: "Active Coupons", value: activeCoupons.toString(), change: 0, icon: Tag, iconBg: "accent" as const },
     { title: "Open Tickets", value: openTickets.toString(), change: 0, icon: Headphones, iconBg: "primary" as const },
-    { title: "Newsletter Subs", value: newsletterSubs.toString(), change: 0, icon: Users, iconBg: "success" as const },
+    { title: "Newsletter Subs", value: newsletterSubs.toString(), change: 0, icon: Mail, iconBg: "success" as const },
   ];
 
   const comparisonMetrics = [
