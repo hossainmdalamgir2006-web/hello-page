@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw } from "lucide-react";
+import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCard } from "@/components/admin/StatsCard";
