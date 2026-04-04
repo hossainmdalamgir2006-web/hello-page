@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 
-import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX, Tag, Headphones, ShoppingBag, CalendarCheck, CheckCircle, Mail } from "lucide-react";
+import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX, Tag, Headphones, ShoppingBag, CalendarCheck, CheckCircle, Mail, Undo2, Target, TrendingDown } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCard } from "@/components/admin/StatsCard";
@@ -115,12 +115,14 @@ const Index = () => {
 
 
   const avgOrderValue = stats.totalOrders > 0 ? stats.totalSales / stats.totalOrders : 0;
+  const conversionRate = stats.totalCustomers > 0 ? ((stats.totalOrders / stats.totalCustomers) * 100) : 0;
 
   const statsData = [
     // Row 1: Revenue & Sales overview
     { title: 'Total Sales', value: formatPrice(stats.totalSales), change: stats.salesChange, icon: TrendingUp, iconBg: "accent" as const },
     { title: "Today's Sales", value: formatPrice(todaySales), change: 0, icon: CalendarCheck, iconBg: "success" as const },
     { title: "Avg. Order Value", value: formatPrice(Math.round(avgOrderValue)), change: 0, icon: DollarSign, iconBg: "success" as const },
+    { title: "Revenue Growth", value: `${stats.salesChange >= 0 ? '+' : ''}${stats.salesChange}%`, change: stats.salesChange, icon: stats.salesChange >= 0 ? TrendingUp : TrendingDown, iconBg: stats.salesChange >= 0 ? "success" as const : "warning" as const },
     { title: "Total Refunded", value: formatPrice(refundStats.amount), change: 0, icon: RotateCcw, iconBg: "accent" as const },
     { title: "Total Refunds", value: refundStats.count.toString(), change: 0, icon: RotateCcw, iconBg: "warning" as const },
     // Row 2: Orders lifecycle
@@ -129,11 +131,13 @@ const Index = () => {
     { title: "Total Delivered", value: deliveredOrders.toString(), change: 0, icon: CheckCircle, iconBg: "success" as const },
     { title: "Abandoned Carts", value: abandonedCarts.toString(), change: 0, icon: ShoppingBag, iconBg: "warning" as const },
     { title: 'Total Customers', value: stats.totalCustomers.toString(), change: stats.customersChange, icon: Users, iconBg: "primary" as const },
+    { title: "Conversion Rate", value: `${conversionRate.toFixed(1)}%`, change: 0, icon: Target, iconBg: "accent" as const },
     // Row 3: Inventory & Support
     { title: 'Total Products', value: stats.totalProducts.toString(), change: stats.productsChange, icon: Package, iconBg: "primary" as const },
     { title: "Low Stock", value: stats.lowStockProducts.toString(), change: 0, icon: PackageX, iconBg: "warning" as const },
     { title: "Active Coupons", value: activeCoupons.toString(), change: 0, icon: Tag, iconBg: "accent" as const },
     { title: "Open Tickets", value: openTickets.toString(), change: 0, icon: Headphones, iconBg: "primary" as const },
+    { title: "Pending Returns", value: pendingReturns.toString(), change: 0, icon: Undo2, iconBg: "warning" as const },
     { title: "Newsletter Subs", value: newsletterSubs.toString(), change: 0, icon: Mail, iconBg: "success" as const },
   ];
 
@@ -172,9 +176,9 @@ const Index = () => {
       case "stats":
         return (
           <div key={widget.id} className="md:col-span-2 lg:col-span-4">
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-6">
               {loading ? (
-                Array.from({ length: 15 }).map((_, index) => (
+                Array.from({ length: 18 }).map((_, index) => (
                   <Skeleton key={index} className="h-28 rounded-xl" />
                 ))
               ) : (
