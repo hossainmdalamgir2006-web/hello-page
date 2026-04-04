@@ -47,25 +47,36 @@ const Index = () => {
     dateRange,
   } = useDashboardData(dateRangePreset, customRange);
 
-  // Fetch pending return requests count and refund stats
   useEffect(() => {
-    async function fetchReturnStats() {
-      const { count } = await supabase
-        .from('return_requests')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
-      setPendingReturns(count || 0);
+    async function fetchExtraStats() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      const { data: refunded } = await supabase
-        .from('orders' as any)
-        .select('refund_amount, refund_status')
-        .eq('refund_status', 'refunded');
-      if (refunded) {
-        const total = (refunded as any[]).reduce((sum, o) => sum + Number(o.refund_amount || 0), 0);
-        setRefundStats({ count: (refunded as any[]).length, amount: total });
+      const [returnRes, refundedRes, couponsRes, ticketsRes, cartsRes, todayOrdersRes] = await Promise.all([
+        supabase.from('return_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('orders' as any).select('refund_amount, refund_status').eq('refund_status', 'refunded'),
+        supabase.from('coupons' as any).select('*', { count: 'exact', head: true }).eq('is_active', true),
+        supabase.from('support_tickets' as any).select('*', { count: 'exact', head: true }).eq('status', 'open'),
+        supabase.from('abandoned_carts' as any).select('*', { count: 'exact', head: true }).is('recovered_at', null),
+        supabase.from('orders' as any).select('total_amount').gte('created_at', today.toISOString()),
+      ]);
+
+      setPendingReturns(returnRes.count || 0);
+      setActiveCoupons(couponsRes.count || 0);
+      setOpenTickets(ticketsRes.count || 0);
+      setAbandonedCarts(cartsRes.count || 0);
+
+      if (refundedRes.data) {
+        const total = (refundedRes.data as any[]).reduce((sum, o) => sum + Number(o.refund_amount || 0), 0);
+        setRefundStats({ count: (refundedRes.data as any[]).length, amount: total });
+      }
+
+      if (todayOrdersRes.data) {
+        const total = (todayOrdersRes.data as any[]).reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
+        setTodaySales(total);
       }
     }
-    fetchReturnStats();
+    fetchExtraStats();
   }, []);
   
   const {
