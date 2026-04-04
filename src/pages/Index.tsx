@@ -119,6 +119,10 @@ const Index = () => {
     { title: "Avg. Order Value", value: formatPrice(Math.round(avgOrderValue)), change: 0, icon: DollarSign, iconBg: "success" as const },
     { title: "Pending Orders", value: stats.pendingOrders.toString(), change: 0, icon: Clock, iconBg: "primary" as const },
     { title: "Low Stock", value: stats.lowStockProducts.toString(), change: 0, icon: PackageX, iconBg: "warning" as const },
+    { title: "Active Coupons", value: activeCoupons.toString(), change: 0, icon: Tag, iconBg: "accent" as const },
+    { title: "Open Tickets", value: openTickets.toString(), change: 0, icon: Headphones, iconBg: "primary" as const },
+    { title: "Abandoned Carts", value: abandonedCarts.toString(), change: 0, icon: ShoppingBag, iconBg: "warning" as const },
+    { title: "Today's Sales", value: formatPrice(todaySales), change: 0, icon: CalendarCheck, iconBg: "success" as const },
   ];
 
   const comparisonMetrics = [
