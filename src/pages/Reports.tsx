@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -17,18 +16,18 @@ import { format, subDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   FileText, Download, Calendar as CalendarIcon, Clock, BarChart3, TrendingUp, Users, ShoppingCart,
-  Package, DollarSign, Plus, Play, Trash2, Edit, Eye, FileSpreadsheet, Filter, Mail, RefreshCw, AlertCircle
+  Package, DollarSign, Plus, Play, Trash2, Filter, Mail, RefreshCw, AlertCircle
 } from "lucide-react";
 
 // ─── Types ───
 interface GeneratedReport {
   id: string;
   name: string;
-  type: ReportType;
+  type: string;
   generatedAt: string;
   rowCount: number;
   status: 'ready' | 'generating' | 'failed';
-  csvBlob?: Blob;
+  filePath?: string;
 }
 
 type ReportType = 'sales' | 'inventory' | 'customers' | 'orders' | 'products' | 'financial';
@@ -44,11 +43,12 @@ interface ReportTemplate {
 interface ScheduledReport {
   id: string;
   name: string;
-  type: string;
+  report_type: string;
   frequency: 'daily' | 'weekly' | 'monthly';
-  nextRun: string;
+  next_run_at: string | null;
+  last_run_at: string | null;
   recipients: string[];
-  isActive: boolean;
+  is_active: boolean;
 }
 
 // ─── Config ───
@@ -61,7 +61,7 @@ const reportTemplates: ReportTemplate[] = [
   { id: "financial", name: "Financial Report", description: "Revenue summary, refunds & discounts", icon: DollarSign, type: "financial" },
 ];
 
-const typeConfig: Record<ReportType, { label: string; color: string; icon: React.ElementType }> = {
+const typeConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   sales: { label: "Sales", color: "bg-green-100 text-green-800", icon: TrendingUp },
   inventory: { label: "Inventory", color: "bg-blue-100 text-blue-800", icon: Package },
   customers: { label: "Customer", color: "bg-purple-100 text-purple-800", icon: Users },
@@ -93,94 +93,57 @@ function downloadBlob(blob: Blob, filename: string) {
 async function fetchSalesReport(from: Date, to: Date) {
   const { data, error } = await supabase.from("orders")
     .select("order_number, status, payment_status, payment_method, subtotal, discount_amount, shipping_cost, total_amount, created_at")
-    .gte("created_at", from.toISOString())
-    .lte("created_at", to.toISOString())
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
+    .gte("created_at", from.toISOString()).lte("created_at", to.toISOString()).is("deleted_at", null).order("created_at", { ascending: false });
   if (error) throw error;
   const headers = ["Order#", "Status", "Payment Status", "Payment Method", "Subtotal", "Discount", "Shipping", "Total", "Date"];
-  const rows = (data || []).map(o => [
-    o.order_number, o.status, o.payment_status || "", o.payment_method || "",
-    String(o.subtotal), String(o.discount_amount || 0), String(o.shipping_cost || 0),
-    String(o.total_amount), format(new Date(o.created_at), "yyyy-MM-dd HH:mm")
-  ]);
+  const rows = (data || []).map(o => [o.order_number, o.status, o.payment_status || "", o.payment_method || "", String(o.subtotal), String(o.discount_amount || 0), String(o.shipping_cost || 0), String(o.total_amount), format(new Date(o.created_at), "yyyy-MM-dd HH:mm")]);
   return { headers, rows };
 }
 
 async function fetchInventoryReport() {
   const { data, error } = await supabase.from("products")
-    .select("name, sku, category, price, compare_at_price, quantity, is_active")
-    .is("deleted_at", null)
-    .order("name");
+    .select("name, sku, category, price, compare_at_price, quantity, is_active").is("deleted_at", null).order("name");
   if (error) throw error;
   const headers = ["Name", "SKU", "Category", "Price", "Compare At", "Stock", "Active"];
-  const rows = (data || []).map(p => [
-    p.name, p.sku || "", p.category || "", String(p.price), String(p.compare_at_price || ""),
-    String(p.quantity ?? 0), p.is_active ? "Yes" : "No"
-  ]);
+  const rows = (data || []).map(p => [p.name, p.sku || "", p.category || "", String(p.price), String(p.compare_at_price || ""), String(p.quantity ?? 0), p.is_active ? "Yes" : "No"]);
   return { headers, rows };
 }
 
 async function fetchCustomerReport() {
   const { data, error } = await supabase.from("customers")
-    .select("full_name, email, phone, status, total_orders, total_spent, created_at")
-    .order("created_at", { ascending: false });
+    .select("full_name, email, phone, status, total_orders, total_spent, created_at").order("created_at", { ascending: false });
   if (error) throw error;
   const headers = ["Name", "Email", "Phone", "Status", "Total Orders", "Total Spent", "Joined"];
-  const rows = (data || []).map(c => [
-    c.full_name, c.email || "", c.phone || "", c.status || "",
-    String(c.total_orders || 0), String(c.total_spent || 0),
-    format(new Date(c.created_at), "yyyy-MM-dd")
-  ]);
+  const rows = (data || []).map(c => [c.full_name, c.email || "", c.phone || "", c.status || "", String(c.total_orders || 0), String(c.total_spent || 0), format(new Date(c.created_at), "yyyy-MM-dd")]);
   return { headers, rows };
 }
 
 async function fetchOrderReport(from: Date, to: Date) {
   const { data, error } = await supabase.from("orders")
-    .select("order_number, status, payment_status, payment_method, total_amount, shipping_cost, discount_amount, notes, tracking_number, created_at, customer_id")
-    .gte("created_at", from.toISOString())
-    .lte("created_at", to.toISOString())
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
+    .select("order_number, status, payment_status, payment_method, total_amount, shipping_cost, discount_amount, notes, tracking_number, created_at")
+    .gte("created_at", from.toISOString()).lte("created_at", to.toISOString()).is("deleted_at", null).order("created_at", { ascending: false });
   if (error) throw error;
   const headers = ["Order#", "Status", "Payment", "Method", "Total", "Shipping", "Discount", "Tracking", "Notes", "Date"];
-  const rows = (data || []).map(o => [
-    o.order_number, o.status, o.payment_status || "", o.payment_method || "",
-    String(o.total_amount), String(o.shipping_cost || 0), String(o.discount_amount || 0),
-    o.tracking_number || "", o.notes || "", format(new Date(o.created_at), "yyyy-MM-dd HH:mm")
-  ]);
+  const rows = (data || []).map(o => [o.order_number, o.status, o.payment_status || "", o.payment_method || "", String(o.total_amount), String(o.shipping_cost || 0), String(o.discount_amount || 0), o.tracking_number || "", o.notes || "", format(new Date(o.created_at), "yyyy-MM-dd HH:mm")]);
   return { headers, rows };
 }
 
 async function fetchProductReport() {
   const { data, error } = await supabase.from("products")
-    .select("name, sku, category, price, compare_at_price, quantity, is_active, is_featured, created_at")
-    .is("deleted_at", null)
-    .order("name");
+    .select("name, sku, category, price, compare_at_price, quantity, is_active, is_featured, created_at").is("deleted_at", null).order("name");
   if (error) throw error;
   const headers = ["Name", "SKU", "Category", "Price", "Compare At", "Stock", "Active", "Featured", "Created"];
-  const rows = (data || []).map(p => [
-    p.name, p.sku || "", p.category || "", String(p.price), String(p.compare_at_price || ""),
-    String(p.quantity ?? 0), p.is_active ? "Yes" : "No", p.is_featured ? "Yes" : "No",
-    format(new Date(p.created_at), "yyyy-MM-dd")
-  ]);
+  const rows = (data || []).map(p => [p.name, p.sku || "", p.category || "", String(p.price), String(p.compare_at_price || ""), String(p.quantity ?? 0), p.is_active ? "Yes" : "No", p.is_featured ? "Yes" : "No", format(new Date(p.created_at), "yyyy-MM-dd")]);
   return { headers, rows };
 }
 
 async function fetchFinancialReport(from: Date, to: Date) {
   const { data, error } = await supabase.from("orders")
     .select("order_number, subtotal, discount_amount, shipping_cost, total_amount, refund_amount, refund_status, payment_method, status, created_at")
-    .gte("created_at", from.toISOString())
-    .lte("created_at", to.toISOString())
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
+    .gte("created_at", from.toISOString()).lte("created_at", to.toISOString()).is("deleted_at", null).order("created_at", { ascending: false });
   if (error) throw error;
   const headers = ["Order#", "Subtotal", "Discount", "Shipping", "Total", "Refund", "Refund Status", "Payment Method", "Status", "Date"];
-  const rows = (data || []).map(o => [
-    o.order_number, String(o.subtotal), String(o.discount_amount || 0), String(o.shipping_cost || 0),
-    String(o.total_amount), String(o.refund_amount || 0), o.refund_status || "",
-    o.payment_method || "", o.status, format(new Date(o.created_at), "yyyy-MM-dd")
-  ]);
+  const rows = (data || []).map(o => [o.order_number, String(o.subtotal), String(o.discount_amount || 0), String(o.shipping_cost || 0), String(o.total_amount), String(o.refund_amount || 0), o.refund_status || "", o.payment_method || "", o.status, format(new Date(o.created_at), "yyyy-MM-dd")]);
   return { headers, rows };
 }
 
@@ -196,34 +159,82 @@ export default function Reports() {
   });
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [dbStats, setDbStats] = useState({ orders: 0, products: 0, customers: 0 });
+  const [loadingReports, setLoadingReports] = useState(true);
 
   const [newSchedule, setNewSchedule] = useState({
     name: "", type: "", frequency: "daily" as ScheduledReport['frequency'], recipients: ""
   });
 
-  // Fetch real stats
+  // Fetch real stats + persisted reports + schedules
   useEffect(() => {
-    const fetchStats = async () => {
-      const [o, p, c] = await Promise.all([
+    const fetchAll = async () => {
+      const [o, p, c, reportsRes, schedulesRes] = await Promise.all([
         supabase.from("orders").select("id", { count: "exact", head: true }).is("deleted_at", null),
         supabase.from("products").select("id", { count: "exact", head: true }).is("deleted_at", null),
         supabase.from("customers").select("id", { count: "exact", head: true }),
+        supabase.from("generated_reports").select("*").order("created_at", { ascending: false }).limit(50),
+        supabase.from("scheduled_reports").select("*").order("created_at", { ascending: false }),
       ]);
       setDbStats({ orders: o.count || 0, products: p.count || 0, customers: c.count || 0 });
+      
+      if (reportsRes.data) {
+        setReports(reportsRes.data.map((r: any) => ({
+          id: r.id,
+          name: r.name,
+          type: r.report_type,
+          generatedAt: format(new Date(r.created_at), 'yyyy-MM-dd HH:mm'),
+          rowCount: r.row_count,
+          status: r.status as 'ready' | 'generating' | 'failed',
+          filePath: r.file_path,
+        })));
+      }
+
+      if (schedulesRes.data) {
+        setScheduledReports(schedulesRes.data.map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          report_type: s.report_type,
+          frequency: s.frequency,
+          next_run_at: s.next_run_at,
+          last_run_at: s.last_run_at,
+          recipients: s.recipients || [],
+          is_active: s.is_active,
+        })));
+      }
+      setLoadingReports(false);
     };
-    fetchStats();
+    fetchAll();
   }, []);
 
   const filteredReports = reports.filter(r => typeFilter === "all" || r.type === typeFilter);
 
-  // Generate real report
+  // Generate real report → persist to DB + storage
   const handleGenerateReport = useCallback(async () => {
     if (!selectedTemplate) return;
     const from = dateRange.from || subDays(new Date(), 30);
     const to = dateRange.to || new Date();
-    const reportId = `rpt-${Date.now()}`;
     const reportName = `${selectedTemplate.name} - ${format(new Date(), 'dd MMM yyyy')}`;
 
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { toast.error("Please log in"); return; }
+
+    // Insert placeholder in DB
+    const { data: insertedReport, error: insertErr } = await supabase.from("generated_reports").insert({
+      user_id: user.id,
+      name: reportName,
+      report_type: selectedTemplate.type,
+      status: "generating",
+      date_from: from.toISOString(),
+      date_to: to.toISOString(),
+    } as any).select().single();
+
+    if (insertErr || !insertedReport) {
+      toast.error("Failed to create report record");
+      return;
+    }
+
+    const reportId = (insertedReport as any).id;
     setReports(prev => [{ id: reportId, name: reportName, type: selectedTemplate.type, generatedAt: format(new Date(), 'yyyy-MM-dd HH:mm'), rowCount: 0, status: 'generating' }, ...prev]);
     setBuilderOpen(false);
     setSelectedTemplate(null);
@@ -241,42 +252,90 @@ export default function Reports() {
       }
 
       const blob = arrayToCSV(result.headers, result.rows);
-      setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'ready' as const, rowCount: result.rows.length, csvBlob: blob } : r));
+      const fileName = `manual/${reportId}/${selectedTemplate.type}_${Date.now()}.csv`;
+
+      // Upload to storage
+      const { error: uploadErr } = await supabase.storage.from("reports").upload(fileName, blob, { contentType: "text/csv", upsert: true });
+      if (uploadErr) throw uploadErr;
+
+      // Update DB record
+      await supabase.from("generated_reports").update({
+        status: "ready",
+        row_count: result.rows.length,
+        file_path: fileName,
+        file_size: blob.size,
+      } as any).eq("id", reportId);
+
+      setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'ready' as const, rowCount: result.rows.length, filePath: fileName } : r));
       toast.success(`Report generated with ${result.rows.length} rows`);
     } catch (err: any) {
+      await supabase.from("generated_reports").update({ status: "failed" } as any).eq("id", reportId);
       setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'failed' as const } : r));
       toast.error(err.message || "Failed to generate report");
     }
   }, [selectedTemplate, dateRange]);
 
-  const handleDownload = (report: GeneratedReport) => {
-    if (!report.csvBlob) { toast.error("No data available"); return; }
+  // Download from storage
+  const handleDownload = async (report: GeneratedReport) => {
+    if (!report.filePath) { toast.error("No file available"); return; }
+    const { data, error } = await supabase.storage.from("reports").download(report.filePath);
+    if (error || !data) { toast.error("Failed to download file"); return; }
     const filename = `${report.name.replace(/\s+/g, '_')}.csv`;
-    downloadBlob(report.csvBlob, filename);
+    downloadBlob(data, filename);
     toast.success(`Downloaded ${filename}`);
   };
 
-  const handleCreateSchedule = () => {
+  // Create schedule → persist to DB
+  const handleCreateSchedule = async () => {
     if (!newSchedule.name || !newSchedule.type || !newSchedule.recipients) {
       toast.error("Please fill in all required fields"); return;
     }
-    const schedule: ScheduledReport = {
-      id: `sch-${Date.now()}`, name: newSchedule.name, type: newSchedule.type,
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { toast.error("Please log in"); return; }
+
+    const nextRun = new Date();
+    if (newSchedule.frequency === "daily") nextRun.setDate(nextRun.getDate() + 1);
+    else if (newSchedule.frequency === "weekly") nextRun.setDate(nextRun.getDate() + 7);
+    else nextRun.setMonth(nextRun.getMonth() + 1);
+
+    const recipientsList = newSchedule.recipients.split(',').map(e => e.trim()).filter(Boolean);
+
+    const { data: inserted, error } = await supabase.from("scheduled_reports").insert({
+      user_id: user.id,
+      name: newSchedule.name,
+      report_type: newSchedule.type,
       frequency: newSchedule.frequency,
-      nextRun: format(new Date(Date.now() + 86400000), 'yyyy-MM-dd HH:mm'),
-      recipients: newSchedule.recipients.split(',').map(e => e.trim()), isActive: true
-    };
-    setScheduledReports([schedule, ...scheduledReports]);
+      recipients: recipientsList,
+      is_active: true,
+      next_run_at: nextRun.toISOString(),
+    } as any).select().single();
+
+    if (error || !inserted) {
+      toast.error("Failed to create schedule");
+      return;
+    }
+
+    const s = inserted as any;
+    setScheduledReports(prev => [{
+      id: s.id, name: s.name, report_type: s.report_type,
+      frequency: s.frequency, next_run_at: s.next_run_at, last_run_at: s.last_run_at,
+      recipients: s.recipients || [], is_active: s.is_active,
+    }, ...prev]);
     setNewSchedule({ name: "", type: "", frequency: "daily", recipients: "" });
     setScheduleDialogOpen(false);
-    toast.success("Schedule created (email delivery requires email integration)");
+    toast.success("Schedule created successfully");
   };
 
-  const toggleSchedule = (id: string) => {
-    setScheduledReports(s => s.map(r => r.id === id ? { ...r, isActive: !r.isActive } : r));
+  const toggleSchedule = async (id: string) => {
+    const schedule = scheduledReports.find(s => s.id === id);
+    if (!schedule) return;
+    const newActive = !schedule.is_active;
+    await supabase.from("scheduled_reports").update({ is_active: newActive } as any).eq("id", id);
+    setScheduledReports(s => s.map(r => r.id === id ? { ...r, is_active: newActive } : r));
   };
 
-  const deleteSchedule = (id: string) => {
+  const deleteSchedule = async (id: string) => {
+    await supabase.from("scheduled_reports").delete().eq("id", id);
     setScheduledReports(s => s.filter(r => r.id !== id));
     toast.success("Schedule deleted");
   };
@@ -337,7 +396,7 @@ export default function Reports() {
           <TabsList>
             <TabsTrigger value="reports">Generated Reports</TabsTrigger>
             <TabsTrigger value="templates">Templates</TabsTrigger>
-            <TabsTrigger value="scheduled">Scheduled (Coming Soon)</TabsTrigger>
+            <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
           </TabsList>
 
           {/* Reports List */}
@@ -360,7 +419,14 @@ export default function Reports() {
               </Select>
             </div>
 
-            {filteredReports.length === 0 ? (
+            {loadingReports ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <RefreshCw className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3 animate-spin" />
+                  <p className="text-muted-foreground">Loading reports...</p>
+                </CardContent>
+              </Card>
+            ) : filteredReports.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
                   <FileText className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
@@ -383,7 +449,7 @@ export default function Reports() {
                     </TableHeader>
                     <TableBody>
                       {filteredReports.map((report) => {
-                        const type = typeConfig[report.type];
+                        const type = typeConfig[report.type] || typeConfig.sales;
                         const TypeIcon = type.icon;
                         return (
                           <TableRow key={report.id}>
@@ -456,10 +522,10 @@ export default function Reports() {
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-5 w-5 text-warning mt-0.5" />
                   <div>
-                    <p className="font-medium text-sm">Email delivery not configured</p>
+                    <p className="font-medium text-sm">Email delivery requires configuration</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Scheduled reports require an email integration (e.g., Resend) to deliver reports automatically. 
-                      You can still create schedules — they will become active once email is configured.
+                      Go to Settings → Alerts & Email API to configure Resend or Gmail SMTP. 
+                      Schedules will auto-deliver reports via email once configured.
                     </p>
                   </div>
                 </div>
@@ -468,18 +534,24 @@ export default function Reports() {
 
             <div className="grid gap-4">
               {scheduledReports.map((schedule) => (
-                <Card key={schedule.id} className={!schedule.isActive ? "opacity-60" : ""}>
+                <Card key={schedule.id} className={!schedule.is_active ? "opacity-60" : ""}>
                   <CardContent className="pt-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="flex items-start gap-4">
-                        <div className={`p-2 rounded-full ${schedule.isActive ? 'bg-green-100' : 'bg-muted'}`}>
-                          <Clock className={`h-4 w-4 ${schedule.isActive ? 'text-green-600' : 'text-muted-foreground'}`} />
+                        <div className={`p-2 rounded-full ${schedule.is_active ? 'bg-green-100' : 'bg-muted'}`}>
+                          <Clock className={`h-4 w-4 ${schedule.is_active ? 'text-green-600' : 'text-muted-foreground'}`} />
                         </div>
                         <div>
                           <h3 className="font-semibold">{schedule.name}</h3>
                           <div className="flex flex-wrap items-center gap-2 mt-1">
                             <Badge variant="outline">{schedule.frequency}</Badge>
-                            <span className="text-sm text-muted-foreground">Next: {schedule.nextRun}</span>
+                            <Badge variant="outline" className="capitalize">{schedule.report_type}</Badge>
+                            {schedule.next_run_at && (
+                              <span className="text-sm text-muted-foreground">Next: {format(new Date(schedule.next_run_at), 'dd MMM yyyy HH:mm')}</span>
+                            )}
+                            {schedule.last_run_at && (
+                              <span className="text-sm text-muted-foreground">Last: {format(new Date(schedule.last_run_at), 'dd MMM yyyy')}</span>
+                            )}
                           </div>
                           <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                             <Mail className="h-3 w-3" />
@@ -488,7 +560,7 @@ export default function Reports() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Switch checked={schedule.isActive} onCheckedChange={() => toggleSchedule(schedule.id)} />
+                        <Switch checked={schedule.is_active} onCheckedChange={() => toggleSchedule(schedule.id)} />
                         <Button variant="ghost" size="icon" onClick={() => deleteSchedule(schedule.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -573,7 +645,7 @@ export default function Reports() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Scheduled Report</DialogTitle>
-            <DialogDescription>Schedule automatic report generation (requires email integration)</DialogDescription>
+            <DialogDescription>Schedule automatic report generation & email delivery</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -590,6 +662,7 @@ export default function Reports() {
                     <SelectItem value="inventory">Inventory</SelectItem>
                     <SelectItem value="customers">Customer</SelectItem>
                     <SelectItem value="orders">Order</SelectItem>
+                    <SelectItem value="products">Product</SelectItem>
                     <SelectItem value="financial">Financial</SelectItem>
                   </SelectContent>
                 </Select>

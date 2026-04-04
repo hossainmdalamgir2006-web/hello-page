@@ -1211,6 +1211,51 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_reports: {
+        Row: {
+          created_at: string
+          date_from: string | null
+          date_to: string | null
+          file_path: string | null
+          file_size: number | null
+          id: string
+          name: string
+          report_type: string
+          row_count: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_from?: string | null
+          date_to?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          name: string
+          report_type: string
+          row_count?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_from?: string | null
+          date_to?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          name?: string
+          report_type?: string
+          row_count?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       geo_blocking_rules: {
         Row: {
           country_code: string
@@ -2869,6 +2914,48 @@ export type Database = {
           label?: string
           last_four?: string | null
           method_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scheduled_reports: {
+        Row: {
+          created_at: string
+          frequency: string
+          id: string
+          is_active: boolean
+          last_run_at: string | null
+          name: string
+          next_run_at: string | null
+          recipients: string[]
+          report_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name: string
+          next_run_at?: string | null
+          recipients?: string[]
+          report_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name?: string
+          next_run_at?: string | null
+          recipients?: string[]
+          report_type?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
