@@ -290,7 +290,16 @@ export function useProductsData() {
       if (error) throw error;
 
       const updatedProduct = data as unknown as Product;
+      const oldProduct = products.find(p => p.id === id);
       setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p));
+      logAuditAction({
+        action: 'update',
+        resource_type: 'product',
+        resource_id: id,
+        description: `Product updated: ${updatedProduct.name}`,
+        old_value: oldProduct ? { name: oldProduct.name, price: oldProduct.price, is_active: oldProduct.is_active } : null,
+        new_value: { name: updatedProduct.name, price: updatedProduct.price, is_active: updatedProduct.is_active },
+      });
       toast.success('Product updated successfully!');
       return updatedProduct;
     } catch (error: any) {
