@@ -311,6 +311,11 @@ export function useOrdersData() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      logAuditAction({
+        action: 'update',
+        resource_type: 'order',
+        description: 'Payment verified',
+      });
       toast.success('Payment verified successfully');
     },
     onError: (error: any) => {
