@@ -119,7 +119,8 @@ export default function Messages() {
               )}
             </Button>
           </div>
-        </div>
+          }
+        />
 
         {/* SLA Breach Alert */}
         <SLABreachAlert conversations={conversations} tickets={tickets} />
