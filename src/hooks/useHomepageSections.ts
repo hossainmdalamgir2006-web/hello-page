@@ -62,6 +62,7 @@ export function useHomepageSections() {
       toast({ title: "Error", description: "Failed to update section", variant: "destructive" });
       return false;
     }
+    logAuditAction({ action: "update", resource_type: "homepage", resource_id: id, description: "Homepage section updated", new_value: updates });
     toast({ title: "Success", description: "Section updated successfully" });
     refetch();
     return true;
