@@ -574,7 +574,8 @@ export default function Categories() {
               Add Category
             </Button>
           </div>
-        </div>
+          }
+        />
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

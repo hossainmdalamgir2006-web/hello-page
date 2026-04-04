@@ -349,7 +349,8 @@ export default function Brands() {
               Add Brand
             </Button>
           </div>
-        </div>
+          }
+        />
 
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-3">
