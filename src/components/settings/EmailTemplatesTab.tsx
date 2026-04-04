@@ -68,10 +68,13 @@ const categoryIcons: Record<string, Record<string, React.ElementType>> = {
 };
 
 const categories = [
-  { key: "order", label: "Order Templates", description: "Email templates for order lifecycle", icon: ShoppingCart },
+  { key: "order", label: "Order & Shipping Templates", description: "Email templates for order lifecycle and shipping", icon: ShoppingCart },
   { key: "auth", label: "Authentication Templates", description: "Email templates for user authentication", icon: UserCheck },
-  { key: "marketing", label: "Marketing Templates", description: "Email templates for customer engagement", icon: Send },
+  { key: "marketing", label: "Marketing & Reviews Templates", description: "Email templates for customer engagement and reviews", icon: Send },
   { key: "security", label: "Security Templates", description: "Email templates for security alerts", icon: Shield },
+  { key: "inventory", label: "Inventory Templates", description: "Email templates for stock alerts", icon: Package },
+  { key: "customers", label: "Customer Templates", description: "Email templates for customer notifications", icon: UserCheck },
+  { key: "reports", label: "Report Templates", description: "Email templates for automated reports", icon: ClipboardList },
   { key: "support", label: "Support Templates", description: "Email templates for customer support", icon: MessageSquareReply },
 ];
 
