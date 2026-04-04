@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logAuditAction } from "@/lib/auditLog";
 import { 
   PAYMENT_METHOD_DEFINITIONS, 
   getPaymentMethodDefinition,
