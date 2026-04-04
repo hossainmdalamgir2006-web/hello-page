@@ -142,6 +142,46 @@ export function AuditLogTab() {
 
   return (
     <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Today</p>
+            </div>
+            <p className="text-2xl font-bold mt-1">{stats.todayCount}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Active Users</p>
+            </div>
+            <p className="text-2xl font-bold mt-1">{stats.uniqueUsers}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Top Action</p>
+            </div>
+            <p className="text-lg font-bold mt-1 capitalize">{stats.topAction.replace(/_/g, " ")}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Total (page)</p>
+            </div>
+            <p className="text-2xl font-bold mt-1">{logs.length}</p>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Audit Log */}
       <Card>
         <CardHeader>
@@ -155,16 +195,35 @@ export function AuditLogTab() {
                 Track all admin actions for security and accountability
               </CardDescription>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-              className="gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              Filters
-            </Button>
-          </div>
+            <div className="flex gap-2">
+              <DataExport
+                data={filteredLogs}
+                filename="audit-log"
+                columns={[
+                  { key: "created_at", header: "Timestamp" },
+                  { key: "user_email", header: "User" },
+                  { key: "user_role", header: "Role" },
+                  { key: "action", header: "Action" },
+                  { key: "resource_type", header: "Resource" },
+                  { key: "resource_id", header: "Resource ID" },
+                  { key: "description", header: "Description" },
+                ]}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="gap-2"
+              >
+                <Filter className="h-4 w-4" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Search & Filters */}
