@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 
-import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX, Tag, Headphones, ShoppingBag, CalendarCheck, CheckCircle, Mail } from "lucide-react";
+import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX, Tag, Headphones, ShoppingBag, CalendarCheck, CheckCircle, Mail, Undo2, Target, TrendingDown } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCard } from "@/components/admin/StatsCard";
