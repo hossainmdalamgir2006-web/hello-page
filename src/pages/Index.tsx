@@ -68,6 +68,7 @@ const Index = () => {
       setActiveCoupons(couponsRes.count || 0);
       setOpenTickets(ticketsRes.count || 0);
       setAbandonedCarts(cartsRes.count || 0);
+      setDeliveredOrders(deliveredRes.count || 0);
 
       if (refundedRes.data) {
         const total = (refundedRes.data as any[]).reduce((sum, o) => sum + Number(o.refund_amount || 0), 0);
