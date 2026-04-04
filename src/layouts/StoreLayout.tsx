@@ -51,8 +51,10 @@ export function StoreLayout({ children }: StoreLayoutProps) {
     link.href = url;
   }
 
-  // Show maintenance page for non-admin visitors
-  if (!maintenanceLoading && isMaintenanceMode && !isStaff) {
+  // Show maintenance page for non-admin visitors (allow login page access)
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+  if (!maintenanceLoading && isMaintenanceMode && !isStaff && !isLoginPage) {
     return <MaintenancePage message={message} estimatedEnd={estimatedEnd} />;
   }
 
