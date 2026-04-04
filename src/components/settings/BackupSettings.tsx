@@ -48,7 +48,7 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  RefreshCw,
+  
   Upload,
   AlertTriangle,
   FileCode,
@@ -227,14 +227,6 @@ export function BackupSettings() {
               Upload / Restore
             </Button>
             
-            <Button
-              onClick={() => refetch()}
-              variant="ghost"
-              size="icon"
-              title="Refresh"
-            >
-              <RefreshCw className="h-4 w-4" />
-            </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-3">
             Complete database backup including all tables (Products, Orders, Customers, Settings, etc.)
