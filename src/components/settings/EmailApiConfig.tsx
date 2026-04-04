@@ -219,9 +219,12 @@ export function EmailApiConfig() {
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={loadConfig} title="Refresh">
-              <RefreshCw className="h-4 w-4" />
-            </Button>
+            {isConfigured && (
+              <Badge variant="default" className="gap-1">
+                <CheckCircle2 className="h-3 w-3" />
+                {config.provider === 'resend' ? 'Resend' : 'Gmail'} Active
+              </Badge>
+            )}
           </div>
         </div>
       </CardHeader>
