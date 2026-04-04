@@ -39,6 +39,7 @@ const Index = () => {
   const [abandonedCarts, setAbandonedCarts] = useState(0);
   const [todaySales, setTodaySales] = useState(0);
   const [deliveredOrders, setDeliveredOrders] = useState(0);
+  const [newsletterSubs, setNewsletterSubs] = useState(0);
   const { 
     stats, 
     recentOrders, 
