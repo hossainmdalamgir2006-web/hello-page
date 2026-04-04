@@ -154,8 +154,9 @@ export function useSupportTickets() {
 
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      logAuditAction({ action: "update", resource_type: "support_ticket", resource_id: vars.id, description: `Ticket priority → ${vars.priority}`, new_value: { priority: vars.priority } });
       toast.success("Priority updated");
     },
     onError: (error) => {
