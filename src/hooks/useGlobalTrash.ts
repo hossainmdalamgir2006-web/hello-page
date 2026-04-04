@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logAuditAction } from '@/lib/auditLog';
 
 export type TrashEntityType = 'product' | 'order' | 'brand' | 'category' | 'coupon' | 'support_ticket' | 'contact_message' | 'review' | 'carousel_slide' | 'auto_discount_rule';
 
