@@ -1,34 +1,46 @@
 
 
-## Admin Pages — Unified Glassmorphic Header Design
+## Emails & Notifications Pages — Analysis & Update Plan
 
-### Problem
-Products পেজে যে glassmorphic header আছে (gradient background, blur elements, rounded border) — সেটা শুধু Products পেজেই আছে। বাকি ২৩+ admin পেজে plain header ব্যবহার হচ্ছে।
+### Current State
 
-### Solution
-`AdminPageHeader` কম্পোনেন্টে glassmorphic styling যোগ করে সব পেজে একই ডিজাইন আনা।
+**Emails Page (`/admin/system-settings/emails`):**
+- Email template management with 5 categories (Order, Auth, Marketing, Security, Support)
+- Template editor with HTML preview, variable system, default templates
+- Create/edit/delete/toggle templates — all functional with DB
+- **Issues:** No stats overview, no template preview thumbnails, no search/filter, Refresh button in EmailApiConfig needs removal
 
-### Step 1 — Update `AdminPageHeader` component
-`src/components/admin/AdminPageHeader.tsx` এ Products পেজের মতো styling যোগ করা:
-- `rounded-xl border border-border/50 bg-gradient-to-br from-card via-card to-primary/5 p-6`
-- Decorative blur circles (top-right, bottom-left)
-- `relative overflow-hidden` wrapper
+**Notifications Page (`/admin/system-settings/notifications`):**
+- Email API config (Resend/Gmail) with test email
+- 7 notification categories with 30+ toggle switches — all save to `store_settings`
+- **Issues:** Refresh button in EmailApiConfig, no search across notifications, no "Enable All / Disable All" per category
 
-### Step 2 — Replace inline headers across all admin pages
-এই ২৩টি পেজে inline header markup সরিয়ে `AdminPageHeader` ব্যবহার করা:
-- `Index.tsx` (Dashboard)
-- `Products.tsx` (already has design, switch to component)
-- `Orders.tsx`, `Customers.tsx`, `Coupons.tsx`, `Messages.tsx`
-- `Shipping.tsx`, `AbandonedCarts.tsx`, `RoleManagement.tsx`
-- `Reports.tsx`, `Analytics.tsx`, `Categories.tsx`
-- `AppearanceManager.tsx`, `ManagerSettings.tsx`
-- `RoleDashboard.tsx`, `Brands.tsx`
-- Settings sub-pages: `SecurityPage.tsx`, etc.
-- Any other admin pages with inline headers
+### Recommended Updates
+
+#### 1. Email Templates Page Enhancements
+- **Add stats cards at top** — Total templates, Active, Inactive, Categories count
+- **Add search bar** — Filter templates by name/subject across all categories
+- **Add "Preview" button** alongside Edit — quick inline HTML preview without opening full editor
+- **Template duplicate button** — Clone an existing template for quick creation
+
+#### 2. Notifications Page Enhancements
+- **Remove Refresh button** from EmailApiConfig (matches admin UI standard)
+- **Add "Enable All / Disable All" toggle per category** — bulk toggle for each notification group
+- **Add search/filter** — quickly find a specific notification across all categories
+- **Add email delivery stats card** — Show last test email status, configured provider badge prominently at top
+
+#### 3. Cross-Page Consistency
+- Both pages already use `AdminPageHeader` with glassmorphic design — good
+- Add consistent stat card styling matching other admin pages
 
 ### Technical Details
-- **Modified:** `src/components/admin/AdminPageHeader.tsx` — add glassmorphic wrapper + blur elements
-- **Modified:** ~20+ page files — replace inline `<h1>` headers with `<AdminPageHeader>` component
-- Products পেজ থেকে custom header markup সরিয়ে `AdminPageHeader` ব্যবহার করা
-- No DB changes needed
+
+**Files to modify:**
+- `src/components/settings/EmailApiConfig.tsx` — Remove Refresh button (line 222-224)
+- `src/components/settings/EmailTemplatesTab.tsx` — Add stats cards, search bar, duplicate & preview buttons
+- `src/components/settings/AllEmailNotifications.tsx` — Add search filter, per-category bulk toggle
+- `src/pages/system-settings/EmailsPage.tsx` — Minor layout adjustments
+- `src/pages/system-settings/NotificationsPage.tsx` — Add top-level provider status indicator
+
+**No DB migrations needed** — all data already exists.
 
