@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -149,30 +150,28 @@ export default function GlobalTrash() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Global Trash</h1>
-            <p className="text-sm text-muted-foreground">
-              {items.length} items in trash · Auto-cleanup after 30 days
-            </p>
-          </div>
-          {selectedIds.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3">
-              {canRestore && (
-                <Button variant="outline" size="sm" onClick={handleBulkRestore} className="gap-2">
-                  <RotateCcw className="h-4 w-4" />
-                  Restore ({selectedIds.length})
-                </Button>
-              )}
-              {canPermanentDelete && (
-                <Button variant="destructive" size="sm" onClick={() => setBulkDeleteConfirm(true)} className="gap-2">
-                  <Trash2 className="h-4 w-4" />
-                  Delete Permanently ({selectedIds.length})
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+        <AdminPageHeader
+          title="Global Trash"
+          description={`${items.length} items in trash · Auto-cleanup after 30 days`}
+          actions={
+            selectedIds.length > 0 ? (
+              <div className="flex flex-wrap items-center gap-3">
+                {canRestore && (
+                  <Button variant="outline" size="sm" onClick={handleBulkRestore} className="gap-2">
+                    <RotateCcw className="h-4 w-4" />
+                    Restore ({selectedIds.length})
+                  </Button>
+                )}
+                {canPermanentDelete && (
+                  <Button variant="destructive" size="sm" onClick={() => setBulkDeleteConfirm(true)} className="gap-2">
+                    <Trash2 className="h-4 w-4" />
+                    Delete Permanently ({selectedIds.length})
+                  </Button>
+                )}
+              </div>
+            ) : undefined
+          }
+        />
 
         {/* Warning */}
         <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">

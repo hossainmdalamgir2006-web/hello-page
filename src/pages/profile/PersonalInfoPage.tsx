@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -123,10 +124,10 @@ export default function PersonalInfoPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Personal Info</h1>
-        <p className="text-sm text-muted-foreground">Manage your profile details and email</p>
-      </div>
+      <AdminPageHeader
+        title="Personal Info"
+        description="Manage your profile details and email"
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left Column */}

@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -280,13 +281,10 @@ export default function Brands() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Brands</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage product brands ({brands.length} total)
-            </p>
-          </div>
+        <AdminPageHeader
+          title="Brands"
+          description={`Manage product brands (${brands.length} total)`}
+          actions={
           <div className="flex flex-wrap items-center gap-3">
             {selectedBrands.length > 0 && (
               <DropdownMenu>
@@ -351,7 +349,8 @@ export default function Brands() {
               Add Brand
             </Button>
           </div>
-        </div>
+          }
+        />
 
         {/* Stats */}
         <div className="grid gap-4 sm:grid-cols-3">

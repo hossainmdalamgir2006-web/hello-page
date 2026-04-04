@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { logAuditAction } from "@/lib/auditLog";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -540,22 +541,22 @@ export default function Coupons() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Discounts & Coupons</h1>
-            <p className="text-sm text-muted-foreground mt-1">Create coupons and set automatic discount rules</p>
-          </div>
-          <div className="flex gap-2 mt-2 sm:mt-0">
-            <Button variant="outline" onClick={() => setRuleDialogOpen(true)}>
-              <Zap className="mr-2 h-4 w-4" />
-              Auto Rule
-            </Button>
-            <Button onClick={() => setCouponDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Coupon
-            </Button>
-          </div>
-        </div>
+        <AdminPageHeader
+          title="Discounts & Coupons"
+          description="Create coupons and set automatic discount rules"
+          actions={
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setRuleDialogOpen(true)}>
+                <Zap className="mr-2 h-4 w-4" />
+                Auto Rule
+              </Button>
+              <Button onClick={() => setCouponDialogOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                New Coupon
+              </Button>
+            </div>
+          }
+        />
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">

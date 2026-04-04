@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReturnRequestsTab } from "@/components/admin/ReturnRequestsTab";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -279,10 +280,10 @@ export default function Orders() {
   return (
     <>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Orders</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage and track customer orders ({orders.length} total)</p>
-        </div>
+        <AdminPageHeader
+          title="Orders"
+          description={`Manage and track customer orders (${orders.length} total)`}
+        />
 
         <Tabs defaultValue="orders" className="space-y-6">
           <TabsList>

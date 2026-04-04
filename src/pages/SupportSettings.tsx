@@ -2,6 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CannedResponsesSettings } from "@/components/settings/CannedResponsesSettings";
 import { MessageSquare, Bell } from "lucide-react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -55,10 +56,10 @@ export default function SupportSettings() {
   return (
     <>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground">Manage your notifications and quick replies</p>
-        </div>
+        <AdminPageHeader
+          title="Settings"
+          description="Manage your notifications and quick replies"
+        />
 
         <Tabs defaultValue="notifications" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 lg:w-auto">

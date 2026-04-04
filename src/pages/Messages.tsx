@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -86,11 +87,10 @@ export default function Messages() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Messages & Support</h1>
-            <p className="text-sm text-muted-foreground mt-1">Manage customer inquiries and support tickets</p>
-          </div>
+        <AdminPageHeader
+          title="Messages & Support"
+          description="Manage customer inquiries and support tickets"
+          actions={
           <div className="flex gap-2 flex-wrap mt-2 sm:mt-0">
             <KnowledgeBaseSheet />
             <Button
@@ -120,7 +120,8 @@ export default function Messages() {
               )}
             </Button>
           </div>
-        </div>
+          }
+        />
 
         {/* SLA Breach Alert */}
         <SLABreachAlert conversations={conversations} tickets={tickets} />

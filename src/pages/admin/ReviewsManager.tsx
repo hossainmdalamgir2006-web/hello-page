@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -203,52 +204,50 @@ export default function ReviewsManager() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Product Reviews</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage customer reviews and ratings ({reviews.length} total)
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {selectedReviews.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    Bulk Actions ({selectedReviews.length})
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-popover">
-                  <DropdownMenuItem onClick={() => updateMutation.mutate({ ids: selectedReviews, approved: null })}>
-                    <Clock className="mr-2 h-4 w-4" /> Set Pending
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => updateMutation.mutate({ ids: selectedReviews, approved: true })}>
-                    <Check className="mr-2 h-4 w-4" /> Approve
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => updateMutation.mutate({ ids: selectedReviews, approved: false })}>
-                    <X className="mr-2 h-4 w-4" /> Reject
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setBulkDeleteOpen(true)} className="text-destructive focus:text-destructive">
-                    <Trash2 className="mr-2 h-4 w-4" /> Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-popover">
-                <SelectItem value="all">All Reviews</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <AdminPageHeader
+          title="Product Reviews"
+          description={`Manage customer reviews and ratings (${reviews.length} total)`}
+          actions={
+            <div className="flex flex-wrap items-center gap-3">
+              {selectedReviews.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      Bulk Actions ({selectedReviews.length})
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-popover">
+                    <DropdownMenuItem onClick={() => updateMutation.mutate({ ids: selectedReviews, approved: null })}>
+                      <Clock className="mr-2 h-4 w-4" /> Set Pending
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => updateMutation.mutate({ ids: selectedReviews, approved: true })}>
+                      <Check className="mr-2 h-4 w-4" /> Approve
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => updateMutation.mutate({ ids: selectedReviews, approved: false })}>
+                      <X className="mr-2 h-4 w-4" /> Reject
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setBulkDeleteOpen(true)} className="text-destructive focus:text-destructive">
+                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-popover">
+                  <SelectItem value="all">All Reviews</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          }
+        />
 
         {/* Average Rating Summary */}
         <ReviewRatingSummary reviews={reviews} />

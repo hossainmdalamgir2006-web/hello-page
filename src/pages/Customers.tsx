@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -232,17 +233,11 @@ export default function Customers() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Customers</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Manage your customer base ({customers.length} customers)
-            </p>
-          </div>
-          <div className="mt-2 sm:mt-0">
-            <CustomerQuickLookup customers={customers} onSelect={viewDetails} />
-          </div>
-        </div>
+        <AdminPageHeader
+          title="Customers"
+          description={`Manage your customer base (${customers.length} customers)`}
+          actions={<CustomerQuickLookup customers={customers} onSelect={viewDetails} />}
+        />
 
         {/* Stats Cards */}
         <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">

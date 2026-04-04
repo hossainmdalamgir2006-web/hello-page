@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -122,18 +123,16 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground">Manage your store configuration and preferences</p>
-        </div>
-        <div className="flex items-center gap-2">
+      <AdminPageHeader
+        title="Settings"
+        description="Manage your store configuration and preferences"
+        actions={
           <Button onClick={handleSave} disabled={saving || settingsLoading} className="gap-2">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Saving..." : "Save Changes"}
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       <Tabs defaultValue="store" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 sm:grid-cols-8 lg:w-auto lg:grid-cols-8">

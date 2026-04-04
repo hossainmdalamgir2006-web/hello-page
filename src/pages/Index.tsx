@@ -8,6 +8,7 @@ import { QuickActions } from "@/components/admin/QuickActions";
 import { DateRangeSelector, DateRangePreset } from "@/components/admin/DateRangeSelector";
 import { DashboardWidget } from "@/components/admin/DashboardWidget";
 import { DashboardWidgetPicker } from "@/components/admin/DashboardWidgetPicker";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useDashboardLayout } from "@/hooks/useDashboardLayout";
 import { useGoalTracker } from "@/hooks/useGoalTracker";
@@ -304,19 +305,17 @@ const Index = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Overview of your store performance</p>
-        </div>
-        <div className="flex items-center gap-2 mt-2 sm:mt-0">
+      <AdminPageHeader
+        title="Dashboard"
+        description="Overview of your store performance"
+        actions={
           <DateRangeSelector
             value={dateRangePreset}
             customRange={customRange}
             onChange={handleDateRangeChange}
           />
-        </div>
-      </div>
+        }
+      />
 
       {/* Welcome Banner */}
       <WelcomeBanner />
