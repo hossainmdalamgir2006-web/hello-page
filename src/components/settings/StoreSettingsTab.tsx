@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import {
   Store,
-  Globe,
+  
   Building,
   Upload,
   Loader2,
