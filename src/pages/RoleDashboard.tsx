@@ -184,12 +184,7 @@ const RoleDashboard = () => {
     <>
       <SupportKeyboardShortcuts />
 
-      {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-          Support Dashboard
-        </h1>
-      </div>
+      <AdminPageHeader title="Support Dashboard" />
 
       {/* Welcome Banner */}
       <div className="mb-6">
