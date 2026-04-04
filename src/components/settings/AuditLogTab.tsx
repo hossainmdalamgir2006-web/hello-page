@@ -281,11 +281,18 @@ export function AuditLogTab() {
                   <SelectItem value="order">Orders</SelectItem>
                   <SelectItem value="product">Products</SelectItem>
                   <SelectItem value="customer">Customers</SelectItem>
-                  <SelectItem value="settings">Settings</SelectItem>
-                  <SelectItem value="user">Users</SelectItem>
                   <SelectItem value="coupon">Coupons</SelectItem>
                   <SelectItem value="category">Categories</SelectItem>
+                  <SelectItem value="brand">Brands</SelectItem>
                   <SelectItem value="shipping">Shipping</SelectItem>
+                  <SelectItem value="payment">Payments</SelectItem>
+                  <SelectItem value="settings">Settings</SelectItem>
+                  <SelectItem value="homepage">Homepage</SelectItem>
+                  <SelectItem value="support_ticket">Support</SelectItem>
+                  <SelectItem value="backup">Backups</SelectItem>
+                  <SelectItem value="trash">Trash</SelectItem>
+                  <SelectItem value="review">Reviews</SelectItem>
+                  <SelectItem value="user">Users</SelectItem>
                 </SelectContent>
               </Select>
 
