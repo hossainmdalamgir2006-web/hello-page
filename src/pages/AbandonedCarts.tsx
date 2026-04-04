@@ -50,22 +50,20 @@ export default function AbandonedCarts() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Abandoned Carts</h1>
-            <p className="text-sm text-muted-foreground">
-              Track and recover abandoned shopping carts
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-        </div>
+        <AdminPageHeader
+          title="Abandoned Carts"
+          description="Track and recover abandoned shopping carts"
+          actions={
+            <Button
+              variant="outline"
+              onClick={() => refetch()}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          }
+        />
 
         {/* Stats Cards */}
         <AbandonedCartStats stats={stats} />
