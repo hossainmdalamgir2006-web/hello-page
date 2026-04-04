@@ -148,6 +148,7 @@ export function useShippingData() {
 
       if (error) throw error;
       setZones(prev => prev.map(z => z.id === id ? { ...z, ...updates } : z));
+      logAuditAction({ action: "update", resource_type: "shipping", resource_id: id, description: "Shipping zone updated", new_value: updates });
       toast.success('Shipping zone updated');
     } catch (error) {
       console.error('Error updating zone:', error);
