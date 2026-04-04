@@ -115,12 +115,14 @@ const Index = () => {
 
 
   const avgOrderValue = stats.totalOrders > 0 ? stats.totalSales / stats.totalOrders : 0;
+  const conversionRate = stats.totalCustomers > 0 ? ((stats.totalOrders / stats.totalCustomers) * 100) : 0;
 
   const statsData = [
     // Row 1: Revenue & Sales overview
     { title: 'Total Sales', value: formatPrice(stats.totalSales), change: stats.salesChange, icon: TrendingUp, iconBg: "accent" as const },
     { title: "Today's Sales", value: formatPrice(todaySales), change: 0, icon: CalendarCheck, iconBg: "success" as const },
     { title: "Avg. Order Value", value: formatPrice(Math.round(avgOrderValue)), change: 0, icon: DollarSign, iconBg: "success" as const },
+    { title: "Revenue Growth", value: `${stats.salesChange >= 0 ? '+' : ''}${stats.salesChange}%`, change: stats.salesChange, icon: stats.salesChange >= 0 ? TrendingUp : TrendingDown, iconBg: stats.salesChange >= 0 ? "success" as const : "warning" as const },
     { title: "Total Refunded", value: formatPrice(refundStats.amount), change: 0, icon: RotateCcw, iconBg: "accent" as const },
     { title: "Total Refunds", value: refundStats.count.toString(), change: 0, icon: RotateCcw, iconBg: "warning" as const },
     // Row 2: Orders lifecycle
@@ -129,11 +131,13 @@ const Index = () => {
     { title: "Total Delivered", value: deliveredOrders.toString(), change: 0, icon: CheckCircle, iconBg: "success" as const },
     { title: "Abandoned Carts", value: abandonedCarts.toString(), change: 0, icon: ShoppingBag, iconBg: "warning" as const },
     { title: 'Total Customers', value: stats.totalCustomers.toString(), change: stats.customersChange, icon: Users, iconBg: "primary" as const },
+    { title: "Conversion Rate", value: `${conversionRate.toFixed(1)}%`, change: 0, icon: Target, iconBg: "accent" as const },
     // Row 3: Inventory & Support
     { title: 'Total Products', value: stats.totalProducts.toString(), change: stats.productsChange, icon: Package, iconBg: "primary" as const },
     { title: "Low Stock", value: stats.lowStockProducts.toString(), change: 0, icon: PackageX, iconBg: "warning" as const },
     { title: "Active Coupons", value: activeCoupons.toString(), change: 0, icon: Tag, iconBg: "accent" as const },
     { title: "Open Tickets", value: openTickets.toString(), change: 0, icon: Headphones, iconBg: "primary" as const },
+    { title: "Pending Returns", value: pendingReturns.toString(), change: 0, icon: Undo2, iconBg: "warning" as const },
     { title: "Newsletter Subs", value: newsletterSubs.toString(), change: 0, icon: Mail, iconBg: "success" as const },
   ];
 
