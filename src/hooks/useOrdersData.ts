@@ -349,6 +349,13 @@ export function useOrdersData() {
       toast.error('Failed to trash order');
     },
     onSuccess: (_data, orderId) => {
+      const order = orders.find(o => o.id === orderId);
+      logAuditAction({
+        action: 'delete',
+        resource_type: 'order',
+        resource_id: order?.order_number || orderId,
+        description: `Order moved to trash`,
+      });
       toast.success('Order moved to trash', {
         action: {
           label: 'Undo',
