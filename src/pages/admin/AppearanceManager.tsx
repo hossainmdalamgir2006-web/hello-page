@@ -576,22 +576,6 @@ export default function AppearanceManager() {
             </Card>
           </TabsContent>
 
-          {/* Branding Tab */}
-          <TabsContent value="branding">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Logo & Branding</CardTitle>
-                <CardDescription>ব্র্যান্ড নাম, লোগো ও favicon</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <TextField label="Brand Name" settingKey="brand_name" description="Header ও sidebar-এ দেখাবে" />
-                  <TextField label="Logo URL" settingKey="logo_url" description="Logo image URL (optional)" />
-                  <TextField label="Favicon URL" settingKey="favicon_url" description="Browser tab icon URL" />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           {/* Custom CSS Tab */}
           <TabsContent value="custom">
