@@ -233,7 +233,16 @@ export function useOrdersData() {
       }
       toast.error('Failed to update status');
     },
-    onSuccess: () => {
+    onSuccess: (_data, { orderId, status }) => {
+      const order = orders.find(o => o.id === orderId);
+      logAuditAction({
+        action: 'update',
+        resource_type: 'order',
+        resource_id: order?.order_number || orderId,
+        description: `Order status changed to ${status}`,
+        old_value: { status: order?.status },
+        new_value: { status },
+      });
       toast.success('Order status updated successfully');
     },
     onSettled: () => {
