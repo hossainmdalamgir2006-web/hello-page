@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2 } from "lucide-react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { StoreSettingsTab } from "@/components/settings/StoreSettingsTab";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { toast } from "sonner";
