@@ -391,7 +391,14 @@ export function useProductsData() {
         .eq('id', id);
 
       if (error) throw error;
+      const trashedProduct = products.find(p => p.id === id);
       setProducts(prev => prev.filter(p => p.id !== id));
+      logAuditAction({
+        action: 'delete',
+        resource_type: 'product',
+        resource_id: id,
+        description: `Product trashed: ${trashedProduct?.name}`,
+      });
       toast.success('Product moved to trash!');
     } catch (error: any) {
       console.error('Error trashing product:', error);
