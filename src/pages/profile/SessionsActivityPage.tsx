@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { History, Monitor, Smartphone, Tablet, CheckCircle, XCircle, Globe, Shield, Clock, LogOut, RefreshCw, Loader2 } from 'lucide-react';
+import { History, Monitor, Smartphone, Tablet, CheckCircle, XCircle, Globe, Shield, Clock, LogOut, Loader2 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
