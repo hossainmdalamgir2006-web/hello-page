@@ -470,7 +470,14 @@ export function useProductsData() {
         .eq('id', id);
 
       if (error) throw error;
+      const deletedProduct = products.find(p => p.id === id);
       setProducts(prev => prev.filter(p => p.id !== id));
+      logAuditAction({
+        action: 'delete',
+        resource_type: 'product',
+        resource_id: id,
+        description: `Product permanently deleted: ${deletedProduct?.name}`,
+      });
       toast.success('Product permanently deleted!');
     } catch (error: any) {
       console.error('Error deleting product:', error);
