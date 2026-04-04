@@ -169,7 +169,7 @@ export default function AppearanceManager() {
             <TabsTrigger value="toast" className="gap-1.5"><Bell className="h-3.5 w-3.5" />Toast</TabsTrigger>
             <TabsTrigger value="charts" className="gap-1.5"><BarChart3 className="h-3.5 w-3.5" />Charts</TabsTrigger>
             <TabsTrigger value="spacing" className="gap-1.5"><Grid3X3 className="h-3.5 w-3.5" />Spacing</TabsTrigger>
-            <TabsTrigger value="branding" className="gap-1.5"><Image className="h-3.5 w-3.5" />Branding</TabsTrigger>
+            
             <TabsTrigger value="custom" className="gap-1.5"><Code className="h-3.5 w-3.5" />Custom CSS</TabsTrigger>
           </TabsList>
 
