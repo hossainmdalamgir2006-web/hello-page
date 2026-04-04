@@ -1,35 +1,66 @@
 
 
-## Dashboard Stats Cards — New Card Ideas
+## Reports Page — Current Status & What Needs to Be Done
 
-### Current 6 Cards
-Total Sales, Total Orders, Total Products, Total Customers, Total Refunds, Total Refunded
+### Current State: 100% Mock/Placeholder
 
-### Suggested New Cards (pick any combination)
+The entire Reports page (`src/pages/Reports.tsx`) is **non-functional**. Here's what's fake:
 
-| Card | Value | Why Useful |
-|------|-------|------------|
-| **Average Order Value (AOV)** | `totalSales / totalOrders` | Key e-commerce KPI — shows how much each customer spends per order |
-| **Pending Orders** | Already in `stats.pendingOrders` | Quick visibility into orders needing action |
-| **Low Stock Products** | Already in `stats.lowStockProducts` | Alert for inventory that needs restocking |
-| **Conversion Rate** | `orders / visitors` (needs tracking) | Shows how effectively visitors become buyers |
-| **Active Coupons** | Count from `coupons` table | Shows running promotions at a glance |
-| **Open Tickets** | Count from `support_tickets` where status = open | Customer support workload visibility |
-| **Abandoned Carts** | Count from `abandoned_carts` | Lost revenue awareness |
-| **Today's Sales** | Orders from today only | Real-time daily performance |
+| Feature | Status | Problem |
+|---------|--------|---------|
+| Report List | Hardcoded 5 reports | Static array, no DB |
+| Generate Report | Simulated with `setTimeout` | No actual data fetched, no real file created |
+| Download button | Shows toast only | No file download |
+| Scheduled Reports | Hardcoded 3 schedules | Not persisted, lost on refresh |
+| Create Schedule | Local state only | Not saved to DB, no cron/automation |
+| Stats cards | Counts from mock array | Not from real data |
+| Report Builder dialog | UI only | No actual query or export logic |
 
-### Recommendation
-Add these 3 most impactful cards (no new DB queries needed — data already exists):
-1. **Average Order Value** — calculated from existing `totalSales / totalOrders`
-2. **Pending Orders** — `stats.pendingOrders` already fetched
-3. **Low Stock Products** — `stats.lowStockProducts` already fetched
+### What Can Be Made Functional (Realistic Scope)
 
-This brings the total to **9 cards** (3 rows of 3 on desktop). All three use data already available in `useDashboardData.ts` — zero additional DB queries.
+#### Phase 1 — Real Report Generation & Download (High Impact)
+1. **Sales Report**: Query `orders` table by date range → generate CSV/JSON with real data → download
+2. **Inventory Report**: Query `products` table (stock, category) → export
+3. **Customer Report**: Query `customers` table (with LTV, orders) → export
+4. **Order Report**: Query `orders` + `order_items` → export
+5. **Product Report**: Query `products` + `order_items` for performance → export
+6. **Financial Report**: Query `orders` for revenue/profit summary → export
 
-### Implementation
-- **File to modify:** `src/pages/Index.tsx` — add 3 new entries to `statsData` array
-- **Grid update:** Change `xl:grid-cols-6` to a responsive layout that fits 9 cards (e.g., `xl:grid-cols-3` with 3 rows, or keep flexible with `grid-cols-2 md:grid-cols-3`)
+Each report will:
+- Use real DB queries based on selected date range and filters
+- Generate actual CSV files for download (CSV is most reliable in-browser)
+- Show real generation status
+- Persist generated reports list in `localStorage` (or optionally a new DB table)
 
-### Alternative: If you want all 8 new cards
-Would require adding queries for `coupons`, `support_tickets`, and `abandoned_carts` counts in `useDashboardData.ts`. Happy to include those too.
+#### Phase 2 — Persist Reports History (Optional)
+- Create a `generated_reports` table to track report metadata
+- Store report files in storage bucket or as downloadable blobs
+
+#### Phase 3 — Scheduled Reports (Requires Email System)
+- This needs a working email integration (Resend/SMTP) + a cron mechanism
+- Can build the DB structure but actual scheduling won't work without email credentials
+- Mark as "Coming Soon" or keep UI but note it's placeholder
+
+### Recommended Approach
+
+**Phase 1 only** — make report generation functional with real DB data and real CSV downloads. This covers:
+- Real data queries per report type
+- Date range filtering works
+- CSV download produces actual files
+- Stats cards show real counts from DB
+- Report list shows actually generated reports (session-persisted)
+
+### Technical Details
+
+**File to modify**: `src/pages/Reports.tsx`
+
+**Changes**:
+- Import `supabase` client
+- Add async functions for each report type that query real tables
+- Replace `handleGenerateReport` with actual DB queries → CSV blob → download
+- Replace `handleDownload` with real file download
+- Stats cards: query real counts from DB
+- Keep scheduled reports UI but mark as placeholder (needs email system)
+
+**No DB migrations needed** — all data already exists in `orders`, `products`, `customers`, `order_items` tables.
 
