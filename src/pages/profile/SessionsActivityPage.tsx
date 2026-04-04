@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { History, Monitor, Smartphone, Tablet, CheckCircle, XCircle, Globe, Shield, Clock, LogOut, RefreshCw, Loader2 } from 'lucide-react';
+import { History, Monitor, Smartphone, Tablet, CheckCircle, XCircle, Globe, Shield, Clock, LogOut, Loader2 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
@@ -182,9 +182,6 @@ export default function SessionsActivityPage() {
                   </CardDescription>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={refreshSessions}>
-                <RefreshCw className="h-4 w-4" />
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
