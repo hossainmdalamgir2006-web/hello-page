@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { useSiteThemeSettings } from "@/hooks/useSiteThemeSettings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
