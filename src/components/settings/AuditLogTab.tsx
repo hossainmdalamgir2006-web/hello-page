@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,9 +38,14 @@ import {
   User,
   Activity,
   FileText,
+  Download,
+  BarChart3,
+  Users,
+  Zap,
 } from "lucide-react";
 import { useAuditLog, AuditLogEntry } from "@/hooks/useAuditLog";
-import { formatDistanceToNow, format } from "date-fns";
+import { DataExport } from "@/components/ui/data-export";
+import { formatDistanceToNow, format, isToday } from "date-fns";
 
 const actionColors: Record<string, string> = {
   create: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -59,6 +64,16 @@ const resourceIcons: Record<string, React.ElementType> = {
   customer: User,
   settings: Shield,
   user: User,
+  coupon: Zap,
+  shipping: FileText,
+  homepage: FileText,
+  support_ticket: FileText,
+  payment: FileText,
+  backup: FileText,
+  trash: FileText,
+  brand: FileText,
+  category: FileText,
+  review: FileText,
   default: Activity,
 };
 
