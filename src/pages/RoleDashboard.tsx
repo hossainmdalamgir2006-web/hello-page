@@ -78,22 +78,16 @@ const RoleDashboard = () => {
         {/* Keyboard Shortcuts */}
         <SupportKeyboardShortcuts />
         {/* Header */}
-        <div className="mb-6 sm:mb-8 flex flex-col gap-3 sm:gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-                {roleLabel} Dashboard
-              </h1>
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <DateRangeSelector
-                value={dateRangePreset}
-                customRange={customRange}
-                onChange={handleDateRangeChange}
-              />
-            </div>
-          </div>
-        </div>
+        <AdminPageHeader
+          title={`${roleLabel} Dashboard`}
+          actions={
+            <DateRangeSelector
+              value={dateRangePreset}
+              customRange={customRange}
+              onChange={handleDateRangeChange}
+            />
+          }
+        />
 
         {/* Welcome Banner */}
         <div className="mb-6">
