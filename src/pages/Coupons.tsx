@@ -332,8 +332,9 @@ export default function Coupons() {
       
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
+      logAuditAction({ action: "update", resource_type: "coupon", resource_id: vars.id, description: `Coupon ${vars.is_active ? "activated" : "deactivated"}`, new_value: { is_active: vars.is_active } });
       toast.success("Coupon status updated");
     },
     onError: () => {
