@@ -176,6 +176,14 @@ export function useCustomersData() {
           });
       }
 
+      logAuditAction({
+        action: 'update',
+        resource_type: 'customer',
+        resource_id: id,
+        description: `Customer status changed to ${status}`,
+        new_value: { status, reason },
+      });
+
       queryClient.invalidateQueries({ queryKey: ['customers-data'] });
       toast.success(`Customer ${status === 'blocked' ? 'blocked' : status === 'flagged' ? 'flagged' : 'activated'} successfully`);
     } catch (error: any) {
