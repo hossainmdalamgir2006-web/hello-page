@@ -224,6 +224,7 @@ export function AuditLogTab() {
                 )}
               </Button>
             </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Search & Filters */}
