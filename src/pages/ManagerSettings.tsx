@@ -10,12 +10,10 @@ export default function ManagerSettings() {
   return (
     <>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage auto-reply, quick replies, and SLA configuration
-          </p>
-        </div>
+        <AdminPageHeader
+          title="Settings"
+          description="Manage auto-reply, quick replies, and SLA configuration"
+        />
 
         <Tabs defaultValue="auto-reply" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 lg:w-auto">
