@@ -77,6 +77,7 @@ export function useHomepageSections() {
       toast({ title: "Error", description: "Failed to create section", variant: "destructive" });
       return false;
     }
+    logAuditAction({ action: "create", resource_type: "homepage", description: `Homepage section "${section.section_type}" created`, new_value: section });
     toast({ title: "Success", description: "Section created successfully" });
     refetch();
     return true;
