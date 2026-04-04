@@ -4,6 +4,7 @@ import { AutoReplySettings } from "@/components/settings/AutoReplySettings";
 import { CannedResponsesSettings } from "@/components/settings/CannedResponsesSettings";
 import { Bot, MessageSquare, Clock } from "lucide-react";
 import { SLASettings } from "@/components/settings/SLASettings";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export default function ManagerSettings() {
   return (
