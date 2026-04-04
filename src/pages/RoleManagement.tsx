@@ -217,10 +217,10 @@ export default function RoleManagement() {
   return (
     <>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Role Management</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage user roles and permissions</p>
-        </div>
+        <AdminPageHeader
+          title="Role Management"
+          description="Manage user roles and permissions"
+        />
 
         {/* Stats */}
         <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">

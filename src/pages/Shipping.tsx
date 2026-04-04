@@ -185,11 +185,10 @@ export default function Shipping() {
   return (
     <>
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Shipping Management</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage shipping zones, rates and courier integrations</p>
-        </div>
+        <AdminPageHeader
+          title="Shipping Management"
+          description="Manage shipping zones, rates and courier integrations"
+        />
 
         {/* Stats */}
         <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-5">
