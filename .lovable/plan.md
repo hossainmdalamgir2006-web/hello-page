@@ -1,59 +1,34 @@
 
 
-## Audit Log Page — Analysis & Update Plan
+## Admin Pages — Unified Glassmorphic Header Design
 
-### Current State Summary
+### Problem
+Products পেজে যে glassmorphic header আছে (gradient background, blur elements, rounded border) — সেটা শুধু Products পেজেই আছে। বাকি ২৩+ admin পেজে plain header ব্যবহার হচ্ছে।
 
-**Audit UI (AuditLogTab.tsx):** Fully functional — search, filters, pagination, detail dialog, staff activity summary, CSV export all work. No UI bugs.
+### Solution
+`AdminPageHeader` কম্পোনেন্টে glassmorphic styling যোগ করে সব পেজে একই ডিজাইন আনা।
 
-**Audit Logging Coverage — What's Tracked vs Missing:**
+### Step 1 — Update `AdminPageHeader` component
+`src/components/admin/AdminPageHeader.tsx` এ Products পেজের মতো styling যোগ করা:
+- `rounded-xl border border-border/50 bg-gradient-to-br from-card via-card to-primary/5 p-6`
+- Decorative blur circles (top-right, bottom-left)
+- `relative overflow-hidden` wrapper
 
-| Tracked ✅ | Missing ❌ |
-|------------|-----------|
-| Order status/payment changes | Coupon CRUD |
-| Product create/update/delete | Shipping zone/rate changes |
-| Customer update/status/merge | Settings changes (store, payment, security, notifications) |
-| Category create/update | Carousel/homepage section edits |
-| Brand create/update | Support ticket actions |
-| Role changes | Login/logout events |
-| | Review moderation |
-| | Backup creation |
-| | Trash restore/permanent delete |
-
-### Recommended Updates
-
-#### 1. Expand Audit Logging Coverage (Priority)
-Add `logAuditAction()` calls to these hooks/pages that currently have NO audit tracking:
-
-- **Coupons** — admin coupon pages (create, update, delete, toggle active)
-- **Shipping** — `useShippingData.ts`, `useShippingZones.ts`, `useShippingRates.ts` (zone/rate CRUD)
-- **Settings** — store settings, payment method config, security rules, notification config changes
-- **Homepage** — carousel slide CRUD, homepage section updates
-- **Support** — ticket status changes, assignments
-- **Reviews** — approve/reject/delete actions
-- **Trash** — restore and permanent delete actions in `useGlobalTrash.ts`
-- **Backup** — backup creation events
-
-#### 2. Audit Log UI Enhancements (Nice-to-have)
-- **Stats cards at top** — Total logs today, most active user, most common action, unique users active
-- **CSV Export button** — Currently missing from the audit page itself (DataExport component exists but isn't used here)
-- **"Clear All Filters" visual indicator** — Show active filter count on the Filters button
-- **Resource filter dropdown** — Add missing resource types: `brand`, `coupon`, `carousel`, `shipping`, `review`, `backup`
+### Step 2 — Replace inline headers across all admin pages
+এই ২৩টি পেজে inline header markup সরিয়ে `AdminPageHeader` ব্যবহার করা:
+- `Index.tsx` (Dashboard)
+- `Products.tsx` (already has design, switch to component)
+- `Orders.tsx`, `Customers.tsx`, `Coupons.tsx`, `Messages.tsx`
+- `Shipping.tsx`, `AbandonedCarts.tsx`, `RoleManagement.tsx`
+- `Reports.tsx`, `Analytics.tsx`, `Categories.tsx`
+- `AppearanceManager.tsx`, `ManagerSettings.tsx`
+- `RoleDashboard.tsx`, `Brands.tsx`
+- Settings sub-pages: `SecurityPage.tsx`, etc.
+- Any other admin pages with inline headers
 
 ### Technical Details
-
-**Files to modify for logging coverage:**
-- `src/pages/Coupons.tsx` or coupon hook — add logAuditAction for CRUD
-- `src/hooks/useShippingData.ts` / `useShippingZones.ts` / `useShippingRates.ts`
-- `src/components/settings/PaymentSettings.tsx` — payment method changes
-- `src/components/settings/IPSecuritySettings.tsx` — security rule changes
-- Store settings page — store config saves
-- `src/hooks/useGlobalTrash.ts` — restore/permanent delete
-- Homepage management pages — carousel/section CRUD
-- Support ticket hooks — status/assignment changes
-
-**Files to modify for UI enhancements:**
-- `src/components/settings/AuditLogTab.tsx` — add stats cards, export button, update resource filter list
-
-**No DB migrations needed** — the `audit_logs` table schema already supports all fields.
+- **Modified:** `src/components/admin/AdminPageHeader.tsx` — add glassmorphic wrapper + blur elements
+- **Modified:** ~20+ page files — replace inline `<h1>` headers with `<AdminPageHeader>` component
+- Products পেজ থেকে custom header markup সরিয়ে `AdminPageHeader` ব্যবহার করা
+- No DB changes needed
 
