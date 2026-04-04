@@ -167,6 +167,15 @@ export default function RoleManagement() {
         title: 'Role Updated',
         description: `Role updated to ${roleConfig[newRole].label}`,
       });
+
+      logAuditAction({
+        action: 'update',
+        resource_type: 'user_role',
+        resource_id: selectedUser.user_id,
+        description: `Role changed to ${roleConfig[newRole].label} for ${selectedUser.full_name || selectedUser.user_id}`,
+        old_value: { role: selectedUser.role },
+        new_value: { role: newRole },
+      });
       
       setIsDialogOpen(false);
     } catch (error: any) {
