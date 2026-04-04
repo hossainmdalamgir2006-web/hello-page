@@ -274,7 +274,16 @@ export function useOrdersData() {
       }
       toast.error('Failed to update payment status');
     },
-    onSuccess: () => {
+    onSuccess: (_data, { orderId, paymentStatus }) => {
+      const order = orders.find(o => o.id === orderId);
+      logAuditAction({
+        action: 'update',
+        resource_type: 'order',
+        resource_id: order?.order_number || orderId,
+        description: `Payment status changed to ${paymentStatus}`,
+        old_value: { payment_status: order?.payment_status },
+        new_value: { payment_status: paymentStatus },
+      });
       toast.success('Payment status updated successfully');
     },
     onSettled: () => {
