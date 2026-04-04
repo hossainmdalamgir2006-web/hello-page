@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { logAuditAction } from "@/lib/auditLog";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
