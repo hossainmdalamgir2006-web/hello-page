@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw } from "lucide-react";
+import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCard } from "@/components/admin/StatsCard";
@@ -92,49 +92,18 @@ const Index = () => {
 
 
 
+  const avgOrderValue = stats.totalOrders > 0 ? stats.totalSales / stats.totalOrders : 0;
+
   const statsData = [
-    { 
-      title: 'Total Sales', 
-      value: formatPrice(stats.totalSales), 
-      change: stats.salesChange, 
-      icon: TrendingUp, 
-      iconBg: "accent" as const 
-    },
-    { 
-      title: 'Total Orders', 
-      value: stats.totalOrders.toString(), 
-      change: stats.ordersChange, 
-      icon: ShoppingCart, 
-      iconBg: "primary" as const 
-    },
-    { 
-      title: 'Total Products', 
-      value: stats.totalProducts.toString(), 
-      change: stats.productsChange, 
-      icon: Package, 
-      iconBg: "warning" as const 
-    },
-    { 
-      title: 'Total Customers', 
-      value: stats.totalCustomers.toString(), 
-      change: stats.customersChange, 
-      icon: Users, 
-      iconBg: "success" as const 
-    },
-    { 
-      title: "Total Refunds", 
-      value: refundStats.count.toString(), 
-      change: 0, 
-      icon: RotateCcw, 
-      iconBg: "warning" as const 
-    },
-    { 
-      title: "Total Refunded", 
-      value: formatPrice(refundStats.amount), 
-      change: 0, 
-      icon: RotateCcw, 
-      iconBg: "accent" as const 
-    },
+    { title: 'Total Sales', value: formatPrice(stats.totalSales), change: stats.salesChange, icon: TrendingUp, iconBg: "accent" as const },
+    { title: 'Total Orders', value: stats.totalOrders.toString(), change: stats.ordersChange, icon: ShoppingCart, iconBg: "primary" as const },
+    { title: 'Total Products', value: stats.totalProducts.toString(), change: stats.productsChange, icon: Package, iconBg: "warning" as const },
+    { title: 'Total Customers', value: stats.totalCustomers.toString(), change: stats.customersChange, icon: Users, iconBg: "success" as const },
+    { title: "Total Refunds", value: refundStats.count.toString(), change: 0, icon: RotateCcw, iconBg: "warning" as const },
+    { title: "Total Refunded", value: formatPrice(refundStats.amount), change: 0, icon: RotateCcw, iconBg: "accent" as const },
+    { title: "Avg. Order Value", value: formatPrice(Math.round(avgOrderValue)), change: 0, icon: DollarSign, iconBg: "success" as const },
+    { title: "Pending Orders", value: stats.pendingOrders.toString(), change: 0, icon: Clock, iconBg: "primary" as const },
+    { title: "Low Stock", value: stats.lowStockProducts.toString(), change: 0, icon: PackageX, iconBg: "warning" as const },
   ];
 
   const comparisonMetrics = [
@@ -172,9 +141,9 @@ const Index = () => {
       case "stats":
         return (
           <div key={widget.id} className="md:col-span-2 lg:col-span-4">
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
               {loading ? (
-                Array.from({ length: 6 }).map((_, index) => (
+                Array.from({ length: 9 }).map((_, index) => (
                   <Skeleton key={index} className="h-28 rounded-xl" />
                 ))
               ) : (
