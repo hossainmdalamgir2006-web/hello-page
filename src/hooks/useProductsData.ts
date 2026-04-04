@@ -234,6 +234,13 @@ export function useProductsData() {
 
       const newProduct = data as unknown as Product;
       setProducts(prev => [newProduct, ...prev]);
+      logAuditAction({
+        action: 'create',
+        resource_type: 'product',
+        resource_id: newProduct.id,
+        description: `Product created: ${newProduct.name}`,
+        new_value: { name: newProduct.name, price: newProduct.price, sku: newProduct.sku },
+      });
       toast.success('Product created successfully!');
       return newProduct;
     } catch (error: any) {
