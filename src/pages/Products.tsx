@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { ProductCard } from "@/components/products/ProductCard";
 import { ProductFilters, type FilterState } from "@/components/products/ProductFilters";
