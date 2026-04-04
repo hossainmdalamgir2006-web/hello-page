@@ -154,14 +154,14 @@ async function fetchOrderReport(from: Date, to: Date) {
 
 async function fetchProductReport() {
   const { data, error } = await supabase.from("products")
-    .select("name, sku, category, price, compare_at_price, stock_quantity, is_active, is_featured, created_at")
+    .select("name, sku, category, price, compare_at_price, quantity, is_active, is_featured, created_at")
     .is("deleted_at", null)
     .order("name");
   if (error) throw error;
   const headers = ["Name", "SKU", "Category", "Price", "Compare At", "Stock", "Active", "Featured", "Created"];
   const rows = (data || []).map(p => [
     p.name, p.sku || "", p.category || "", String(p.price), String(p.compare_at_price || ""),
-    String(p.stock_quantity ?? 0), p.is_active ? "Yes" : "No", p.is_featured ? "Yes" : "No",
+    String(p.quantity ?? 0), p.is_active ? "Yes" : "No", p.is_featured ? "Yes" : "No",
     format(new Date(p.created_at), "yyyy-MM-dd")
   ]);
   return { headers, rows };
