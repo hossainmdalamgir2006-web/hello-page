@@ -33,6 +33,10 @@ const Index = () => {
   const [customRange, setCustomRange] = useState<{ from: Date; to: Date } | undefined>();
   const [pendingReturns, setPendingReturns] = useState(0);
   const [refundStats, setRefundStats] = useState({ count: 0, amount: 0 });
+  const [activeCoupons, setActiveCoupons] = useState(0);
+  const [openTickets, setOpenTickets] = useState(0);
+  const [abandonedCarts, setAbandonedCarts] = useState(0);
+  const [todaySales, setTodaySales] = useState(0);
   const { 
     stats, 
     recentOrders, 
