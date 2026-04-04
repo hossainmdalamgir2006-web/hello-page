@@ -144,15 +144,6 @@ export default function Analytics() {
               <TrendingUp className="h-4 w-4 mr-2" />
               Compare
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => refetch()}
-              disabled={loading}
-            >
-              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              Refresh
-            </Button>
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="w-40 bg-card">
                 <Calendar className="mr-2 h-4 w-4" />

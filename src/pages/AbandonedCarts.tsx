@@ -53,16 +53,6 @@ export default function AbandonedCarts() {
         <AdminPageHeader
           title="Abandoned Carts"
           description="Track and recover abandoned shopping carts"
-          actions={
-            <Button
-              variant="outline"
-              onClick={() => refetch()}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-          }
         />
 
         {/* Stats Cards */}
