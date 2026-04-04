@@ -54,13 +54,14 @@ const Index = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const [returnRes, refundedRes, couponsRes, ticketsRes, cartsRes, todayOrdersRes] = await Promise.all([
+      const [returnRes, refundedRes, couponsRes, ticketsRes, cartsRes, todayOrdersRes, deliveredRes] = await Promise.all([
         supabase.from('return_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('orders' as any).select('refund_amount, refund_status').eq('refund_status', 'refunded'),
         supabase.from('coupons' as any).select('*', { count: 'exact', head: true }).eq('is_active', true),
         supabase.from('support_tickets' as any).select('*', { count: 'exact', head: true }).eq('status', 'open'),
         supabase.from('abandoned_carts' as any).select('*', { count: 'exact', head: true }).is('recovered_at', null),
         supabase.from('orders' as any).select('total_amount').gte('created_at', today.toISOString()),
+        supabase.from('orders' as any).select('*', { count: 'exact', head: true }).eq('status', 'delivered'),
       ]);
 
       setPendingReturns(returnRes.count || 0);
