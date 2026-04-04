@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,39 +13,32 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 import { 
-  FileText, 
-  Download, 
-  Calendar as CalendarIcon, 
-  Clock, 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
-  ShoppingCart,
-  Package,
-  DollarSign,
-  Plus,
-  Play,
-  Pause,
-  Trash2,
-  Edit,
-  Eye,
-  FileSpreadsheet,
-  Filter,
-  Settings,
-  Mail,
-  RefreshCw
+  FileText, Download, Calendar as CalendarIcon, Clock, BarChart3, TrendingUp, Users, ShoppingCart,
+  Package, DollarSign, Plus, Play, Trash2, Edit, Eye, FileSpreadsheet, Filter, Mail, RefreshCw, AlertCircle
 } from "lucide-react";
 
-interface Report {
+// ─── Types ───
+interface GeneratedReport {
   id: string;
   name: string;
-  type: 'sales' | 'inventory' | 'customers' | 'orders' | 'products' | 'financial';
-  format: 'pdf' | 'excel' | 'csv';
+  type: ReportType;
   generatedAt: string;
-  size: string;
+  rowCount: number;
   status: 'ready' | 'generating' | 'failed';
+  csvBlob?: Blob;
+}
+
+type ReportType = 'sales' | 'inventory' | 'customers' | 'orders' | 'products' | 'financial';
+
+interface ReportTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ElementType;
+  type: ReportType;
 }
 
 interface ScheduledReport {
@@ -55,87 +47,21 @@ interface ScheduledReport {
   type: string;
   frequency: 'daily' | 'weekly' | 'monthly';
   nextRun: string;
-  lastRun?: string;
   recipients: string[];
   isActive: boolean;
-  format: 'pdf' | 'excel';
 }
 
-interface ReportTemplate {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ElementType;
-  fields: string[];
-  type: string;
-}
-
+// ─── Config ───
 const reportTemplates: ReportTemplate[] = [
-  {
-    id: "sales",
-    name: "Sales Report",
-    description: "Sales performance, revenue, and trend analysis",
-    icon: TrendingUp,
-    fields: ["Date Range", "Product Category", "Payment Method", "Sales Channel"],
-    type: "sales"
-  },
-  {
-    id: "inventory",
-    name: "Inventory Report",
-    description: "Stock levels, movement, and valuation",
-    icon: Package,
-    fields: ["Category", "Stock Status", "Supplier", "Warehouse"],
-    type: "inventory"
-  },
-  {
-    id: "customers",
-    name: "Customer Report",
-    description: "Customer activity, retention, and segmentation",
-    icon: Users,
-    fields: ["Registration Date", "Loyalty Tier", "Location", "Order History"],
-    type: "customers"
-  },
-  {
-    id: "orders",
-    name: "Order Report",
-    description: "Order status, fulfillment, and shipping analytics",
-    icon: ShoppingCart,
-    fields: ["Order Status", "Shipping Method", "Payment Status", "Date Range"],
-    type: "orders"
-  },
-  {
-    id: "products",
-    name: "Product Report",
-    description: "Product performance, views, and conversion rate",
-    icon: BarChart3,
-    fields: ["Category", "Price Range", "Stock Status", "Brand"],
-    type: "products"
-  },
-  {
-    id: "financial",
-    name: "Financial Report",
-    description: "Revenue, profit margin, and cost analysis",
-    icon: DollarSign,
-    fields: ["Fiscal Period", "Revenue Source", "Expense Category", "Tax"],
-    type: "financial"
-  }
+  { id: "sales", name: "Sales Report", description: "Revenue, orders & payment breakdown", icon: TrendingUp, type: "sales" },
+  { id: "inventory", name: "Inventory Report", description: "Stock levels, categories & valuation", icon: Package, type: "inventory" },
+  { id: "customers", name: "Customer Report", description: "Customer list with LTV & order stats", icon: Users, type: "customers" },
+  { id: "orders", name: "Order Report", description: "All orders with items, status & totals", icon: ShoppingCart, type: "orders" },
+  { id: "products", name: "Product Report", description: "Product catalog with pricing & stock", icon: BarChart3, type: "products" },
+  { id: "financial", name: "Financial Report", description: "Revenue summary, refunds & discounts", icon: DollarSign, type: "financial" },
 ];
 
-const initialReports: Report[] = [
-  { id: "rpt-1", name: "January Sales Report", type: "sales", format: "pdf", generatedAt: "2024-01-21 10:30", size: "2.4 MB", status: "ready" },
-  { id: "rpt-2", name: "Q4 Inventory Summary", type: "inventory", format: "excel", generatedAt: "2024-01-20 15:45", size: "5.1 MB", status: "ready" },
-  { id: "rpt-3", name: "Customer Segmentation", type: "customers", format: "pdf", generatedAt: "2024-01-19 09:00", size: "1.8 MB", status: "ready" },
-  { id: "rpt-4", name: "Weekly Order Report", type: "orders", format: "excel", generatedAt: "2024-01-21 08:00", size: "3.2 MB", status: "generating" },
-  { id: "rpt-5", name: "Product Performance", type: "products", format: "csv", generatedAt: "2024-01-18 14:20", size: "890 KB", status: "ready" },
-];
-
-const initialScheduledReports: ScheduledReport[] = [
-  { id: "sch-1", name: "Daily Sales Summary", type: "sales", frequency: "daily", nextRun: "2024-01-22 08:00", lastRun: "2024-01-21 08:00", recipients: ["admin@store.com"], isActive: true, format: "pdf" },
-  { id: "sch-2", name: "Weekly Inventory Update", type: "inventory", frequency: "weekly", nextRun: "2024-01-28 09:00", lastRun: "2024-01-21 09:00", recipients: ["manager@store.com", "inventory@store.com"], isActive: true, format: "excel" },
-  { id: "sch-3", name: "Monthly Financial Report", type: "financial", frequency: "monthly", nextRun: "2024-02-01 10:00", lastRun: "2024-01-01 10:00", recipients: ["cfo@store.com"], isActive: false, format: "pdf" },
-];
-
-const typeConfig: Record<Report['type'], { label: string; color: string; icon: React.ElementType }> = {
+const typeConfig: Record<ReportType, { label: string; color: string; icon: React.ElementType }> = {
   sales: { label: "Sales", color: "bg-green-100 text-green-800", icon: TrendingUp },
   inventory: { label: "Inventory", color: "bg-blue-100 text-blue-800", icon: Package },
   customers: { label: "Customer", color: "bg-purple-100 text-purple-800", icon: Users },
@@ -144,102 +70,218 @@ const typeConfig: Record<Report['type'], { label: string; color: string; icon: R
   financial: { label: "Financial", color: "bg-yellow-100 text-yellow-800", icon: DollarSign },
 };
 
+// ─── CSV Helper ───
+function arrayToCSV(headers: string[], rows: string[][]): Blob {
+  const escape = (v: string) => {
+    if (v.includes(",") || v.includes('"') || v.includes("\n")) return `"${v.replace(/"/g, '""')}"`;
+    return v;
+  };
+  const content = [headers.join(","), ...rows.map(r => r.map(escape).join(","))].join("\n");
+  return new Blob(["\ufeff" + content], { type: "text/csv;charset=utf-8;" });
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Data Fetchers ───
+async function fetchSalesReport(from: Date, to: Date) {
+  const { data, error } = await supabase.from("orders")
+    .select("order_number, status, payment_status, payment_method, subtotal, discount_amount, shipping_cost, total_amount, created_at")
+    .gte("created_at", from.toISOString())
+    .lte("created_at", to.toISOString())
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const headers = ["Order#", "Status", "Payment Status", "Payment Method", "Subtotal", "Discount", "Shipping", "Total", "Date"];
+  const rows = (data || []).map(o => [
+    o.order_number, o.status, o.payment_status || "", o.payment_method || "",
+    String(o.subtotal), String(o.discount_amount || 0), String(o.shipping_cost || 0),
+    String(o.total_amount), format(new Date(o.created_at), "yyyy-MM-dd HH:mm")
+  ]);
+  return { headers, rows };
+}
+
+async function fetchInventoryReport() {
+  const { data, error } = await supabase.from("products")
+    .select("name, sku, category, price, compare_at_price, stock_quantity, is_active")
+    .is("deleted_at", null)
+    .order("name");
+  if (error) throw error;
+  const headers = ["Name", "SKU", "Category", "Price", "Compare At", "Stock", "Active"];
+  const rows = (data || []).map(p => [
+    p.name, p.sku || "", p.category || "", String(p.price), String(p.compare_at_price || ""),
+    String(p.stock_quantity ?? 0), p.is_active ? "Yes" : "No"
+  ]);
+  return { headers, rows };
+}
+
+async function fetchCustomerReport() {
+  const { data, error } = await supabase.from("customers")
+    .select("full_name, email, phone, status, total_orders, total_spent, created_at")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const headers = ["Name", "Email", "Phone", "Status", "Total Orders", "Total Spent", "Joined"];
+  const rows = (data || []).map(c => [
+    c.full_name, c.email || "", c.phone || "", c.status || "",
+    String(c.total_orders || 0), String(c.total_spent || 0),
+    format(new Date(c.created_at), "yyyy-MM-dd")
+  ]);
+  return { headers, rows };
+}
+
+async function fetchOrderReport(from: Date, to: Date) {
+  const { data, error } = await supabase.from("orders")
+    .select("order_number, status, payment_status, payment_method, total_amount, shipping_cost, discount_amount, notes, tracking_number, created_at, customer_id")
+    .gte("created_at", from.toISOString())
+    .lte("created_at", to.toISOString())
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const headers = ["Order#", "Status", "Payment", "Method", "Total", "Shipping", "Discount", "Tracking", "Notes", "Date"];
+  const rows = (data || []).map(o => [
+    o.order_number, o.status, o.payment_status || "", o.payment_method || "",
+    String(o.total_amount), String(o.shipping_cost || 0), String(o.discount_amount || 0),
+    o.tracking_number || "", o.notes || "", format(new Date(o.created_at), "yyyy-MM-dd HH:mm")
+  ]);
+  return { headers, rows };
+}
+
+async function fetchProductReport() {
+  const { data, error } = await supabase.from("products")
+    .select("name, sku, category, price, compare_at_price, stock_quantity, is_active, is_featured, created_at")
+    .is("deleted_at", null)
+    .order("name");
+  if (error) throw error;
+  const headers = ["Name", "SKU", "Category", "Price", "Compare At", "Stock", "Active", "Featured", "Created"];
+  const rows = (data || []).map(p => [
+    p.name, p.sku || "", p.category || "", String(p.price), String(p.compare_at_price || ""),
+    String(p.stock_quantity ?? 0), p.is_active ? "Yes" : "No", p.is_featured ? "Yes" : "No",
+    format(new Date(p.created_at), "yyyy-MM-dd")
+  ]);
+  return { headers, rows };
+}
+
+async function fetchFinancialReport(from: Date, to: Date) {
+  const { data, error } = await supabase.from("orders")
+    .select("order_number, subtotal, discount_amount, shipping_cost, total_amount, refund_amount, refund_status, payment_method, status, created_at")
+    .gte("created_at", from.toISOString())
+    .lte("created_at", to.toISOString())
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  const headers = ["Order#", "Subtotal", "Discount", "Shipping", "Total", "Refund", "Refund Status", "Payment Method", "Status", "Date"];
+  const rows = (data || []).map(o => [
+    o.order_number, String(o.subtotal), String(o.discount_amount || 0), String(o.shipping_cost || 0),
+    String(o.total_amount), String(o.refund_amount || 0), o.refund_status || "",
+    o.payment_method || "", o.status, format(new Date(o.created_at), "yyyy-MM-dd")
+  ]);
+  return { headers, rows };
+}
+
+// ─── Component ───
 export default function Reports() {
-  const [reports, setReports] = useState<Report[]>(initialReports);
-  const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>(initialScheduledReports);
+  const [reports, setReports] = useState<GeneratedReport[]>([]);
+  const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([]);
   const [builderOpen, setBuilderOpen] = useState(false);
   const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
-  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
-  const [reportFormat, setReportFormat] = useState<'pdf' | 'excel' | 'csv'>('pdf');
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: subDays(new Date(), 30), to: new Date()
+  });
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [dbStats, setDbStats] = useState({ orders: 0, products: 0, customers: 0 });
 
   const [newSchedule, setNewSchedule] = useState({
-    name: "",
-    type: "",
-    frequency: "daily" as ScheduledReport['frequency'],
-    recipients: "",
-    format: "pdf" as 'pdf' | 'excel'
+    name: "", type: "", frequency: "daily" as ScheduledReport['frequency'], recipients: ""
   });
 
-  const stats = {
-    totalReports: reports.length,
-    scheduledActive: scheduledReports.filter(s => s.isActive).length,
-    generatingNow: reports.filter(r => r.status === 'generating').length,
-    thisMonth: reports.filter(r => r.generatedAt.startsWith('2024-01')).length
-  };
-
-  const filteredReports = reports.filter(report => 
-    typeFilter === "all" || report.type === typeFilter
-  );
-
-  const handleGenerateReport = () => {
-    if (!selectedTemplate) return;
-
-    const newReport: Report = {
-      id: `rpt-${Date.now()}`,
-      name: `${selectedTemplate.name} - ${format(new Date(), 'dd MMM yyyy')}`,
-      type: selectedTemplate.type as Report['type'],
-      format: reportFormat,
-      generatedAt: format(new Date(), 'yyyy-MM-dd HH:mm'),
-      size: "Generating...",
-      status: "generating"
+  // Fetch real stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      const [o, p, c] = await Promise.all([
+        supabase.from("orders").select("id", { count: "exact", head: true }).is("deleted_at", null),
+        supabase.from("products").select("id", { count: "exact", head: true }).is("deleted_at", null),
+        supabase.from("customers").select("id", { count: "exact", head: true }),
+      ]);
+      setDbStats({ orders: o.count || 0, products: p.count || 0, customers: c.count || 0 });
     };
+    fetchStats();
+  }, []);
 
-    setReports([newReport, ...reports]);
+  const filteredReports = reports.filter(r => typeFilter === "all" || r.type === typeFilter);
+
+  // Generate real report
+  const handleGenerateReport = useCallback(async () => {
+    if (!selectedTemplate) return;
+    const from = dateRange.from || subDays(new Date(), 30);
+    const to = dateRange.to || new Date();
+    const reportId = `rpt-${Date.now()}`;
+    const reportName = `${selectedTemplate.name} - ${format(new Date(), 'dd MMM yyyy')}`;
+
+    setReports(prev => [{ id: reportId, name: reportName, type: selectedTemplate.type, generatedAt: format(new Date(), 'yyyy-MM-dd HH:mm'), rowCount: 0, status: 'generating' }, ...prev]);
     setBuilderOpen(false);
     setSelectedTemplate(null);
-    toast.success("Generating report...");
 
-    // Simulate report generation
-    setTimeout(() => {
-      setReports(prev => prev.map(r => 
-        r.id === newReport.id 
-          ? { ...r, status: 'ready' as const, size: `${(Math.random() * 5 + 1).toFixed(1)} MB` }
-          : r
-      ));
-      toast.success("Report generated!");
-    }, 3000);
-  };
+    try {
+      let result: { headers: string[]; rows: string[][] };
+      switch (selectedTemplate.type) {
+        case 'sales': result = await fetchSalesReport(from, to); break;
+        case 'inventory': result = await fetchInventoryReport(); break;
+        case 'customers': result = await fetchCustomerReport(); break;
+        case 'orders': result = await fetchOrderReport(from, to); break;
+        case 'products': result = await fetchProductReport(); break;
+        case 'financial': result = await fetchFinancialReport(from, to); break;
+        default: throw new Error("Unknown report type");
+      }
 
-  const handleDownload = (report: Report) => {
-    toast.success(`Downloading ${report.name}...`);
+      const blob = arrayToCSV(result.headers, result.rows);
+      setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'ready' as const, rowCount: result.rows.length, csvBlob: blob } : r));
+      toast.success(`Report generated with ${result.rows.length} rows`);
+    } catch (err: any) {
+      setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'failed' as const } : r));
+      toast.error(err.message || "Failed to generate report");
+    }
+  }, [selectedTemplate, dateRange]);
+
+  const handleDownload = (report: GeneratedReport) => {
+    if (!report.csvBlob) { toast.error("No data available"); return; }
+    const filename = `${report.name.replace(/\s+/g, '_')}.csv`;
+    downloadBlob(report.csvBlob, filename);
+    toast.success(`Downloaded ${filename}`);
   };
 
   const handleCreateSchedule = () => {
     if (!newSchedule.name || !newSchedule.type || !newSchedule.recipients) {
-      toast.error("Please fill in all required fields");
-      return;
+      toast.error("Please fill in all required fields"); return;
     }
-
     const schedule: ScheduledReport = {
-      id: `sch-${Date.now()}`,
-      name: newSchedule.name,
-      type: newSchedule.type,
+      id: `sch-${Date.now()}`, name: newSchedule.name, type: newSchedule.type,
       frequency: newSchedule.frequency,
       nextRun: format(new Date(Date.now() + 86400000), 'yyyy-MM-dd HH:mm'),
-      recipients: newSchedule.recipients.split(',').map(e => e.trim()),
-      isActive: true,
-      format: newSchedule.format
+      recipients: newSchedule.recipients.split(',').map(e => e.trim()), isActive: true
     };
-
     setScheduledReports([schedule, ...scheduledReports]);
-    setNewSchedule({ name: "", type: "", frequency: "daily", recipients: "", format: "pdf" });
+    setNewSchedule({ name: "", type: "", frequency: "daily", recipients: "" });
     setScheduleDialogOpen(false);
-    toast.success("Scheduled report created");
+    toast.success("Schedule created (email delivery requires email integration)");
   };
 
-  const toggleSchedule = (scheduleId: string) => {
-    setScheduledReports(scheduledReports.map(s => 
-      s.id === scheduleId ? { ...s, isActive: !s.isActive } : s
-    ));
-    toast.success("Schedule updated");
+  const toggleSchedule = (id: string) => {
+    setScheduledReports(s => s.map(r => r.id === id ? { ...r, isActive: !r.isActive } : r));
   };
 
-  const deleteSchedule = (scheduleId: string) => {
-    setScheduledReports(scheduledReports.filter(s => s.id !== scheduleId));
+  const deleteSchedule = (id: string) => {
+    setScheduledReports(s => s.filter(r => r.id !== id));
     toast.success("Schedule deleted");
   };
+
+  const generatingCount = reports.filter(r => r.status === 'generating').length;
 
   return (
     <>
@@ -248,7 +290,7 @@ export default function Reports() {
         <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Reports</h1>
-            <p className="text-sm text-muted-foreground mt-1">Generate and schedule business reports</p>
+            <p className="text-sm text-muted-foreground mt-1">Generate and download business reports from real data</p>
           </div>
           <div className="flex gap-2 mt-2 sm:mt-0">
             <Button variant="outline" onClick={() => setScheduleDialogOpen(true)}>
@@ -265,10 +307,10 @@ export default function Reports() {
         {/* Stats */}
         <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
           {[
-            { label: "Total Reports", value: stats.totalReports.toString(), icon: FileText, color: "primary" },
-            { label: "Active Schedules", value: stats.scheduledActive.toString(), icon: Clock, color: "success" },
-            { label: "Generating", value: stats.generatingNow.toString(), icon: RefreshCw, color: "accent" },
-            { label: "This Month", value: stats.thisMonth.toString(), icon: CalendarIcon, color: "warning" },
+            { label: "Total Orders", value: dbStats.orders.toString(), icon: ShoppingCart, color: "primary" },
+            { label: "Total Products", value: dbStats.products.toString(), icon: Package, color: "success" },
+            { label: "Total Customers", value: dbStats.customers.toString(), icon: Users, color: "accent" },
+            { label: "Generating Now", value: generatingCount.toString(), icon: RefreshCw, color: "warning" },
           ].map((card) => {
             const IconComp = card.icon;
             const bgMap: Record<string,string> = { primary: "bg-primary/10 text-primary", accent: "bg-accent/10 text-accent", success: "bg-success/10 text-success", warning: "bg-warning/10 text-warning" };
@@ -293,9 +335,9 @@ export default function Reports() {
         {/* Main Content */}
         <Tabs defaultValue="reports" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="reports">Report List</TabsTrigger>
-            <TabsTrigger value="scheduled">Scheduled Reports</TabsTrigger>
+            <TabsTrigger value="reports">Generated Reports</TabsTrigger>
             <TabsTrigger value="templates">Templates</TabsTrigger>
+            <TabsTrigger value="scheduled">Scheduled (Coming Soon)</TabsTrigger>
           </TabsList>
 
           {/* Reports List */}
@@ -318,134 +360,68 @@ export default function Reports() {
               </Select>
             </div>
 
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Report Name</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Format</TableHead>
-                      <TableHead>Size</TableHead>
-                      <TableHead>Generated Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredReports.map((report) => {
-                      const type = typeConfig[report.type];
-                      const TypeIcon = type.icon;
-                      return (
-                        <TableRow key={report.id}>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <TypeIcon className="h-4 w-4 text-muted-foreground" />
-                              <span className="font-medium">{report.name}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={type.color} variant="secondary">
-                              {type.label}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="uppercase">
-                              {report.format}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{report.size}</TableCell>
-                          <TableCell>{report.generatedAt}</TableCell>
-                          <TableCell>
-                            {report.status === 'ready' ? (
-                              <Badge className="bg-green-100 text-green-800">Ready</Badge>
-                            ) : report.status === 'generating' ? (
-                              <Badge className="bg-blue-100 text-blue-800">
-                                <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                                Generating
-                              </Badge>
-                            ) : (
-                              <Badge className="bg-red-100 text-red-800">Failed</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                disabled={report.status !== 'ready'}
-                              >
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                disabled={report.status !== 'ready'}
-                                onClick={() => handleDownload(report)}
-                              >
+            {filteredReports.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <FileText className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No reports generated yet. Click "New Report" to create one.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Report Name</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Rows</TableHead>
+                        <TableHead>Generated</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredReports.map((report) => {
+                        const type = typeConfig[report.type];
+                        const TypeIcon = type.icon;
+                        return (
+                          <TableRow key={report.id}>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <TypeIcon className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">{report.name}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={type.color} variant="secondary">{type.label}</Badge>
+                            </TableCell>
+                            <TableCell>{report.status === 'ready' ? report.rowCount : '—'}</TableCell>
+                            <TableCell>{report.generatedAt}</TableCell>
+                            <TableCell>
+                              {report.status === 'ready' ? (
+                                <Badge className="bg-green-100 text-green-800">Ready</Badge>
+                              ) : report.status === 'generating' ? (
+                                <Badge className="bg-blue-100 text-blue-800">
+                                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />Generating
+                                </Badge>
+                              ) : (
+                                <Badge className="bg-red-100 text-red-800">Failed</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="icon" disabled={report.status !== 'ready'} onClick={() => handleDownload(report)}>
                                 <Download className="h-4 w-4" />
                               </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Scheduled Reports */}
-          <TabsContent value="scheduled" className="space-y-4">
-            <div className="grid gap-4">
-              {scheduledReports.map((schedule) => (
-                <Card key={schedule.id} className={!schedule.isActive ? "opacity-60" : ""}>
-                  <CardContent className="pt-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="flex items-start gap-4">
-                        <div className={`p-2 rounded-full ${schedule.isActive ? 'bg-green-100' : 'bg-gray-100'}`}>
-                          <Clock className={`h-4 w-4 ${schedule.isActive ? 'text-green-600' : 'text-gray-600'}`} />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">{schedule.name}</h3>
-                          <div className="flex flex-wrap items-center gap-2 mt-1">
-                            <Badge variant="outline">
-                              {schedule.frequency === 'daily' ? 'Daily' : 
-                               schedule.frequency === 'weekly' ? 'Weekly' : 'Monthly'}
-                            </Badge>
-                            <Badge variant="outline" className="uppercase">{schedule.format}</Badge>
-                            <span className="text-sm text-muted-foreground">
-                              Next Run: {schedule.nextRun}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                            <Mail className="h-3 w-3" />
-                            {schedule.recipients.join(", ")}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch 
-                          checked={schedule.isActive}
-                          onCheckedChange={() => toggleSchedule(schedule.id)}
-                        />
-                        <Button variant="ghost" size="icon">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => deleteSchedule(schedule.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           {/* Templates */}
@@ -463,24 +439,67 @@ export default function Reports() {
                         <div className="p-2 rounded-full bg-primary/10">
                           <TemplateIcon className="h-5 w-5 text-primary" />
                         </div>
-                        <div>
-                          <CardTitle className="text-lg">{template.name}</CardTitle>
-                        </div>
+                        <CardTitle className="text-lg">{template.name}</CardTitle>
                       </div>
                       <CardDescription>{template.description}</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-1">
-                        {template.fields.map((field) => (
-                          <Badge key={field} variant="secondary" className="text-xs">
-                            {field}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
                   </Card>
                 );
               })}
+            </div>
+          </TabsContent>
+
+          {/* Scheduled Reports */}
+          <TabsContent value="scheduled" className="space-y-4">
+            <Card className="border-dashed">
+              <CardContent className="py-6">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-warning mt-0.5" />
+                  <div>
+                    <p className="font-medium text-sm">Email delivery not configured</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Scheduled reports require an email integration (e.g., Resend) to deliver reports automatically. 
+                      You can still create schedules — they will become active once email is configured.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid gap-4">
+              {scheduledReports.map((schedule) => (
+                <Card key={schedule.id} className={!schedule.isActive ? "opacity-60" : ""}>
+                  <CardContent className="pt-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="flex items-start gap-4">
+                        <div className={`p-2 rounded-full ${schedule.isActive ? 'bg-green-100' : 'bg-muted'}`}>
+                          <Clock className={`h-4 w-4 ${schedule.isActive ? 'text-green-600' : 'text-muted-foreground'}`} />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{schedule.name}</h3>
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
+                            <Badge variant="outline">{schedule.frequency}</Badge>
+                            <span className="text-sm text-muted-foreground">Next: {schedule.nextRun}</span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                            <Mail className="h-3 w-3" />
+                            {schedule.recipients.join(", ")}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch checked={schedule.isActive} onCheckedChange={() => toggleSchedule(schedule.id)} />
+                        <Button variant="ghost" size="icon" onClick={() => deleteSchedule(schedule.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {scheduledReports.length === 0 && (
+                <p className="text-center text-muted-foreground py-8">No scheduled reports. Click "Create Schedule" to add one.</p>
+              )}
             </div>
           </TabsContent>
         </Tabs>
@@ -490,122 +509,60 @@ export default function Reports() {
       <Dialog open={builderOpen} onOpenChange={setBuilderOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Report Builder</DialogTitle>
-            <DialogDescription>
-              Create a custom report
-            </DialogDescription>
+            <DialogTitle>Generate Report</DialogTitle>
+            <DialogDescription>Select a report type and date range, then generate a CSV download.</DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
-            {/* Template Selection */}
             <div className="space-y-2">
-              <Label>Report Template</Label>
-              <Select 
-                value={selectedTemplate?.id || ""} 
-                onValueChange={(value) => setSelectedTemplate(reportTemplates.find(t => t.id === value) || null)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a template" />
-                </SelectTrigger>
+              <Label>Report Type</Label>
+              <Select value={selectedTemplate?.id || ""} onValueChange={(v) => setSelectedTemplate(reportTemplates.find(t => t.id === v) || null)}>
+                <SelectTrigger><SelectValue placeholder="Select a report" /></SelectTrigger>
                 <SelectContent>
-                  {reportTemplates.map((template) => (
-                    <SelectItem key={template.id} value={template.id}>
-                      {template.name}
-                    </SelectItem>
-                  ))}
+                  {reportTemplates.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Date Range */}
-            <div className="space-y-2">
-              <Label>Date Range</Label>
-              <div className="grid grid-cols-2 gap-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.from ? format(dateRange.from, 'dd/MM/yyyy') : 'Start Date'}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.from}
-                      onSelect={(date) => setDateRange({ ...dateRange, from: date })}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.to ? format(dateRange.to, 'dd/MM/yyyy') : 'End Date'}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.to}
-                      onSelect={(date) => setDateRange({ ...dateRange, to: date })}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-
-            {/* Format Selection */}
-            <div className="space-y-2">
-              <Label>Export Format</Label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <Checkbox 
-                    checked={reportFormat === 'pdf'} 
-                    onCheckedChange={() => setReportFormat('pdf')}
-                  />
-                  <FileText className="h-4 w-4" />
-                  PDF
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <Checkbox 
-                    checked={reportFormat === 'excel'} 
-                    onCheckedChange={() => setReportFormat('excel')}
-                  />
-                  <FileSpreadsheet className="h-4 w-4" />
-                  Excel
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <Checkbox 
-                    checked={reportFormat === 'csv'} 
-                    onCheckedChange={() => setReportFormat('csv')}
-                  />
-                  <FileText className="h-4 w-4" />
-                  CSV
-                </label>
-              </div>
-            </div>
-
-            {/* Fields to Include */}
-            {selectedTemplate && (
+            {selectedTemplate && ['sales', 'orders', 'financial'].includes(selectedTemplate.type) && (
               <div className="space-y-2">
-                <Label>Fields to Include</Label>
+                <Label>Date Range</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {selectedTemplate.fields.map((field) => (
-                    <label key={field} className="flex items-center gap-2 cursor-pointer">
-                      <Checkbox defaultChecked />
-                      {field}
-                    </label>
-                  ))}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="justify-start text-left font-normal">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {dateRange.from ? format(dateRange.from, 'dd/MM/yyyy') : 'Start Date'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar mode="single" selected={dateRange.from} onSelect={(d) => setDateRange(prev => ({ ...prev, from: d }))} />
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="justify-start text-left font-normal">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {dateRange.to ? format(dateRange.to, 'dd/MM/yyyy') : 'End Date'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar mode="single" selected={dateRange.to} onSelect={(d) => setDateRange(prev => ({ ...prev, to: d }))} />
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
+            )}
+
+            {selectedTemplate && (
+              <p className="text-sm text-muted-foreground">{selectedTemplate.description}. Output format: CSV</p>
             )}
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setBuilderOpen(false)}>Cancel</Button>
             <Button onClick={handleGenerateReport} disabled={!selectedTemplate}>
-              <Play className="h-4 w-4 mr-2" />
-              Generate Report
+              <Play className="h-4 w-4 mr-2" />Generate Report
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -616,27 +573,18 @@ export default function Reports() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Scheduled Report</DialogTitle>
-            <DialogDescription>
-              Schedule automatic report generation
-            </DialogDescription>
+            <DialogDescription>Schedule automatic report generation (requires email integration)</DialogDescription>
           </DialogHeader>
-          
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Report Name</Label>
-              <Input 
-                placeholder="e.g., Daily Sales Summary"
-                value={newSchedule.name}
-                onChange={(e) => setNewSchedule({ ...newSchedule, name: e.target.value })}
-              />
+              <Input placeholder="e.g., Daily Sales Summary" value={newSchedule.name} onChange={(e) => setNewSchedule({ ...newSchedule, name: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Report Type</Label>
-                <Select value={newSchedule.type} onValueChange={(value) => setNewSchedule({ ...newSchedule, type: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
+                <Select value={newSchedule.type} onValueChange={(v) => setNewSchedule({ ...newSchedule, type: v })}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="sales">Sales</SelectItem>
                     <SelectItem value="inventory">Inventory</SelectItem>
@@ -648,10 +596,8 @@ export default function Reports() {
               </div>
               <div className="space-y-2">
                 <Label>Frequency</Label>
-                <Select value={newSchedule.frequency} onValueChange={(value) => setNewSchedule({ ...newSchedule, frequency: value as any })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                <Select value={newSchedule.frequency} onValueChange={(v) => setNewSchedule({ ...newSchedule, frequency: v as any })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="daily">Daily</SelectItem>
                     <SelectItem value="weekly">Weekly</SelectItem>
@@ -661,27 +607,10 @@ export default function Reports() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Format</Label>
-              <Select value={newSchedule.format} onValueChange={(value) => setNewSchedule({ ...newSchedule, format: value as any })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pdf">PDF</SelectItem>
-                  <SelectItem value="excel">Excel</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
               <Label>Email Recipients (comma separated)</Label>
-              <Input 
-                placeholder="email1@example.com, email2@example.com"
-                value={newSchedule.recipients}
-                onChange={(e) => setNewSchedule({ ...newSchedule, recipients: e.target.value })}
-              />
+              <Input placeholder="email1@example.com, email2@example.com" value={newSchedule.recipients} onChange={(e) => setNewSchedule({ ...newSchedule, recipients: e.target.value })} />
             </div>
           </div>
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setScheduleDialogOpen(false)}>Cancel</Button>
             <Button onClick={handleCreateSchedule}>Create Schedule</Button>
