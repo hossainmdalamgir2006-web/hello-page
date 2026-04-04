@@ -126,6 +126,7 @@ export function useBrandsData() {
       const existing = brands.find(b => b.id === id);
       const updated: Brand = { ...(data as any), product_count: existing?.product_count || 0 };
       setBrands(prev => prev.map(b => b.id === id ? updated : b));
+      logAuditAction({ action: 'update', resource_type: 'brand', resource_id: id, description: `Brand updated: ${updated.name}` });
       toast.success('Brand updated successfully!');
       return updated;
     } catch (error: any) {
