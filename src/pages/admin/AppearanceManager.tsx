@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { useSiteThemeSettings } from "@/hooks/useSiteThemeSettings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -134,22 +135,22 @@ export default function AppearanceManager() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Appearance Manager</h1>
-            <p className="text-sm text-muted-foreground">Customize your store's complete look and feel</p>
-          </div>
-          <div className="flex items-center gap-3">
-            {hasChanges && (
-              <Button variant="outline" onClick={handleReset} disabled={saving}>
-                <RotateCcw className="h-4 w-4 mr-2" /> Reset
+        <AdminPageHeader
+          title="Appearance Manager"
+          description="Customize your store's complete look and feel"
+          actions={
+            <div className="flex items-center gap-3">
+              {hasChanges && (
+                <Button variant="outline" onClick={handleReset} disabled={saving}>
+                  <RotateCcw className="h-4 w-4 mr-2" /> Reset
+                </Button>
+              )}
+              <Button onClick={handleSave} disabled={!hasChanges || saving}>
+                <Save className="h-4 w-4 mr-2" /> {saving ? "Saving..." : "Save Changes"}
               </Button>
-            )}
-            <Button onClick={handleSave} disabled={!hasChanges || saving}>
-              <Save className="h-4 w-4 mr-2" /> {saving ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
-        </div>
+            </div>
+          }
+        />
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>

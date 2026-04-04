@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, Loader2 } from "lucide-react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { StoreSettingsTab } from "@/components/settings/StoreSettingsTab";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { toast } from "sonner";
@@ -132,18 +133,16 @@ export default function StorePage() {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">Store Settings</h2>
-          <p className="text-sm text-muted-foreground">Basic store information, branding and social links</p>
-        </div>
-        <div className="flex items-center gap-2">
+      <AdminPageHeader
+        title="Store Settings"
+        description="Basic store information, branding and social links"
+        actions={
           <Button size="sm" onClick={handleSave} disabled={saving || loading} className="gap-2">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {saving ? "Saving..." : "Save Changes"}
           </Button>
-        </div>
-      </div>
+        }
+      />
       <StoreSettingsTab storeSettings={storeSettings} updateStoreField={updateStoreField} />
     </div>
   );
