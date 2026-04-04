@@ -243,6 +243,7 @@ export function useShippingData() {
 
       if (error) throw error;
       setRates(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+      logAuditAction({ action: "update", resource_type: "shipping", resource_id: id, description: "Shipping rate updated", new_value: updates });
       toast.success('Shipping rate updated');
     } catch (error) {
       console.error('Error updating rate:', error);
