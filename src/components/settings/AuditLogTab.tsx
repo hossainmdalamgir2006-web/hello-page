@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,9 +38,14 @@ import {
   User,
   Activity,
   FileText,
+  Download,
+  BarChart3,
+  Users,
+  Zap,
 } from "lucide-react";
 import { useAuditLog, AuditLogEntry } from "@/hooks/useAuditLog";
-import { formatDistanceToNow, format } from "date-fns";
+import { DataExport } from "@/components/ui/data-export";
+import { formatDistanceToNow, format, isToday } from "date-fns";
 
 const actionColors: Record<string, string> = {
   create: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -59,6 +64,16 @@ const resourceIcons: Record<string, React.ElementType> = {
   customer: User,
   settings: Shield,
   user: User,
+  coupon: Zap,
+  shipping: FileText,
+  homepage: FileText,
+  support_ticket: FileText,
+  payment: FileText,
+  backup: FileText,
+  trash: FileText,
+  brand: FileText,
+  category: FileText,
+  review: FileText,
   default: Activity,
 };
 
@@ -88,6 +103,17 @@ export function AuditLogTab() {
     );
   });
 
+  const activeFilterCount = [filters.action, filters.resource_type, filters.dateFrom, filters.dateTo].filter(Boolean).length;
+
+  const stats = useMemo(() => {
+    const todayLogs = logs.filter(l => isToday(new Date(l.created_at)));
+    const uniqueUsers = new Set(logs.map(l => l.user_email).filter(Boolean));
+    const actionCounts: Record<string, number> = {};
+    logs.forEach(l => { actionCounts[l.action] = (actionCounts[l.action] || 0) + 1; });
+    const topAction = Object.entries(actionCounts).sort((a, b) => b[1] - a[1])[0];
+    return { todayCount: todayLogs.length, uniqueUsers: uniqueUsers.size, topAction: topAction?.[0] || "—", topActionCount: topAction?.[1] || 0 };
+  }, [logs]);
+
   if (loading && logs.length === 0) {
     return (
       <div className="space-y-6">
@@ -116,6 +142,46 @@ export function AuditLogTab() {
 
   return (
     <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Today</p>
+            </div>
+            <p className="text-2xl font-bold mt-1">{stats.todayCount}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Active Users</p>
+            </div>
+            <p className="text-2xl font-bold mt-1">{stats.uniqueUsers}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Top Action</p>
+            </div>
+            <p className="text-lg font-bold mt-1 capitalize">{stats.topAction.replace(/_/g, " ")}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-3 px-4">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              <p className="text-xs text-muted-foreground">Total (page)</p>
+            </div>
+            <p className="text-2xl font-bold mt-1">{logs.length}</p>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Audit Log */}
       <Card>
         <CardHeader>
@@ -129,15 +195,35 @@ export function AuditLogTab() {
                 Track all admin actions for security and accountability
               </CardDescription>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-              className="gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              Filters
-            </Button>
+            <div className="flex gap-2">
+              <DataExport
+                data={filteredLogs}
+                filename="audit-log"
+                columns={[
+                  { key: "created_at", header: "Timestamp" },
+                  { key: "user_email", header: "User" },
+                  { key: "user_role", header: "Role" },
+                  { key: "action", header: "Action" },
+                  { key: "resource_type", header: "Resource" },
+                  { key: "resource_id", header: "Resource ID" },
+                  { key: "description", header: "Description" },
+                ]}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="gap-2"
+              >
+                <Filter className="h-4 w-4" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -195,11 +281,18 @@ export function AuditLogTab() {
                   <SelectItem value="order">Orders</SelectItem>
                   <SelectItem value="product">Products</SelectItem>
                   <SelectItem value="customer">Customers</SelectItem>
-                  <SelectItem value="settings">Settings</SelectItem>
-                  <SelectItem value="user">Users</SelectItem>
                   <SelectItem value="coupon">Coupons</SelectItem>
                   <SelectItem value="category">Categories</SelectItem>
+                  <SelectItem value="brand">Brands</SelectItem>
                   <SelectItem value="shipping">Shipping</SelectItem>
+                  <SelectItem value="payment">Payments</SelectItem>
+                  <SelectItem value="settings">Settings</SelectItem>
+                  <SelectItem value="homepage">Homepage</SelectItem>
+                  <SelectItem value="support_ticket">Support</SelectItem>
+                  <SelectItem value="backup">Backups</SelectItem>
+                  <SelectItem value="trash">Trash</SelectItem>
+                  <SelectItem value="review">Reviews</SelectItem>
+                  <SelectItem value="user">Users</SelectItem>
                 </SelectContent>
               </Select>
 

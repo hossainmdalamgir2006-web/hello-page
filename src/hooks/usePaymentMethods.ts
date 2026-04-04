@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logAuditAction } from "@/lib/auditLog";
 import { 
   PAYMENT_METHOD_DEFINITIONS, 
   getPaymentMethodDefinition,
@@ -210,6 +211,8 @@ export function usePaymentMethods() {
   };
 
   const toggleEnabled = async (id: string, enabled: boolean) => {
+    const method = paymentMethods.find(m => m.id === id);
+    logAuditAction({ action: "update", resource_type: "payment", resource_id: id, description: `Payment method "${method?.name}" ${enabled ? "enabled" : "disabled"}`, new_value: { is_active: enabled } });
     return updatePaymentMethod(id, { is_active: enabled });
   };
 

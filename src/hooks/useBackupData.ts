@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logAuditAction } from "@/lib/auditLog";
 
 export interface BackupRecord {
   id: string;
@@ -100,6 +101,7 @@ export function useBackupData() {
       if (!response.ok) throw new Error(data?.error || "Backup failed");
 
       if (data?.success) {
+        logAuditAction({ action: "create", resource_type: "backup", description: `Database backup created (${format})`, new_value: { format, file_size: data.file_size } });
         toast.success(`Backup created successfully! (${formatFileSize(data.file_size)})`);
         await fetchBackups();
         return data;

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logAuditAction } from "@/lib/auditLog";
 
 export interface SupportTicket {
   id: string;
@@ -111,8 +112,9 @@ export function useSupportTickets() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      logAuditAction({ action: "create", resource_type: "support_ticket", resource_id: data.id, description: `Support ticket created: ${data.subject}` });
       toast.success("Ticket created successfully");
     },
     onError: (error) => {
@@ -131,8 +133,9 @@ export function useSupportTickets() {
 
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      logAuditAction({ action: "status_change", resource_type: "support_ticket", resource_id: vars.id, description: `Ticket status → ${vars.status}`, new_value: { status: vars.status } });
       toast.success("Ticket status updated");
     },
     onError: (error) => {
@@ -151,8 +154,9 @@ export function useSupportTickets() {
 
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      logAuditAction({ action: "update", resource_type: "support_ticket", resource_id: vars.id, description: `Ticket priority → ${vars.priority}`, new_value: { priority: vars.priority } });
       toast.success("Priority updated");
     },
     onError: (error) => {
@@ -171,8 +175,9 @@ export function useSupportTickets() {
 
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      logAuditAction({ action: "update", resource_type: "support_ticket", resource_id: vars.id, description: `Ticket assigned to ${vars.assigned_to || "unassigned"}`, new_value: { assigned_to: vars.assigned_to } });
       toast.success("Ticket assigned");
     },
     onError: (error) => {

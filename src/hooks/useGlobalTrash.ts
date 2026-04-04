@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logAuditAction } from '@/lib/auditLog';
 
 export type TrashEntityType = 'product' | 'order' | 'brand' | 'category' | 'coupon' | 'support_ticket' | 'contact_message' | 'review' | 'carousel_slide' | 'auto_discount_rule';
 
@@ -135,6 +136,7 @@ export function useGlobalTrash() {
     if (error) { toast.error('Failed to restore'); return false; }
     
     await logTrashAction(item.entity_type, item.id, item.name, 'restored');
+    logAuditAction({ action: "update", resource_type: "trash", resource_id: item.id, description: `Restored "${item.name}" (${item.entity_type}) from trash` });
     setItems(prev => prev.filter(i => i.id !== item.id));
     toast.success(`"${item.name}" restored successfully`);
     return true;
@@ -150,6 +152,7 @@ export function useGlobalTrash() {
     if (error) { toast.error('Failed to delete'); return false; }
     
     await logTrashAction(item.entity_type, item.id, item.name, 'permanently_deleted');
+    logAuditAction({ action: "delete", resource_type: "trash", resource_id: item.id, description: `Permanently deleted "${item.name}" (${item.entity_type})` });
     setItems(prev => prev.filter(i => i.id !== item.id));
     toast.success(`"${item.name}" permanently deleted`);
     return true;

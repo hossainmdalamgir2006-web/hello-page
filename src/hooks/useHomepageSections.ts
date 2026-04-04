@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { logAuditAction } from "@/lib/auditLog";
 
 export interface HomepageSection {
   id: string;
@@ -61,6 +62,7 @@ export function useHomepageSections() {
       toast({ title: "Error", description: "Failed to update section", variant: "destructive" });
       return false;
     }
+    logAuditAction({ action: "update", resource_type: "homepage", resource_id: id, description: "Homepage section updated", new_value: updates });
     toast({ title: "Success", description: "Section updated successfully" });
     refetch();
     return true;
@@ -75,6 +77,7 @@ export function useHomepageSections() {
       toast({ title: "Error", description: "Failed to create section", variant: "destructive" });
       return false;
     }
+    logAuditAction({ action: "create", resource_type: "homepage", description: `Homepage section "${section.section_type}" created`, new_value: section });
     toast({ title: "Success", description: "Section created successfully" });
     refetch();
     return true;
@@ -90,6 +93,7 @@ export function useHomepageSections() {
       toast({ title: "Error", description: "Failed to delete section", variant: "destructive" });
       return false;
     }
+    logAuditAction({ action: "delete", resource_type: "homepage", resource_id: id, description: "Homepage section deleted" });
     toast({ title: "Success", description: "Section deleted successfully" });
     refetch();
     return true;

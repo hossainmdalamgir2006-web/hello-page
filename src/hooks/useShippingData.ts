@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logAuditAction } from "@/lib/auditLog";
 
 export interface ShippingZone {
   id: string;
@@ -127,6 +128,7 @@ export function useShippingData() {
         updated_at: data.updated_at,
       };
       setZones(prev => [...prev, newZone]);
+      logAuditAction({ action: "create", resource_type: "shipping", resource_id: data.id, description: `Shipping zone "${name}" created`, new_value: { name, regions } });
       toast.success('Shipping zone added');
       return data;
     } catch (error) {
@@ -146,6 +148,7 @@ export function useShippingData() {
 
       if (error) throw error;
       setZones(prev => prev.map(z => z.id === id ? { ...z, ...updates } : z));
+      logAuditAction({ action: "update", resource_type: "shipping", resource_id: id, description: "Shipping zone updated", new_value: updates });
       toast.success('Shipping zone updated');
     } catch (error) {
       console.error('Error updating zone:', error);
@@ -163,8 +166,10 @@ export function useShippingData() {
         .eq('id', id);
 
       if (error) throw error;
+      const zone = zones.find(z => z.id === id);
       setZones(prev => prev.filter(z => z.id !== id));
       setRates(prev => prev.filter(r => r.zone_id !== id));
+      logAuditAction({ action: "delete", resource_type: "shipping", resource_id: id, description: `Shipping zone "${zone?.name}" deleted` });
       toast.success('Shipping zone deleted');
     } catch (error) {
       console.error('Error deleting zone:', error);
@@ -218,6 +223,7 @@ export function useShippingData() {
         updated_at: data.updated_at,
       };
       setRates(prev => [...prev, newRate]);
+      logAuditAction({ action: "create", resource_type: "shipping", resource_id: data.id, description: `Shipping rate "${rateData.name}" created`, new_value: rateData });
       toast.success('Shipping rate added');
       return data;
     } catch (error) {
@@ -237,6 +243,7 @@ export function useShippingData() {
 
       if (error) throw error;
       setRates(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+      logAuditAction({ action: "update", resource_type: "shipping", resource_id: id, description: "Shipping rate updated", new_value: updates });
       toast.success('Shipping rate updated');
     } catch (error) {
       console.error('Error updating rate:', error);
@@ -254,7 +261,9 @@ export function useShippingData() {
         .eq('id', id);
 
       if (error) throw error;
+      const rate = rates.find(r => r.id === id);
       setRates(prev => prev.filter(r => r.id !== id));
+      logAuditAction({ action: "delete", resource_type: "shipping", resource_id: id, description: `Shipping rate "${rate?.name}" deleted` });
       toast.success('Shipping rate deleted');
     } catch (error) {
       console.error('Error deleting rate:', error);

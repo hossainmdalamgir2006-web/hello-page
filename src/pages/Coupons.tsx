@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { logAuditAction } from "@/lib/auditLog";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -249,9 +250,10 @@ export default function Coupons() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
       setCouponDialogOpen(false);
+      logAuditAction({ action: "create", resource_type: "coupon", resource_id: data.code, description: `Coupon "${data.code}" created`, new_value: data });
       setNewCoupon({
         code: "",
         title: "",
@@ -330,8 +332,9 @@ export default function Coupons() {
       
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_d, vars) => {
       queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
+      logAuditAction({ action: "update", resource_type: "coupon", resource_id: vars.id, description: `Coupon ${vars.is_active ? "activated" : "deactivated"}`, new_value: { is_active: vars.is_active } });
       toast.success("Coupon status updated");
     },
     onError: () => {
@@ -371,6 +374,7 @@ export default function Coupons() {
     },
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
+      logAuditAction({ action: "delete", resource_type: "coupon", resource_id: id, description: "Coupon moved to trash" });
       toast.success("Coupon moved to trash", {
         action: {
           label: 'Undo',
