@@ -1,66 +1,42 @@
 
 
-## Reports Page — Current Status & What Needs to Be Done
+## Reports Page — Phase Analysis & Next Steps
 
-### Current State: 100% Mock/Placeholder
+### Phase 1 — Real Report Generation ✅ COMPLETE
+সব ৬টি রিপোর্ট (Sales, Inventory, Customer, Order, Product, Financial) রিয়েল DB query করে CSV ডাউনলোড করতে পারছে। Stats cards রিয়েল count দেখাচ্ছে। Date filtering কাজ করছে।
 
-The entire Reports page (`src/pages/Reports.tsx`) is **non-functional**. Here's what's fake:
+### Phase 2 — Persist Reports History (TODO)
+**Problem:** Reports শুধু React state-এ থাকে — পেজ রিফ্রেশ করলে সব হারিয়ে যায়।
 
-| Feature | Status | Problem |
-|---------|--------|---------|
-| Report List | Hardcoded 5 reports | Static array, no DB |
-| Generate Report | Simulated with `setTimeout` | No actual data fetched, no real file created |
-| Download button | Shows toast only | No file download |
-| Scheduled Reports | Hardcoded 3 schedules | Not persisted, lost on refresh |
-| Create Schedule | Local state only | Not saved to DB, no cron/automation |
-| Stats cards | Counts from mock array | Not from real data |
-| Report Builder dialog | UI only | No actual query or export logic |
+**Plan:**
+- `generated_reports` টেবিল তৈরি করা (id, user_id, name, type, row_count, status, file_url, created_at)
+- রিপোর্ট generate হলে metadata DB-তে save করা
+- CSV ফাইল `database-backups` storage bucket-এ upload করা (বা নতুন `reports` bucket)
+- পেজ লোডে DB থেকে report history fetch করা
+- Download বাটন storage থেকে ফাইল আনবে
 
-### What Can Be Made Functional (Realistic Scope)
+### Phase 3 — Scheduled Reports (TODO)
+**Problem:** Schedule create হয় কিন্তু local state-এ থাকে, কোনো email পাঠায় না।
 
-#### Phase 1 — Real Report Generation & Download (High Impact)
-1. **Sales Report**: Query `orders` table by date range → generate CSV/JSON with real data → download
-2. **Inventory Report**: Query `products` table (stock, category) → export
-3. **Customer Report**: Query `customers` table (with LTV, orders) → export
-4. **Order Report**: Query `orders` + `order_items` → export
-5. **Product Report**: Query `products` + `order_items` for performance → export
-6. **Financial Report**: Query `orders` for revenue/profit summary → export
+**Email Integration অলরেডি আছে** — `admin/system-settings/notifications` পেজে Resend/Gmail কনফিগ করা যায় এবং `send-contact-reply` Edge Function দিয়ে email পাঠানো হচ্ছে।
 
-Each report will:
-- Use real DB queries based on selected date range and filters
-- Generate actual CSV files for download (CSV is most reliable in-browser)
-- Show real generation status
-- Persist generated reports list in `localStorage` (or optionally a new DB table)
+**Plan:**
+- `scheduled_reports` টেবিল তৈরি করা (id, user_id, name, type, frequency, recipients, is_active, next_run_at)
+- Schedule CRUD DB-তে persist করা
+- নতুন Edge Function `send-scheduled-report` তৈরি করা — যেটা:
+  1. DB query করে রিপোর্ট generate করবে
+  2. CSV attach করে বা link দিয়ে email পাঠাবে (existing email config ব্যবহার করে)
+- pg_cron দিয়ে daily check করবে কোন schedule due আছে
+- "Coming Soon" badge সরিয়ে functional করা
 
-#### Phase 2 — Persist Reports History (Optional)
-- Create a `generated_reports` table to track report metadata
-- Store report files in storage bucket or as downloadable blobs
-
-#### Phase 3 — Scheduled Reports (Requires Email System)
-- This needs a working email integration (Resend/SMTP) + a cron mechanism
-- Can build the DB structure but actual scheduling won't work without email credentials
-- Mark as "Coming Soon" or keep UI but note it's placeholder
-
-### Recommended Approach
-
-**Phase 1 only** — make report generation functional with real DB data and real CSV downloads. This covers:
-- Real data queries per report type
-- Date range filtering works
-- CSV download produces actual files
-- Stats cards show real counts from DB
-- Report list shows actually generated reports (session-persisted)
+### Recommended Order
+1. **Phase 2 আগে** — কারণ এটা simpler এবং Phase 3-এর জন্যও দরকার
+2. **Phase 3 পরে** — email config already আছে, শুধু scheduled execution logic দরকার
 
 ### Technical Details
-
-**File to modify**: `src/pages/Reports.tsx`
-
-**Changes**:
-- Import `supabase` client
-- Add async functions for each report type that query real tables
-- Replace `handleGenerateReport` with actual DB queries → CSV blob → download
-- Replace `handleDownload` with real file download
-- Stats cards: query real counts from DB
-- Keep scheduled reports UI but mark as placeholder (needs email system)
-
-**No DB migrations needed** — all data already exists in `orders`, `products`, `customers`, `order_items` tables.
+- **New DB table:** `generated_reports` (Phase 2), `scheduled_reports` (Phase 3)
+- **New storage bucket:** `reports` (for CSV files)
+- **New Edge Function:** `send-scheduled-report` (Phase 3)
+- **Modified file:** `src/pages/Reports.tsx`
+- **Existing email infra reuse:** `store_settings.email_api_config` থেকে Resend/Gmail credentials পড়া
 
