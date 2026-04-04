@@ -166,8 +166,10 @@ export function useShippingData() {
         .eq('id', id);
 
       if (error) throw error;
+      const zone = zones.find(z => z.id === id);
       setZones(prev => prev.filter(z => z.id !== id));
       setRates(prev => prev.filter(r => r.zone_id !== id));
+      logAuditAction({ action: "delete", resource_type: "shipping", resource_id: id, description: `Shipping zone "${zone?.name}" deleted` });
       toast.success('Shipping zone deleted');
     } catch (error) {
       console.error('Error deleting zone:', error);
