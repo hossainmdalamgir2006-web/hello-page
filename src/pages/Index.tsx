@@ -172,9 +172,9 @@ const Index = () => {
       case "stats":
         return (
           <div key={widget.id} className="md:col-span-2 lg:col-span-4">
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-5">
               {loading ? (
-                Array.from({ length: 13 }).map((_, index) => (
+                Array.from({ length: 15 }).map((_, index) => (
                   <Skeleton key={index} className="h-28 rounded-xl" />
                 ))
               ) : (
