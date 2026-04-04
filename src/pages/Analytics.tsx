@@ -131,13 +131,10 @@ export default function Analytics() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Analytics</h1>
-            <p className="text-sm text-muted-foreground">
-              Detailed insights and performance metrics
-            </p>
-          </div>
+        <AdminPageHeader
+          title="Analytics"
+          description="Detailed insights and performance metrics"
+          actions={
           <div className="flex flex-wrap gap-2">
             <Button
               variant={showComparison ? "default" : "outline"}
