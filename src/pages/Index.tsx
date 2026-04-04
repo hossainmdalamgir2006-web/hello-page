@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX, Tag, Headphones, ShoppingBag, CalendarCheck } from "lucide-react";
+
+import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX, Tag, Headphones, ShoppingBag, CalendarCheck, CheckCircle } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCard } from "@/components/admin/StatsCard";
@@ -37,6 +38,7 @@ const Index = () => {
   const [openTickets, setOpenTickets] = useState(0);
   const [abandonedCarts, setAbandonedCarts] = useState(0);
   const [todaySales, setTodaySales] = useState(0);
+  const [deliveredOrders, setDeliveredOrders] = useState(0);
   const { 
     stats, 
     recentOrders, 
@@ -52,19 +54,21 @@ const Index = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const [returnRes, refundedRes, couponsRes, ticketsRes, cartsRes, todayOrdersRes] = await Promise.all([
+      const [returnRes, refundedRes, couponsRes, ticketsRes, cartsRes, todayOrdersRes, deliveredRes] = await Promise.all([
         supabase.from('return_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('orders' as any).select('refund_amount, refund_status').eq('refund_status', 'refunded'),
         supabase.from('coupons' as any).select('*', { count: 'exact', head: true }).eq('is_active', true),
         supabase.from('support_tickets' as any).select('*', { count: 'exact', head: true }).eq('status', 'open'),
         supabase.from('abandoned_carts' as any).select('*', { count: 'exact', head: true }).is('recovered_at', null),
         supabase.from('orders' as any).select('total_amount').gte('created_at', today.toISOString()),
+        supabase.from('orders' as any).select('*', { count: 'exact', head: true }).eq('status', 'delivered'),
       ]);
 
       setPendingReturns(returnRes.count || 0);
       setActiveCoupons(couponsRes.count || 0);
       setOpenTickets(ticketsRes.count || 0);
       setAbandonedCarts(cartsRes.count || 0);
+      setDeliveredOrders(deliveredRes.count || 0);
 
       if (refundedRes.data) {
         const total = (refundedRes.data as any[]).reduce((sum, o) => sum + Number(o.refund_amount || 0), 0);
@@ -123,6 +127,7 @@ const Index = () => {
     { title: "Open Tickets", value: openTickets.toString(), change: 0, icon: Headphones, iconBg: "primary" as const },
     { title: "Abandoned Carts", value: abandonedCarts.toString(), change: 0, icon: ShoppingBag, iconBg: "warning" as const },
     { title: "Today's Sales", value: formatPrice(todaySales), change: 0, icon: CalendarCheck, iconBg: "success" as const },
+    { title: "Total Delivered", value: deliveredOrders.toString(), change: 0, icon: CheckCircle, iconBg: "success" as const },
   ];
 
   const comparisonMetrics = [
