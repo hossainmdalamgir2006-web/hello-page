@@ -136,6 +136,7 @@ export function useGlobalTrash() {
     if (error) { toast.error('Failed to restore'); return false; }
     
     await logTrashAction(item.entity_type, item.id, item.name, 'restored');
+    logAuditAction({ action: "update", resource_type: "trash", resource_id: item.id, description: `Restored "${item.name}" (${item.entity_type}) from trash` });
     setItems(prev => prev.filter(i => i.id !== item.id));
     toast.success(`"${item.name}" restored successfully`);
     return true;
