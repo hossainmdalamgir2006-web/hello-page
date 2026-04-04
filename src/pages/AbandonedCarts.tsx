@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RefreshCw, Search, ShoppingCart, Filter } from "lucide-react";
+import { Search, ShoppingCart, Filter } from "lucide-react";
 import { AbandonedCartStats } from "@/components/admin/AbandonedCartStats";
 import { AbandonedCartTable } from "@/components/admin/AbandonedCartTable";
 import { RecoveryRateChart } from "@/components/admin/RecoveryRateChart";

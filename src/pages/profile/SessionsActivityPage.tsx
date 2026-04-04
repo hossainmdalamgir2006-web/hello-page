@@ -182,9 +182,6 @@ export default function SessionsActivityPage() {
                   </CardDescription>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={refreshSessions}>
-                <RefreshCw className="h-4 w-4" />
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
