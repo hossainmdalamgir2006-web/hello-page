@@ -347,22 +347,22 @@ export default function Reports() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Reports</h1>
-            <p className="text-sm text-muted-foreground mt-1">Generate and download business reports from real data</p>
-          </div>
-          <div className="flex gap-2 mt-2 sm:mt-0">
-            <Button variant="outline" onClick={() => setScheduleDialogOpen(true)}>
-              <Clock className="h-4 w-4 mr-2" />
-              Create Schedule
-            </Button>
-            <Button onClick={() => setBuilderOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Report
-            </Button>
-          </div>
-        </div>
+        <AdminPageHeader
+          title="Reports"
+          description="Generate and download business reports from real data"
+          actions={
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setScheduleDialogOpen(true)}>
+                <Clock className="h-4 w-4 mr-2" />
+                Create Schedule
+              </Button>
+              <Button onClick={() => setBuilderOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                New Report
+              </Button>
+            </div>
+          }
+        />
 
         {/* Stats */}
         <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">

@@ -506,13 +506,10 @@ export default function Categories() {
     <>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Categories</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage product categories ({categories.length} total)
-            </p>
-          </div>
+        <AdminPageHeader
+          title="Categories"
+          description={`Manage product categories (${categories.length} total)`}
+          actions={
           <div className="flex flex-wrap items-center gap-3">
             {selectedIds.size > 0 && (
               <DropdownMenu>
