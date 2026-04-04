@@ -1,27 +1,35 @@
 
 
-## Problem
+## Dashboard Stats Cards — New Card Ideas
 
-DB-তে পুরোনো migrated data আছে (`site_content_overrides` টেবিলে) যেটা registry-র নতুন `defaultContent` কে override করে দিচ্ছে। যেমন FAQ-এর DB override-এ `faqs` array আছে কিন্তু `category` field নেই — তাই category filter কাজ করছে না। অন্যান্য পেজেও একই সমস্যা।
+### Current 6 Cards
+Total Sales, Total Orders, Total Products, Total Customers, Total Refunds, Total Refunded
 
-Merge logic `{ ...defaultContent, ...overrideContent }` — এখানে DB-র `faqs` array পুরো default array-কে replace করে দেয় (JavaScript spread doesn't deep-merge arrays)।
+### Suggested New Cards (pick any combination)
 
-## Solution
+| Card | Value | Why Useful |
+|------|-------|------------|
+| **Average Order Value (AOV)** | `totalSales / totalOrders` | Key e-commerce KPI — shows how much each customer spends per order |
+| **Pending Orders** | Already in `stats.pendingOrders` | Quick visibility into orders needing action |
+| **Low Stock Products** | Already in `stats.lowStockProducts` | Alert for inventory that needs restocking |
+| **Conversion Rate** | `orders / visitors` (needs tracking) | Shows how effectively visitors become buyers |
+| **Active Coupons** | Count from `coupons` table | Shows running promotions at a glance |
+| **Open Tickets** | Count from `support_tickets` where status = open | Customer support workload visibility |
+| **Abandoned Carts** | Count from `abandoned_carts` | Lost revenue awareness |
+| **Today's Sales** | Orders from today only | Real-time daily performance |
 
-### 1. Delete old migrated overrides from DB
-`site_content_overrides` টেবিল থেকে পুরোনো migrated rows ডিলিট করতে হবে যেগুলো `page_contents` / `homepage_sections` থেকে এসেছিল। এগুলো এখন আর দরকার নেই কারণ registry-তে সব default data আছে।
+### Recommendation
+Add these 3 most impactful cards (no new DB queries needed — data already exists):
+1. **Average Order Value** — calculated from existing `totalSales / totalOrders`
+2. **Pending Orders** — `stats.pendingOrders` already fetched
+3. **Low Stock Products** — `stats.lowStockProducts` already fetched
 
-**Delete these rows** (non-homepage overrides that came from old migration):
-- `faq / main_content`
-- `contact / main_content` 
-- `footer / main_content`
-- `header / main_content`
+This brings the total to **9 cards** (3 rows of 3 on desktop). All three use data already available in `useDashboardData.ts` — zero additional DB queries.
 
-Homepage overrides রাখা যেতে পারে কারণ সেগুলো admin-এর manually configured।
+### Implementation
+- **File to modify:** `src/pages/Index.tsx` — add 3 new entries to `statsData` array
+- **Grid update:** Change `xl:grid-cols-6` to a responsive layout that fits 9 cards (e.g., `xl:grid-cols-3` with 3 rows, or keep flexible with `grid-cols-2 md:grid-cols-3`)
 
-### 2. No code changes needed
-Registry defaults + merge logic ঠিকই আছে। শুধু DB-র পুরোনো data conflict করছে। সেটা clean করলেই নতুন default data আসবে।
-
-### Files to modify: 0
-### DB operation: DELETE old override rows using insert tool
+### Alternative: If you want all 8 new cards
+Would require adding queries for `coupons`, `support_tickets`, and `abandoned_carts` counts in `useDashboardData.ts`. Happy to include those too.
 
