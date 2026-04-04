@@ -130,6 +130,13 @@ export function useCustomersData() {
         .single();
 
       if (error) throw error;
+      logAuditAction({
+        action: 'update',
+        resource_type: 'customer',
+        resource_id: id,
+        description: `Customer updated`,
+        new_value: updateData,
+      });
       queryClient.invalidateQueries({ queryKey: ['customers-data'] });
       return data;
     } catch (error: any) {
