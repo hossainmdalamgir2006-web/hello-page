@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX } from "lucide-react";
+import { ShoppingCart, Package, Users, TrendingUp, AlertCircle, Clock, RefreshCw, RotateCcw, DollarSign, PackageX, Tag, Headphones, ShoppingBag, CalendarCheck } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { StatsCard } from "@/components/admin/StatsCard";
@@ -33,6 +33,10 @@ const Index = () => {
   const [customRange, setCustomRange] = useState<{ from: Date; to: Date } | undefined>();
   const [pendingReturns, setPendingReturns] = useState(0);
   const [refundStats, setRefundStats] = useState({ count: 0, amount: 0 });
+  const [activeCoupons, setActiveCoupons] = useState(0);
+  const [openTickets, setOpenTickets] = useState(0);
+  const [abandonedCarts, setAbandonedCarts] = useState(0);
+  const [todaySales, setTodaySales] = useState(0);
   const { 
     stats, 
     recentOrders, 
@@ -43,25 +47,36 @@ const Index = () => {
     dateRange,
   } = useDashboardData(dateRangePreset, customRange);
 
-  // Fetch pending return requests count and refund stats
   useEffect(() => {
-    async function fetchReturnStats() {
-      const { count } = await supabase
-        .from('return_requests')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
-      setPendingReturns(count || 0);
+    async function fetchExtraStats() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      const { data: refunded } = await supabase
-        .from('orders' as any)
-        .select('refund_amount, refund_status')
-        .eq('refund_status', 'refunded');
-      if (refunded) {
-        const total = (refunded as any[]).reduce((sum, o) => sum + Number(o.refund_amount || 0), 0);
-        setRefundStats({ count: (refunded as any[]).length, amount: total });
+      const [returnRes, refundedRes, couponsRes, ticketsRes, cartsRes, todayOrdersRes] = await Promise.all([
+        supabase.from('return_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('orders' as any).select('refund_amount, refund_status').eq('refund_status', 'refunded'),
+        supabase.from('coupons' as any).select('*', { count: 'exact', head: true }).eq('is_active', true),
+        supabase.from('support_tickets' as any).select('*', { count: 'exact', head: true }).eq('status', 'open'),
+        supabase.from('abandoned_carts' as any).select('*', { count: 'exact', head: true }).is('recovered_at', null),
+        supabase.from('orders' as any).select('total_amount').gte('created_at', today.toISOString()),
+      ]);
+
+      setPendingReturns(returnRes.count || 0);
+      setActiveCoupons(couponsRes.count || 0);
+      setOpenTickets(ticketsRes.count || 0);
+      setAbandonedCarts(cartsRes.count || 0);
+
+      if (refundedRes.data) {
+        const total = (refundedRes.data as any[]).reduce((sum, o) => sum + Number(o.refund_amount || 0), 0);
+        setRefundStats({ count: (refundedRes.data as any[]).length, amount: total });
+      }
+
+      if (todayOrdersRes.data) {
+        const total = (todayOrdersRes.data as any[]).reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
+        setTodaySales(total);
       }
     }
-    fetchReturnStats();
+    fetchExtraStats();
   }, []);
   
   const {
@@ -104,6 +119,10 @@ const Index = () => {
     { title: "Avg. Order Value", value: formatPrice(Math.round(avgOrderValue)), change: 0, icon: DollarSign, iconBg: "success" as const },
     { title: "Pending Orders", value: stats.pendingOrders.toString(), change: 0, icon: Clock, iconBg: "primary" as const },
     { title: "Low Stock", value: stats.lowStockProducts.toString(), change: 0, icon: PackageX, iconBg: "warning" as const },
+    { title: "Active Coupons", value: activeCoupons.toString(), change: 0, icon: Tag, iconBg: "accent" as const },
+    { title: "Open Tickets", value: openTickets.toString(), change: 0, icon: Headphones, iconBg: "primary" as const },
+    { title: "Abandoned Carts", value: abandonedCarts.toString(), change: 0, icon: ShoppingBag, iconBg: "warning" as const },
+    { title: "Today's Sales", value: formatPrice(todaySales), change: 0, icon: CalendarCheck, iconBg: "success" as const },
   ];
 
   const comparisonMetrics = [
@@ -143,7 +162,7 @@ const Index = () => {
           <div key={widget.id} className="md:col-span-2 lg:col-span-4">
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
               {loading ? (
-                Array.from({ length: 9 }).map((_, index) => (
+                Array.from({ length: 13 }).map((_, index) => (
                   <Skeleton key={index} className="h-28 rounded-xl" />
                 ))
               ) : (
