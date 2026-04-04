@@ -112,8 +112,9 @@ export function useSupportTickets() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["support-tickets"] });
+      logAuditAction({ action: "create", resource_type: "support_ticket", resource_id: data.id, description: `Support ticket created: ${data.subject}` });
       toast.success("Ticket created successfully");
     },
     onError: (error) => {
