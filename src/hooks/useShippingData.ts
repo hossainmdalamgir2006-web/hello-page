@@ -223,6 +223,7 @@ export function useShippingData() {
         updated_at: data.updated_at,
       };
       setRates(prev => [...prev, newRate]);
+      logAuditAction({ action: "create", resource_type: "shipping", resource_id: data.id, description: `Shipping rate "${rateData.name}" created`, new_value: rateData });
       toast.success('Shipping rate added');
       return data;
     } catch (error) {
