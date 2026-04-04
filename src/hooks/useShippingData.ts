@@ -128,6 +128,7 @@ export function useShippingData() {
         updated_at: data.updated_at,
       };
       setZones(prev => [...prev, newZone]);
+      logAuditAction({ action: "create", resource_type: "shipping", resource_id: data.id, description: `Shipping zone "${name}" created`, new_value: { name, regions } });
       toast.success('Shipping zone added');
       return data;
     } catch (error) {
