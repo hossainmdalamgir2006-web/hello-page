@@ -107,6 +107,7 @@ export function useCategoriesData() {
         status: (data as any).is_active ? 'active' : 'inactive',
       };
       setCategories(prev => [newCategory, ...prev]);
+      logAuditAction({ action: 'create', resource_type: 'category', resource_id: newCategory.id, description: `Category created: ${newCategory.name}` });
       toast.success('Category created successfully!');
       return newCategory;
     } catch (error: any) {

@@ -91,6 +91,7 @@ export function useBrandsData() {
 
       const newBrand: Brand = { ...(data as any), product_count: 0 };
       setBrands(prev => [newBrand, ...prev]);
+      logAuditAction({ action: 'create', resource_type: 'brand', resource_id: newBrand.id, description: `Brand created: ${newBrand.name}` });
       toast.success('Brand created successfully!');
       return newBrand;
     } catch (error: any) {
