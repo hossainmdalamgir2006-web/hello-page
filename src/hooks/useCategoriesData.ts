@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logAuditAction } from '@/lib/auditLog';
 
 export interface Category {
   id: string;
@@ -106,6 +107,7 @@ export function useCategoriesData() {
         status: (data as any).is_active ? 'active' : 'inactive',
       };
       setCategories(prev => [newCategory, ...prev]);
+      logAuditAction({ action: 'create', resource_type: 'category', resource_id: newCategory.id, description: `Category created: ${newCategory.name}` });
       toast.success('Category created successfully!');
       return newCategory;
     } catch (error: any) {
@@ -144,6 +146,7 @@ export function useCategoriesData() {
         status: (data as any).is_active ? 'active' : 'inactive',
       };
       setCategories(prev => prev.map(c => c.id === id ? updatedCategory : c));
+      logAuditAction({ action: 'update', resource_type: 'category', resource_id: id, description: `Category updated: ${updatedCategory.name}` });
       toast.success('Category updated successfully!');
       return updatedCategory;
     } catch (error: any) {

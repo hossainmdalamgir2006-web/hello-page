@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logAuditAction } from '@/lib/auditLog';
 
 export interface Brand {
   id: string;
@@ -90,6 +91,7 @@ export function useBrandsData() {
 
       const newBrand: Brand = { ...(data as any), product_count: 0 };
       setBrands(prev => [newBrand, ...prev]);
+      logAuditAction({ action: 'create', resource_type: 'brand', resource_id: newBrand.id, description: `Brand created: ${newBrand.name}` });
       toast.success('Brand created successfully!');
       return newBrand;
     } catch (error: any) {
@@ -124,6 +126,7 @@ export function useBrandsData() {
       const existing = brands.find(b => b.id === id);
       const updated: Brand = { ...(data as any), product_count: existing?.product_count || 0 };
       setBrands(prev => prev.map(b => b.id === id ? updated : b));
+      logAuditAction({ action: 'update', resource_type: 'brand', resource_id: id, description: `Brand updated: ${updated.name}` });
       toast.success('Brand updated successfully!');
       return updated;
     } catch (error: any) {

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 import { supabase } from '@/integrations/supabase/client';
+import { logAuditAction } from '@/lib/auditLog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -165,6 +166,15 @@ export default function RoleManagement() {
       toast({
         title: 'Role Updated',
         description: `Role updated to ${roleConfig[newRole].label}`,
+      });
+
+      logAuditAction({
+        action: 'update',
+        resource_type: 'user_role',
+        resource_id: selectedUser.user_id,
+        description: `Role changed to ${roleConfig[newRole].label} for ${selectedUser.full_name || selectedUser.user_id}`,
+        old_value: { role: selectedUser.role },
+        new_value: { role: newRole },
       });
       
       setIsDialogOpen(false);

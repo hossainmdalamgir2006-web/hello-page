@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logAuditAction } from '@/lib/auditLog';
 
 export type ProductType = 'simple' | 'variable' | 'grouped' | 'bundle';
 
@@ -233,6 +234,13 @@ export function useProductsData() {
 
       const newProduct = data as unknown as Product;
       setProducts(prev => [newProduct, ...prev]);
+      logAuditAction({
+        action: 'create',
+        resource_type: 'product',
+        resource_id: newProduct.id,
+        description: `Product created: ${newProduct.name}`,
+        new_value: { name: newProduct.name, price: newProduct.price, sku: newProduct.sku },
+      });
       toast.success('Product created successfully!');
       return newProduct;
     } catch (error: any) {
@@ -282,7 +290,16 @@ export function useProductsData() {
       if (error) throw error;
 
       const updatedProduct = data as unknown as Product;
+      const oldProduct = products.find(p => p.id === id);
       setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p));
+      logAuditAction({
+        action: 'update',
+        resource_type: 'product',
+        resource_id: id,
+        description: `Product updated: ${updatedProduct.name}`,
+        old_value: oldProduct ? { name: oldProduct.name, price: oldProduct.price, is_active: oldProduct.is_active } : null,
+        new_value: { name: updatedProduct.name, price: updatedProduct.price, is_active: updatedProduct.is_active },
+      });
       toast.success('Product updated successfully!');
       return updatedProduct;
     } catch (error: any) {
@@ -374,7 +391,14 @@ export function useProductsData() {
         .eq('id', id);
 
       if (error) throw error;
+      const trashedProduct = products.find(p => p.id === id);
       setProducts(prev => prev.filter(p => p.id !== id));
+      logAuditAction({
+        action: 'delete',
+        resource_type: 'product',
+        resource_id: id,
+        description: `Product trashed: ${trashedProduct?.name}`,
+      });
       toast.success('Product moved to trash!');
     } catch (error: any) {
       console.error('Error trashing product:', error);
@@ -446,7 +470,14 @@ export function useProductsData() {
         .eq('id', id);
 
       if (error) throw error;
+      const deletedProduct = products.find(p => p.id === id);
       setProducts(prev => prev.filter(p => p.id !== id));
+      logAuditAction({
+        action: 'delete',
+        resource_type: 'product',
+        resource_id: id,
+        description: `Product permanently deleted: ${deletedProduct?.name}`,
+      });
       toast.success('Product permanently deleted!');
     } catch (error: any) {
       console.error('Error deleting product:', error);

@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logAuditAction } from '@/lib/auditLog';
 
 export interface CustomerOrder {
   id: string;
@@ -129,6 +130,13 @@ export function useCustomersData() {
         .single();
 
       if (error) throw error;
+      logAuditAction({
+        action: 'update',
+        resource_type: 'customer',
+        resource_id: id,
+        description: `Customer updated`,
+        new_value: updateData,
+      });
       queryClient.invalidateQueries({ queryKey: ['customers-data'] });
       return data;
     } catch (error: any) {
@@ -167,6 +175,14 @@ export function useCustomersData() {
             direction: 'outbound',
           });
       }
+
+      logAuditAction({
+        action: 'update',
+        resource_type: 'customer',
+        resource_id: id,
+        description: `Customer status changed to ${status}`,
+        new_value: { status, reason },
+      });
 
       queryClient.invalidateQueries({ queryKey: ['customers-data'] });
       toast.success(`Customer ${status === 'blocked' ? 'blocked' : status === 'flagged' ? 'flagged' : 'activated'} successfully`);
@@ -217,6 +233,13 @@ export function useCustomersData() {
       }
 
       queryClient.invalidateQueries({ queryKey: ['customers-data'] });
+      logAuditAction({
+        action: 'update',
+        resource_type: 'customer',
+        resource_id: primaryId,
+        description: `Merged ${duplicateIds.length} duplicate customer(s)`,
+        new_value: { merged_ids: duplicateIds },
+      });
       toast.success(`Successfully merged ${duplicateIds.length} duplicate(s)`);
     } catch (error: any) {
       console.error('Error merging customers:', error);

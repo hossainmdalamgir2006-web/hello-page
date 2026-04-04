@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logAuditAction } from '@/lib/auditLog';
 
 export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 
@@ -232,7 +233,16 @@ export function useOrdersData() {
       }
       toast.error('Failed to update status');
     },
-    onSuccess: () => {
+    onSuccess: (_data, { orderId, status }) => {
+      const order = orders.find(o => o.id === orderId);
+      logAuditAction({
+        action: 'update',
+        resource_type: 'order',
+        resource_id: order?.order_number || orderId,
+        description: `Order status changed to ${status}`,
+        old_value: { status: order?.status },
+        new_value: { status },
+      });
       toast.success('Order status updated successfully');
     },
     onSettled: () => {
@@ -264,7 +274,16 @@ export function useOrdersData() {
       }
       toast.error('Failed to update payment status');
     },
-    onSuccess: () => {
+    onSuccess: (_data, { orderId, paymentStatus }) => {
+      const order = orders.find(o => o.id === orderId);
+      logAuditAction({
+        action: 'update',
+        resource_type: 'order',
+        resource_id: order?.order_number || orderId,
+        description: `Payment status changed to ${paymentStatus}`,
+        old_value: { payment_status: order?.payment_status },
+        new_value: { payment_status: paymentStatus },
+      });
       toast.success('Payment status updated successfully');
     },
     onSettled: () => {
@@ -292,6 +311,11 @@ export function useOrdersData() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      logAuditAction({
+        action: 'update',
+        resource_type: 'order',
+        description: 'Payment verified',
+      });
       toast.success('Payment verified successfully');
     },
     onError: (error: any) => {
@@ -325,6 +349,13 @@ export function useOrdersData() {
       toast.error('Failed to trash order');
     },
     onSuccess: (_data, orderId) => {
+      const order = orders.find(o => o.id === orderId);
+      logAuditAction({
+        action: 'delete',
+        resource_type: 'order',
+        resource_id: order?.order_number || orderId,
+        description: `Order moved to trash`,
+      });
       toast.success('Order moved to trash', {
         action: {
           label: 'Undo',
