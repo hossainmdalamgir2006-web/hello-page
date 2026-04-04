@@ -374,6 +374,7 @@ export default function Coupons() {
     },
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
+      logAuditAction({ action: "delete", resource_type: "coupon", resource_id: id, description: "Coupon moved to trash" });
       toast.success("Coupon moved to trash", {
         action: {
           label: 'Undo',

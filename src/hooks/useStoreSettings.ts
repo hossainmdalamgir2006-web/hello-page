@@ -119,6 +119,7 @@ export function useStoreSettings() {
         return newSettings;
       });
       
+      logAuditAction({ action: "settings_change", resource_type: "settings", description: `Store settings updated (${updates.length} fields)`, new_value: Object.fromEntries(updates.map(u => [u.key, u.value])) });
       toast.success("Settings updated successfully");
       return true;
     } catch (error: any) {

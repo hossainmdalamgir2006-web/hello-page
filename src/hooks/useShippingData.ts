@@ -261,7 +261,9 @@ export function useShippingData() {
         .eq('id', id);
 
       if (error) throw error;
+      const rate = rates.find(r => r.id === id);
       setRates(prev => prev.filter(r => r.id !== id));
+      logAuditAction({ action: "delete", resource_type: "shipping", resource_id: id, description: `Shipping rate "${rate?.name}" deleted` });
       toast.success('Shipping rate deleted');
     } catch (error) {
       console.error('Error deleting rate:', error);

@@ -211,6 +211,8 @@ export function usePaymentMethods() {
   };
 
   const toggleEnabled = async (id: string, enabled: boolean) => {
+    const method = paymentMethods.find(m => m.id === id);
+    logAuditAction({ action: "update", resource_type: "payment", resource_id: id, description: `Payment method "${method?.name}" ${enabled ? "enabled" : "disabled"}`, new_value: { is_active: enabled } });
     return updatePaymentMethod(id, { is_active: enabled });
   };
 

@@ -152,6 +152,7 @@ export function useGlobalTrash() {
     if (error) { toast.error('Failed to delete'); return false; }
     
     await logTrashAction(item.entity_type, item.id, item.name, 'permanently_deleted');
+    logAuditAction({ action: "delete", resource_type: "trash", resource_id: item.id, description: `Permanently deleted "${item.name}" (${item.entity_type})` });
     setItems(prev => prev.filter(i => i.id !== item.id));
     toast.success(`"${item.name}" permanently deleted`);
     return true;

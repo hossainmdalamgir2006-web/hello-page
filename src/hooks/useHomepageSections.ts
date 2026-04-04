@@ -93,6 +93,7 @@ export function useHomepageSections() {
       toast({ title: "Error", description: "Failed to delete section", variant: "destructive" });
       return false;
     }
+    logAuditAction({ action: "delete", resource_type: "homepage", resource_id: id, description: "Homepage section deleted" });
     toast({ title: "Success", description: "Section deleted successfully" });
     refetch();
     return true;
