@@ -224,57 +224,6 @@ export function StoreSettingsTab({ storeSettings, updateStoreField }: StoreSetti
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-accent" />
-            Regional Settings
-          </CardTitle>
-          <CardDescription>Currency, timezone, and localization</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid gap-6 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label>Country</Label>
-              <Select value={storeSettings.country} onValueChange={(v) => updateStoreField("country", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent className="bg-popover">
-                  <SelectItem value="Bangladesh">🇧🇩 Bangladesh</SelectItem>
-                  <SelectItem value="India">🇮🇳 India</SelectItem>
-                  <SelectItem value="Pakistan">🇵🇰 Pakistan</SelectItem>
-                  <SelectItem value="USA">🇺🇸 USA</SelectItem>
-                  <SelectItem value="UK">🇬🇧 UK</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Currency</Label>
-              <Select value={storeSettings.currency} onValueChange={(v) => updateStoreField("currency", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent className="bg-popover">
-                  <SelectItem value="BDT">৳ BDT - Bangladeshi Taka</SelectItem>
-                  <SelectItem value="INR">₹ INR - Indian Rupee</SelectItem>
-                  <SelectItem value="USD">$ USD - US Dollar</SelectItem>
-                  <SelectItem value="EUR">€ EUR - Euro</SelectItem>
-                  <SelectItem value="GBP">£ GBP - British Pound</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Timezone</Label>
-              <Select value={storeSettings.timezone} onValueChange={(v) => updateStoreField("timezone", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent className="bg-popover">
-                  <SelectItem value="Asia/Dhaka">Asia/Dhaka (GMT+6)</SelectItem>
-                  <SelectItem value="Asia/Kolkata">Asia/Kolkata (GMT+5:30)</SelectItem>
-                  <SelectItem value="America/New_York">America/New_York (EST)</SelectItem>
-                  <SelectItem value="Europe/London">Europe/London (GMT)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Branding & Social */}
       <Card>
