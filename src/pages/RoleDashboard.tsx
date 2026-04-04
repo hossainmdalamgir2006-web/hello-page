@@ -30,6 +30,7 @@ import { PriorityQueue } from "@/components/admin/PriorityQueue";
 import { ManagerApprovalQueue } from "@/components/admin/ManagerApprovalQueue";
 import { SupportKeyboardShortcuts } from "@/components/admin/SupportKeyboardShortcuts";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
