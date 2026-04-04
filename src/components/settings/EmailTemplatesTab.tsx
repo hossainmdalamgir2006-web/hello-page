@@ -46,19 +46,25 @@ interface EmailTemplatesTabProps {
 }
 
 const templateCategoryMap: Record<string, string[]> = {
-  order: ["order_confirmation", "shipping_notification", "delivery_confirmation", "order_cancelled", "order_status_update", "refund_confirmation", "return_request", "payment_verified"],
-  auth: ["password_reset", "welcome_email", "email_verification_otp"],
-  marketing: ["abandoned_cart", "review_request", "coupon_promo", "wishlist_price_drop", "back_in_stock"],
-  security: ["lockout_alert", "unlock_alert", "login_alert"],
+  order: ["order_confirmation", "shipping_notification", "delivery_confirmation", "order_cancelled", "order_status_update", "refund_confirmation", "return_request", "payment_verified", "new_order_admin", "payment_failed", "shipping_delayed", "tracking_updated"],
+  auth: ["password_reset", "welcome_email", "email_verification_otp", "password_changed"],
+  marketing: ["abandoned_cart", "review_request", "coupon_promo", "wishlist_price_drop", "back_in_stock", "new_review_admin", "review_approved", "low_rating_alert"],
+  security: ["lockout_alert", "unlock_alert", "login_alert", "suspicious_login", "new_device_login", "two_factor_enabled", "two_factor_disabled", "session_terminated", "ip_blocked", "geo_blocked"],
   support: ["contact_reply"],
+  inventory: ["low_stock_alert", "out_of_stock"],
+  customers: ["new_customer_admin"],
+  reports: ["daily_sales_report", "weekly_summary", "monthly_report"],
 };
 
 const categoryIcons: Record<string, Record<string, React.ElementType>> = {
-  order: { order_confirmation: ShoppingCart, shipping_notification: Package, delivery_confirmation: CheckCircle2, order_cancelled: XCircle, order_status_update: ClipboardList, refund_confirmation: DollarSign, return_request: RotateCcw, payment_verified: CheckCircle2 },
-  auth: { password_reset: RefreshCw, welcome_email: UserCheck, email_verification_otp: KeyRound },
-  marketing: { abandoned_cart: Clock, review_request: Send, coupon_promo: Tag, wishlist_price_drop: TrendingDown, back_in_stock: PackageCheck },
-  security: { lockout_alert: AlertCircle, unlock_alert: CheckCircle2, login_alert: Shield },
+  order: { order_confirmation: ShoppingCart, shipping_notification: Package, delivery_confirmation: CheckCircle2, order_cancelled: XCircle, order_status_update: ClipboardList, refund_confirmation: DollarSign, return_request: RotateCcw, payment_verified: CheckCircle2, new_order_admin: ShoppingCart, payment_failed: XCircle, shipping_delayed: Clock, tracking_updated: Package },
+  auth: { password_reset: RefreshCw, welcome_email: UserCheck, email_verification_otp: KeyRound, password_changed: KeyRound },
+  marketing: { abandoned_cart: Clock, review_request: Send, coupon_promo: Tag, wishlist_price_drop: TrendingDown, back_in_stock: PackageCheck, new_review_admin: Send, review_approved: CheckCircle2, low_rating_alert: AlertCircle },
+  security: { lockout_alert: AlertCircle, unlock_alert: CheckCircle2, login_alert: Shield, suspicious_login: AlertCircle, new_device_login: Shield, two_factor_enabled: Shield, two_factor_disabled: AlertCircle, session_terminated: XCircle, ip_blocked: Shield, geo_blocked: AlertCircle },
   support: { contact_reply: MessageSquareReply },
+  inventory: { low_stock_alert: TrendingDown, out_of_stock: XCircle },
+  customers: { new_customer_admin: UserCheck },
+  reports: { daily_sales_report: ClipboardList, weekly_summary: ClipboardList, monthly_report: ClipboardList },
 };
 
 const categories = [
