@@ -233,6 +233,13 @@ export function useCustomersData() {
       }
 
       queryClient.invalidateQueries({ queryKey: ['customers-data'] });
+      logAuditAction({
+        action: 'update',
+        resource_type: 'customer',
+        resource_id: primaryId,
+        description: `Merged ${duplicateIds.length} duplicate customer(s)`,
+        new_value: { merged_ids: duplicateIds },
+      });
       toast.success(`Successfully merged ${duplicateIds.length} duplicate(s)`);
     } catch (error: any) {
       console.error('Error merging customers:', error);
