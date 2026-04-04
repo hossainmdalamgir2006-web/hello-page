@@ -103,6 +103,17 @@ export function AuditLogTab() {
     );
   });
 
+  const activeFilterCount = [filters.action, filters.resource_type, filters.dateFrom, filters.dateTo].filter(Boolean).length;
+
+  const stats = useMemo(() => {
+    const todayLogs = logs.filter(l => isToday(new Date(l.created_at)));
+    const uniqueUsers = new Set(logs.map(l => l.user_email).filter(Boolean));
+    const actionCounts: Record<string, number> = {};
+    logs.forEach(l => { actionCounts[l.action] = (actionCounts[l.action] || 0) + 1; });
+    const topAction = Object.entries(actionCounts).sort((a, b) => b[1] - a[1])[0];
+    return { todayCount: todayLogs.length, uniqueUsers: uniqueUsers.size, topAction: topAction?.[0] || "—", topActionCount: topAction?.[1] || 0 };
+  }, [logs]);
+
   if (loading && logs.length === 0) {
     return (
       <div className="space-y-6">
