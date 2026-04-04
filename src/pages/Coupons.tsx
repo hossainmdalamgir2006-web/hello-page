@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { logAuditAction } from "@/lib/auditLog";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

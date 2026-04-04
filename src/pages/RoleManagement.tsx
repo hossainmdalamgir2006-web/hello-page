@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { useAuth } from '@/contexts/AuthContext';
 

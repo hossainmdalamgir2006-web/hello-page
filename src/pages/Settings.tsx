@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

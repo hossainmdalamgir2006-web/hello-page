@@ -8,6 +8,7 @@ import { QuickActions } from "@/components/admin/QuickActions";
 import { DateRangeSelector, DateRangePreset } from "@/components/admin/DateRangeSelector";
 import { DashboardWidget } from "@/components/admin/DashboardWidget";
 import { DashboardWidgetPicker } from "@/components/admin/DashboardWidgetPicker";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useDashboardLayout } from "@/hooks/useDashboardLayout";
 import { useGoalTracker } from "@/hooks/useGoalTracker";

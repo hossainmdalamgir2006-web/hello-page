@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
