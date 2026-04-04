@@ -405,8 +405,8 @@ export default function Products() {
                 Add Product
               </Button>
             </div>
-          </div>
-        </motion.div>
+          }
+        />
 
         {/* Status Summary */}
         <ProductStatusBar products={uiProducts} />
