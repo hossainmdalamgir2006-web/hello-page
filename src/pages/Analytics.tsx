@@ -166,7 +166,8 @@ export default function Analytics() {
               </SelectContent>
             </Select>
           </div>
-        </div>
+          }
+        />
 
         {/* Stats Overview */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
