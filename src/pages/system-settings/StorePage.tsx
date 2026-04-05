@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { StoreSettingsTab } from "@/components/settings/StoreSettingsTab";
+import { UploadSettings } from "@/components/settings/UploadSettings";
+import { MaintenanceModeSettings } from "@/components/settings/MaintenanceModeSettings";
 import { useSiteContent, type MergedSection } from "@/hooks/useSiteContent";
 import { siteSettingsRegistry, type PageDef } from "@/config/siteContentRegistry";
 
@@ -11,17 +12,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Save, Settings, X } from "lucide-react";
+import { Save, Upload, Construction, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinkListEditor } from "@/components/admin/content-editors";
 
-type SidebarItem = { type: "page"; pageDef: PageDef } | { type: "settings" };
+type SidebarItem =
+  | { type: "page"; pageDef: PageDef }
+  | { type: "upload" }
+  | { type: "maintenance" };
 
 const sidebarItems: SidebarItem[] = [
   ...siteSettingsRegistry.map((p) => ({ type: "page" as const, pageDef: p })),
-  { type: "settings" },
+  { type: "upload" },
+  { type: "maintenance" },
 ];
 
 export default function StorePage() {
@@ -48,12 +52,7 @@ export default function StorePage() {
       const contentObj: Record<string, any> = {};
       for (const key of Object.keys(def.contentSchema)) {
         if (editForm[key] !== undefined) {
-          const schemaType = def.contentSchema[key];
-          if (["link_list", "string_list"].includes(schemaType)) {
-            contentObj[key] = editForm[key];
-          } else {
-            contentObj[key] = editForm[key];
-          }
+          contentObj[key] = editForm[key];
         }
       }
       const success = await updateSection(pageSlug, section.def.key, { content: contentObj });
@@ -143,10 +142,22 @@ export default function StorePage() {
     });
   };
 
+  const getItemIcon = (item: SidebarItem) => {
+    if (item.type === "page") return item.pageDef.icon;
+    if (item.type === "upload") return Upload;
+    return Construction;
+  };
+
+  const getItemLabel = (item: SidebarItem) => {
+    if (item.type === "page") return item.pageDef.label;
+    if (item.type === "upload") return "Upload Settings";
+    return "Maintenance Mode";
+  };
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Site Settings"
+        title="Store Settings"
         description="Store header, footer, uploads, and maintenance"
       />
 
@@ -161,9 +172,8 @@ export default function StorePage() {
               <ScrollArea className="max-h-[70vh]">
                 <div className="space-y-0.5">
                   {sidebarItems.map((item, idx) => {
-                    const isPage = item.type === "page";
-                    const Icon = isPage ? item.pageDef.icon : Settings;
-                    const label = isPage ? item.pageDef.label : "Site Settings";
+                    const Icon = getItemIcon(item);
+                    const label = getItemLabel(item);
 
                     return (
                       <button
@@ -194,10 +204,15 @@ export default function StorePage() {
               <h2 className="text-lg font-semibold">{selected.pageDef.label}</h2>
               {renderPageSections(selected.pageDef)}
             </>
+          ) : selected.type === "upload" ? (
+            <>
+              <h2 className="text-lg font-semibold">Upload Settings</h2>
+              <UploadSettings />
+            </>
           ) : (
             <>
-              <h2 className="text-lg font-semibold">Site Settings</h2>
-              <StoreSettingsTab />
+              <h2 className="text-lg font-semibold">Maintenance Mode</h2>
+              <MaintenanceModeSettings />
             </>
           )}
         </div>
