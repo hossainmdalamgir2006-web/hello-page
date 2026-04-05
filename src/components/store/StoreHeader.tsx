@@ -47,8 +47,9 @@ export function StoreHeader() {
   const { navCategories } = useDynamicCategories();
   const { t } = useLanguage();
 
-  const storeName = settings?.STORE_NAME || "Your Store";
-  const storeLogo = settings?.STORE_LOGO || null;
+  const headerCont = (headerContent?.content as any) || {};
+  const storeName = headerCont.store_name || settings?.STORE_NAME || "Your Store";
+  const storeLogo = headerCont.store_logo || settings?.STORE_LOGO || null;
 
   const handleSignOut = async () => {
     await signOut();
