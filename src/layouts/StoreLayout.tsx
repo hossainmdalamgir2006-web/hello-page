@@ -1,5 +1,5 @@
-import { ReactNode, useEffect, useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { ReactNode, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { StoreHeader } from "@/components/store/StoreHeader";
 import { StoreFooter } from "@/components/store/StoreFooter";
 import { LiveChatWidget } from "@/components/store/LiveChatWidget";
@@ -11,8 +11,6 @@ import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
-import { useSiteContent } from "@/hooks/useSiteContent";
-import { X } from "lucide-react";
 import { Suspense } from "react";
 
 interface StoreLayoutProps {
@@ -25,13 +23,7 @@ export function StoreLayout({ children }: StoreLayoutProps) {
   usePageViewTracking();
   const { isMaintenanceMode, message, estimatedEnd, loading: maintenanceLoading } = useMaintenanceCheck();
   const { user, isStaff } = useAuth();
-  const [announcementDismissed, setAnnouncementDismissed] = useState(false);
   const { data: settings } = useStoreSettingsCache();
-
-  // Read announcement from site content overrides
-  const { getSectionConfig } = useSiteContent();
-  const announcementSection = getSectionConfig("homepage", "announcement");
-  const announcement = announcementSection?.isEnabled ? announcementSection : null;
 
   // Favicon: read from shared store settings cache
   useEffect(() => {
@@ -60,23 +52,6 @@ export function StoreLayout({ children }: StoreLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-store-background">
-      {/* Announcement Bar */}
-      {announcement && !announcementDismissed && (
-        <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm relative">
-          <span>{announcement.title}</span>
-          {announcement.content?.link && (
-            <Link to={announcement.content.link} className="ml-2 underline font-medium">
-              {announcement.content.link_text || "Shop Now"}
-            </Link>
-          )}
-          <button
-            onClick={() => setAnnouncementDismissed(true)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      )}
       <StoreHeader />
       <StoreBreadcrumb />
       <main className="flex-1 pb-16 md:pb-0">
