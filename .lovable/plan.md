@@ -1,33 +1,28 @@
+## Renaming ও Sidebar Tab Split
 
+### পরিবর্তন সমূহ
 
-## Store Header/Footer → Site Settings পেজে Move
+#### 1. `src/components/admin/AdminSidebar.tsx`
 
-### সমস্যা
-Store Header ও Store Footer বর্তমানে `/admin/content` পেজে আছে। এগুলো `/admin/system-settings/store` (Site Settings) পেজে move করতে হবে এবং সেই পেজে Content Manager-এর মতো sidebar navigation যোগ করতে হবে।
+- "Site Settings" → "Store Settings"
 
-### পরিবর্তন
+#### 2. `src/config/siteContentRegistry.ts`
 
-#### 1. `src/config/siteContentRegistry.ts`
-- `header` ও `footer` entries remove করব registry array থেকে (line 507-559)
-- এই দুটো আলাদা registry/config হিসেবে export করব Site Settings পেজের জন্য:
-  ```ts
-  export const siteSettingsRegistry = [headerDef, footerDef];
-  ```
+- `label: "Store Header"` → `"Header"`
+- `label: "Store Footer"` → `"Footer"`
 
-#### 2. `src/pages/system-settings/StorePage.tsx` — সম্পূর্ণ রিডিজাইন
-- Content Manager-এর মতো sidebar layout যোগ করব
-- Left sidebar: 3টি item — **Store Header**, **Store Footer**, **Site Settings** (Upload + Maintenance)
-- Right side: selected item-এর editor form (Content Manager-এর section edit UI reuse)
-- Site Settings select করলে existing `UploadSettings` + `MaintenanceModeSettings` দেখাবে
-- Store Header/Footer select করলে Content Manager-এর মতো section editor দেখাবে
-- `useSiteContent` hook ব্যবহার করব header/footer data manage করতে
+#### 3. `src/pages/system-settings/StorePage.tsx`
 
-#### 3. `src/components/settings/StoreSettingsTab.tsx`
-- শুধু Upload + Maintenance render করবে (already done, no change needed)
+- Page title: "Site Settings" → "Store Settings"
+- Description: "Store header, footer, uploads, and maintenance"
+- Sidebar-এ "Site Settings" tab-কে দুটো আলাদা tab-এ ভাগ করব:
+  - **Upload Settings** (icon: Upload) — শুধু `<UploadSettings />`
+  - **Maintenance Mode** (icon: Construction) — শুধু `<MaintenanceMode />`
+- Sidebar items: Header, Footer, Upload Settings, Maintenance Mode (4টি)
+- `SidebarItem` type-এ `{ type: "upload" }` ও `{ type: "maintenance" }` যোগ
 
 ### Technical Details
-- 2 files modified: `siteContentRegistry.ts`, `StorePage.tsx`
-- Content Manager-এর `renderFieldEditor` pattern reuse করব StorePage-তে
-- No DB changes
-- `StoreHeader.tsx`/`StoreFooter.tsx` unchanged — তারা `useSiteContent("header")`/`useSiteContent("footer")` ব্যবহার করে, registry-তে data থাকলেই কাজ করবে
 
+- 3 files modified
+- No DB changes
+- `StoreSettingsTab.tsx` আর ব্যবহার হবে না (import remove)
