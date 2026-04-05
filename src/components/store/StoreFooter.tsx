@@ -120,20 +120,24 @@ export function StoreFooter() {
   const { data: footerContent } = usePageContent("footer");
   const content = (footerContent?.content as any) || {};
 
-  const storeName = settings?.STORE_NAME || "Your Store";
+  const storeName = content.store_name || settings?.STORE_NAME || "Your Store";
   const storeLogo = settings?.STORE_LOGO || null;
-  const storeDescription = settings?.STORE_DESCRIPTION || "Quality products at affordable prices.";
-  const storeEmail = settings?.STORE_EMAIL || "";
-  const storePhone = settings?.STORE_PHONE || "";
+  const storeDescription = content.store_description || settings?.STORE_DESCRIPTION || "Quality products at affordable prices.";
+  const storeEmail = content.store_email || settings?.STORE_EMAIL || "";
+  const storePhone = content.store_phone || settings?.STORE_PHONE || "";
 
-  const addressParts = [settings?.STORE_ADDRESS, settings?.STORE_CITY, settings?.STORE_POSTAL_CODE].filter(Boolean);
+  const addressParts = [
+    content.store_address || settings?.STORE_ADDRESS,
+    content.store_city || settings?.STORE_CITY,
+    content.store_postal_code || settings?.STORE_POSTAL_CODE,
+  ].filter(Boolean);
   const storeAddress = addressParts.length > 0 ? addressParts.join(", ") : "";
 
   const socialLinks = {
-    facebook: settings?.STORE_FACEBOOK_URL || "",
-    instagram: settings?.STORE_INSTAGRAM_URL || "",
-    twitter: settings?.STORE_TWITTER_URL || "",
-    youtube: settings?.STORE_YOUTUBE_URL || "",
+    facebook: content.facebook_url || settings?.STORE_FACEBOOK_URL || "",
+    instagram: content.instagram_url || settings?.STORE_INSTAGRAM_URL || "",
+    twitter: content.twitter_url || settings?.STORE_TWITTER_URL || "",
+    youtube: content.youtube_url || settings?.STORE_YOUTUBE_URL || "",
   };
   const hasSocial = socialLinks.facebook || socialLinks.instagram || socialLinks.twitter || socialLinks.youtube;
 
