@@ -129,7 +129,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
       label: "System Settings",
       items: [
         { title: t('nav.roles'), url: "/admin/role-management", icon: UserCog, roles: ['admin'] },
-        { title: "Store", url: "/admin/system-settings/store", icon: Store, roles: ['admin'] },
+        { title: "Site Settings", url: "/admin/system-settings/store", icon: Store, roles: ['admin'] },
         { title: "Payments", url: "/admin/system-settings/payments", icon: CreditCard, roles: ['admin'] },
         { title: "Security", url: "/admin/system-settings/security", icon: Shield, roles: ['admin'] },
         { title: "Audit Log", url: "/admin/system-settings/audit", icon: ClipboardList, roles: ['admin'] },
