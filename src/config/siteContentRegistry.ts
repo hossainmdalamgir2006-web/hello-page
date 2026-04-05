@@ -533,7 +533,7 @@ export const siteSettingsRegistry: PageDef[] = [
   },
   {
     slug: "footer",
-    label: "Store Footer",
+    label: "Footer",
     icon: FileText,
     storePath: "/",
     sections: [
