@@ -510,7 +510,7 @@ export const siteContentRegistry: PageDef[] = [
 export const siteSettingsRegistry: PageDef[] = [
   {
     slug: "header",
-    label: "Store Header",
+    label: "Header",
     icon: Layout,
     storePath: "/",
     sections: [
