@@ -504,6 +504,10 @@ export const siteContentRegistry: PageDef[] = [
       },
     ],
   },
+];
+
+// Header & Footer definitions — used by Site Settings page, NOT Content Manager
+export const siteSettingsRegistry: PageDef[] = [
   {
     slug: "header",
     label: "Store Header",
@@ -559,8 +563,13 @@ export const siteContentRegistry: PageDef[] = [
   },
 ];
 
+// Combined lookup: checks both registries
+function getAllPageDefs(): PageDef[] {
+  return [...siteContentRegistry, ...siteSettingsRegistry];
+}
+
 export function getPageDef(slug: string): PageDef | undefined {
-  return siteContentRegistry.find((p) => p.slug === slug);
+  return getAllPageDefs().find((p) => p.slug === slug);
 }
 
 export function getSectionDef(pageSlug: string, sectionKey: string): SectionDef | undefined {
