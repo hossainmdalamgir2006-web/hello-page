@@ -36,7 +36,7 @@ export function LoginSignupView({
   return (
     <div className="container mx-auto px-4 py-12 max-w-md">
       <Button variant="ghost" className="mb-6" asChild>
-        <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> {t('store.backToStore')}</Link>
+        <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> Back To Home</Link>
       </Button>
       <Card>
         <CardHeader className="space-y-1 text-center">
@@ -52,7 +52,7 @@ export function LoginSignupView({
             </div>
           )}
           <CardTitle className="text-2xl font-bold">{t('store.welcome')}</CardTitle>
-          <CardDescription>{t('store.signInOrCreate')}</CardDescription>
+          <CardDescription>Sign In Or Sign Up</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -114,7 +114,7 @@ export function LoginSignupView({
                 </div>
                 <Button type="submit" className="w-full bg-store-primary hover:bg-store-primary/90" disabled={loading}>
                   {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                  {loading ? t('store.creatingAccount') : 'Create Account'}
+                  {loading ? t('store.creatingAccount') : 'Sign Up'}
                 </Button>
               </form>
             </TabsContent>
