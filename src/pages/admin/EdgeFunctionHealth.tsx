@@ -61,35 +61,37 @@ export default function EdgeFunctionHealth() {
     const start = Date.now();
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      // Send minimal request — any response (even 400/500) means function is deployed & running
-      const { data, error } = await supabase.functions.invoke(name, {
-        body: { action: "health_check" },
+      // Use raw fetch instead of supabase.functions.invoke to avoid SDK throwing on non-2xx
+      // Any HTTP response (200, 400, 500) proves the function is deployed and running
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const session = (await supabase.auth.getSession()).data.session;
+
+      const res = await fetch(`${supabaseUrl}/functions/v1/${name}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${session?.access_token || supabaseKey}`,
+        },
+        body: JSON.stringify({ action: "health_check" }),
+        signal: controller.signal,
       });
 
-      clearTimeout(timeout);
+      clearTimeout(timeoutId);
       const responseTime = Date.now() - start;
 
-      // ANY response from the function means it's alive and reachable
-      // 400 = validation error (expected, we sent dummy data)
-      // 500 = missing config (function runs but needs setup)  
-      // Both prove the function is deployed and responding
-      if (error) {
-        const msg = typeof error === "object" && "message" in error ? (error as any).message : String(error);
-        // If we got a structured JSON error back, the function is running
-        const isAlive = msg.includes("Edge function returned");
-        if (isAlive || responseTime < 7000) {
-          return { status: "ok", responseTime, error: undefined };
-        }
-        return { status: "error", responseTime, error: msg };
-      }
+      // Consume response body to prevent resource leaks
+      await res.text();
 
-      return { status: "ok", responseTime };
+      // ANY response = function is alive (400/500 just means invalid input, which is expected)
+      return { status: "ok", responseTime, error: undefined };
     } catch (err: unknown) {
       const responseTime = Date.now() - start;
       const msg = err instanceof Error ? err.message : "Unknown error";
-      if (msg.includes("abort") || responseTime >= 7500) {
+      if (msg.includes("abort") || msg.includes("AbortError") || responseTime >= 7500) {
         return { status: "timeout", responseTime, error: "Timeout (>8s)" };
       }
       return { status: "error", responseTime, error: msg };
