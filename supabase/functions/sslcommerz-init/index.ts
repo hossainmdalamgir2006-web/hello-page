@@ -81,8 +81,7 @@ Deno.serve(async (req) => {
     params.append('product_profile', 'general');
     params.append('value_a', orderId); // Store order UUID for IPN
 
-    // Use sandbox API
-    const sslRes = await fetch('https://sandbox.sslcommerz.com/gwprocess/v4/api.php', {
+    const sslRes = await fetchWithRetry('https://sandbox.sslcommerz.com/gwprocess/v4/api.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString(),
