@@ -10,7 +10,7 @@ import { StoreBreadcrumb } from "@/components/store/StoreBreadcrumb";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
-import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { Suspense } from "react";
 
 interface StoreLayoutProps {
