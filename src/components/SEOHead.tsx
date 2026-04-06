@@ -7,7 +7,7 @@ interface SEOHeadProps {
   canonicalPath?: string;
   ogImage?: string;
   ogType?: string;
-  jsonLd?: Record<string, any>;
+  jsonLd?: Record<string, any> | Record<string, any>[];
   noIndex?: boolean;
 }
 
