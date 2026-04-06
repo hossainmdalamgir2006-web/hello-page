@@ -1,112 +1,64 @@
 
 
-## Security Scan Results — 12টি Issue পাওয়া গেছে
+## আপনার Setup-এ যে সমস্যাগুলো আছে
 
-### 🔴 Critical (6টি)
+### 🔴 CRITICAL — SERVICE_ROLE_KEY GitHub-এ Exposed
 
-| # | Issue | Risk |
-|---|-------|------|
-| 1 | **password_history** — admin-রা password hashes পড়তে পারে | Password hash leak → offline attack |
-| 2 | **two_factor_auth** — TOTP secrets ও backup codes admin API-তে accessible | Admin compromise = সব account takeover |
-| 3 | **recovery_codes** — plaintext recovery codes admin-রা পড়তে পারে | Recovery code = password equivalent |
-| 4 | **pathao_settings / steadfast_settings** — API credentials DB-তে readable | Third-party API abuse |
-| 5 | **enabled_payment_methods** — `account_details` JSONB publicly readable | Payment credentials leak |
-| 6 | **user_sessions** — `session_token` column users ও admins দেখতে পারে | Session hijacking |
+আপনার `.env` ফাইল GitHub-এ push হয়ে গেছে এবং সেখানে `SUPABASE_SERVICE_ROLE_KEY` আছে। এটি **অত্যন্ত বিপজ্জনক**। এই key দিয়ে যে কেউ আপনার সব data read/write/delete করতে পারবে, RLS bypass করে। 
 
-### 🟡 Warning (6টি)
+**এখনই করতে হবে:**
+1. Supabase Dashboard → Settings → API Keys → service_role key **regenerate** করুন
+2. GitHub repo থেকে `.env` ফাইল **মুছে ফেলুন**
+3. `.gitignore`-এ `.env` যোগ করুন (বর্তমানে `.env` gitignore-এ নেই!)
+4. Vercel-এ Environment Variables হিসেবে set করুন, `.env` ফাইলে না রেখে
 
-| # | Issue | Risk |
-|---|-------|------|
-| 7 | **chat-attachments** SELECT — যেকোনো authenticated user সব attachment দেখতে পারে | |
-| 8 | **chat-attachments** INSERT — ownership check নেই | |
-| 9 | **avatars** UPDATE/DELETE — যেকোনো user অন্যের avatar মুছতে পারে | |
-| 10 | **Realtime channels** — subscription-এ কোনো restriction নেই | |
-| 11 | **review-media** INSERT — path-based ownership check নেই | |
-| 12 | **coupons** — internal fields (max_uses, used_count) publicly visible | |
+### 🟡 সমস্যা ১: শুধু ৩টি Edge Function Deploy হয়েছে
+
+আপনার codebase-এ **26টি** edge function আছে কিন্তু Supabase-এ মাত্র **3টি** deploy করা হয়েছে (database-backup, database-restore, delete-user-account)। বাকি 23টি deploy না হওয়ায় সেগুলো call করলে error আসবে।
+
+**সমাধান:** Supabase CLI দিয়ে সব function deploy করতে হবে:
+```bash
+supabase functions deploy --project-ref yjubybsqtnwirlqtacdn
+```
+
+### 🟡 সমস্যা ২: Database Migrations চালানো হয়নি
+
+Dashboard-এ "No migrations" দেখাচ্ছে। এর মানে আপনার database-এ কোনো table, RLS policy, function তৈরি হয়নি। এজন্য edge functions কাজ করলেও data-related operations fail করবে।
+
+**সমাধান:**
+```bash
+supabase db push --project-ref yjubybsqtnwirlqtacdn
+```
+
+### 🟡 সমস্যা ৩: `.gitignore`-এ `.env` নেই
+
+বর্তমান `.gitignore` ফাইলে `.env` entry নেই। তাই `.env` ফাইল Git-এ track হচ্ছে এবং GitHub-এ push হয়ে যাচ্ছে।
+
+**Fix:** `.gitignore`-এ `.env` লাইন যোগ করতে হবে।
+
+### 🟢 Vercel Environment Variables Setup
+
+Vercel-এ এই variables গুলো Environment Variables হিসেবে set করুন (`.env` ফাইলে রাখবেন না):
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+- `VITE_SUPABASE_PROJECT_ID`
+
+Note: `SUPABASE_SERVICE_ROLE_KEY` শুধু Edge Functions-এর Secrets-এ থাকবে, Vercel বা frontend-এ কখনো না।
 
 ---
 
-### Fix Plan — Database Migration
+### সারাংশ — যা করতে হবে (ক্রমানুসারে)
 
-#### Fix 1-3: Sensitive auth tables — Remove admin SELECT, add security definer functions
+| # | কাজ | Priority |
+|---|------|----------|
+| 1 | GitHub থেকে `.env` মুছুন, `.gitignore`-এ `.env` যোগ করুন | URGENT |
+| 2 | Supabase service_role key regenerate করুন | URGENT |
+| 3 | `supabase db push` চালিয়ে migrations apply করুন | High |
+| 4 | `supabase functions deploy` চালিয়ে সব edge function deploy করুন | High |
+| 5 | Vercel Environment Variables configure করুন | High |
 
-```sql
--- password_history: Remove admin read, create function for password check only
--- two_factor_auth: Remove admin SELECT on secret/backup_codes, create safe status function
--- recovery_codes: Remove admin SELECT, only owner can read at generation time
-```
+### আমি কী করতে পারি
 
-- Admin-দের `secret`, `backup_codes`, `password_hash` columns সরাসরি দেখার দরকার নেই
-- SECURITY DEFINER function দিয়ে শুধু verify/status check করা যাবে
-
-#### Fix 4: Courier API credentials — Restrict to admin-only (already are, but should move to vault)
-
-- Short-term: policy ঠিক আছে, কিন্তু note রাখা হবে যে এগুলো vault-এ যাওয়া উচিত
-- এই tables শুধু admin read/write — current risk হলো admin account compromise
-
-#### Fix 5: enabled_payment_methods — Hide account_details from public
-
-```sql
--- Public SELECT policy: account_details column exclude করা যাবে না RLS দিয়ে
--- Solution: SECURITY DEFINER function যেটা account_details ছাড়া return করে
--- অথবা: public SELECT-এ condition add: auth.uid() IS NOT NULL
-```
-
-#### Fix 6: user_sessions — session_token hide
-
-```sql
--- Create a view/function that returns sessions WITHOUT session_token
--- Or: remove session_token from SELECT columns via a security definer function
-```
-
-#### Fix 7-8: chat-attachments — Conversation-based access
-
-```sql
--- SELECT: user must be participant of the conversation (path-based check)
--- INSERT: file path must include auth.uid()
-```
-
-#### Fix 9: avatars — Path-based ownership
-
-```sql
-DROP POLICY "Users can update own avatar" ON storage.objects;
-CREATE POLICY "Users can update own avatar" ON storage.objects
-  FOR UPDATE USING (bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text);
-
-DROP POLICY "Users can delete own avatar" ON storage.objects;  
-CREATE POLICY "Users can delete own avatar" ON storage.objects
-  FOR DELETE USING (bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text);
-```
-
-#### Fix 10: Realtime — Note only (cannot add RLS to realtime.messages via migration)
-
-- Realtime channel security Supabase internally manage করে — RLS on source tables already covers data
-- Table-level RLS already enforced, so realtime only delivers what RLS allows
-
-#### Fix 11: review-media — Path-based INSERT
-
-```sql
-DROP POLICY "Authenticated users can upload review media" ON storage.objects;
-CREATE POLICY "Users can upload own review media" ON storage.objects
-  FOR INSERT WITH CHECK (
-    bucket_id = 'review-media' AND (storage.foldername(name))[1] = auth.uid()::text
-  );
-```
-
-#### Fix 12: coupons — Restrict public fields
-
-```sql
--- Create a security definer function that returns only safe coupon fields
--- Or update SELECT policy to require authentication
-```
-
-### Technical Details
-- 1 database migration
-- ~20 DROP/CREATE POLICY statements
-- 2-3 SECURITY DEFINER functions (safe_payment_methods, safe_user_sessions, check_2fa_status)
-- No frontend code changes needed (functions return same shape minus sensitive columns)
-- No table structure changes
-
-### Files Changed
-- 1 new migration file
+- `.gitignore`-এ `.env` যোগ করে দিতে পারি
+- এটুকুই — বাকি কাজগুলো (deploy, push, key regenerate) আপনাকে আপনার terminal বা Supabase dashboard থেকে করতে হবে
 
