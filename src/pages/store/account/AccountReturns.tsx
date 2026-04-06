@@ -35,6 +35,7 @@ const statusColors: Record<string, string> = {
 
 export default function AccountReturns() {
   const { user } = useAuth();
+  const { setHeaderActions } = useAccountHeaderActions();
   const [requests, setRequests] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
