@@ -36,6 +36,18 @@ export interface SteadfastDeliveryStatus {
   delivery_status: string;
 }
 
+async function callWithRetry<T>(fn: () => Promise<T>, maxRetries = 2): Promise<T> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt === maxRetries) throw err;
+      await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+    }
+  }
+  throw new Error('Unreachable');
+}
+
 export function useSteadfastCourier() {
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
@@ -43,15 +55,18 @@ export function useSteadfastCourier() {
   const callSteadfast = async (action: string, payload: Record<string, any> = {}) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('steadfast-courier', {
-        body: { action, ...payload },
+      return await callWithRetry(async () => {
+        const { data, error } = await supabase.functions.invoke('steadfast-courier', {
+          body: { action, ...payload },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        return data;
       });
-
-      if (error) throw error;
-      return data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Steadfast API error:', error);
-      toast.error(`Steadfast API error: ${error.message}`);
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Steadfast: ${msg}`);
       throw error;
     } finally {
       setLoading(false);

@@ -8,6 +8,27 @@ const corsHeaders = {
 
 const BASE_URL = "https://api.paperfly.com.bd";
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 2): Promise<Response> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok || res.status < 500) return res;
+      console.warn(`Paperfly API returned ${res.status}, attempt ${attempt + 1}/${maxRetries + 1}`);
+      if (attempt < maxRetries) await delay(1000 * (attempt + 1));
+      else return res;
+    } catch (err) {
+      console.warn(`Paperfly API network error, attempt ${attempt + 1}/${maxRetries + 1}:`, err);
+      if (attempt === maxRetries) throw err;
+      await delay(1000 * (attempt + 1));
+    }
+  }
+  throw new Error("NETWORK_ERROR: Paperfly API unreachable after retries");
+}
+
 async function getCredentialsFromDB(supabaseClient: any) {
   try {
     const { data, error } = await supabaseClient
@@ -43,13 +64,24 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({ error: "Server configuration missing", code: "CONFIG_ERROR" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
+
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
     const creds = await getCredentialsFromDB(supabaseClient);
     if (!creds) {
-      throw new Error("Paperfly API credentials not configured. Please set them in System Settings > Integrations.");
+      return new Response(
+        JSON.stringify({ error: "Paperfly API credentials not configured. Please set them in System Settings > Integrations.", code: "CONFIG_ERROR" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
     }
 
     const headers = buildHeaders(creds.username, creds.password, creds.paperflyKey);
@@ -59,7 +91,7 @@ serve(async (req) => {
       try {
         return JSON.parse(text);
       } catch {
-        throw new Error(text || `HTTP ${response.status}: Non-JSON response`);
+        throw new Error(text || `HTTP ${response.status}: Non-JSON response from Paperfly API`);
       }
     };
 
@@ -68,24 +100,17 @@ serve(async (req) => {
 
     switch (action) {
       case "test_connection": {
-        // Paperfly has no dedicated "ping" endpoint, so we do a dummy tracking call
-        // A successful auth will return a JSON response (even if tracking not found)
-        const response = await fetch(`${BASE_URL}/API-Order-Tracking`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ ReferenceNumber: "TEST000" }),
+        const response = await fetchWithRetry(`${BASE_URL}/API-Order-Tracking`, {
+          method: "POST", headers, body: JSON.stringify({ ReferenceNumber: "TEST000" }),
         });
         result = await safeJsonParse(response);
-        // If we get a JSON response (even error), auth is working
         result = { success: true, message: "Connection successful", details: result };
         break;
       }
 
       case "create_parcel": {
-        const response = await fetch(`${BASE_URL}/OrderPlacement`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(payload.parcel),
+        const response = await fetchWithRetry(`${BASE_URL}/OrderPlacement`, {
+          method: "POST", headers, body: JSON.stringify(payload.parcel),
         });
         result = await safeJsonParse(response);
         break;
@@ -93,10 +118,8 @@ serve(async (req) => {
 
       case "track_parcel": {
         const { tracking_code } = payload;
-        const response = await fetch(`${BASE_URL}/API-Order-Tracking`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ ReferenceNumber: tracking_code }),
+        const response = await fetchWithRetry(`${BASE_URL}/API-Order-Tracking`, {
+          method: "POST", headers, body: JSON.stringify({ ReferenceNumber: tracking_code }),
         });
         result = await safeJsonParse(response);
         break;
@@ -104,10 +127,8 @@ serve(async (req) => {
 
       case "get_parcel_details": {
         const { tracking_code } = payload;
-        const response = await fetch(`${BASE_URL}/api/v1/invoice-details/`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ ReferenceNumber: tracking_code }),
+        const response = await fetchWithRetry(`${BASE_URL}/api/v1/invoice-details/`, {
+          method: "POST", headers, body: JSON.stringify({ ReferenceNumber: tracking_code }),
         });
         result = await safeJsonParse(response);
         break;
@@ -115,17 +136,18 @@ serve(async (req) => {
 
       case "cancel_parcel": {
         const { tracking_code } = payload;
-        const response = await fetch(`${BASE_URL}/api/v1/cancel-order/`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ ReferenceNumber: tracking_code }),
+        const response = await fetchWithRetry(`${BASE_URL}/api/v1/cancel-order/`, {
+          method: "POST", headers, body: JSON.stringify({ ReferenceNumber: tracking_code }),
         });
         result = await safeJsonParse(response);
         break;
       }
 
       default:
-        throw new Error(`Unknown action: ${action}`);
+        return new Response(
+          JSON.stringify({ error: `Unknown action: ${action}`, code: "API_ERROR" }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+        );
     }
 
     return new Response(JSON.stringify(result), {
@@ -135,8 +157,9 @@ serve(async (req) => {
   } catch (error: unknown) {
     console.error("Paperfly API error:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const code = errorMessage.includes("NETWORK_ERROR") ? "NETWORK_ERROR" : "API_ERROR";
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: errorMessage, code }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
