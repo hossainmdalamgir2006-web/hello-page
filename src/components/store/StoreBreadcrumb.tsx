@@ -25,7 +25,11 @@ export function StoreBreadcrumb() {
   const location = useLocation();
   const segments = location.pathname.split("/").filter(Boolean);
 
+  // Hide breadcrumb on home and unknown/404 routes
   if (segments.length === 0) return null;
+  const knownPaths = Object.keys(pathLabels);
+  const firstSegment = segments[0];
+  if (!knownPaths.includes(firstSegment) && firstSegment !== "product" && firstSegment !== "order-tracking" && firstSegment !== "payment") return null;
 
   const crumbs = segments.map((seg, i) => {
     const path = "/" + segments.slice(0, i + 1).join("/");
