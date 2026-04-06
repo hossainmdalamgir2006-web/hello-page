@@ -48,8 +48,8 @@ export function StoreHeader() {
   const { t } = useLanguage();
 
   const headerCont = (headerContent?.content as any) || {};
-  const storeName = headerCont.store_name || settings?.STORE_NAME || "Your Store";
-  const storeLogo = headerCont.store_logo || settings?.STORE_LOGO || null;
+  const storeName = headerCont.store_name || "";
+  const storeLogo = headerCont.store_logo || null;
 
   const handleSignOut = async () => {
     await signOut();
