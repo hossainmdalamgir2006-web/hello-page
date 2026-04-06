@@ -90,6 +90,12 @@ export default function AccountAddresses() {
 
   useEffect(() => { fetchAddresses(); }, [user]);
 
+  useEffect(() => {
+    setHeaderActions(
+      <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />{t('account.addAddress')}</Button>
+    );
+  }, []);
+
   const handleAddressSubmit = async (values: z.infer<typeof addressSchema>) => {
     if (!user) return;
     setSavingAddress(true);
