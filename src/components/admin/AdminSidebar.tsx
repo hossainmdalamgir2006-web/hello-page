@@ -138,6 +138,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
         { title: "Alerts & Email", url: "/admin/system-settings/notifications", icon: Bell, roles: ['admin'] },
         { title: "Backup", url: "/admin/system-settings/backup", icon: HardDrive, roles: ['admin'] },
         { title: "Integrations", url: "/admin/system-settings/integrations", icon: Plug, roles: ['admin'] },
+        { title: "Edge Functions", url: "/admin/system-settings/edge-functions", icon: Activity, roles: ['admin'] },
       ],
     },
   ];
