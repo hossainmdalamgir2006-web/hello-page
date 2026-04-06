@@ -89,18 +89,16 @@ export function StoreFooter() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              {storeLogo ? (
-                <OptimizedImage src={storeLogo} alt={storeName} className="w-10 h-10 rounded-full object-cover border-2 border-store-primary/20" />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-store-primary to-store-secondary flex items-center justify-center">
-                  <span className="text-store-primary-foreground font-display font-bold text-lg">
-                    {storeName.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
-              <span className="font-display font-bold text-xl text-[hsl(210,40%,98%)]">{storeName}</span>
-            </Link>
+            {(storeLogo || storeName) && (
+              <Link to="/" className="flex items-center gap-2 mb-4">
+                {storeLogo && (
+                  <OptimizedImage src={storeLogo} alt={storeName} className="w-10 h-10 rounded-full object-cover border-2 border-store-primary/20" />
+                )}
+                {storeName && (
+                  <span className="font-display font-bold text-xl text-[hsl(210,40%,98%)]">{storeName}</span>
+                )}
+              </Link>
+            )}
             <p className="text-[hsl(215,16%,60%)] text-sm mb-4">{storeDescription}</p>
             <div className="flex gap-3">
               {hasSocial ? (

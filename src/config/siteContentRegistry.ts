@@ -562,7 +562,6 @@ export const siteSettingsRegistry: PageDef[] = [
           copyright_text: "text",
         },
         defaultContent: {
-          store_name: "Demo Clothing",
           store_description: "Premium fashion for the modern Bangladeshi. Quality meets style at affordable prices.",
           store_email: "contact@democlothing.com",
           store_phone: "+880 1700-000000",

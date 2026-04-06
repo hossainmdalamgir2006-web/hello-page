@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext, useContext, ReactNode } from "react";
-import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
+import { usePageContent } from "@/hooks/useSiteContent";
 
 const STORE_NAME_CACHE_KEY = "_store_name";
 
@@ -9,7 +9,7 @@ interface TitleContextType {
 }
 
 const TitleContext = createContext<TitleContextType>({
-  storeName: "Store",
+  storeName: "",
   setPageTitle: () => {},
 });
 
@@ -18,26 +18,27 @@ export function useSiteTitle() {
 }
 
 export function DynamicTitleProvider({ children }: { children: ReactNode }) {
-  const cachedName = localStorage.getItem(STORE_NAME_CACHE_KEY) || "Store";
+  const cachedName = localStorage.getItem(STORE_NAME_CACHE_KEY) || "";
   const [storeName, setStoreName] = useState(cachedName);
-  const { data: settings } = useStoreSettingsCache();
+  const { data: headerContent } = usePageContent("header");
 
   useEffect(() => {
-    if (cachedName !== "Store") {
+    if (cachedName) {
       document.title = cachedName;
     }
   }, []);
 
-  // Update from shared cache when available
+  // Update from header content when available
   useEffect(() => {
-    const name = settings?.STORE_NAME;
+    const headerCont = (headerContent?.content as any) || {};
+    const name = headerCont.store_name;
     if (name && name !== storeName) {
       setStoreName(name);
       document.title = name;
       localStorage.setItem(STORE_NAME_CACHE_KEY, name);
       updateMetaTags(name);
     }
-  }, [settings?.STORE_NAME]);
+  }, [headerContent]);
 
   const updateMetaTags = (name: string) => {
     const ogTitle = document.querySelector('meta[property="og:title"]');
