@@ -525,8 +525,6 @@ export const siteSettingsRegistry: PageDef[] = [
           store_logo: "image_upload",
           store_favicon: "image_upload",
           store_phone: "text",
-          announcement_text: "text",
-          announcement_link: "text",
         },
         defaultContent: {
           store_phone: "+880 1700-000000",
