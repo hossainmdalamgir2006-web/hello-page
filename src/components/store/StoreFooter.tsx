@@ -133,11 +133,12 @@ export function StoreFooter() {
   ].filter(Boolean);
   const storeAddress = addressParts.length > 0 ? addressParts.join(", ") : "";
 
+  const socialLinksArr: { label: string; url: string }[] = content.social_links || [];
   const socialLinks = {
-    facebook: content.facebook_url || settings?.STORE_FACEBOOK_URL || "",
-    instagram: content.instagram_url || settings?.STORE_INSTAGRAM_URL || "",
-    twitter: content.twitter_url || settings?.STORE_TWITTER_URL || "",
-    youtube: content.youtube_url || settings?.STORE_YOUTUBE_URL || "",
+    facebook: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "facebook")?.url || settings?.STORE_FACEBOOK_URL || "",
+    instagram: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "instagram")?.url || settings?.STORE_INSTAGRAM_URL || "",
+    twitter: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "twitter")?.url || settings?.STORE_TWITTER_URL || "",
+    youtube: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "youtube")?.url || settings?.STORE_YOUTUBE_URL || "",
   };
   const hasSocial = socialLinks.facebook || socialLinks.instagram || socialLinks.twitter || socialLinks.youtube;
 
