@@ -1,5 +1,5 @@
-import { ReactNode, useState, useEffect, Suspense } from "react";
-import { useLocation, Outlet } from "react-router-dom";
+import { ReactNode, useState, useEffect, Suspense, useCallback } from "react";
+import { useLocation, Outlet, useOutletContext } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +7,14 @@ import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { AccountHeader } from "@/components/account/AccountHeader";
 import { AccountPageHeader } from "@/components/account/AccountPageHeader";
 import { cn } from "@/lib/utils";
+
+export interface AccountOutletContext {
+  setHeaderActions: (actions: ReactNode) => void;
+}
+
+export function useAccountHeaderActions() {
+  return useOutletContext<AccountOutletContext>();
+}
 
 const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
 
