@@ -1,63 +1,77 @@
 
 
-## Security Vulnerability Fix Plan
+## Security Scan Results — 7 Issues Found
 
-### সমস্যা
-Security scan-এ **15টি vulnerability** পাওয়া গেছে। মূল কারণ — অনেক table-এর RLS policy শুধু `auth.uid() IS NOT NULL` বা `true` check করে, admin role check করে না।
+### 🔴 Critical (4টি)
 
-### সমাধান — Database Migration
+| # | Issue | Risk |
+|---|-------|------|
+| 1 | **store_settings API credentials publicly readable** | PATHAO_CLIENT_SECRET, PATHAO_PASSWORD uppercase হওয়ায় lowercase LIKE filter (`%secret%`) bypass করছে |
+| 2 | **chat-attachments readable by any authenticated user** | যেকোনো logged-in user অন্যের private chat files দেখতে পারে |
+| 3 | **Realtime channels have no access control** | notifications, live_chat — যেকোনো user subscribe করে অন্যের data পেতে পারে |
+| 4 | **abandoned_carts UPDATE has no ownership check** | যেকোনো anonymous user অন্যের cart modify করতে পারে |
 
-একটি single migration-এ সব vulnerable RLS policy fix করা হবে:
+### 🟡 Warning (3টি)
 
-#### 1. `store_settings` — SELECT policy fix
-- বর্তমান: `USING (true)` (সবাই পড়তে পারে)
-- নতুন: সাধারণ settings (store name, currency etc.) সবাই পড়তে পারবে, কিন্তু API keys/secrets শুধু admin
+| # | Issue | Risk |
+|---|-------|------|
+| 5 | **avatars/product-images/brand-logos storage** — any authenticated user can delete/overwrite | |
+| 6 | **orders INSERT** — no user_id = auth.uid() check | অন্যের নামে order create করা যায় |
+| 7 | **support_tickets INSERT** — no user_id check | অন্যের নামে ticket create করা যায় |
 
-#### 2. `live_chat_conversations` — SELECT/UPDATE policy fix
-- SELECT: Customer শুধু নিজের conversation দেখবে (`user_id = auth.uid()`)
-- UPDATE: Customer শুধু নিজের conversation update করতে পারবে
-- Admin/staff সব দেখতে পারবে
+---
 
-#### 3. `live_chat_messages` — SELECT/UPDATE policy fix
-- SELECT: শুধু নিজের conversation-এর messages
-- UPDATE: শুধু নিজের পাঠানো messages
+### Fix Plan — Single Database Migration
 
-#### 4. `abandoned_carts` — SELECT policy fix
-- `user_id IS NULL` clause remove
-- শুধু নিজের carts দেখতে পারবে
+#### Fix 1: store_settings — Case-insensitive filter + allowlist approach
+```sql
+DROP POLICY "Public can read non-sensitive settings" ON store_settings;
+CREATE POLICY "Public can read non-sensitive settings" ON store_settings
+  FOR SELECT USING (
+    has_admin_role(auth.uid()) OR
+    (key NOT ILIKE '%api%' AND key NOT ILIKE '%secret%' 
+     AND key NOT ILIKE '%token%' AND key NOT ILIKE '%password%'
+     AND key NOT ILIKE '%client_id%' AND key NOT ILIKE '%username%')
+  );
+```
 
-#### 5. `database-backups` storage bucket — policy fix
-- SELECT/INSERT/DELETE: শুধু admin (`has_admin_role(auth.uid())`)
+#### Fix 2: chat-attachments — Owner-only access
+```sql
+-- Drop existing SELECT policy, create path-based one
+-- Only allow if file path starts with user's conversation folder
+```
 
-#### 6. `page_contents` — INSERT/UPDATE/DELETE policy fix
-- Write operations: শুধু admin
+#### Fix 3: Realtime — Enable RLS on realtime channels
+- Add authorization checks via Supabase Realtime RLS (channel-level auth policies)
 
-#### 7. `brands` — INSERT/UPDATE/DELETE policy fix
-- Write operations: শুধু admin
+#### Fix 4: abandoned_carts UPDATE — Add ownership check
+```sql
+DROP POLICY "Anyone can update abandoned carts" ON abandoned_carts;
+CREATE POLICY "Users can update own abandoned carts" ON abandoned_carts
+  FOR UPDATE USING (
+    has_admin_role(auth.uid()) OR 
+    (user_id = auth.uid() AND user_id IS NOT NULL)
+  );
+```
 
-#### 8. `activated_licenses` — full policy fix
-- SELECT: শুধু admin
-- INSERT/UPDATE: শুধু admin
+#### Fix 5: Storage buckets — Admin-only write for media buckets, path-based for avatars
+- `avatars`: write restricted to `auth.uid()` path
+- `product-images`, `product-videos`, `brand-logos`, `category-images`: admin-only write
 
-#### 9. `customer_communication_log` — SELECT policy fix
-- শুধু admin পড়তে পারবে
+#### Fix 6: orders INSERT — Add user_id ownership check
+```sql
+-- Update INSERT policy to include: user_id IS NULL OR auth.uid() = user_id
+```
 
-#### 10. `chat-attachments` storage — policy fix
-- File path-based access control
-
-#### 11. `store-assets` storage — write policy fix
-- Upload/update/delete: শুধু admin
-
-#### 12. Leaked Password Protection
-- Enable HIBP check via auth settings
-
-### Files Changed
-- 1 database migration (RLS policy updates)
-- Auth config update (HIBP)
+#### Fix 7: support_tickets INSERT — Add user_id check
+```sql
+-- Update INSERT policy to include: user_id IS NULL OR auth.uid() = user_id
+```
 
 ### Technical Details
-- ~15 DROP POLICY + CREATE POLICY statements
-- `has_admin_role()` function already exists, reuse করা হবে
-- No frontend code changes needed
+- 1 database migration file
+- ~15 DROP/CREATE POLICY statements
+- No frontend code changes
 - No table structure changes
+- `ILIKE` used instead of `LIKE` for case-insensitive matching
 
