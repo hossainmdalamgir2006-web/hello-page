@@ -59,34 +59,34 @@ export default function EdgeFunctionHealth() {
 
   const checkFunction = useCallback(async (name: string): Promise<Partial<FunctionStatus>> => {
     const start = Date.now();
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      // Use raw fetch instead of supabase.functions.invoke to avoid SDK throwing on non-2xx
-      // Any HTTP response (200, 400, 500) proves the function is deployed and running
+    try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const session = (await supabase.auth.getSession()).data.session;
 
       const res = await fetch(`${supabaseUrl}/functions/v1/${name}`, {
-        method: "POST",
+        method: "OPTIONS",
         headers: {
-          "Content-Type": "application/json",
-          "apikey": supabaseKey,
-          "Authorization": `Bearer ${session?.access_token || supabaseKey}`,
+          apikey: supabaseKey,
+          Authorization: `Bearer ${session?.access_token || supabaseKey}`,
         },
-        body: JSON.stringify({ action: "health_check" }),
         signal: controller.signal,
       });
 
-      clearTimeout(timeoutId);
       const responseTime = Date.now() - start;
-
-      // Consume response body to prevent resource leaks
       await res.text();
 
-      // ANY response = function is alive (400/500 just means invalid input, which is expected)
+      if (!res.ok) {
+        return {
+          status: "error",
+          responseTime,
+          error: `Health probe failed with status ${res.status}`,
+        };
+      }
+
       return { status: "ok", responseTime, error: undefined };
     } catch (err: unknown) {
       const responseTime = Date.now() - start;
@@ -95,6 +95,8 @@ export default function EdgeFunctionHealth() {
         return { status: "timeout", responseTime, error: "Timeout (>8s)" };
       }
       return { status: "error", responseTime, error: msg };
+    } finally {
+      clearTimeout(timeoutId);
     }
   }, []);
 
@@ -141,9 +143,9 @@ export default function EdgeFunctionHealth() {
 
   const getStatusIcon = (status: FunctionStatus["status"]) => {
     switch (status) {
-      case "ok": return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case "ok": return <CheckCircle2 className="h-4 w-4 text-success" />;
       case "error": return <XCircle className="h-4 w-4 text-destructive" />;
-      case "timeout": return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case "timeout": return <AlertTriangle className="h-4 w-4 text-warning" />;
       case "checking": return <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />;
       default: return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
@@ -151,9 +153,9 @@ export default function EdgeFunctionHealth() {
 
   const getStatusBadge = (status: FunctionStatus["status"]) => {
     switch (status) {
-      case "ok": return <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Online</Badge>;
+      case "ok": return <Badge className="border-success/20 bg-success/10 text-success">Online</Badge>;
       case "error": return <Badge variant="destructive">Error</Badge>;
-      case "timeout": return <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">Timeout</Badge>;
+      case "timeout": return <Badge className="border-warning/20 bg-warning/10 text-warning">Timeout</Badge>;
       case "checking": return <Badge variant="secondary">Checking...</Badge>;
       default: return <Badge variant="outline">Not Checked</Badge>;
     }
@@ -176,7 +178,7 @@ export default function EdgeFunctionHealth() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{counts.ok}</div>
+            <div className="text-2xl font-bold text-success">{counts.ok}</div>
             <div className="text-xs text-muted-foreground">Online</div>
           </CardContent>
         </Card>
@@ -188,7 +190,7 @@ export default function EdgeFunctionHealth() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-yellow-600">{counts.timeout}</div>
+            <div className="text-2xl font-bold text-warning">{counts.timeout}</div>
             <div className="text-xs text-muted-foreground">Timeouts</div>
           </CardContent>
         </Card>
