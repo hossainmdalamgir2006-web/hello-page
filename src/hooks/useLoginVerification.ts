@@ -69,7 +69,6 @@ export function useLoginVerification() {
 
       if (error) {
         console.error('Login security check error:', error);
-        // On error, allow login (fail-open for better UX)
         return false;
       }
 
