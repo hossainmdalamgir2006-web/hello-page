@@ -9,10 +9,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSiteTitle } from "@/components/DynamicTitleProvider";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -46,12 +45,13 @@ interface MenuGroup {
 
 export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobile }: AdminSidebarProps) {
   const { t } = useLanguage();
-  const { storeName } = useSiteTitle();
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
+  const storeName = headerCont.store_name || "";
+  const storeLogo = headerCont.store_logo || null;
   const { signOut, role } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { getSettingValue } = useStoreSettings();
-  const storeLogo = getSettingValue('STORE_LOGO');
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     content: true,
@@ -200,14 +200,14 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
         <div className={cn("mb-8 flex items-center gap-3 px-2", collapsed && "justify-center px-0")}>
           {storeLogo ? (
             <img src={storeLogo} alt={storeName} className="h-10 w-10 rounded-lg object-contain shrink-0" />
-          ) : (
+          ) : storeName ? (
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary shrink-0">
               <span className="font-display text-lg font-bold text-sidebar-primary-foreground">{storeName.charAt(0).toUpperCase()}</span>
             </div>
-          )}
+          ) : null}
           {!collapsed && (
             <div>
-              <h1 className="font-display text-lg font-bold text-sidebar-foreground">{storeName}</h1>
+              <h1 className="font-display text-lg font-bold text-sidebar-foreground">{storeName || "Admin Panel"}</h1>
               <p className="text-xs text-sidebar-muted">{getPanelName()}</p>
             </div>
           )}

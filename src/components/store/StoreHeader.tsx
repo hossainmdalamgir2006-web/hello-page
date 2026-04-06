@@ -48,8 +48,8 @@ export function StoreHeader() {
   const { t } = useLanguage();
 
   const headerCont = (headerContent?.content as any) || {};
-  const storeName = headerCont.store_name || settings?.STORE_NAME || "Your Store";
-  const storeLogo = headerCont.store_logo || settings?.STORE_LOGO || null;
+  const storeName = headerCont.store_name || "";
+  const storeLogo = headerCont.store_logo || null;
 
   const handleSignOut = async () => {
     await signOut();
@@ -106,22 +106,18 @@ export function StoreHeader() {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            {storeLogo ? (
+            {storeLogo && (
               <OptimizedImage
                 src={storeLogo}
                 alt={storeName}
                 className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover border-2 border-store-primary/20"
               />
-            ) : (
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-store-primary to-store-secondary flex items-center justify-center">
-                <span className="text-store-primary-foreground font-display font-bold text-lg md:text-xl">
-                  {storeName.charAt(0).toUpperCase()}
-                </span>
-              </div>
             )}
-            <span className="hidden sm:inline font-display font-bold text-xl md:text-2xl bg-gradient-to-r from-store-primary to-store-secondary bg-clip-text text-transparent">
-              {storeName}
-            </span>
+            {storeName && (
+              <span className="hidden sm:inline font-display font-bold text-xl md:text-2xl bg-gradient-to-r from-store-primary to-store-secondary bg-clip-text text-transparent">
+                {storeName}
+              </span>
+            )}
           </Link>
 
           {/* Center Search Bar — Desktop */}
