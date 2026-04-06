@@ -72,6 +72,12 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
   }, [user]);
 
   const pageInfo = pageTitles[location.pathname] || { title: "My Account", description: "" };
+  const [headerActions, setHeaderActions] = useState<ReactNode>(null);
+
+  // Reset actions on route change
+  useEffect(() => {
+    setHeaderActions(null);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-background">
