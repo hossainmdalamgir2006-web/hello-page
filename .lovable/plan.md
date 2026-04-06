@@ -1,129 +1,104 @@
 
-## Edge Function 401 Error — Review Result
 
-### আমি যা confirm করেছি
-- তোমার log-এ valid authenticated JWT দেখা যাচ্ছে: `auth_user` আছে, `role=authenticated` আছে।
-- মানে request backend-এ authenticated হিসেবেই পৌঁছাচ্ছে।
-- `src/hooks/useBackupData.ts` থেকে `database-backup` function-এ manual `fetch()` দিয়ে call করা হচ্ছে।
-- `supabase/functions/database-backup/index.ts`-এ function-এর ভিতরে আবার:
-  1. `Authorization` header নেয়
-  2. anon client বানায়
-  3. `supabaseUser.auth.getUser()` call করে
-  4. fail হলে `401` return করে
-- একই auth pattern আছে:
-  - `supabase/functions/database-restore/index.ts`
-  - `supabase/functions/delete-user-account/index.ts`
-- `supabase/config.toml` এখনো old project ref (`rxuiclgaixjunpisvhjr`) দেখাচ্ছে।
+## Edge Function Error Handling Improvement
 
-### সবচেয়ে likely root cause
-#### 1. Edge function auth validation pattern পুরোনো / brittle
-`auth.getUser()` edge function-এর ভিতরে অনেক সময় fail করে, বিশেষ করে যখন project নিজের backend-এ migrate করা হয়।  
-তোমার log এইটাই support করে: JWT valid, তবুও function 401 দিচ্ছে।
+### বর্তমান সমস্যা
 
-#### 2. New backend-এ old backend setup পুরো copy হয়নি
-`database-backup` কাজ করতে এগুলো লাগবে:
-- `user_roles`
-- `database_backups`
-- `has_admin_role()`
-- `get_table_columns()`
-- `database-backups` storage bucket
-- তোমার user-এর admin/manager role row
+সব edge function-এ একই pattern:
+1. **কোনো retry logic নেই** — external API (Resend, courier APIs, payment gateways) fail করলে সাথে সাথে error return করে
+2. **Generic error messages** — catch block-এ শুধু `error.message` return হয়, user-friendly context নেই
+3. **Missing secret detection নেই** — function শুরুতে secret check না করে runtime-এ crash করে
+4. **Frontend hooks-এ retry নেই** — `supabase.functions.invoke()` fail হলে একবারেই error দেখায়
+5. **`error.message` type unsafe** — কিছু function-এ `error: any` type use হচ্ছে
 
-#### 3. অনেক function-এ secret dependency আছে
-নিজের backend-এ নতুন করে secrets set না করলে email / courier / payment function-গুলাও fail করবে।
+### পরিবর্তন
 
-#### 4. Repo config আর deployed backend fully aligned না
-`supabase/config.toml` old project-এ pointing করছে, তাই future deploy/debug-এ mismatch হওয়ার chance আছে।
-
-### কেন এটা auth-check issue বলছি
-- request gateway-level এ authenticated হয়েছে
-- missing secret হলে `database-backup` code অনুযায়ী `500` আসার কথা
-- role problem হলে `403` আসার কথা
-- কিন্তু তুমি `401` পাচ্ছো
-- তাই strongest suspect: function-এর ভিতরের `getUser()` validation step
-
-## Solution Plan
-
-### Step 1 — Edge function auth fix
-এই 3টা file আগে update করতে হবে:
-- `supabase/functions/database-backup/index.ts`
-- `supabase/functions/database-restore/index.ts`
-- `supabase/functions/delete-user-account/index.ts`
-
-`auth.getUser()` বাদ দিয়ে token-based validation use করতে হবে:
+#### 1. Shared retry utility — Edge Functions
+সব edge function-এ inline retry helper add করব (shared file সম্ভব না edge function structure-এ):
 
 ```ts
-const authHeader = req.headers.get('Authorization')
-if (!authHeader?.startsWith('Bearer ')) {
-  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
+async function fetchWithRetry(url, options, maxRetries = 2) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok || res.status < 500) return res; // Don't retry 4xx
+      if (attempt < maxRetries) await delay(1000 * (attempt + 1));
+    } catch (err) {
+      if (attempt === maxRetries) throw err;
+      await delay(1000 * (attempt + 1));
+    }
+  }
 }
-
-const token = authHeader.replace('Bearer ', '')
-
-const authClient = createClient(
-  Deno.env.get('SUPABASE_URL')!,
-  Deno.env.get('SUPABASE_ANON_KEY')!,
-  { global: { headers: { Authorization: authHeader } } }
-)
-
-const { data, error } = await authClient.auth.getClaims(token)
-if (error || !data?.claims?.sub) {
-  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
-}
-
-const userId = data.claims.sub
 ```
 
-তারপর DB/storage/admin কাজের জন্য service-role client use থাকবে।
+#### 2. Edge Functions Update (External API calls সহ — 14 files)
 
-### Step 2 — Frontend function calls harden করা
-`useBackupData.ts`-এ manual `fetch()` আছে। এটা safer করতে হবে:
-- possible হলে `supabase.functions.invoke('database-backup')` use করা
-- না হলে call করার আগে `session?.access_token` check করা
-- `Bearer undefined` type request prevent করা
+**Courier functions** (4 files):
+- `steadfast-courier` — Steadfast API calls-এ retry add
+- `redx-courier` — RedX API calls-এ retry add
+- `paperfly-courier` — Paperfly API calls-এ retry add
+- `pathao-courier` — Pathao token refresh + API calls-এ retry add
 
-এটাই `AccountDeletionRequests.tsx`-এর manual function call-এর ক্ষেত্রেও apply হবে।
+**Email functions** (6 files):
+- `send-order-confirmation` — Resend/Gmail send-এ retry add
+- `send-contact-reply` — Resend/Gmail send-এ retry add
+- `send-login-alert` — Resend/Gmail send-এ retry add
+- `send-lockout-alert` — Resend/Gmail send-এ retry add
+- `send-unlock-alert` — Resend/Gmail send-এ retry add
+- `send-abandoned-cart-reminder` — Resend send-এ retry add
 
-### Step 3 — New backend prerequisites verify করা
-তোমার own backend-এ confirm করতে হবে:
-- table: `user_roles`
-- table: `database_backups`
-- function: `has_admin_role`
-- function: `get_table_columns`
-- bucket: `database-backups`
-- তোমার user row: `admin` বা `manager`
+**Payment functions** (3 files):
+- `payment-gateway-init` — gateway init calls-এ retry add
+- `sslcommerz-init` — SSLCommerz API call-এ retry add
+- `send-scheduled-report` — email send-এ retry add
 
-### Step 4 — Secrets verify করা
-Own backend-এ অন্তত এগুলো থাকতে হবে:
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+**Other** (1 file):
+- `process-abandoned-carts` — email send already has some handling, retry add
 
-আর extra function-এর জন্য:
-- email provider key
-- payment keys
-- courier keys
+প্রতিটি function-এ:
+- `fetchWithRetry()` helper inline add
+- Error response-এ proper error code categories: `CONFIG_ERROR`, `AUTH_ERROR`, `API_ERROR`, `NETWORK_ERROR`
+- Missing secret early detection with clear message
+- Type-safe error handling (`error instanceof Error`)
 
-### Step 5 — Project linkage cleanup
-`supabase/config.toml` old project ref থেকে তোমার own project-এর সাথে align করতে হবে, না হলে later deploy/debug issue করবে।
+#### 3. Frontend Hooks Update (5 files)
+- `useSteadfastCourier.ts` — retry wrapper with exponential backoff
+- `useRedXCourier.ts` — retry wrapper
+- `usePaperflyCourier.ts` — retry wrapper
+- `usePathaoCourier.ts` — retry wrapper
+- `useBackupData.ts` — already updated, verify retry
 
-## আমি কী update করতাম
-1. Edge functions-এ `getUser()` → `getClaims()` auth migration
-2. Manual raw fetch → standardized function invoke / token guard
-3. 401 / 403 / 500 error messages আলাদা ও clear করা
-4. Missing table / missing RPC / missing bucket / missing role detect করে proper error return
+Frontend retry pattern:
+```ts
+const callWithRetry = async (fn, maxRetries = 2) => {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt === maxRetries) throw err;
+      await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+    }
+  }
+};
+```
 
-## Technical Details
-Directly involved files:
-- `src/hooks/useBackupData.ts`
-- `src/pages/admin/AccountDeletionRequests.tsx`
-- `supabase/functions/database-backup/index.ts`
-- `supabase/functions/database-restore/index.ts`
-- `supabase/functions/delete-user-account/index.ts`
-- `supabase/config.toml`
+Plus user-friendly toast messages with action context.
 
-## Expected outcome after fix
-- valid logged-in admin user হলে 401 বন্ধ হবে
-- admin role missing থাকলে clean 403 পাবে
-- backend object missing থাকলে exact missing dependency ধরা যাবে
-- অন্য edge function fail করলে secret/config missing issue আলাদা করে isolate করা সহজ হবে
+#### 4. Functions NOT updated (intentionally)
+- `auto-clean-trash`, `auto-clean-chat` — internal cron, no external APIs
+- `create-demo-users` — one-time setup
+- `generate-sitemap` — DB read only
+- `migrate-product-images` — internal migration
+- `verify-login` — user-facing auth flow, retry could mask issues
+- `track-order` — DB query only
+- `database-backup`, `database-restore`, `delete-user-account` — already updated
+- `payment-gateway-ipn`, `sslcommerz-ipn` — IPN callbacks from gateways, retrying doesn't apply
+
+### Technical Details
+- ~14 edge function files updated
+- ~4 frontend hook files updated
+- No DB changes
+- Pattern: inline `fetchWithRetry()` + `delay()` helper per function
+- Retry only on 5xx / network errors, NOT on 4xx (client errors)
+- Max 2 retries with linear backoff (1s, 2s)
+
