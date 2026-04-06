@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginVerificationModal } from '@/components/auth/LoginVerificationModal';
 import { useLoginVerification } from '@/hooks/useLoginVerification';
-import { usePageContent } from '@/hooks/useSiteContent';
+import { useSiteContent } from '@/hooks/useSiteContent';
 import { toast } from 'sonner';
 import { ForgotPasswordView } from '@/components/auth/ForgotPasswordView';
 import { ResetPasswordView } from '@/components/auth/ResetPasswordView';
