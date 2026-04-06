@@ -156,6 +156,10 @@ export default function StorePage() {
       return <LinkListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} type="link" />;
     }
 
+    if (schemaType === "social_link_list") {
+      return <LinkListEditor key={fieldKey} label={label} value={Array.isArray(value) ? value : []} onChange={updateField} type="social" />;
+    }
+
     return (
       <div key={fieldKey} className="space-y-1.5">
         <Label className="text-xs font-medium">{label}</Label>
