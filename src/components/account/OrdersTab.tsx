@@ -200,19 +200,6 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
     <>
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <CardTitle>Order History</CardTitle>
-              <CardDescription>
-                {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''}
-                {statusFilter !== 'all' && ` • ${statusConfig[statusFilter]?.label || statusFilter}`}
-              </CardDescription>
-            </div>
-            <Button variant="ghost" size="sm" onClick={onRefresh}>
-              <RefreshCw className="h-4 w-4 mr-1" />
-              Refresh
-            </Button>
-          </div>
           {/* Search & Filter Bar */}
           <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <div className="relative flex-1">

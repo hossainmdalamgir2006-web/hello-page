@@ -149,17 +149,9 @@ export default function AccountAddresses() {
     <>
       <SEOHead title="My Addresses" noIndex />
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">{t('account.addresses')}</h1>
-            <p className="text-sm text-muted-foreground">{t('account.manageAddresses')}</p>
-          </div>
-          <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />{t('account.addAddress')}</Button>
-        </motion.div>
-
         {addresses.length === 0 ? (
           <motion.div variants={itemVariants}>
-            <Card className="border-dashed">
+            <Card>
               <CardContent className="py-16">
                 <div className="text-center">
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">

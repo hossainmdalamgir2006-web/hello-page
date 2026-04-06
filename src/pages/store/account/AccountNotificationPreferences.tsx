@@ -77,11 +77,7 @@ export default function AccountNotificationPreferences() {
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
         <motion.div variants={itemVariants}>
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Bell className="h-5 w-5" />{t('account.notificationPreferences')}</CardTitle>
-              <CardDescription>{t('account.manageNotifications')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="pt-6 space-y-6">
               {/* Order Notifications */}
               <div className="space-y-4">
                 <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Package className="h-4 w-4" />{t('account.orderNotifications')}</h3>

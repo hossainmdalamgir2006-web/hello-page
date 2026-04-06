@@ -147,7 +147,7 @@ export default function AccountReturns() {
 
       {requests.length === 0 ? (
         <motion.div variants={itemVariants}>
-          <Card className="border-dashed">
+          <Card>
             <CardContent className="py-16 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
                 <RotateCcw className="h-8 w-8 text-primary" />
