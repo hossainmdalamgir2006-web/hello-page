@@ -529,7 +529,6 @@ export const siteSettingsRegistry: PageDef[] = [
           announcement_link: "text",
         },
         defaultContent: {
-          store_name: "Demo Clothing",
           store_phone: "+880 1700-000000",
           announcement_text: "🔥 Up to 50% OFF on selected items!",
           announcement_link: "/products?filter=sale",
