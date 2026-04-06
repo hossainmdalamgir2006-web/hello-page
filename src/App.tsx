@@ -90,6 +90,7 @@ const ContentManager = lazy(() => import("./pages/admin/ContentManager"));
 const AppearanceManager = lazy(() => import("./pages/admin/AppearanceManager"));
 const ReviewsManager = lazy(() => import("./pages/admin/ReviewsManager"));
 const AccountDeletionRequests = lazy(() => import("./pages/admin/AccountDeletionRequests"));
+const EdgeFunctionHealth = lazy(() => import("./pages/admin/EdgeFunctionHealth"));
 const SupportSettings = lazy(() => import("./pages/SupportSettings"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -193,6 +194,7 @@ const App = () => (
             <Route path="/admin/reviews" element={<ReviewsManager />} />
             <Route path="/admin/trash" element={<GlobalTrash />} />
             <Route path="/admin/account-deletion-requests" element={<AccountDeletionRequests />} />
+            <Route path="/admin/system-settings/edge-functions" element={<EdgeFunctionHealth />} />
             <Route path="/admin/support-settings" element={<SupportSettings />} />
           </Route>
 
