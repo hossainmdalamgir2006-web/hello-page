@@ -23,15 +23,15 @@ export function StoreLayout({ children }: StoreLayoutProps) {
   usePageViewTracking();
   const { isMaintenanceMode, message, estimatedEnd, loading: maintenanceLoading } = useMaintenanceCheck();
   const { user, isStaff } = useAuth();
-  const { data: settings } = useStoreSettingsCache();
+  const { merged: headerContent } = usePageContent("header");
 
-  // Favicon: read from shared store settings cache
+  // Favicon: read from header content (Header Settings)
   useEffect(() => {
-    const faviconUrl = settings?.STORE_FAVICON;
+    const faviconUrl = headerContent?.store_favicon;
     if (faviconUrl) {
       applyFavicon(faviconUrl);
     }
-  }, [settings?.STORE_FAVICON]);
+  }, [headerContent?.store_favicon]);
 
   function applyFavicon(url: string) {
     let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");

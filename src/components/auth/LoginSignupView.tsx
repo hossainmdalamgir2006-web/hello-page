@@ -40,15 +40,17 @@ export function LoginSignupView({
       </Button>
       <Card>
         <CardHeader className="space-y-1 text-center">
-          <div className="flex items-center justify-center mb-4">
-            {storeLogo ? (
-              <img src={storeLogo} alt={storeName} className="w-16 h-16 rounded-full object-contain" />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-store-primary to-store-secondary flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">{storeInitial}</span>
-              </div>
-            )}
-          </div>
+          {(storeLogo || storeName) && (
+            <div className="flex items-center justify-center mb-4">
+              {storeLogo ? (
+                <img src={storeLogo} alt={storeName} className="w-16 h-16 rounded-full object-contain" />
+              ) : storeName ? (
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-store-primary to-store-secondary flex items-center justify-center">
+                  <span className="text-white font-bold text-2xl">{storeInitial}</span>
+                </div>
+              ) : null}
+            </div>
+          )}
           <CardTitle className="text-2xl font-bold">{t('store.welcome')}</CardTitle>
           <CardDescription>{t('store.signInOrCreate')}</CardDescription>
         </CardHeader>

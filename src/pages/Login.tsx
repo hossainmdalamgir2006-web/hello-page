@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginVerificationModal } from '@/components/auth/LoginVerificationModal';
 import { useLoginVerification } from '@/hooks/useLoginVerification';
-import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { usePageContent } from '@/hooks/useSiteContent';
 import { toast } from 'sonner';
 import { ForgotPasswordView } from '@/components/auth/ForgotPasswordView';
 import { ResetPasswordView } from '@/components/auth/ResetPasswordView';
@@ -15,11 +15,11 @@ export default function Auth() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { signIn, signUp, signInWithGoogle, resetPassword, updatePassword, user, role, roleLoading } = useAuth();
-  const { getSettingValue } = useStoreSettings();
+  const { merged: headerContent } = usePageContent("header");
 
-  const storeName = getSettingValue('store_name') || getSettingValue('STORE_NAME') || 'Store';
-  const storeLogo = getSettingValue('STORE_LOGO');
-  const storeInitial = storeName.charAt(0).toUpperCase();
+  const storeName = headerContent?.store_name || "";
+  const storeLogo = headerContent?.store_logo || null;
+  const storeInitial = storeName ? storeName.charAt(0).toUpperCase() : "";
 
   const [loading, setLoading] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>('login');
