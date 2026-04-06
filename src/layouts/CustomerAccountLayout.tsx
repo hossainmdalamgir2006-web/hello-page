@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { AccountHeader } from "@/components/account/AccountHeader";
+import { AccountPageHeader } from "@/components/account/AccountPageHeader";
 import { cn } from "@/lib/utils";
 
 const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
