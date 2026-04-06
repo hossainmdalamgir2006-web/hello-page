@@ -79,12 +79,31 @@ export default function StoreHome() {
     }
   };
 
+  const baseUrl = window.location.origin;
+
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: storeName,
-    url: window.location.origin,
+    url: baseUrl,
   };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: storeName,
+    url: baseUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${baseUrl}/products?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const combinedJsonLd = [orgJsonLd, websiteJsonLd];
 
   const heroCarousel = section("hero_carousel");
   const featureBar = section("feature_bar");
