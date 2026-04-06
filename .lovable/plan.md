@@ -1,42 +1,29 @@
 
 
-## Default Store Name/Logo/Favicon সরানো — শুধু Header Settings থেকে আপডেট করলে দেখাবে
+## Favicon ও Logo — সব জায়গায় Header Settings থেকে আপডেট
 
 ### সমস্যা
-বর্তমানে "Demo Clothing" default value হিসেবে registry-তে আছে, তাই Header Settings-এ কিছু save না করলেও সব জায়গায় "Demo Clothing" দেখায়। User চায় — default-এ কিছু না থাকুক, শুধু Header Settings থেকে save করলে তবেই store name, logo, favicon আপডেট হোক।
+1. **Favicon**: `StoreLayout.tsx`-এ `settings?.STORE_FAVICON` (পুরাতন store_settings table) থেকে পড়ছে — Header Settings-এর `store_favicon` ব্যবহার করছে না
+2. **Login Page Logo**: `Login.tsx`-এ `getSettingValue('STORE_LOGO')` ও `getSettingValue('store_name')` থেকে পড়ছে — Header Settings-এর content ব্যবহার করছে না। তাই "32" initial দেখাচ্ছে
 
 ### পরিবর্তন
 
-#### 1. `src/config/siteContentRegistry.ts` — Header section
-- `defaultContent` থেকে `store_name: "Demo Clothing"` **remove** করব
-- `store_logo` ও `store_favicon` এমনিতেই default নেই (image_upload), কোনো change নেই
+#### 1. `src/layouts/StoreLayout.tsx` — Favicon update
+- `settings?.STORE_FAVICON` বদলে `usePageContent("header")` থেকে `store_favicon` পড়ব
+- Header Settings-এ favicon সেট না থাকলে কোনো favicon apply করব না (default browser behavior)
 
-#### 2. `src/config/siteContentRegistry.ts` — Footer section
-- `defaultContent` থেকে `store_name: "Demo Clothing"` **remove** করব
-- Footer-এ store name header content থেকে আসবে (পরবর্তী step)
+#### 2. `src/pages/Login.tsx` — Logo/Name update
+- `useStoreSettings()` / `getSettingValue()` সরিয়ে `usePageContent("header")` ব্যবহার করব
+- `storeName = headerCont.store_name || ""`
+- `storeLogo = headerCont.store_logo || null`
+- Name empty হলে initial দেখাবে না
 
-#### 3. `src/components/store/StoreHeader.tsx`
-- Fallback chain: `headerCont.store_name || settings?.STORE_NAME || "Your Store"` → শুধু `headerCont.store_name || ""` রাখব
-- Logo: `headerCont.store_logo || settings?.STORE_LOGO || null` → শুধু `headerCont.store_logo || null`
-- Store name empty হলে logo-র পাশে text দেখাবে না, আর initial-letter circle-ও দেখাবে না
-
-#### 4. `src/components/store/StoreFooter.tsx`
-- `storeName`: header content থেকে পড়বে — `usePageContent("header")` import করে `headerContent.store_name` ব্যবহার করব
-- Empty হলে fallback হবে empty string, footer-এ name/logo দেখাবে না
-- Logo-ও header content থেকে নেবে
-
-#### 5. `src/components/DynamicTitleProvider.tsx`
-- Default store name `"Store"` → empty/generic ব্রাউজার title রাখব
-- Header content (`usePageContent("header")`) থেকে store_name পড়ব
-- Name পাওয়া গেলে document.title সেট করব, না পেলে generic title
-
-#### 6. `src/components/admin/AdminSidebar.tsx`
-- `storeName` ও `storeLogo` — header content থেকে নেবে (`usePageContent("header")`)
-- Empty হলে sidebar-এ generic text দেখাবে (e.g., "Admin Panel") এবং কোনো logo/initial দেখাবে না
+#### 3. `src/components/auth/LoginSignupView.tsx` — Empty fallback
+- `storeLogo` ও `storeName` দুটোই empty হলে logo/initial section পুরোটাই hide করব
+- Heading "Welcome" থাকবে, কিন্তু initial circle দেখাবে না
 
 ### Technical Details
-- 5 files modified: `siteContentRegistry.ts`, `StoreHeader.tsx`, `StoreFooter.tsx`, `DynamicTitleProvider.tsx`, `AdminSidebar.tsx`
+- 3 files modified
 - No DB changes
-- সব জায়গায় single source of truth: Header Settings-এর `store_name`, `store_logo`, `store_favicon`
-- Header Settings-এ save না করলে সব জায়গায় empty/generic fallback
+- Single source of truth: Header Settings (`usePageContent("header")`)
 
