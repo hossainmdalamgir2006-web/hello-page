@@ -5,6 +5,19 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+function delay(ms: number): Promise<void> { return new Promise((r) => setTimeout(r, ms)); }
+
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 2): Promise<Response> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok || res.status < 500) return res;
+      if (attempt < maxRetries) await delay(1000 * (attempt + 1)); else return res;
+    } catch (err) { if (attempt === maxRetries) throw err; await delay(1000 * (attempt + 1)); }
+  }
+  throw new Error("NETWORK_ERROR: SSLCommerz API unreachable after retries");
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -68,8 +81,7 @@ Deno.serve(async (req) => {
     params.append('product_profile', 'general');
     params.append('value_a', orderId); // Store order UUID for IPN
 
-    // Use sandbox API
-    const sslRes = await fetch('https://sandbox.sslcommerz.com/gwprocess/v4/api.php', {
+    const sslRes = await fetchWithRetry('https://sandbox.sslcommerz.com/gwprocess/v4/api.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params.toString(),
@@ -101,11 +113,13 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('SSLCommerz init error:', error);
+    const msg = error instanceof Error ? error.message : 'Internal server error';
     return new Response(JSON.stringify({
       success: false,
-      error: error.message || 'Internal server error',
+      error: msg,
+      code: msg.includes("NETWORK_ERROR") ? "NETWORK_ERROR" : "API_ERROR",
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

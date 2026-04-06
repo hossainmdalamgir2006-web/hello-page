@@ -8,6 +8,27 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 2): Promise<Response> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok || res.status < 500) return res;
+      console.warn(`RedX API returned ${res.status}, attempt ${attempt + 1}/${maxRetries + 1}`);
+      if (attempt < maxRetries) await delay(1000 * (attempt + 1));
+      else return res;
+    } catch (err) {
+      console.warn(`RedX API network error, attempt ${attempt + 1}/${maxRetries + 1}:`, err);
+      if (attempt === maxRetries) throw err;
+      await delay(1000 * (attempt + 1));
+    }
+  }
+  throw new Error("NETWORK_ERROR: RedX API unreachable after retries");
+}
+
 async function getCredentialsFromDB(supabaseClient: any): Promise<{ apiToken: string } | null> {
   try {
     const { data, error } = await supabaseClient
@@ -31,15 +52,26 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({ error: "Server configuration missing", code: "CONFIG_ERROR" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
+
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
     const dbCredentials = await getCredentialsFromDB(supabaseClient);
     const apiToken = dbCredentials?.apiToken || Deno.env.get("REDX_API_TOKEN");
 
     if (!apiToken) {
-      throw new Error("RedX API token not configured. Please set it in System Settings > Integrations.");
+      return new Response(
+        JSON.stringify({ error: "RedX API token not configured. Please set it in System Settings > Integrations.", code: "CONFIG_ERROR" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
     }
 
     const headers = {
@@ -52,7 +84,7 @@ serve(async (req) => {
       try {
         return JSON.parse(text);
       } catch {
-        throw new Error(text || `HTTP ${response.status}: Non-JSON response`);
+        throw new Error(text || `HTTP ${response.status}: Non-JSON response from RedX API`);
       }
     };
 
@@ -60,29 +92,16 @@ serve(async (req) => {
     let result;
 
     switch (action) {
-      case "test_connection": {
-        const response = await fetch(`${REDX_BASE_URL}/areas`, {
-          method: "GET",
-          headers,
-        });
-        result = await safeJsonParse(response);
-        break;
-      }
-
+      case "test_connection":
       case "get_areas": {
-        const response = await fetch(`${REDX_BASE_URL}/areas`, {
-          method: "GET",
-          headers,
-        });
+        const response = await fetchWithRetry(`${REDX_BASE_URL}/areas`, { method: "GET", headers });
         result = await safeJsonParse(response);
         break;
       }
 
       case "create_parcel": {
-        const response = await fetch(`${REDX_BASE_URL}/parcel`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(payload.parcel),
+        const response = await fetchWithRetry(`${REDX_BASE_URL}/parcel`, {
+          method: "POST", headers, body: JSON.stringify(payload.parcel),
         });
         result = await safeJsonParse(response);
         break;
@@ -90,37 +109,32 @@ serve(async (req) => {
 
       case "track_parcel": {
         const { tracking_id } = payload;
-        const response = await fetch(`${REDX_BASE_URL}/parcel/track/${tracking_id}`, {
-          method: "GET",
-          headers,
-        });
+        const response = await fetchWithRetry(`${REDX_BASE_URL}/parcel/track/${tracking_id}`, { method: "GET", headers });
         result = await safeJsonParse(response);
         break;
       }
 
       case "get_parcel_details": {
         const { tracking_id } = payload;
-        const response = await fetch(`${REDX_BASE_URL}/parcel/${tracking_id}`, {
-          method: "GET",
-          headers,
-        });
+        const response = await fetchWithRetry(`${REDX_BASE_URL}/parcel/${tracking_id}`, { method: "GET", headers });
         result = await safeJsonParse(response);
         break;
       }
 
       case "cancel_parcel": {
         const { tracking_id } = payload;
-        const response = await fetch(`${REDX_BASE_URL}/parcel/cancel/${tracking_id}`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({}),
+        const response = await fetchWithRetry(`${REDX_BASE_URL}/parcel/cancel/${tracking_id}`, {
+          method: "POST", headers, body: JSON.stringify({}),
         });
         result = await safeJsonParse(response);
         break;
       }
 
       default:
-        throw new Error(`Unknown action: ${action}`);
+        return new Response(
+          JSON.stringify({ error: `Unknown action: ${action}`, code: "API_ERROR" }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+        );
     }
 
     return new Response(JSON.stringify(result), {
@@ -130,8 +144,9 @@ serve(async (req) => {
   } catch (error: unknown) {
     console.error("RedX API error:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const code = errorMessage.includes("NETWORK_ERROR") ? "NETWORK_ERROR" : "API_ERROR";
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: errorMessage, code }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
