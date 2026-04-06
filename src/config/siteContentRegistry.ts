@@ -549,7 +549,6 @@ export const siteSettingsRegistry: PageDef[] = [
         defaultEnabled: true,
         editableFields: ["content"],
         contentSchema: {
-          store_name: "text",
           store_description: "textarea",
           store_email: "text",
           store_phone: "text",
