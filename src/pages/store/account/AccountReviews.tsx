@@ -74,6 +74,14 @@ export default function AccountReviews() {
 
   useEffect(() => { fetchData(); }, [user]);
 
+  useEffect(() => {
+    setHeaderActions(
+      <Button size="sm" disabled={products.length === 0} onClick={() => setOpen(true)}>
+        <Plus className="h-4 w-4 mr-1.5" />{t('account.writeReviewBtn')}
+      </Button>
+    );
+  }, [products.length]);
+
   const handleSubmit = async () => {
     if (!selectedProduct || rating === 0) { toast.error(t('account.selectProductAndRating')); return; }
     setSubmitting(true);
