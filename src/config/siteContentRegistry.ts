@@ -14,7 +14,7 @@ export interface SectionDef {
   defaultBadge?: string;
   defaultContent?: Record<string, any>;
   editableFields: ("title" | "subtitle" | "badge" | "image" | "content")[];
-  contentSchema?: Record<string, "text" | "textarea" | "number" | "boolean" | "json" | "faq_list" | "card_list" | "section_list" | "step_list" | "string_list" | "size_table" | "shipping_rate_list" | "courier_list" | "link_list">;
+  contentSchema?: Record<string, "text" | "textarea" | "number" | "boolean" | "json" | "faq_list" | "card_list" | "section_list" | "step_list" | "string_list" | "size_table" | "shipping_rate_list" | "courier_list" | "link_list" | "image_upload">;
 }
 
 export interface PageDef {
@@ -522,11 +522,17 @@ export const siteSettingsRegistry: PageDef[] = [
         editableFields: ["content"],
         contentSchema: {
           store_name: "text",
-          store_logo: "text",
-          store_favicon: "text",
+          store_logo: "image_upload",
+          store_favicon: "image_upload",
           store_phone: "text",
           announcement_text: "text",
           announcement_link: "text",
+        },
+        defaultContent: {
+          store_name: "Demo Clothing",
+          store_phone: "+880 1700-000000",
+          announcement_text: "🔥 Up to 50% OFF on selected items!",
+          announcement_link: "/products?filter=sale",
         },
       },
     ],
@@ -557,6 +563,15 @@ export const siteSettingsRegistry: PageDef[] = [
           shop_links: "link_list",
           help_links: "link_list",
           social_links: "link_list",
+        },
+        defaultContent: {
+          store_description: "Premium fashion for the modern Bangladeshi. Quality meets style at affordable prices.",
+          store_email: "contact@democlothing.com",
+          store_phone: "+880 1700-000000",
+          store_address: "123 Fashion Street, Gulshan",
+          store_city: "Dhaka",
+          store_postal_code: "1212",
+          facebook_url: "https://facebook.com/",
         },
       },
     ],

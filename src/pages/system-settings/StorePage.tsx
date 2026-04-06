@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { UploadSettings } from "@/components/settings/UploadSettings";
 import { MaintenanceModeSettings } from "@/components/settings/MaintenanceModeSettings";
 import { useSiteContent, type MergedSection } from "@/hooks/useSiteContent";
 import { siteSettingsRegistry, type PageDef } from "@/config/siteContentRegistry";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,9 +14,10 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Save, Upload, Construction, X } from "lucide-react";
+import { Save, Upload, Construction, X, ImageIcon, Trash2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinkListEditor } from "@/components/admin/content-editors";
+import { useToast } from "@/hooks/use-toast";
 
 type SidebarItem =
   | { type: "page"; pageDef: PageDef }
@@ -31,8 +33,11 @@ const sidebarItems: SidebarItem[] = [
 export default function StorePage() {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const { getSectionConfig, updateSection, toggleSection, loading } = useSiteContent();
+  const { toast } = useToast();
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Record<string, any>>({});
+  const [uploading, setUploading] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const selected = sidebarItems[selectedIdx];
 
@@ -60,10 +65,83 @@ export default function StorePage() {
     }
   };
 
+  const handleImageUpload = async (fieldKey: string, file: File) => {
+    if (!file) return;
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast({ title: "Error", description: "File size must be under 5MB", variant: "destructive" });
+      return;
+    }
+    setUploading(fieldKey);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `${fieldKey}_${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("store-assets")
+        .upload(fileName, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from("store-assets").getPublicUrl(fileName);
+      setEditForm((f) => ({ ...f, [fieldKey]: publicUrl }));
+      toast({ title: "Uploaded", description: "Image uploaded successfully" });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(null);
+    }
+  };
+
   const renderFieldEditor = (fieldKey: string, schemaType: string) => {
     const value = editForm[fieldKey] ?? "";
     const label = fieldKey.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     const updateField = (v: any) => setEditForm((f) => ({ ...f, [fieldKey]: v }));
+
+    if (schemaType === "image_upload") {
+      return (
+        <div key={fieldKey} className="space-y-2">
+          <Label className="text-xs font-medium">{label}</Label>
+          {value ? (
+            <div className="flex items-center gap-3">
+              <img src={value} alt={label} className="h-16 w-16 object-contain rounded-lg border bg-muted p-1" />
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateField("")}
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-1" />Remove
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={uploading === fieldKey}
+                onClick={() => {
+                  const input = document.createElement("input");
+                  input.type = "file";
+                  input.accept = "image/*";
+                  input.onchange = (e) => {
+                    const f = (e.target as HTMLInputElement).files?.[0];
+                    if (f) handleImageUpload(fieldKey, f);
+                  };
+                  input.click();
+                }}
+              >
+                {uploading === fieldKey ? (
+                  <><Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />Uploading...</>
+                ) : (
+                  <><ImageIcon className="h-3.5 w-3.5 mr-1" />Upload Image</>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
+      );
+    }
 
     if (schemaType === "textarea") {
       return (
