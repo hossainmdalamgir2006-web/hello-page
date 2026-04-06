@@ -23,7 +23,8 @@ export function StoreLayout({ children }: StoreLayoutProps) {
   usePageViewTracking();
   const { isMaintenanceMode, message, estimatedEnd, loading: maintenanceLoading } = useMaintenanceCheck();
   const { user, isStaff } = useAuth();
-  const { merged: headerContent } = usePageContent("header");
+  const { section: headerSection } = useSiteContent("header");
+  const headerContent = headerSection("main_content")?.content;
 
   // Favicon: read from header content (Header Settings)
   useEffect(() => {

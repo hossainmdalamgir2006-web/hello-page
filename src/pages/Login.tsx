@@ -15,10 +15,11 @@ export default function Auth() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { signIn, signUp, signInWithGoogle, resetPassword, updatePassword, user, role, roleLoading } = useAuth();
-  const { merged: headerContent } = usePageContent("header");
+  const { section: headerSection } = useSiteContent("header");
+  const headerCont = headerSection("main_content")?.content;
 
-  const storeName = headerContent?.store_name || "";
-  const storeLogo = headerContent?.store_logo || null;
+  const storeName = headerCont?.store_name || "";
+  const storeLogo = headerCont?.store_logo || null;
   const storeInitial = storeName ? storeName.charAt(0).toUpperCase() : "";
 
   const [loading, setLoading] = useState(false);
