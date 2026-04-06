@@ -1,46 +1,57 @@
+## Unused/Non-functional Code Cleanup
+
+### পাওয়া গেছে
+
+#### 1. Unused Files (কোথাও import নেই)
 
 
-## MyAccount Pages — Design Consistency Update
+| File                                    | Size      | কারণ                                                                                                                                     |
+| --------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/pages/Profile.tsx`                 | 639 lines | পুরোনো monolithic profile page — এখন `profile/` subfolder-এ আলাদা pages আছে (PersonalInfoPage, PasswordPage, SecurityPage, SessionsPage) |
+| `src/pages/profile/Security2FAPage.tsx` | 5 lines   | কোনো route-এ নেই, শুধু `TwoFactorSetup` render করে যেটা `SecurityPage.tsx`-এ already আছে                                                 |
+| `src/hooks/usePageTitle.ts`             | ~70 lines | কোথাও import নেই — `AutoPageTitle` ও `DynamicTitleProvider` এখন title handle করে                                                         |
+| `src/hooks/useDynamicTitle.ts`          | unused    | কোথাও import নেই                                                                                                                         |
+| `src/hooks/useHomepageSections.ts`      | unused    | কোথাও import নেই — `useSiteContent` এখন homepage sections handle করে                                                                     |
+| `src/hooks/useInfiniteScroll.ts`        | unused    | কোথাও import নেই                                                                                                                         |
+| `src/hooks/useFailedLoginAttempts.ts`   | unused    | কোথাও import নেই                                                                                                                         |
+| `src/hooks/useBlockedIps.ts`            | unused    | কোথাও import নেই                                                                                                                         |
+| `src/hooks/useGeoBlockingRules.ts`      | unused    | কোথাও import নেই                                                                                                                         |
+| `src/hooks/useIpRateLimits.ts`          | unused    | কোথাও import নেই                                                                                                                         |
+| `src/hooks/useLoginVerification.ts`     | unused    | কোথাও import নেই                                                                                                                         |
 
-### সমস্যা চিহ্নিত
 
-Screenshots থেকে দেখা যাচ্ছে:
+#### 2. Test placeholder
 
-1. **Duplicate Headers** — Layout-এ `AccountPageHeader` আছে (যেমন "My Orders / View and track your orders"), আবার প্রতিটি component-এর ভিতরেও CardHeader-এ নিজস্ব title আছে (যেমন "Order History", "My Wishlist", "Support Tickets", "Addresses", "Notification Preferences", "Recently Viewed")। এটা দুইবার header দেখাচ্ছে।
 
-2. **Action Buttons floating** — Returns-এ "New Request", Reviews-এ "Write Review Btn", Addresses-এ "Add Address" বাটন page header-এর বাইরে আলাদাভাবে floating। Admin panel-এ এগুলো `AdminPageHeader`-এর `actions` prop-এ থাকে।
+| File                       | Note                                                       |
+| -------------------------- | ---------------------------------------------------------- |
+| `src/test/example.test.ts` | শুধু `expect(true).toBe(true)` — placeholder, কোনো কাজ নেই |
 
-3. **Dashed borders** — Empty state cards-এ `border-dashed` ব্যবহার হচ্ছে যা Admin panel-এর solid border style-এর সাথে match করে না।
 
 ### পরিবর্তন
 
-#### 1. Action buttons কে AccountPageHeader-এ move করা
-এই page গুলোতে action button আছে যেগুলো header-এ যাবে:
-- **AccountReturns** — "New Request" button → header actions-এ
-- **AccountReviews** — "Write Review Btn" → header actions-এ  
-- **AccountAddresses** — "Add Address" button → header actions-এ
-- **AccountOrders** (OrdersTab) — "Refresh" button → header actions-এ
+**12 files delete করব:**
 
-#### 2. Component internal headers remove করা
-এই component গুলো থেকে duplicate CardHeader/title সরাতে হবে:
-- **OrdersTab** — `CardHeader` থেকে "Order History" title ও description remove (CardHeader রাখব শুধু search/filter bar-এর জন্য)
-- **WishlistTab** — CardHeader থেকে "My Wishlist" title ও description remove
-- **RecentlyViewedTab** — CardHeader থেকে "Recently Viewed" title ও description remove, "Clear All" button header actions-এ move
-- **CustomerSupportTickets** — CardHeader থেকে "Support Tickets" title/description remove, "New Ticket" button header actions-এ move
-- **AccountNotificationPreferences** — CardHeader থেকে "Notification Preferences" title/description remove
-- **AccountAddresses** — Internal `<h1>` title ও description remove
-
-#### 3. `CustomerAccountLayout.tsx` — Header actions support
-- `AccountPageHeader`-এ actions pass করার জন্য Outlet context বা state mechanism add করব
-- প্রতিটি page থেকে actions set করতে পারবে
-
-#### 4. Empty state cards — border-dashed → solid
-- Returns, Wishlist, Reviews empty state cards থেকে `border-dashed` remove করব
+1. `src/pages/Profile.tsx` (639 lines — সবচেয়ে বড়)
+2. `src/pages/profile/Security2FAPage.tsx`
+3. `src/hooks/usePageTitle.ts`
+4. `src/hooks/useDynamicTitle.ts`
+5. `src/hooks/useHomepageSections.ts`
+6. `src/hooks/useInfiniteScroll.ts`
+7. `src/hooks/useFailedLoginAttempts.ts`
+8. `src/hooks/useBlockedIps.ts`
+9. `src/hooks/useGeoBlockingRules.ts`
+10. `src/hooks/useIpRateLimits.ts`
+11. `src/hooks/useLoginVerification.ts`
+12. `src/test/example.test.ts`
 
 ### Technical Details
-- ~8 files modified
-- `CustomerAccountLayout.tsx` — Outlet context দিয়ে child pages থেকে header actions pass করার mechanism
-- `AccountPageHeader.tsx` — already `actions` prop support করে
-- No DB changes
-- Pattern: Admin panel-এর `AdminPageHeader` + `actions` pattern follow
 
+- শুধু delete, কোনো file edit নেই
+- কোনো route বা import break হবে না কারণ এগুলো কোথাও ব্যবহার হচ্ছে না
+- ~800+ lines dead code remove হবে
+- No DB changes
+
+&nbsp;
+
+abar review koro use kora hosse amon kisu delete koiro na 
