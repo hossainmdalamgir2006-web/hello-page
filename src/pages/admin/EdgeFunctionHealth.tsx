@@ -143,9 +143,9 @@ export default function EdgeFunctionHealth() {
 
   const getStatusIcon = (status: FunctionStatus["status"]) => {
     switch (status) {
-      case "ok": return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case "ok": return <CheckCircle2 className="h-4 w-4 text-success" />;
       case "error": return <XCircle className="h-4 w-4 text-destructive" />;
-      case "timeout": return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case "timeout": return <AlertTriangle className="h-4 w-4 text-warning" />;
       case "checking": return <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />;
       default: return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
@@ -153,9 +153,9 @@ export default function EdgeFunctionHealth() {
 
   const getStatusBadge = (status: FunctionStatus["status"]) => {
     switch (status) {
-      case "ok": return <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Online</Badge>;
+      case "ok": return <Badge className="border-success/20 bg-success/10 text-success">Online</Badge>;
       case "error": return <Badge variant="destructive">Error</Badge>;
-      case "timeout": return <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">Timeout</Badge>;
+      case "timeout": return <Badge className="border-warning/20 bg-warning/10 text-warning">Timeout</Badge>;
       case "checking": return <Badge variant="secondary">Checking...</Badge>;
       default: return <Badge variant="outline">Not Checked</Badge>;
     }
@@ -178,7 +178,7 @@ export default function EdgeFunctionHealth() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{counts.ok}</div>
+            <div className="text-2xl font-bold text-success">{counts.ok}</div>
             <div className="text-xs text-muted-foreground">Online</div>
           </CardContent>
         </Card>
@@ -190,7 +190,7 @@ export default function EdgeFunctionHealth() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-yellow-600">{counts.timeout}</div>
+            <div className="text-2xl font-bold text-warning">{counts.timeout}</div>
             <div className="text-xs text-muted-foreground">Timeouts</div>
           </CardContent>
         </Card>
