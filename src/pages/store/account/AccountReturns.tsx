@@ -4,6 +4,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, RotateCcw, Plus } from "lucide-react";
 import { DelayedLoader } from "@/components/ui/DelayedLoader";
+import { useAccountHeaderActions } from "@/layouts/CustomerAccountLayout";
 import { GenericListSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
