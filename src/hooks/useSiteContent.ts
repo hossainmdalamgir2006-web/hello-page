@@ -46,6 +46,19 @@ async function fetchAllOverrides(): Promise<SiteContentOverride[]> {
   return (data as any[]) || [];
 }
 
+function mergeContent(defaults: Record<string, any>, overrides: Record<string, any>): Record<string, any> {
+  const merged = { ...defaults };
+  for (const key of Object.keys(overrides)) {
+    const val = overrides[key];
+    // Treat empty arrays as "not set" — fall back to default
+    if (Array.isArray(val) && val.length === 0 && Array.isArray(defaults[key]) && defaults[key].length > 0) {
+      continue;
+    }
+    merged[key] = val;
+  }
+  return merged;
+}
+
 function mergeSection(def: SectionDef, override: SiteContentOverride | null): MergedSection {
   return {
     def,
