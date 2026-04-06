@@ -52,6 +52,13 @@ export function StoreHeader() {
   const storeName = headerCont.store_name || "";
   const storeLogo = headerCont.store_logo || null;
 
+  // Announcement Bar from Content Manager (homepage > announcement section)
+  const announcementSection = getAnnouncementSection("announcement");
+  const announcementEnabled = announcementSection?.isEnabled ?? false;
+  const announcementText = announcementSection?.title || "";
+  const announcementLink = announcementSection?.content?.link || "";
+  const announcementLinkText = announcementSection?.content?.link_text || "";
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
