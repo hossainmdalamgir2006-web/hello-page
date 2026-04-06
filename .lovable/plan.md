@@ -1,18 +1,24 @@
 
 
-## Footer Settings — Default Link Values দেখানো
+## Social Links — Default Icon দেখানো ও Pinterest যোগ
 
 ### সমস্যা
-Footer Settings editor-এ Social Links, Shop Links, Help Links empty দেখাচ্ছে কারণ database-এ empty array `[]` save আছে, যা registry defaults-কে override করে ফেলছে।
+Social Links-এ custom logo upload না থাকলে generic image upload icon দেখায়। Screenshot অনুযায়ী label-based default Lucide icon (Facebook, Pinterest, Twitter, YouTube) দেখাতে হবে।
 
 ### পরিবর্তন
 
-**File: `src/hooks/useSiteContent.ts`** — `mergeSection` function update
-- Content merge logic-এ array fields-এর জন্য check যোগ: যদি override-এ empty array থাকে এবং default-এ populated array থাকে, তাহলে default ব্যবহার করব
-- এতে editor-এ default values pre-populated দেখাবে
+#### 1. `src/components/admin/content-editors/LinkListEditor.tsx`
+- Social type-এর জন্য label-based default icon map যোগ: `{ facebook: Facebook, instagram: Instagram, twitter: Twitter, youtube: Youtube, pinterest: Pin }` (Lucide icons)
+- যখন `item.logo` empty এবং label match করে → default Lucide icon দেখাবে (upload button-এর বদলে)
+- Icon-এর উপর click করলে upload trigger হবে (icon replace করতে পারবে)
+- Logo uploaded থাকলে আগের মতোই uploaded image দেখাবে
+
+#### 2. `src/config/siteContentRegistry.ts`
+- Default social_links-এ `Instagram` → `Pinterest` replace (screenshot অনুযায়ী)
+- Pinterest URL: `https://pinterest.com/`
 
 ### Technical Details
-- 1 file modified
+- 2 files modified
 - No DB changes
-- Fix applies globally — যেকোনো section-এর empty array override default-এ fallback করবে
+- Lucide icons import: `Facebook, Instagram, Twitter, Youtube` থেকে `Facebook, Twitter, Youtube` + নতুন Pinterest icon (`Pin` from lucide-react) যোগ
 
