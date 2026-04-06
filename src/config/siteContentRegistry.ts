@@ -14,7 +14,7 @@ export interface SectionDef {
   defaultBadge?: string;
   defaultContent?: Record<string, any>;
   editableFields: ("title" | "subtitle" | "badge" | "image" | "content")[];
-  contentSchema?: Record<string, "text" | "textarea" | "number" | "boolean" | "json" | "faq_list" | "card_list" | "section_list" | "step_list" | "string_list" | "size_table" | "shipping_rate_list" | "courier_list" | "link_list">;
+  contentSchema?: Record<string, "text" | "textarea" | "number" | "boolean" | "json" | "faq_list" | "card_list" | "section_list" | "step_list" | "string_list" | "size_table" | "shipping_rate_list" | "courier_list" | "link_list" | "image_upload">;
 }
 
 export interface PageDef {
