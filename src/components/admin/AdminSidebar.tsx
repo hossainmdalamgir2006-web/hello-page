@@ -9,10 +9,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSiteTitle } from "@/components/DynamicTitleProvider";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
