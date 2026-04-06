@@ -52,7 +52,7 @@ export function LoginSignupView({
             </div>
           )}
           <CardTitle className="text-2xl font-bold">{t('store.welcome')}</CardTitle>
-          <CardDescription>{t('store.signInOrCreate')}</CardDescription>
+          <CardDescription>Sign In Or Sign Up</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
