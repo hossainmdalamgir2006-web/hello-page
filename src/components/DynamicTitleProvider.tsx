@@ -38,6 +38,18 @@ export function DynamicTitleProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORE_NAME_CACHE_KEY, name);
       updateMetaTags(name);
     }
+
+    // Dynamic favicon from Header Settings
+    const favicon = headerCont.store_favicon;
+    if (favicon) {
+      let link: HTMLLinkElement | null = document.querySelector('link[rel="icon"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = favicon;
+    }
   }, [headerContent]);
 
   const updateMetaTags = (name: string) => {
