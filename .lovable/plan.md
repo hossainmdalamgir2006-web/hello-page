@@ -1,40 +1,36 @@
 
 
-## Favicon Dynamic Update Fix ও Badge Hide
+## MyAccount Panel — Page Header ও Mobile Responsive Fix
 
 ### সমস্যা
-1. `index.html`-এ কোনো favicon `<link>` tag নেই — তাই Lovable-এর default `favicon.ico` দেখাচ্ছে
-2. `DynamicTitleProvider.tsx`-এ favicon dynamically update হচ্ছে কিনা verify করা দরকার
+- Admin panel-এ প্রতিটি পেজে `AdminPageHeader` (glassmorphic, gradient, title+description) দেখায়
+- Customer account (myaccount) panel-এ কোনো page header নেই — content সরাসরি শুরু হয়
+- Mobile-এ content area-র padding/spacing ঠিকমতো কাজ করছে না
 
 ### পরিবর্তন
 
-#### 1. `public/favicon.ico` — Delete
-- Lovable-এর default favicon file মুছে দেব
+#### 1. `src/components/account/AccountPageHeader.tsx` — নতুন component তৈরি
+- `AdminPageHeader`-এর মতো glassmorphic page header, কিন্তু customer account-এর জন্য
+- Props: `title`, `description`, `actions`
+- Styling: `rounded-xl`, gradient background, decorative blur elements
+- Mobile responsive: smaller text sizes on sm screens
 
-#### 2. `index.html` — Favicon link tag add
-- একটা generic transparent/empty favicon link add করব যেন browser default Lovable icon না দেখায়:
-  ```html
-  <link rel="icon" href="data:," type="image/x-icon">
-  ```
-- Header Settings-এ favicon upload করলে `DynamicTitleProvider` dynamically এটা replace করবে
+#### 2. `src/layouts/CustomerAccountLayout.tsx` — Page header render
+- `<main>` section-এ `AccountPageHeader` add করব `pageTitle` ও `pageDescription` দিয়ে
+- Content area padding adjust: mobile-এ `p-3`, tablet-এ `p-4`, desktop-এ `p-6` (existing — verify)
 
-#### 3. `src/components/DynamicTitleProvider.tsx` — Favicon update logic verify/fix
-- Header content থেকে `store_favicon` পড়ে dynamically `<link rel="icon">` update করা হচ্ছে কিনা check করব
-- না থাকলে add করব:
-  ```tsx
-  const favicon = headerCont.store_favicon;
-  if (favicon) {
-    let link = document.querySelector('link[rel="icon"]');
-    if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
-    link.href = favicon;
-  }
-  ```
+#### 3. `src/pages/store/account/AccountSettings.tsx` — Mobile responsive improvements
+- `lg:grid-cols-2` grid mobile-এ single column হবে (already আছে)
+- Cards-এর padding mobile-এ `p-4` করব (currently `p-5`)
+- Form fields mobile-এ full width stack করবে
 
-#### 4. Badge — Information
-- নিজের Vercel/domain-এ নিজে build করে deploy করলে badge থাকবে না
-- Lovable-এর published URL-এ badge hide করতে Pro plan প্রয়োজন
+#### 4. অন্যান্য myaccount পেজগুলোতে — Consistency
+- যেসব পেজে নিজস্ব title/header আছে সেগুলো remove করব (layout-এর header handle করবে)
+- `pageTitles` map-এ `/myaccount/personal-info` title "Settings" → "Personal Info" fix
 
 ### Technical Details
-- 3 files: `index.html`, `DynamicTitleProvider.tsx`, delete `public/favicon.ico`
+- 1 new file: `AccountPageHeader.tsx`
+- ~3-4 files modified
 - No DB changes
+- `AdminPageHeader` pattern follow করা হবে কিন্তু আলাদা component (customer vs admin separation)
 
