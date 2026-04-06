@@ -27,7 +27,7 @@ const NotFound = () => {
         </div>
         <button onClick={() => window.history.back()} className="mt-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="h-4 w-4" />Go Back</button>
         <div className="mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground mb-4">Or check out these links:</p>
+          <p className="text-sm text-muted-foreground mb-4">Or visit:</p>
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <Link to="/faq" className="text-primary hover:underline">FAQ</Link>
             <span className="text-border">•</span>
