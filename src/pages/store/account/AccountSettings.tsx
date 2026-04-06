@@ -267,7 +267,7 @@ export default function AccountSettings() {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Change Email Card */}
-            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-4 sm:p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-accent/10 p-2"><Mail className="h-5 w-5 text-accent" /></div>
                 <div>
