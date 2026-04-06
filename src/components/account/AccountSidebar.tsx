@@ -9,7 +9,7 @@ import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
-import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -48,9 +48,10 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const { getSettingValue } = useStoreSettings();
-  const storeLogo = getSettingValue('STORE_LOGO');
-  const storeName = getSettingValue('STORE_NAME') || 'Ekta';
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
+  const storeLogo = headerCont.store_logo || null;
+  const storeName = headerCont.store_name || '';
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     overview: true,
