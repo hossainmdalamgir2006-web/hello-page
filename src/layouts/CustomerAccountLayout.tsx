@@ -118,8 +118,8 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
         />
         <main className="p-3 sm:p-4 md:p-6 animate-fade-in">
           <Suspense fallback={null}>
-            <AccountPageHeader title={pageInfo.title} description={pageInfo.description} />
-            {children || <Outlet />}
+            <AccountPageHeader title={pageInfo.title} description={pageInfo.description} actions={headerActions} />
+            {children || <Outlet context={{ setHeaderActions } satisfies AccountOutletContext} />}
           </Suspense>
         </main>
       </div>
