@@ -40,6 +40,7 @@ export function StoreHeader() {
   const [searchFocused, setSearchFocused] = useState(false);
   const { data: settings } = useStoreSettingsCache();
   const { data: headerContent } = usePageContent("header");
+  const { section: getAnnouncementSection } = useSiteContent("homepage");
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const { itemCount: wishlistCount } = useWishlist();
   const { user, role, signOut } = useAuth();
