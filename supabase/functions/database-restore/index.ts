@@ -5,78 +5,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 }
 
-// Tables in dependency order (parents first, children later)
 const RESTORABLE_TABLES = [
-  'categories',
-  'brands',
-  'products',
-  'product_variants',
-  'product_inventory',
-  'product_attribute_definitions',
-  'product_group_items',
-  'product_reviews',
-  'related_products',
-  'inventory_history',
-  'customers',
-  'customer_notes',
-  'customer_communication_log',
-  'coupons',
-  'coupon_usage',
-  'orders',
-  'order_items',
-  'order_tracking',
-  'order_notes',
-  'order_activity_log',
-  'contact_messages',
-  'contact_message_replies',
-  'live_chat_conversations',
-  'live_chat_messages',
-  'abandoned_carts',
-  'analytics_events',
-  'daily_stats',
-  'profiles',
-  'user_roles',
-  'user_sessions',
-  'user_addresses',
-  'login_activity',
-  'failed_login_attempts',
-  'blocked_login_attempts',
-  'account_lockouts',
-  'blocked_ips',
-  'geo_blocking_rules',
-  'ip_rate_limits',
-  'ip_rate_limit_settings',
-  'notifications',
-  'email_templates',
-  'enabled_payment_methods',
-  'payment_methods',
-  'pathao_settings',
-  'steadfast_settings',
-  'store_settings',
-  'page_contents',
-  'auto_reply_settings',
-  'auto_discount_rules',
-  'canned_responses',
-  'conversation_tags',
-  'shipping_zones',
-  'shipping_rates',
-  'shipments',
-  'homepage_sections',
-  'audit_logs',
-  'csat_ratings',
-  'support_tickets',
-  'ticket_replies',
-  'quick_replies',
-  'admin_presence',
-  'wishlists',
-  'security_settings',
-  'password_history',
-  'recovery_codes',
-  'trusted_devices',
-  'two_factor_auth',
-  'site_theme_settings',
-  'return_requests',
-  'saved_payment_methods',
+  'categories', 'brands', 'products', 'product_variants', 'product_inventory',
+  'product_attribute_definitions', 'product_group_items', 'product_reviews',
+  'related_products', 'inventory_history', 'customers', 'customer_notes',
+  'customer_communication_log', 'coupons', 'coupon_usage', 'orders', 'order_items',
+  'order_tracking', 'order_notes', 'order_activity_log', 'contact_messages',
+  'contact_message_replies', 'live_chat_conversations', 'live_chat_messages',
+  'abandoned_carts', 'analytics_events', 'daily_stats', 'profiles', 'user_roles',
+  'user_sessions', 'user_addresses', 'login_activity', 'failed_login_attempts',
+  'blocked_login_attempts', 'account_lockouts', 'blocked_ips', 'geo_blocking_rules',
+  'ip_rate_limits', 'ip_rate_limit_settings', 'notifications', 'email_templates',
+  'enabled_payment_methods', 'payment_methods', 'pathao_settings', 'steadfast_settings',
+  'store_settings', 'page_contents', 'auto_reply_settings', 'auto_discount_rules',
+  'canned_responses', 'conversation_tags', 'shipping_zones', 'shipping_rates',
+  'shipments', 'homepage_sections', 'audit_logs', 'csat_ratings', 'support_tickets',
+  'ticket_replies', 'quick_replies', 'admin_presence', 'wishlists', 'security_settings',
+  'password_history', 'recovery_codes', 'trusted_devices', 'two_factor_auth',
+  'site_theme_settings', 'return_requests', 'saved_payment_methods',
 ]
 
 interface RestoreRequest {
@@ -118,13 +64,14 @@ Deno.serve(async (req) => {
         !supabaseAnonKey && 'SUPABASE_ANON_KEY'
       ].filter(Boolean).join(', ')
       return new Response(
-        JSON.stringify({ error: `Missing required secrets: ${missing}. Configure them in Edge Function settings.` }),
+        JSON.stringify({ error: `Missing required secrets: ${missing}` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
     
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
     
+    // --- Auth: token-based validation (no getUser session dependency) ---
     const authHeader = req.headers.get('Authorization')
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
@@ -133,32 +80,31 @@ Deno.serve(async (req) => {
       )
     }
 
-    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+    const token = authHeader.replace('Bearer ', '')
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } }
     })
 
-    const { data: userData, error: userError } = await supabaseUser.auth.getUser()
-    
-    if (userError || !userData?.user) {
-      console.error('Auth error:', userError)
+    const { data: claimsData, error: claimsError } = await authClient.auth.getUser(token)
+    if (claimsError || !claimsData?.user?.id) {
+      console.error('Auth validation failed:', claimsError?.message)
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    const userId = userData.user.id
+    const userId = claimsData.user.id
 
     const { data: isAdmin } = await supabaseAdmin.rpc('has_admin_role', { user_uuid: userId })
 
     if (!isAdmin) {
       return new Response(
-        JSON.stringify({ error: 'Admin access required. Your user does not have admin or manager role.' }),
+        JSON.stringify({ error: 'Admin access required.' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Parse request
     const { backup_data, format, tables, mode }: RestoreRequest = await req.json()
     
     if (!backup_data) {
@@ -170,7 +116,6 @@ Deno.serve(async (req) => {
 
     console.log(`Starting restore in ${mode} mode for format ${format}`)
 
-    // Parse backup data
     let parsedData: Record<string, unknown[]>
     
     if (format === 'json') {
@@ -183,13 +128,11 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Check which tables actually exist in the database
     const existingTables = await getExistingTables(supabaseAdmin)
     console.log(`Found ${existingTables.size} existing tables in database`)
 
     const tablesToRestore = tables || Object.keys(parsedData).filter(t => RESTORABLE_TABLES.includes(t))
     
-    // Identify missing tables
     const missingTables: string[] = []
     for (const table of tablesToRestore) {
       if (parsedData[table] && !existingTables.has(table)) {
@@ -201,13 +144,12 @@ Deno.serve(async (req) => {
       console.warn(`Missing tables: ${missingTables.join(', ')}`)
     }
 
-    // If ALL requested tables are missing, return error with guidance
     const availableTables = tablesToRestore.filter(t => parsedData[t] && existingTables.has(t))
     if (availableTables.length === 0 && missingTables.length > 0) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: `None of the ${missingTables.length} tables exist in the database. Please run the schema SQL first to create the tables before restoring data.`,
+          error: `None of the ${missingTables.length} tables exist. Run the schema SQL first.`,
           missing_tables: missingTables,
           total_restored: 0,
           tables_restored: 0,
@@ -220,29 +162,22 @@ Deno.serve(async (req) => {
     const results: Record<string, { success: boolean; count: number; error?: string }> = {}
     const failedDeletes = new Set<string>()
 
-    // Mark missing tables in results
     for (const table of missingTables) {
       results[table] = { success: false, count: 0, error: 'Table does not exist. Run schema SQL first.' }
     }
 
-    // Step 1: In replace mode, delete all tables in REVERSE order (children first)
     if (mode === 'replace') {
       const reverseOrder = [...RESTORABLE_TABLES].reverse()
       for (const table of reverseOrder) {
-        if (!availableTables.includes(table) || !parsedData[table]) {
-          continue
-        }
+        if (!availableTables.includes(table) || !parsedData[table]) continue
         try {
           const { error: deleteError } = await supabaseAdmin
             .from(table)
             .delete()
             .neq('id', '00000000-0000-0000-0000-000000000000')
-          
           if (deleteError) {
             console.warn(`Error clearing ${table}:`, deleteError.message)
             failedDeletes.add(table)
-          } else {
-            console.log(`Cleared table ${table}`)
           }
         } catch (e) {
           console.warn(`Exception clearing ${table}:`, e)
@@ -251,11 +186,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Step 2: Insert data in FORWARD order (parents first) — only for existing tables
     for (const table of RESTORABLE_TABLES) {
-      if (!availableTables.includes(table) || !parsedData[table]) {
-        continue
-      }
+      if (!availableTables.includes(table) || !parsedData[table]) continue
 
       if (mode === 'replace' && failedDeletes.has(table)) {
         results[table] = { success: false, count: 0, error: 'Skipped: failed to clear existing data' }
@@ -263,7 +195,6 @@ Deno.serve(async (req) => {
       }
 
       const tableData = parsedData[table] as Record<string, unknown>[]
-      
       if (!tableData || tableData.length === 0) {
         results[table] = { success: true, count: 0 }
         continue
@@ -275,28 +206,23 @@ Deno.serve(async (req) => {
         
         for (let i = 0; i < tableData.length; i += batchSize) {
           const batch = tableData.slice(i, i + batchSize)
-
           const { error: insertError } = await supabaseAdmin
             .from(table)
             .upsert(batch, { onConflict: 'id', ignoreDuplicates: mode === 'merge' })
-          
           if (insertError) {
             console.error(`Error inserting into ${table}:`, insertError.message)
             results[table] = { success: false, count: insertedCount, error: insertError.message }
             break
           }
-          
           insertedCount += batch.length
         }
 
         if (!results[table]) {
           results[table] = { success: true, count: insertedCount }
         }
-        
         console.log(`Restored ${insertedCount} rows to ${table}`)
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : 'Unknown error'
-        console.error(`Exception restoring ${table}:`, e)
         results[table] = { success: false, count: 0, error: errorMessage }
       }
     }
