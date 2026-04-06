@@ -18,5 +18,10 @@ Disallow: /manager/
 Disallow: /support/
 Disallow: /myaccount/
 Disallow: /login
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-confirmation
+Disallow: /order-tracking/
+Disallow: /payment/
 
-Sitemap: https://say-hi-alif.lovable.app/sitemap.xml
+Sitemap: https://hello-there-splash.lovable.app/sitemap.xml

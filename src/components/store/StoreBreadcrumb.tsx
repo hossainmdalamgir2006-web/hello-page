@@ -38,28 +38,46 @@ export function StoreBreadcrumb() {
     return { path, label, isLast };
   });
 
+  const baseUrl = window.location.origin;
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
+      ...crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 2,
+        name: c.label,
+        ...(c.isLast ? {} : { item: `${baseUrl}${c.path}` }),
+      })),
+    ],
+  };
+
   return (
-    <nav aria-label="Breadcrumb" className="container mx-auto px-4 py-3">
-      <ol className="flex items-center gap-1.5 text-sm text-muted-foreground flex-wrap">
-        <li>
-          <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1">
-            <Home className="h-3.5 w-3.5" />
-            <span className="sr-only">Home</span>
-          </Link>
-        </li>
-        {crumbs.map(({ path, label, isLast }) => (
-          <li key={path} className="flex items-center gap-1.5">
-            <ChevronRight className="h-3 w-3 flex-shrink-0" />
-            {isLast ? (
-              <span className="text-foreground font-medium truncate max-w-[200px]">{label}</span>
-            ) : (
-              <Link to={path} className="hover:text-foreground transition-colors truncate max-w-[150px]">
-                {label}
-              </Link>
-            )}
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <nav aria-label="Breadcrumb" className="container mx-auto px-4 py-3">
+        <ol className="flex items-center gap-1.5 text-sm text-muted-foreground flex-wrap">
+          <li>
+            <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1">
+              <Home className="h-3.5 w-3.5" />
+              <span className="sr-only">Home</span>
+            </Link>
           </li>
-        ))}
-      </ol>
-    </nav>
+          {crumbs.map(({ path, label, isLast }) => (
+            <li key={path} className="flex items-center gap-1.5">
+              <ChevronRight className="h-3 w-3 flex-shrink-0" />
+              {isLast ? (
+                <span className="text-foreground font-medium truncate max-w-[200px]">{label}</span>
+              ) : (
+                <Link to={path} className="hover:text-foreground transition-colors truncate max-w-[150px]">
+                  {label}
+                </Link>
+              )}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </>
   );
 }
