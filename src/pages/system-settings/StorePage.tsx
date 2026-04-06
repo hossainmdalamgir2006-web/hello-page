@@ -33,8 +33,11 @@ const sidebarItems: SidebarItem[] = [
 export default function StorePage() {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const { getSectionConfig, updateSection, toggleSection, loading } = useSiteContent();
+  const { toast } = useToast();
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Record<string, any>>({});
+  const [uploading, setUploading] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const selected = sidebarItems[selectedIdx];
 
