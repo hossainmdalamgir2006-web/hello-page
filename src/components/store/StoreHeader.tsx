@@ -71,7 +71,7 @@ export function StoreHeader() {
       {/* Top Banner */}
       {headerCont.banner_enabled !== false && !bannerDismissed && (
         <div className="bg-gradient-to-r from-store-primary via-store-secondary to-store-accent text-store-primary-foreground py-2 text-center text-sm font-medium relative">
-          <span>{headerCont.banner_text || headerCont.announcement_text || "🔥 Free Shipping on Orders Over ৳2,000 | Use Code: EKTA20 for 20% Off"}</span>
+          <span>{headerCont.banner_text || ""}</span>
           <button
             onClick={() => setBannerDismissed(true)}
             className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"

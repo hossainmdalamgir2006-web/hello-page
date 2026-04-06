@@ -528,8 +528,6 @@ export const siteSettingsRegistry: PageDef[] = [
         },
         defaultContent: {
           store_phone: "+880 1700-000000",
-          announcement_text: "🔥 Up to 50% OFF on selected items!",
-          announcement_link: "/products?filter=sale",
         },
       },
     ],
