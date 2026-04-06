@@ -45,12 +45,13 @@ interface MenuGroup {
 
 export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobile }: AdminSidebarProps) {
   const { t } = useLanguage();
-  const { storeName } = useSiteTitle();
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
+  const storeName = headerCont.store_name || "";
+  const storeLogo = headerCont.store_logo || null;
   const { signOut, role } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { getSettingValue } = useStoreSettings();
-  const storeLogo = getSettingValue('STORE_LOGO');
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     content: true,
