@@ -1,37 +1,36 @@
-## Footer Registry আপডেট — Duplicate Remove ও Default Values যোগ
+
+
+## Footer Registry আপডেট — Newsletter Remove, Link Values Fix, Social Logo Upload
 
 ### সমস্যা
-
-1. Footer registry-তে `facebook_url`, `instagram_url`, `twitter_url`, `youtube_url` আলাদা ফিল্ড আছে, আবার `social_links` নামে একটা `link_list`-ও আছে — duplicate
-2. `shop_links` ও `help_links`-এ কোনো default value নেই
-3. `newsletter_title`, `newsletter_button`, `copyright_text`, `store_name` footer content-এ ব্যবহৃত হয় কিন্তু registry-তে নেই
+1. `newsletter_title` ও `newsletter_button` ফিল্ড footer registry-তে আছে — remove করতে হবে
+2. `LinkListEditor` `href` ফিল্ড ব্যবহার করে, কিন্তু registry defaults ও `StoreFooter.tsx` `url` ফিল্ড ব্যবহার করে — mismatch
+3. Social Links-এ logo/icon upload সাপোর্ট নেই
 
 ### পরিবর্তন
 
-**File: `src/config/siteContentRegistry.ts**` — Footer section update
+#### 1. `src/config/siteContentRegistry.ts`
+- **Remove**: `newsletter_title` ও `newsletter_button` — contentSchema ও defaultContent উভয় থেকে
+- **Fix link field names**: সব default link values-এ `url` → `href` পরিবর্তন (কারণ LinkListEditor `href` ব্যবহার করে)
+- **Social links type change**: `social_links: "link_list"` → `social_links: "social_link_list"` (নতুন type — logo upload সহ)
 
-**contentSchema থেকে remove:**
+#### 2. `src/components/store/StoreFooter.tsx`
+- Social links reading: `url` → `href` (LinkListEditor-এর format match করতে)
+- Shop/help links reading: `link.url` → `link.href` 
+- Newsletter references remove (newsletter_title, newsletter_button usage)
+- `NewsletterForm` component remove
+- Social icon rendering: custom logo image থাকলে সেটা দেখাবে, না থাকলে default Lucide icon
 
-- ``  individual URL fields  remove koro— duplicate, কারণ `social_links: "link_list"`  আছে এবং `StoreFooter.tsx` সেগুলোই ব্যবহার করে
+#### 3. `src/components/admin/content-editors/LinkListEditor.tsx`
+- নতুন `type: "social"` সাপোর্ট যোগ — label + href + logo (image upload button সহ)
+- Logo upload: `supabase.storage.from("store-assets").upload(...)` ব্যবহার করবে
+- Preview: ছোট thumbnail দেখাবে uploaded logo-র
 
-**contentSchema-তে যোগ:**
-
-- `store_name: "text"` — footer-এ store name দেখায়
-- `newsletter_title: "text"`
-- `newsletter_button: "text"`
-- `copyright_text: "text"`
-
-**defaultContent-এ যোগ:**
-
-- `store_name: "Demo Clothing"`
-- `shop_links` — default links array: All Products, New Arrivals, Sale
-- `help_links` — default links array: Contact Us, Track Order, FAQs, Shipping Info, Returns & Exchange, Size Guide
-- `newsletter_title: "Join the {storeName} Family"`
-- `newsletter_button: "Subscribe"`
-- `copyright_text: "All rights reserved."`
+#### 4. `src/pages/system-settings/StorePage.tsx`
+- `social_link_list` schema type handle করব — `LinkListEditor` কে `type="social"` দিয়ে render
 
 ### Technical Details
+- 4 files modified
+- No DB changes (store-assets bucket already exists)
+- LinkListEditor-এ নতুন "social" type যোগ হবে — label, URL, ও logo upload সহ
 
-- 1 file modified: `siteContentRegistry.ts`
-- No DB changes
-- `StoreFooter.tsx` already reads these fields from content — defaults will now show properly in editor
