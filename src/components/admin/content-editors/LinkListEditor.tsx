@@ -2,11 +2,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, ImageIcon, Loader2 } from "lucide-react";
+import { Plus, Trash2, ImageIcon, Loader2, Facebook, Twitter, Youtube, Instagram, Pin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface LinkItem { label?: string; href?: string; name?: string; logo?: string; }
+
+const socialIconMap: Record<string, React.ComponentType<any>> = {
+  facebook: Facebook,
+  instagram: Instagram,
+  twitter: Twitter,
+  youtube: Youtube,
+  pinterest: Pin,
+};
 
 interface Props {
   label: string;
@@ -89,18 +97,31 @@ export function LinkListEditor({ label, value, onChange, type = "link" }: Props)
                     ×
                   </button>
                 </div>
-              ) : (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 shrink-0"
-                  disabled={uploading === i}
-                  onClick={() => triggerFileInput(i)}
-                >
-                  {uploading === i ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImageIcon className="h-3.5 w-3.5" />}
-                </Button>
-              )}
+              ) : (() => {
+                const DefaultIcon = socialIconMap[item.label?.toLowerCase() || ""];
+                return DefaultIcon ? (
+                  <button
+                    type="button"
+                    className="h-8 w-8 shrink-0 rounded border bg-muted flex items-center justify-center hover:bg-accent transition-colors"
+                    title="Click to upload custom logo"
+                    disabled={uploading === i}
+                    onClick={() => triggerFileInput(i)}
+                  >
+                    {uploading === i ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <DefaultIcon className="h-4 w-4" />}
+                  </button>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 shrink-0"
+                    disabled={uploading === i}
+                    onClick={() => triggerFileInput(i)}
+                  >
+                    {uploading === i ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImageIcon className="h-3.5 w-3.5" />}
+                  </Button>
+                );
+              })()}
               <Input value={item.label || ""} onChange={(e) => update(i, { label: e.target.value })} placeholder="Label" className="text-sm" />
               <Input value={item.href || ""} onChange={(e) => update(i, { href: e.target.value })} placeholder="URL" className="text-sm" />
             </>

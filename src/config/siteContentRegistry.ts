@@ -572,7 +572,7 @@ export const siteSettingsRegistry: PageDef[] = [
           store_postal_code: "1212",
           social_links: [
             { label: "Facebook", href: "https://facebook.com/", logo: "" },
-            { label: "Instagram", href: "https://instagram.com/", logo: "" },
+            { label: "Pinterest", href: "https://pinterest.com/", logo: "" },
             { label: "Twitter", href: "https://twitter.com/", logo: "" },
             { label: "YouTube", href: "https://youtube.com/", logo: "" },
           ],
