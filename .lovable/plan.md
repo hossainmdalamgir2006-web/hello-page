@@ -1,46 +1,63 @@
 
 
-## Edge Function Health Check — Error Fix
+## Security Vulnerability Fix Plan
 
 ### সমস্যা
+Security scan-এ **15টি vulnerability** পাওয়া গেছে। মূল কারণ — অনেক table-এর RLS policy শুধু `auth.uid() IS NOT NULL` বা `true` check করে, admin role check করে না।
 
-Network logs থেকে দেখা যাচ্ছে সব `OPTIONS` request "Failed to fetch" error দিচ্ছে। কারণ:
-- Browser থেকে custom headers (`apikey`, `Authorization`) সহ `OPTIONS` request পাঠালে CORS preflight fail করে
-- Supabase edge functions browser-initiated OPTIONS requests properly handle করে না cross-origin থেকে
+### সমাধান — Database Migration
 
-### সমাধান
+একটি single migration-এ সব vulnerable RLS policy fix করা হবে:
 
-`fetch()` + `OPTIONS` method বাদ দিয়ে `supabase.functions.invoke()` ব্যবহার করব। এটা internally CORS handle করে। যেকোনো response (400, 500 সহ) মানে function deployed ও online — শুধু network failure/timeout মানে offline।
+#### 1. `store_settings` — SELECT policy fix
+- বর্তমান: `USING (true)` (সবাই পড়তে পারে)
+- নতুন: সাধারণ settings (store name, currency etc.) সবাই পড়তে পারবে, কিন্তু API keys/secrets শুধু admin
 
-### পরিবর্তন
+#### 2. `live_chat_conversations` — SELECT/UPDATE policy fix
+- SELECT: Customer শুধু নিজের conversation দেখবে (`user_id = auth.uid()`)
+- UPDATE: Customer শুধু নিজের conversation update করতে পারবে
+- Admin/staff সব দেখতে পারবে
 
-**File: `src/pages/admin/EdgeFunctionHealth.tsx`** — `checkFunction` method update:
+#### 3. `live_chat_messages` — SELECT/UPDATE policy fix
+- SELECT: শুধু নিজের conversation-এর messages
+- UPDATE: শুধু নিজের পাঠানো messages
 
-```ts
-const checkFunction = async (name: string) => {
-  const start = Date.now();
-  try {
-    const { data, error } = await supabase.functions.invoke(name, {
-      body: { action: "health_check" },
-    });
-    const responseTime = Date.now() - start;
-    
-    // Any response (even error) = function is deployed & reachable
-    return { status: "ok", responseTime, error: undefined };
-  } catch (err) {
-    const responseTime = Date.now() - start;
-    if (responseTime >= 7500) {
-      return { status: "timeout", responseTime, error: "Timeout (>8s)" };
-    }
-    return { status: "error", responseTime, error: "Failed to reach" };
-  }
-};
-```
+#### 4. `abandoned_carts` — SELECT policy fix
+- `user_id IS NULL` clause remove
+- শুধু নিজের carts দেখতে পারবে
 
-Key point: `supabase.functions.invoke()` returns `{ error }` for 400/500 responses but does NOT throw — so if we reach the `catch`, it's a real network failure. The `error` object from invoke just means the function returned a non-2xx status, which still confirms it's online.
+#### 5. `database-backups` storage bucket — policy fix
+- SELECT/INSERT/DELETE: শুধু admin (`has_admin_role(auth.uid())`)
+
+#### 6. `page_contents` — INSERT/UPDATE/DELETE policy fix
+- Write operations: শুধু admin
+
+#### 7. `brands` — INSERT/UPDATE/DELETE policy fix
+- Write operations: শুধু admin
+
+#### 8. `activated_licenses` — full policy fix
+- SELECT: শুধু admin
+- INSERT/UPDATE: শুধু admin
+
+#### 9. `customer_communication_log` — SELECT policy fix
+- শুধু admin পড়তে পারবে
+
+#### 10. `chat-attachments` storage — policy fix
+- File path-based access control
+
+#### 11. `store-assets` storage — write policy fix
+- Upload/update/delete: শুধু admin
+
+#### 12. Leaked Password Protection
+- Enable HIBP check via auth settings
+
+### Files Changed
+- 1 database migration (RLS policy updates)
+- Auth config update (HIBP)
 
 ### Technical Details
-- 1 file modified: `src/pages/admin/EdgeFunctionHealth.tsx`
-- `AbortController` timeout removed (SDK handles timeout)
-- No DB changes
+- ~15 DROP POLICY + CREATE POLICY statements
+- `has_admin_role()` function already exists, reuse করা হবে
+- No frontend code changes needed
+- No table structure changes
 
