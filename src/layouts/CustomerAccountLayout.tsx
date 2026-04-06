@@ -104,6 +104,7 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
         <main className="p-3 sm:p-4 md:p-6">
           <Suspense fallback={null}>
             <div className="mx-auto max-w-6xl animate-fade-in">
+              <AccountPageHeader title={pageInfo.title} description={pageInfo.description} />
               {children || <Outlet />}
             </div>
           </Suspense>
