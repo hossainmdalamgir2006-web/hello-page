@@ -1,96 +1,33 @@
-import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, Loader2, ShieldCheck, Truck, Headphones, ArrowUp, CreditCard } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { supabase } from "@/integrations/supabase/client";
 import { usePageContent } from "@/hooks/useSiteContent";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
-import { toast } from "sonner";
-
-const RATE_LIMIT_MS = 30_000;
-
-function NewsletterForm({ buttonText }: { buttonText: string }) {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const lastSubmitRef = useRef(0);
-
-  const handleSubscribe = async () => {
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-    const now = Date.now();
-    if (now - lastSubmitRef.current < RATE_LIMIT_MS) {
-      toast.info("Please wait before subscribing again.");
-      return;
-    }
-    setLoading(true);
-    lastSubmitRef.current = now;
-    try {
-      const { error } = await supabase
-        .from("newsletter_subscribers" as any)
-        .insert({ email: email.trim().toLowerCase() } as any);
-      if (error) {
-        if (error.code === "23505") toast.info("You're already subscribed!");
-        else throw error;
-      } else {
-        toast.success("Subscribed successfully! 🎉");
-      }
-      setEmail("");
-    } catch {
-      toast.error("Failed to subscribe. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-      <Input
-        type="email"
-        placeholder="Enter your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSubscribe()}
-        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus-visible:ring-store-accent"
-      />
-      <Button
-        className="bg-store-accent text-store-accent-foreground hover:bg-store-accent/90 font-semibold px-8"
-        onClick={handleSubscribe}
-        disabled={loading}
-      >
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : buttonText}
-      </Button>
-    </div>
-  );
-}
 
 const defaultShopLinks = [
-  { label: "All Products", url: "/products" },
-  { label: "New Arrivals", url: "/products?filter=new" },
-  { label: "Sale", url: "/products?filter=sale" },
+  { label: "All Products", href: "/products" },
+  { label: "New Arrivals", href: "/products?filter=new" },
+  { label: "Sale", href: "/products?filter=sale" },
 ];
 
 const defaultHelpLinks = [
-  { label: "Contact Us", url: "/contact" },
-  { label: "Track Order", url: "/track-order" },
-  { label: "FAQs", url: "/faq" },
-  { label: "Shipping Info", url: "/shipping-info" },
-  { label: "Returns & Exchange", url: "/returns" },
-  { label: "Size Guide", url: "/size-guide" },
-];
-
-const trustBadges = [
-  { icon: ShieldCheck, label: "Secure Payment" },
-  { icon: Truck, label: "Fast Delivery" },
-  { icon: Headphones, label: "24/7 Support" },
-  { icon: CreditCard, label: "Easy Returns" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Track Order", href: "/track-order" },
+  { label: "FAQs", href: "/faq" },
+  { label: "Shipping Info", href: "/shipping-info" },
+  { label: "Returns & Exchange", href: "/returns" },
+  { label: "Size Guide", href: "/size-guide" },
 ];
 
 const paymentIcons = ["bKash", "Nagad", "Visa", "Mastercard", "COD"];
+
+const defaultSocialIconMap: Record<string, React.ComponentType<any>> = {
+  facebook: Facebook,
+  instagram: Instagram,
+  twitter: Twitter,
+  youtube: Youtube,
+};
 
 function FooterHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -101,7 +38,7 @@ function FooterHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SocialIcon({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
+function SocialIcon({ href, label, logo, children }: { href: string; label: string; logo?: string; children?: React.ReactNode }) {
   return (
     <a
       href={href}
@@ -110,7 +47,11 @@ function SocialIcon({ href, label, children }: { href: string; label: string; ch
       aria-label={label}
       className="w-9 h-9 rounded-full bg-white/10 hover:bg-store-primary hover:shadow-[0_0_12px_hsl(var(--store-primary)/0.5)] flex items-center justify-center transition-all duration-300"
     >
-      {children}
+      {logo ? (
+        <img src={logo} alt={label} className="h-4 w-4 object-contain" />
+      ) : (
+        children
+      )}
     </a>
   );
 }
@@ -133,24 +74,15 @@ export function StoreFooter() {
   ].filter(Boolean);
   const storeAddress = addressParts.length > 0 ? addressParts.join(", ") : "";
 
-  const socialLinksArr: { label: string; url: string }[] = content.social_links || [];
-  const socialLinks = {
-    facebook: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "facebook")?.url || settings?.STORE_FACEBOOK_URL || "",
-    instagram: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "instagram")?.url || settings?.STORE_INSTAGRAM_URL || "",
-    twitter: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "twitter")?.url || settings?.STORE_TWITTER_URL || "",
-    youtube: socialLinksArr.find((l: any) => l.label?.toLowerCase() === "youtube")?.url || settings?.STORE_YOUTUBE_URL || "",
-  };
-  const hasSocial = socialLinks.facebook || socialLinks.instagram || socialLinks.twitter || socialLinks.youtube;
+  const socialLinksArr: { label: string; href: string; logo?: string }[] = content.social_links || [];
+  const hasSocial = socialLinksArr.length > 0;
 
   const shopLinks = content.shop_links || defaultShopLinks;
   const helpLinks = content.help_links || defaultHelpLinks;
-  const newsletterTitle = (content.newsletter_title || "Join the {storeName} Family").replace("{storeName}", storeName);
-  const newsletterButton = content.newsletter_button || "Subscribe";
   const copyrightText = content.copyright_text || "All rights reserved.";
 
   return (
     <footer className="bg-[hsl(222,47%,11%)] dark:bg-[hsl(224,30%,5%)] text-[hsl(210,40%,98%)]">
-      {/* Main Footer Grid */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -170,12 +102,14 @@ export function StoreFooter() {
             <p className="text-[hsl(215,16%,60%)] text-sm mb-4">{storeDescription}</p>
             <div className="flex gap-3">
               {hasSocial ? (
-                <>
-                  {socialLinks.facebook && <SocialIcon href={socialLinks.facebook} label="Facebook"><Facebook className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.instagram && <SocialIcon href={socialLinks.instagram} label="Instagram"><Instagram className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.twitter && <SocialIcon href={socialLinks.twitter} label="Twitter"><Twitter className="h-4 w-4" /></SocialIcon>}
-                  {socialLinks.youtube && <SocialIcon href={socialLinks.youtube} label="YouTube"><Youtube className="h-4 w-4" /></SocialIcon>}
-                </>
+                socialLinksArr.map((link, i) => {
+                  const FallbackIcon = defaultSocialIconMap[link.label?.toLowerCase()] || Facebook;
+                  return (
+                    <SocialIcon key={i} href={link.href} label={link.label} logo={link.logo}>
+                      <FallbackIcon className="h-4 w-4" />
+                    </SocialIcon>
+                  );
+                })
               ) : (
                 <>
                   <span className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"><Facebook className="h-4 w-4 opacity-50" /></span>
@@ -193,7 +127,7 @@ export function StoreFooter() {
             <ul className="space-y-2 text-sm mt-2">
               {shopLinks.map((link: any, i: number) => (
                 <li key={i}>
-                  <Link to={link.url} className="group text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors inline-flex items-center gap-1">
+                  <Link to={link.href || link.url || "#"} className="group text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors inline-flex items-center gap-1">
                     <span className="w-0 group-hover:w-2 overflow-hidden transition-all duration-200 text-store-accent">→</span>
                     {link.label}
                   </Link>
@@ -208,7 +142,7 @@ export function StoreFooter() {
             <ul className="space-y-2 text-sm mt-2">
               {helpLinks.map((link: any, i: number) => (
                 <li key={i}>
-                  <Link to={link.url} className="group text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors inline-flex items-center gap-1">
+                  <Link to={link.href || link.url || "#"} className="group text-[hsl(215,16%,60%)] hover:text-store-accent transition-colors inline-flex items-center gap-1">
                     <span className="w-0 group-hover:w-2 overflow-hidden transition-all duration-200 text-store-accent">→</span>
                     {link.label}
                   </Link>
