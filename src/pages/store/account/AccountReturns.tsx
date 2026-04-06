@@ -82,6 +82,14 @@ export default function AccountReturns() {
 
   useEffect(() => { fetchData(); }, [user]);
 
+  useEffect(() => {
+    setHeaderActions(
+      <Button size="sm" disabled={orders.length === 0} onClick={() => setOpen(true)}>
+        <Plus className="h-4 w-4 mr-1.5" />New Request
+      </Button>
+    );
+  }, [orders.length]);
+
   const handleSubmit = async () => {
     if (!selectedOrder || !reason) { toast.error("Please select an order and reason"); return; }
     setSubmitting(true);

@@ -32,6 +32,7 @@ const itemVariants = {
 export default function AccountReviews() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { setHeaderActions } = useAccountHeaderActions();
   const [reviews, setReviews] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
