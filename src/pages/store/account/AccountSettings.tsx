@@ -155,7 +155,7 @@ export default function AccountSettings() {
             </motion.div>
 
             {/* Personal Info Card */}
-            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
+            <motion.div variants={itemVariants} className="rounded-xl border border-border/50 bg-card p-4 sm:p-5 hover:shadow-md transition-all border-l-[3px] border-l-primary">
               <div className="flex items-center gap-3 mb-4">
                 <div className="rounded-lg bg-primary/10 p-2"><User className="h-5 w-5 text-primary" /></div>
                 <div>
