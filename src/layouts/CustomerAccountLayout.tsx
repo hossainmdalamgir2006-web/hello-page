@@ -1,5 +1,5 @@
-import { ReactNode, useState, useEffect, Suspense } from "react";
-import { useLocation, Outlet } from "react-router-dom";
+import { ReactNode, useState, useEffect, Suspense, useCallback } from "react";
+import { useLocation, Outlet, useOutletContext } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +7,14 @@ import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { AccountHeader } from "@/components/account/AccountHeader";
 import { AccountPageHeader } from "@/components/account/AccountPageHeader";
 import { cn } from "@/lib/utils";
+
+export interface AccountOutletContext {
+  setHeaderActions: (actions: ReactNode) => void;
+}
+
+export function useAccountHeaderActions() {
+  return useOutletContext<AccountOutletContext>();
+}
 
 const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
 
@@ -64,6 +72,12 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
   }, [user]);
 
   const pageInfo = pageTitles[location.pathname] || { title: "My Account", description: "" };
+  const [headerActions, setHeaderActions] = useState<ReactNode>(null);
+
+  // Reset actions on route change
+  useEffect(() => {
+    setHeaderActions(null);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,8 +118,8 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
         />
         <main className="p-3 sm:p-4 md:p-6 animate-fade-in">
           <Suspense fallback={null}>
-            <AccountPageHeader title={pageInfo.title} description={pageInfo.description} />
-            {children || <Outlet />}
+            <AccountPageHeader title={pageInfo.title} description={pageInfo.description} actions={headerActions} />
+            {children || <Outlet context={{ setHeaderActions } satisfies AccountOutletContext} />}
           </Suspense>
         </main>
       </div>

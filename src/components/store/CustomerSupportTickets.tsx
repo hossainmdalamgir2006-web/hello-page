@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -39,7 +39,11 @@ const priorityConfig = {
   urgent: { label: "Urgent" },
 };
 
-export function CustomerSupportTickets() {
+interface CustomerSupportTicketsProps {
+  onCreateDialogOpen?: (open: boolean) => void;
+}
+
+export function CustomerSupportTickets({ onCreateDialogOpen }: CustomerSupportTicketsProps) {
   const { tickets, isLoading, createTicket, isCreating } = useCustomerTickets();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -76,134 +80,43 @@ export function CustomerSupportTickets() {
     setDetailDialogOpen(true);
   };
 
+  const openCreateDialog = () => setCreateDialogOpen(true);
+
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-4 w-60" />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {[1, 2].map(i => (
-            <Skeleton key={i} className="h-20 w-full" />
-          ))}
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        {[1, 2].map(i => (
+          <Skeleton key={i} className="h-20 w-full rounded-lg" />
+        ))}
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <div>
-          <CardTitle className="flex items-center gap-2">
-            <TicketIcon className="h-5 w-5" />
-            Support Tickets
-          </CardTitle>
-          <CardDescription>
-            Get help from our support team
-          </CardDescription>
-        </div>
-        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              New Ticket
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Create Support Ticket</DialogTitle>
-              <DialogDescription>
-                Describe your issue and our team will respond shortly
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Subject *</Label>
-                <Input 
-                  placeholder="Brief description of your issue"
-                  value={newTicket.subject}
-                  onChange={(e) => setNewTicket({ ...newTicket, subject: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea 
-                  placeholder="Provide more details about your issue..."
-                  value={newTicket.description}
-                  onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                  rows={4}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Category</Label>
-                  <Select 
-                    value={newTicket.category}
-                    onValueChange={(value) => setNewTicket({ ...newTicket, category: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Order Issue">Order Issue</SelectItem>
-                      <SelectItem value="Delivery">Delivery</SelectItem>
-                      <SelectItem value="Payment">Payment</SelectItem>
-                      <SelectItem value="Return/Refund">Return/Refund</SelectItem>
-                      <SelectItem value="Product">Product</SelectItem>
-                      <SelectItem value="Account">Account</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Priority</Label>
-                  <Select 
-                    value={newTicket.priority}
-                    onValueChange={(value) => setNewTicket({ ...newTicket, priority: value as CustomerTicket['priority'] })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="urgent">Urgent</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+    <>
+      {tickets.length === 0 ? (
+        <Card>
+          <CardContent className="py-12">
+            <div className="text-center text-muted-foreground">
+              <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <p>No support tickets yet</p>
+              <p className="text-sm">Create a ticket if you need help</p>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleCreateTicket} disabled={isCreating || !newTicket.subject.trim()}>
-                {isCreating ? "Creating..." : "Create Ticket"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </CardHeader>
-      <CardContent>
-        {tickets.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>No support tickets yet</p>
-            <p className="text-sm">Create a ticket if you need help</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {tickets.map((ticket) => {
-              const status = statusConfig[ticket.status];
-              const StatusIcon = status.icon;
-              
-              return (
-                <div 
-                  key={ticket.id} 
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-                  onClick={() => handleViewDetails(ticket)}
-                >
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {tickets.map((ticket) => {
+            const status = statusConfig[ticket.status];
+            const StatusIcon = status.icon;
+            
+            return (
+              <Card 
+                key={ticket.id} 
+                className="hover:shadow-md cursor-pointer transition-all hover:border-primary/30"
+                onClick={() => handleViewDetails(ticket)}
+              >
+                <CardContent className="p-4 flex items-center justify-between">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     <div className={`p-2 rounded-full ${status.color}`}>
                       <StatusIcon className="h-4 w-4" />
@@ -227,12 +140,88 @@ export function CustomerSupportTickets() {
                   <Button variant="ghost" size="sm">
                     View
                   </Button>
-                </div>
-              );
-            })}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Create Ticket Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create Support Ticket</DialogTitle>
+            <DialogDescription>
+              Describe your issue and our team will respond shortly
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Subject *</Label>
+              <Input 
+                placeholder="Brief description of your issue"
+                value={newTicket.subject}
+                onChange={(e) => setNewTicket({ ...newTicket, subject: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea 
+                placeholder="Provide more details about your issue..."
+                value={newTicket.description}
+                onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                rows={4}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select 
+                  value={newTicket.category}
+                  onValueChange={(value) => setNewTicket({ ...newTicket, category: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Order Issue">Order Issue</SelectItem>
+                    <SelectItem value="Delivery">Delivery</SelectItem>
+                    <SelectItem value="Payment">Payment</SelectItem>
+                    <SelectItem value="Return/Refund">Return/Refund</SelectItem>
+                    <SelectItem value="Product">Product</SelectItem>
+                    <SelectItem value="Account">Account</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Priority</Label>
+                <Select 
+                  value={newTicket.priority}
+                  onValueChange={(value) => setNewTicket({ ...newTicket, priority: value as CustomerTicket['priority'] })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
-        )}
-      </CardContent>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleCreateTicket} disabled={isCreating || !newTicket.subject.trim()}>
+              {isCreating ? "Creating..." : "Create Ticket"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Ticket Detail Dialog */}
       <TicketDetailDialog 
@@ -240,8 +229,13 @@ export function CustomerSupportTickets() {
         open={detailDialogOpen}
         onOpenChange={setDetailDialogOpen}
       />
-    </Card>
+    </>
   );
+}
+
+// Expose the create dialog trigger for header actions
+export function useCreateTicketAction(openFn: () => void) {
+  return openFn;
 }
 
 // Ticket Detail Dialog Component

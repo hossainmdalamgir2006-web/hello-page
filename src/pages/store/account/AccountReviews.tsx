@@ -8,8 +8,9 @@ import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { GenericListSkeleton } from "@/components/skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useAccountHeaderActions } from "@/layouts/CustomerAccountLayout";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ const itemVariants = {
 export default function AccountReviews() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { setHeaderActions } = useAccountHeaderActions();
   const [reviews, setReviews] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,6 +74,14 @@ export default function AccountReviews() {
 
   useEffect(() => { fetchData(); }, [user]);
 
+  useEffect(() => {
+    setHeaderActions(
+      <Button size="sm" disabled={products.length === 0} onClick={() => setOpen(true)}>
+        <Plus className="h-4 w-4 mr-1.5" />{t('account.writeReviewBtn')}
+      </Button>
+    );
+  }, [products.length]);
+
   const handleSubmit = async () => {
     if (!selectedProduct || rating === 0) { toast.error(t('account.selectProductAndRating')); return; }
     setSubmitting(true);
@@ -93,55 +103,48 @@ export default function AccountReviews() {
     <>
     <SEOHead title="My Reviews" noIndex />
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants} className="flex justify-end">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={products.length === 0}>
-              <Plus className="h-4 w-4 mr-1.5" />{t('account.writeReviewBtn')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>{t('store.writeReview')}</DialogTitle></DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>{t('account.product')}</Label>
-                <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                  <SelectTrigger><SelectValue placeholder={t('account.selectProduct')} /></SelectTrigger>
-                  <SelectContent>
-                    {products.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>{t('store.rating')}</Label>
-                <div className="flex gap-1 mt-1">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <button key={s} type="button" onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(s)}>
-                      <Star className={cn("h-7 w-7 transition-colors", (hoverRating || rating) >= s ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Label>{t('store.titleOptional')}</Label>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('account.greatProduct')} />
-              </div>
-              <div>
-                <Label>{t('store.reviewLabel')}</Label>
-                <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t('account.shareExperience')} rows={3} />
-              </div>
-              <Button onClick={handleSubmit} disabled={submitting} className="w-full">
-                {submitting && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
-                {t('store.submitReview')}
-              </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{t('store.writeReview')}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>{t('account.product')}</Label>
+              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                <SelectTrigger><SelectValue placeholder={t('account.selectProduct')} /></SelectTrigger>
+                <SelectContent>
+                  {products.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>))}
+                </SelectContent>
+              </Select>
             </div>
-          </DialogContent>
-        </Dialog>
-      </motion.div>
+            <div>
+              <Label>{t('store.rating')}</Label>
+              <div className="flex gap-1 mt-1">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <button key={s} type="button" onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(s)}>
+                    <Star className={cn("h-7 w-7 transition-colors", (hoverRating || rating) >= s ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")} />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label>{t('store.titleOptional')}</Label>
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('account.greatProduct')} />
+            </div>
+            <div>
+              <Label>{t('store.reviewLabel')}</Label>
+              <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t('account.shareExperience')} rows={3} />
+            </div>
+            <Button onClick={handleSubmit} disabled={submitting} className="w-full">
+              {submitting && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
+              {t('store.submitReview')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {reviews.length === 0 ? (
         <motion.div variants={itemVariants}>
-          <Card className="border-dashed">
+          <Card>
             <CardContent className="py-16 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
                 <MessageSquare className="h-8 w-8 text-primary" />

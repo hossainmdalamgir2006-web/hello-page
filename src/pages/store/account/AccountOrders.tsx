@@ -5,6 +5,9 @@ import { DelayedLoader } from "@/components/ui/DelayedLoader";
 import { OrdersListSkeleton } from "@/components/skeletons";
 import { OrdersTab } from "@/components/account/OrdersTab";
 import { SEOHead } from "@/components/SEOHead";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { useAccountHeaderActions } from "@/layouts/CustomerAccountLayout";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -18,6 +21,7 @@ const itemVariants = {
 
 export default function AccountOrders() {
   const { user } = useAuth();
+  const { setHeaderActions } = useAccountHeaderActions();
   
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +87,15 @@ export default function AccountOrders() {
   useEffect(() => {
     fetchOrders();
   }, [user]);
+
+  useEffect(() => {
+    setHeaderActions(
+      <Button variant="ghost" size="sm" onClick={fetchOrders}>
+        <RefreshCw className="h-4 w-4 mr-1" />
+        Refresh
+      </Button>
+    );
+  }, []);
 
   if (loading) {
     return <DelayedLoader><OrdersListSkeleton /></DelayedLoader>;
