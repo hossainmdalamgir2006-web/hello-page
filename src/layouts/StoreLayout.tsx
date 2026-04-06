@@ -10,7 +10,7 @@ import { StoreBreadcrumb } from "@/components/store/StoreBreadcrumb";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
-import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { Suspense } from "react";
 
 interface StoreLayoutProps {
@@ -23,15 +23,16 @@ export function StoreLayout({ children }: StoreLayoutProps) {
   usePageViewTracking();
   const { isMaintenanceMode, message, estimatedEnd, loading: maintenanceLoading } = useMaintenanceCheck();
   const { user, isStaff } = useAuth();
-  const { data: settings } = useStoreSettingsCache();
+  const { section: headerSection } = useSiteContent("header");
+  const headerContent = headerSection("main_content")?.content;
 
-  // Favicon: read from shared store settings cache
+  // Favicon: read from header content (Header Settings)
   useEffect(() => {
-    const faviconUrl = settings?.STORE_FAVICON;
+    const faviconUrl = headerContent?.store_favicon;
     if (faviconUrl) {
       applyFavicon(faviconUrl);
     }
-  }, [settings?.STORE_FAVICON]);
+  }, [headerContent?.store_favicon]);
 
   function applyFavicon(url: string) {
     let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
