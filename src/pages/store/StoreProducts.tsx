@@ -537,6 +537,19 @@ export default function StoreProducts() {
         title={showSale ? t('storeProducts.saleItems') : showNew ? t('storeProducts.newArrivals') : t('storeProducts.allProducts')}
         description="Browse our collection of fashion, clothing and accessories. Filter by category, price and more."
         canonicalPath="/products"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: showSale ? "Sale Items" : showNew ? "New Arrivals" : "All Products",
+          url: `${window.location.origin}/products`,
+          numberOfItems: filteredProducts.length,
+          itemListElement: filteredProducts.slice(0, 20).map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: `${window.location.origin}/product/${p.id}`,
+            name: p.name,
+          })),
+        }}
       />
 
       <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-12 overflow-hidden">

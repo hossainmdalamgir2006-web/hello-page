@@ -125,7 +125,7 @@ export default function StoreHome() {
       <SEOHead
         description="Shop the latest fashion, clothing and accessories online."
         canonicalPath="/"
-        jsonLd={orgJsonLd}
+        jsonLd={combinedJsonLd}
       />
 
       {/* 1. Hero Carousel */}
