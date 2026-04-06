@@ -48,9 +48,10 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const { getSettingValue } = useStoreSettings();
-  const storeLogo = getSettingValue('STORE_LOGO');
-  const storeName = getSettingValue('STORE_NAME') || 'Ekta';
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
+  const storeLogo = headerCont.store_logo || null;
+  const storeName = headerCont.store_name || '';
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     overview: true,
