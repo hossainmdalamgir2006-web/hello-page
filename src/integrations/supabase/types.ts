@@ -3654,6 +3654,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_2fa_status: {
+        Args: { target_user_id: string }
+        Returns: {
+          created_at: string
+          is_enabled: boolean
+          method: string
+          user_id: string
+        }[]
+      }
       get_db_functions: {
         Args: never
         Returns: {
@@ -3704,6 +3713,38 @@ export type Database = {
           with_check: string
         }[]
       }
+      get_safe_payment_methods: {
+        Args: never
+        Returns: {
+          code: string
+          created_at: string
+          description: string
+          id: string
+          instructions: string
+          is_active: boolean
+          logo_url: string
+          method_id: string
+          name: string
+          name_bn: string
+          sort_order: number
+          supports_verification: boolean
+          updated_at: string
+        }[]
+      }
+      get_safe_user_sessions: {
+        Args: { target_user_id: string }
+        Returns: {
+          created_at: string
+          device_info: Json
+          expires_at: string
+          id: string
+          ip_address: string
+          is_current: boolean
+          last_active_at: string
+          user_agent: string
+          user_id: string
+        }[]
+      }
       get_storage_policies: {
         Args: never
         Returns: {
@@ -3749,6 +3790,23 @@ export type Database = {
         }[]
       }
       has_admin_role: { Args: { user_uuid: string }; Returns: boolean }
+      validate_coupon: {
+        Args: { coupon_code: string }
+        Returns: {
+          code: string
+          description: string
+          discount_type: string
+          discount_value: number
+          expires_at: string
+          first_order_only: boolean
+          id: string
+          is_active: boolean
+          maximum_discount: number
+          minimum_order_amount: number
+          starts_at: string
+          title: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "manager" | "support" | "user"
