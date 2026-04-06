@@ -113,11 +113,13 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('SSLCommerz init error:', error);
+    const msg = error instanceof Error ? error.message : 'Internal server error';
     return new Response(JSON.stringify({
       success: false,
-      error: error.message || 'Internal server error',
+      error: msg,
+      code: msg.includes("NETWORK_ERROR") ? "NETWORK_ERROR" : "API_ERROR",
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
