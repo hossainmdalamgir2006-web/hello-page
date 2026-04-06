@@ -93,6 +93,7 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
 
       {/* Main content */}
       <div className={cn(
+        "transition-all duration-300",
         collapsed ? "lg:ml-[68px]" : "lg:ml-64"
       )}>
         <AccountHeader
@@ -101,12 +102,10 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
           pageTitle={pageInfo.title}
           pageDescription={pageInfo.description}
         />
-        <main className="p-3 sm:p-4 md:p-6">
+        <main className="p-3 sm:p-4 md:p-6 animate-fade-in">
           <Suspense fallback={null}>
-            <div className="mx-auto max-w-6xl animate-fade-in">
-              <AccountPageHeader title={pageInfo.title} description={pageInfo.description} />
-              {children || <Outlet />}
-            </div>
+            <AccountPageHeader title={pageInfo.title} description={pageInfo.description} />
+            {children || <Outlet />}
           </Suspense>
         </main>
       </div>
