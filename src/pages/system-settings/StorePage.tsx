@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { UploadSettings } from "@/components/settings/UploadSettings";
 import { MaintenanceModeSettings } from "@/components/settings/MaintenanceModeSettings";
 import { useSiteContent, type MergedSection } from "@/hooks/useSiteContent";
 import { siteSettingsRegistry, type PageDef } from "@/config/siteContentRegistry";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,9 +14,10 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Save, Upload, Construction, X } from "lucide-react";
+import { Save, Upload, Construction, X, ImageIcon, Trash2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinkListEditor } from "@/components/admin/content-editors";
+import { useToast } from "@/hooks/use-toast";
 
 type SidebarItem =
   | { type: "page"; pageDef: PageDef }
