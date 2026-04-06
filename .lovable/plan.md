@@ -1,26 +1,40 @@
 
 
-## Header Settings থেকে Announcement Text/Link Remove
+## Favicon Dynamic Update Fix ও Badge Hide
 
 ### সমস্যা
-Header Settings-এ `announcement_text` ও `announcement_link` ফিল্ড আছে যেগুলো অপ্রয়োজনীয় — কারণ Content Manager-এ আলাদা **Announcement Bar** section আছে।
+1. `index.html`-এ কোনো favicon `<link>` tag নেই — তাই Lovable-এর default `favicon.ico` দেখাচ্ছে
+2. `DynamicTitleProvider.tsx`-এ favicon dynamically update হচ্ছে কিনা verify করা দরকার
 
 ### পরিবর্তন
 
-#### 1. `src/config/siteContentRegistry.ts` — Header section
-- `contentSchema` থেকে remove:
-  - `announcement_text: "text"`
-  - `announcement_link: "text"`
-- `defaultContent` থেকে remove:
-  - `announcement_text: "🔥 Up to 50% OFF on selected items!"`
-  - `announcement_link: "/products?filter=sale"`
+#### 1. `public/favicon.ico` — Delete
+- Lovable-এর default favicon file মুছে দেব
 
-#### 2. `src/components/store/StoreHeader.tsx` — Banner fallback cleanup
-- Line 74: `headerCont.announcement_text` fallback সরিয়ে দেব
-- শুধু `headerCont.banner_text` রাখব, না থাকলে Announcement Bar section-এর content ব্যবহার হবে
+#### 2. `index.html` — Favicon link tag add
+- একটা generic transparent/empty favicon link add করব যেন browser default Lovable icon না দেখায়:
+  ```html
+  <link rel="icon" href="data:," type="image/x-icon">
+  ```
+- Header Settings-এ favicon upload করলে `DynamicTitleProvider` dynamically এটা replace করবে
+
+#### 3. `src/components/DynamicTitleProvider.tsx` — Favicon update logic verify/fix
+- Header content থেকে `store_favicon` পড়ে dynamically `<link rel="icon">` update করা হচ্ছে কিনা check করব
+- না থাকলে add করব:
+  ```tsx
+  const favicon = headerCont.store_favicon;
+  if (favicon) {
+    let link = document.querySelector('link[rel="icon"]');
+    if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+    link.href = favicon;
+  }
+  ```
+
+#### 4. Badge — Information
+- নিজের Vercel/domain-এ নিজে build করে deploy করলে badge থাকবে না
+- Lovable-এর published URL-এ badge hide করতে Pro plan প্রয়োজন
 
 ### Technical Details
-- 2 files modified
+- 3 files: `index.html`, `DynamicTitleProvider.tsx`, delete `public/favicon.ico`
 - No DB changes
-- Announcement Bar আলাদা section হিসেবে Content Manager-এ manage হবে
 
