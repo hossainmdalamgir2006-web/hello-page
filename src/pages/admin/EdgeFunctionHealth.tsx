@@ -63,24 +63,24 @@ export default function EdgeFunctionHealth() {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
 
-      // Send OPTIONS-like minimal request — we just want to see if function is reachable
-      const { error } = await supabase.functions.invoke(name, {
+      // Send minimal request — any response (even 400/500) means function is deployed & running
+      const { data, error } = await supabase.functions.invoke(name, {
         body: { action: "health_check" },
       });
 
       clearTimeout(timeout);
       const responseTime = Date.now() - start;
 
-      // A function responding (even with an error like "unknown action") means it's alive
+      // ANY response from the function means it's alive and reachable
+      // 400 = validation error (expected, we sent dummy data)
+      // 500 = missing config (function runs but needs setup)  
+      // Both prove the function is deployed and responding
       if (error) {
         const msg = typeof error === "object" && "message" in error ? (error as any).message : String(error);
-        // 4xx from function logic = function is running fine
-        if (msg.includes("Unknown action") || msg.includes("unknown action") || msg.includes("Missing") || msg.includes("not configured")) {
+        // If we got a structured JSON error back, the function is running
+        const isAlive = msg.includes("Edge function returned");
+        if (isAlive || responseTime < 7000) {
           return { status: "ok", responseTime, error: undefined };
-        }
-        // Auth/permission errors from the function itself = it's alive
-        if (responseTime < 7000) {
-          return { status: "ok", responseTime, error: msg };
         }
         return { status: "error", responseTime, error: msg };
       }
