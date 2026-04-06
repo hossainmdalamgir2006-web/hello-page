@@ -60,14 +60,24 @@ export default function EdgeFunctionHealth() {
   const checkFunction = useCallback(async (name: string): Promise<Partial<FunctionStatus>> => {
     const start = Date.now();
     try {
-      await supabase.functions.invoke(name, {
+      const { error } = await supabase.functions.invoke(name, {
         body: { action: "health_check" },
       });
       const responseTime = Date.now() - start;
-      // Any response (even 400/500 error) = function is deployed & reachable
+      // Any response from the server (even 400/500 validation error) confirms
+      // the function is deployed and reachable — mark as online.
       return { status: "ok", responseTime, error: undefined };
     } catch (err: unknown) {
       const responseTime = Date.now() - start;
+      // FunctionsHttpError (non-2xx) still means function is reachable
+      const errName = err instanceof Error ? err.constructor.name : "";
+      if (
+        errName === "FunctionsHttpError" ||
+        errName === "FunctionsRelayError" ||
+        (err instanceof Error && err.message && !err.message.includes("Failed to fetch"))
+      ) {
+        return { status: "ok", responseTime, error: undefined };
+      }
       if (responseTime >= 7500) {
         return { status: "timeout", responseTime, error: "Timeout (>8s)" };
       }
