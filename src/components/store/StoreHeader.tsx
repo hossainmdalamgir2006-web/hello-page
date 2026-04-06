@@ -27,7 +27,7 @@ import { CartDrawer } from "./CartDrawer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 import { MegaMenuNav, MobileMegaMenu, useDynamicCategories } from "./MegaMenuNav";
-import { usePageContent } from "@/hooks/useSiteContent";
+import { usePageContent, useSiteContent } from "@/hooks/useSiteContent";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { SearchSuggestions } from "./SearchSuggestions";
@@ -40,6 +40,7 @@ export function StoreHeader() {
   const [searchFocused, setSearchFocused] = useState(false);
   const { data: settings } = useStoreSettingsCache();
   const { data: headerContent } = usePageContent("header");
+  const { section: getAnnouncementSection } = useSiteContent("homepage");
   const { itemCount, setIsOpen: setCartOpen } = useCart();
   const { itemCount: wishlistCount } = useWishlist();
   const { user, role, signOut } = useAuth();
@@ -50,6 +51,13 @@ export function StoreHeader() {
   const headerCont = (headerContent?.content as any) || {};
   const storeName = headerCont.store_name || "";
   const storeLogo = headerCont.store_logo || null;
+
+  // Announcement Bar from Content Manager (homepage > announcement section)
+  const announcementSection = getAnnouncementSection("announcement");
+  const announcementEnabled = announcementSection?.isEnabled ?? false;
+  const announcementText = announcementSection?.title || "";
+  const announcementLink = announcementSection?.content?.link || "";
+  const announcementLinkText = announcementSection?.content?.link_text || "";
 
   const handleSignOut = async () => {
     await signOut();
@@ -68,10 +76,16 @@ export function StoreHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-store-card/95 backdrop-blur-md border-b border-store-muted">
-      {/* Top Banner */}
-      {headerCont.banner_enabled !== false && !bannerDismissed && (
+      {/* Top Banner — Announcement Bar from Content Manager */}
+      {announcementEnabled && announcementText && !bannerDismissed && (
         <div className="bg-gradient-to-r from-store-primary via-store-secondary to-store-accent text-store-primary-foreground py-2 text-center text-sm font-medium relative">
-          <span>{headerCont.banner_text || ""}</span>
+          {announcementLink ? (
+            <Link to={announcementLink} className="hover:underline">
+              {announcementText}
+            </Link>
+          ) : (
+            <span>{announcementText}</span>
+          )}
           <button
             onClick={() => setBannerDismissed(true)}
             className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"
