@@ -8,6 +8,14 @@ import { useToast } from "@/hooks/use-toast";
 
 interface LinkItem { label?: string; href?: string; name?: string; logo?: string; }
 
+const socialIconMap: Record<string, React.ComponentType<any>> = {
+  facebook: Facebook,
+  instagram: Instagram,
+  twitter: Twitter,
+  youtube: Youtube,
+  pinterest: Pin,
+};
+
 interface Props {
   label: string;
   value: LinkItem[];
