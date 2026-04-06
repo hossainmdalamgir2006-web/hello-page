@@ -65,13 +65,17 @@ export default function AccountDeletionRequests() {
       if (actionType === 'approve') {
         // Call edge function to permanently delete the user account
         const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session?.access_token) {
+          throw new Error('No active session. Please sign in again.');
+        }
         const response = await fetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user-account`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${sessionData.session?.access_token}`,
+              'Authorization': `Bearer ${sessionData.session.access_token}`,
+              'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             },
             body: JSON.stringify({
               request_id: selectedRequest.id,

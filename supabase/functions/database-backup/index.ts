@@ -11,13 +11,10 @@ interface BackupRequest {
   tables?: string[]
 }
 
-// Convert array of objects to CSV string
 function arrayToCSV(data: Record<string, unknown>[]): string {
   if (!data || data.length === 0) return ''
-  
   const headers = Object.keys(data[0])
   const csvRows = [headers.join(',')]
-  
   for (const row of data) {
     const values = headers.map(header => {
       const val = row[header]
@@ -30,16 +27,13 @@ function arrayToCSV(data: Record<string, unknown>[]): string {
     })
     csvRows.push(values.join(','))
   }
-  
   return csvRows.join('\n')
 }
 
-// Delay helper
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// Fetch all rows from a single table with pagination and retry
 async function fetchAllRows(supabaseAdmin: ReturnType<typeof createClient>, table: string): Promise<{ data: unknown[]; error?: string }> {
   const allRows: unknown[] = []
   let offset = 0
@@ -61,8 +55,7 @@ async function fetchAllRows(supabaseAdmin: ReturnType<typeof createClient>, tabl
           if (error) {
             lastError = error.message
             if (attempt < maxRetries) {
-              console.warn(`Retry ${attempt}/${maxRetries} for ${table} (offset ${offset}): ${error.message}`)
-              await delay(1000 * attempt) // exponential backoff
+              await delay(1000 * attempt)
               continue
             }
           } else {
@@ -74,7 +67,6 @@ async function fetchAllRows(supabaseAdmin: ReturnType<typeof createClient>, tabl
           const msg = fetchErr instanceof Error ? fetchErr.message : 'Unknown fetch error'
           lastError = msg
           if (attempt < maxRetries) {
-            console.warn(`Retry ${attempt}/${maxRetries} for ${table} (offset ${offset}): ${msg}`)
             await delay(1000 * attempt)
             continue
           }
@@ -118,14 +110,14 @@ Deno.serve(async (req) => {
         !supabaseAnonKey && 'SUPABASE_ANON_KEY'
       ].filter(Boolean).join(', ')
       return new Response(
-        JSON.stringify({ error: `Missing required secrets: ${missing}. Configure them in Edge Function settings.` }),
+        JSON.stringify({ error: `Missing required secrets: ${missing}` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
     
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
     
-    // Check authorization
+    // --- Auth: token-based validation (no getUser) ---
     const authHeader = req.headers.get('Authorization')
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
@@ -134,22 +126,23 @@ Deno.serve(async (req) => {
       )
     }
 
-    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+    const token = authHeader.replace('Bearer ', '')
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } }
     })
 
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser()
-    
-    if (userError || !user) {
+    const { data: claimsData, error: claimsError } = await authClient.auth.getUser(token)
+    if (claimsError || !claimsData?.user?.id) {
+      console.error('Auth validation failed:', claimsError?.message)
       return new Response(
         JSON.stringify({ error: 'Unauthorized: Invalid or expired token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    const userId = user.id
+    const userId = claimsData.user.id
 
-    // Use has_admin_role function instead of fragile .single() query
+    // Check admin role using service-role client
     const { data: isAdmin } = await supabaseAdmin.rpc('has_admin_role', { user_uuid: userId })
 
     if (!isAdmin) {
@@ -207,7 +200,7 @@ Deno.serve(async (req) => {
       throw new Error('Failed to create backup record')
     }
 
-    // Fetch all table data IN PARALLEL (batches of 10 to avoid overwhelming)
+    // Fetch all table data in parallel batches
     const backupData: Record<string, unknown[]> = {}
     const errors: string[] = []
     let totalRecords = 0
