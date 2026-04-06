@@ -1,67 +1,129 @@
 
+## Edge Function 401 Error — Review Result
 
-## SEO ও Google Ranking — বর্তমান অবস্থা ও করণীয়
+### আমি যা confirm করেছি
+- তোমার log-এ valid authenticated JWT দেখা যাচ্ছে: `auth_user` আছে, `role=authenticated` আছে।
+- মানে request backend-এ authenticated হিসেবেই পৌঁছাচ্ছে।
+- `src/hooks/useBackupData.ts` থেকে `database-backup` function-এ manual `fetch()` দিয়ে call করা হচ্ছে।
+- `supabase/functions/database-backup/index.ts`-এ function-এর ভিতরে আবার:
+  1. `Authorization` header নেয়
+  2. anon client বানায়
+  3. `supabaseUser.auth.getUser()` call করে
+  4. fail হলে `401` return করে
+- একই auth pattern আছে:
+  - `supabase/functions/database-restore/index.ts`
+  - `supabase/functions/delete-user-account/index.ts`
+- `supabase/config.toml` এখনো old project ref (`rxuiclgaixjunpisvhjr`) দেখাচ্ছে।
 
-### ✅ যা করা হয়েছে (Already Done)
+### সবচেয়ে likely root cause
+#### 1. Edge function auth validation pattern পুরোনো / brittle
+`auth.getUser()` edge function-এর ভিতরে অনেক সময় fail করে, বিশেষ করে যখন project নিজের backend-এ migrate করা হয়।  
+তোমার log এইটাই support করে: JWT valid, তবুও function 401 দিচ্ছে।
 
-| Feature | Status |
-|---------|--------|
-| **SEOHead Component** | সব store page-এ `<title>`, meta description, Open Graph, Twitter Card আছে |
-| **Canonical URLs** | সব public page-এ `canonicalPath` set আছে |
-| **JSON-LD Structured Data** | Homepage (Organization), Product Detail (Product), FAQ (FAQPage), Contact (ContactPage) — ৪টি page-এ আছে |
-| **robots.txt** | Admin, manager, support, myaccount, login blocked; public pages allowed |
-| **Dynamic Sitemap** | Edge function `generate-sitemap` — products, categories, static pages include করে |
-| **Google Analytics (GA4)** | Dynamic injection, settings থেকে enable/disable |
-| **Google Tag Manager (GTM)** | Dynamic injection support |
-| **Meta Pixel** | Facebook pixel tracking support |
-| **Google Search Console** | Verification meta tag support (settings থেকে configure) |
-| **noIndex on private pages** | Account pages, cart, order tracking — সব noIndex আছে |
-| **OG Image** | Product pages-এ product image OG image হিসেবে set হয় |
-| **Dynamic Title** | Store name + page title dynamically set হয় |
-| **Preconnect/DNS Prefetch** | Supabase ও Google Fonts-এর জন্য index.html-এ আছে |
+#### 2. New backend-এ old backend setup পুরো copy হয়নি
+`database-backup` কাজ করতে এগুলো লাগবে:
+- `user_roles`
+- `database_backups`
+- `has_admin_role()`
+- `get_table_columns()`
+- `database-backups` storage bucket
+- তোমার user-এর admin/manager role row
 
-### ❌ যা এখনো করা হয়নি / Update দরকার
+#### 3. অনেক function-এ secret dependency আছে
+নিজের backend-এ নতুন করে secrets set না করলে email / courier / payment function-গুলাও fail করবে।
 
-#### 1. **robots.txt — Sitemap URL ভুল**
-- বর্তমানে: `Sitemap: https://say-hi-alif.lovable.app/sitemap.xml`
-- এটি পুরোনো URL — আপনার actual published URL-এ update করতে হবে
-- আর sitemap edge function call করে না, static file point করে
+#### 4. Repo config আর deployed backend fully aligned না
+`supabase/config.toml` old project-এ pointing করছে, তাই future deploy/debug-এ mismatch হওয়ার chance আছে।
 
-#### 2. **Sitemap Route নেই**
-- `generate-sitemap` edge function আছে কিন্তু `/sitemap.xml` route frontend-এ নেই
-- Google কে sitemap দিতে হলে হয় edge function URL সরাসরি দিতে হবে অথবা frontend route বানাতে হবে
+### কেন এটা auth-check issue বলছি
+- request gateway-level এ authenticated হয়েছে
+- missing secret হলে `database-backup` code অনুযায়ী `500` আসার কথা
+- role problem হলে `403` আসার কথা
+- কিন্তু তুমি `401` পাচ্ছো
+- তাই strongest suspect: function-এর ভিতরের `getUser()` validation step
 
-#### 3. **JSON-LD Structured Data অসম্পূর্ণ**
-- **BreadcrumbList** schema নেই — Google search results-এ breadcrumb দেখাবে না
-- **WebSite** schema (SearchAction সহ) নেই — Google-এ sitelinks search box আসবে না
-- Category/Products listing page-এ **ItemList** schema নেই
+## Solution Plan
 
-#### 4. **Image Alt Text**
-- Product images-এ alt attribute আছে কিনা verify করতে হবে — SEO-র জন্য critical
+### Step 1 — Edge function auth fix
+এই 3টা file আগে update করতে হবে:
+- `supabase/functions/database-backup/index.ts`
+- `supabase/functions/database-restore/index.ts`
+- `supabase/functions/delete-user-account/index.ts`
 
-#### 5. **Page Speed Optimization**
-- Large hero images-এ lazy loading / WebP format check করা দরকার
-- Unsplash image preload index.html-এ আছে — এটা dynamic হওয়া উচিত
+`auth.getUser()` বাদ দিয়ে token-based validation use করতে হবে:
 
-#### 6. **Heading Hierarchy (h1-h6)**
-- প্রতিটি page-এ একটি মাত্র `<h1>` আছে কিনা check করা উচিত
+```ts
+const authHeader = req.headers.get('Authorization')
+if (!authHeader?.startsWith('Bearer ')) {
+  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
+}
 
----
+const token = authHeader.replace('Bearer ', '')
 
-### প্রস্তাবিত পরিবর্তন
+const authClient = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_ANON_KEY')!,
+  { global: { headers: { Authorization: authHeader } } }
+)
 
-#### File Changes:
+const { data, error } = await authClient.auth.getClaims(token)
+if (error || !data?.claims?.sub) {
+  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
+}
 
-1. **`public/robots.txt`** — Sitemap URL update করব actual domain-এ, edge function URL point করব
-2. **`src/pages/store/StoreHome.tsx`** — WebSite JSON-LD schema add (SearchAction সহ)
-3. **`src/pages/store/StoreProducts.tsx`** — ItemList JSON-LD add
-4. **`src/components/SEOHead.tsx`** — BreadcrumbList support add
-5. **`src/components/store/StoreBreadcrumb.tsx`** — Breadcrumb JSON-LD auto-generate
-6. **`index.html`** — Static Unsplash preload remove (dynamic content হওয়া উচিত)
+const userId = data.claims.sub
+```
 
-### Technical Details
-- ~5-6 files modified
-- No DB changes
-- JSON-LD schemas: BreadcrumbList, WebSite+SearchAction, ItemList
-- robots.txt sitemap URL fix
+তারপর DB/storage/admin কাজের জন্য service-role client use থাকবে।
 
+### Step 2 — Frontend function calls harden করা
+`useBackupData.ts`-এ manual `fetch()` আছে। এটা safer করতে হবে:
+- possible হলে `supabase.functions.invoke('database-backup')` use করা
+- না হলে call করার আগে `session?.access_token` check করা
+- `Bearer undefined` type request prevent করা
+
+এটাই `AccountDeletionRequests.tsx`-এর manual function call-এর ক্ষেত্রেও apply হবে।
+
+### Step 3 — New backend prerequisites verify করা
+তোমার own backend-এ confirm করতে হবে:
+- table: `user_roles`
+- table: `database_backups`
+- function: `has_admin_role`
+- function: `get_table_columns`
+- bucket: `database-backups`
+- তোমার user row: `admin` বা `manager`
+
+### Step 4 — Secrets verify করা
+Own backend-এ অন্তত এগুলো থাকতে হবে:
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+আর extra function-এর জন্য:
+- email provider key
+- payment keys
+- courier keys
+
+### Step 5 — Project linkage cleanup
+`supabase/config.toml` old project ref থেকে তোমার own project-এর সাথে align করতে হবে, না হলে later deploy/debug issue করবে।
+
+## আমি কী update করতাম
+1. Edge functions-এ `getUser()` → `getClaims()` auth migration
+2. Manual raw fetch → standardized function invoke / token guard
+3. 401 / 403 / 500 error messages আলাদা ও clear করা
+4. Missing table / missing RPC / missing bucket / missing role detect করে proper error return
+
+## Technical Details
+Directly involved files:
+- `src/hooks/useBackupData.ts`
+- `src/pages/admin/AccountDeletionRequests.tsx`
+- `supabase/functions/database-backup/index.ts`
+- `supabase/functions/database-restore/index.ts`
+- `supabase/functions/delete-user-account/index.ts`
+- `supabase/config.toml`
+
+## Expected outcome after fix
+- valid logged-in admin user হলে 401 বন্ধ হবে
+- admin role missing থাকলে clean 403 পাবে
+- backend object missing থাকলে exact missing dependency ধরা যাবে
+- অন্য edge function fail করলে secret/config missing issue আলাদা করে isolate করা সহজ হবে
