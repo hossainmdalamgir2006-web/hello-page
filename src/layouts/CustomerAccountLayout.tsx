@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { AccountHeader } from "@/components/account/AccountHeader";
+import { AccountPageHeader } from "@/components/account/AccountPageHeader";
 import { cn } from "@/lib/utils";
 
 const ACCOUNT_SIDEBAR_KEY = "account-sidebar-collapsed";
@@ -22,7 +23,7 @@ const pageTitles: Record<string, { title: string; description: string }> = {
   "/myaccount/support": { title: "Support", description: "Get help from our team" },
   "/myaccount/chat": { title: "Live Chat", description: "Chat with support" },
   "/myaccount/notification-preferences": { title: "Notification Preferences", description: "Manage your notification settings" },
-  "/myaccount/personal-info": { title: "Settings", description: "Account preferences" },
+  "/myaccount/personal-info": { title: "Personal Info", description: "Update your personal details" },
   "/myaccount/password": { title: "Change Password", description: "Update your account password" },
   
   "/myaccount/invoices": { title: "Invoices", description: "Download your order invoices" },
@@ -103,6 +104,7 @@ export function CustomerAccountLayout({ children }: CustomerAccountLayoutProps) 
         <main className="p-3 sm:p-4 md:p-6">
           <Suspense fallback={null}>
             <div className="mx-auto max-w-6xl animate-fade-in">
+              <AccountPageHeader title={pageInfo.title} description={pageInfo.description} />
               {children || <Outlet />}
             </div>
           </Suspense>
