@@ -55,6 +55,7 @@ export default function AccountAddresses() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { setHeaderActions } = useAccountHeaderActions();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
   const [addressDialogOpen, setAddressDialogOpen] = useState(false);
