@@ -76,10 +76,16 @@ export function StoreHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-store-card/95 backdrop-blur-md border-b border-store-muted">
-      {/* Top Banner */}
-      {headerCont.banner_enabled !== false && !bannerDismissed && (
+      {/* Top Banner — Announcement Bar from Content Manager */}
+      {announcementEnabled && announcementText && !bannerDismissed && (
         <div className="bg-gradient-to-r from-store-primary via-store-secondary to-store-accent text-store-primary-foreground py-2 text-center text-sm font-medium relative">
-          <span>{headerCont.banner_text || ""}</span>
+          {announcementLink ? (
+            <Link to={announcementLink} className="hover:underline">
+              {announcementText}
+            </Link>
+          ) : (
+            <span>{announcementText}</span>
+          )}
           <button
             onClick={() => setBannerDismissed(true)}
             className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity"
