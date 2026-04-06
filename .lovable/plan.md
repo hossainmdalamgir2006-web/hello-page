@@ -1,36 +1,40 @@
 
 
-## MyAccount Panel — Page Header ও Mobile Responsive Fix
+## MyAccount Layout — Admin Panel-এর সাথে Match করা
 
 ### সমস্যা
-- Admin panel-এ প্রতিটি পেজে `AdminPageHeader` (glassmorphic, gradient, title+description) দেখায়
-- Customer account (myaccount) panel-এ কোনো page header নেই — content সরাসরি শুরু হয়
-- Mobile-এ content area-র padding/spacing ঠিকমতো কাজ করছে না
+Admin panel-এর content area full-width stretch করে (`transition-all duration-300`, কোনো `max-w` constraint নেই), কিন্তু MyAccount panel-এ `max-w-6xl mx-auto` constraint আছে যেটা content area ছোট করে দিচ্ছে। Screenshot-এ ডান দিকে বড় empty space দেখাচ্ছে।
 
 ### পরিবর্তন
 
-#### 1. `src/components/account/AccountPageHeader.tsx` — নতুন component তৈরি
-- `AdminPageHeader`-এর মতো glassmorphic page header, কিন্তু customer account-এর জন্য
-- Props: `title`, `description`, `actions`
-- Styling: `rounded-xl`, gradient background, decorative blur elements
-- Mobile responsive: smaller text sizes on sm screens
+#### `src/layouts/CustomerAccountLayout.tsx`
+1. Main content div-এ `transition-all duration-300` add করব (Admin-এর মতো smooth sidebar transition)
+2. `max-w-6xl mx-auto` wrapper **remove** করব — content full-width হবে Admin panel-এর মতো
+3. `animate-fade-in` সরাসরি `<main>`-এ move করব
 
-#### 2. `src/layouts/CustomerAccountLayout.tsx` — Page header render
-- `<main>` section-এ `AccountPageHeader` add করব `pageTitle` ও `pageDescription` দিয়ে
-- Content area padding adjust: mobile-এ `p-3`, tablet-এ `p-4`, desktop-এ `p-6` (existing — verify)
+```text
+Before:
+  <div className={cn(collapsed ? "lg:ml-[68px]" : "lg:ml-64")}>
+    ...
+    <main>
+      <div className="mx-auto max-w-6xl animate-fade-in">
+        <AccountPageHeader ... />
+        <Outlet />
+      </div>
+    </main>
 
-#### 3. `src/pages/store/account/AccountSettings.tsx` — Mobile responsive improvements
-- `lg:grid-cols-2` grid mobile-এ single column হবে (already আছে)
-- Cards-এর padding mobile-এ `p-4` করব (currently `p-5`)
-- Form fields mobile-এ full width stack করবে
-
-#### 4. অন্যান্য myaccount পেজগুলোতে — Consistency
-- যেসব পেজে নিজস্ব title/header আছে সেগুলো remove করব (layout-এর header handle করবে)
-- `pageTitles` map-এ `/myaccount/personal-info` title "Settings" → "Personal Info" fix
+After:
+  <div className={cn("transition-all duration-300", collapsed ? "lg:ml-[68px]" : "lg:ml-64")}>
+    ...
+    <main className="p-3 sm:p-4 md:p-6">
+      <AccountPageHeader ... />
+      {children || <Outlet />}
+    </main>
+```
 
 ### Technical Details
-- 1 new file: `AccountPageHeader.tsx`
-- ~3-4 files modified
-- No DB changes
-- `AdminPageHeader` pattern follow করা হবে কিন্তু আলাদা component (customer vs admin separation)
+- 1 file modified: `CustomerAccountLayout.tsx`
+- `max-w-6xl` ও `mx-auto` constraint remove → full-width content like Admin
+- `transition-all duration-300` add → smooth sidebar collapse animation
+- Suspense fallback রাখা হবে, শুধু wrapper div remove
 
