@@ -1,38 +1,25 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 export function useDynamicTitle() {
   const [storeName, setStoreName] = useState<string | null>(null);
+  const { section } = useSiteContent("header");
 
   useEffect(() => {
-    fetchStoreName();
-  }, []);
-
-  const fetchStoreName = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("store_settings" as any)
-        .select("setting_value")
-        .eq("key", "STORE_NAME")
-        .single();
-
-      if (!error && data) {
-        const settingValue = (data as any)?.setting_value;
-        if (settingValue) {
-          setStoreName(settingValue);
-          document.title = settingValue;
-          
-          // Also update OG title meta tag
-          const ogTitle = document.querySelector('meta[property="og:title"]');
-          if (ogTitle) {
-            ogTitle.setAttribute('content', settingValue);
-          }
-        }
+    const headerContent = section("main_content")?.content;
+    const name = headerContent?.store_name || null;
+    
+    if (name) {
+      setStoreName(name);
+      document.title = name;
+      
+      // Also update OG title meta tag
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) {
+        ogTitle.setAttribute('content', name);
       }
-    } catch (error) {
-      console.debug("Error fetching store name:", error);
     }
-  };
+  }, [section]);
 
   return storeName;
 }
