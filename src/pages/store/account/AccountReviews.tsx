@@ -103,51 +103,44 @@ export default function AccountReviews() {
     <>
     <SEOHead title="My Reviews" noIndex />
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants} className="flex justify-end">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={products.length === 0}>
-              <Plus className="h-4 w-4 mr-1.5" />{t('account.writeReviewBtn')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>{t('store.writeReview')}</DialogTitle></DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>{t('account.product')}</Label>
-                <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                  <SelectTrigger><SelectValue placeholder={t('account.selectProduct')} /></SelectTrigger>
-                  <SelectContent>
-                    {products.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>{t('store.rating')}</Label>
-                <div className="flex gap-1 mt-1">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <button key={s} type="button" onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(s)}>
-                      <Star className={cn("h-7 w-7 transition-colors", (hoverRating || rating) >= s ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Label>{t('store.titleOptional')}</Label>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('account.greatProduct')} />
-              </div>
-              <div>
-                <Label>{t('store.reviewLabel')}</Label>
-                <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t('account.shareExperience')} rows={3} />
-              </div>
-              <Button onClick={handleSubmit} disabled={submitting} className="w-full">
-                {submitting && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
-                {t('store.submitReview')}
-              </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{t('store.writeReview')}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>{t('account.product')}</Label>
+              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                <SelectTrigger><SelectValue placeholder={t('account.selectProduct')} /></SelectTrigger>
+                <SelectContent>
+                  {products.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>))}
+                </SelectContent>
+              </Select>
             </div>
-          </DialogContent>
-        </Dialog>
-      </motion.div>
+            <div>
+              <Label>{t('store.rating')}</Label>
+              <div className="flex gap-1 mt-1">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <button key={s} type="button" onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(s)}>
+                    <Star className={cn("h-7 w-7 transition-colors", (hoverRating || rating) >= s ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")} />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label>{t('store.titleOptional')}</Label>
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('account.greatProduct')} />
+            </div>
+            <div>
+              <Label>{t('store.reviewLabel')}</Label>
+              <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t('account.shareExperience')} rows={3} />
+            </div>
+            <Button onClick={handleSubmit} disabled={submitting} className="w-full">
+              {submitting && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
+              {t('store.submitReview')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {reviews.length === 0 ? (
         <motion.div variants={itemVariants}>

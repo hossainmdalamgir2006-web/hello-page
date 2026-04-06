@@ -111,49 +111,45 @@ export default function AccountReturns() {
     <>
     <SEOHead title="Returns" noIndex />
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants} className="flex justify-between items-center">
-        <p className="text-xs text-muted-foreground">
-          Returns accepted within {returnWindowDays} days of delivery
-        </p>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={orders.length === 0}><Plus className="h-4 w-4 mr-1.5" />New Request</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Submit Return Request</DialogTitle></DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>Select Order</Label>
-                <Select value={selectedOrder} onValueChange={setSelectedOrder}>
-                  <SelectTrigger><SelectValue placeholder="Choose an order" /></SelectTrigger>
-                  <SelectContent>
-                    {orders.map((o) => (
-                      <SelectItem key={o.id} value={o.id}>#{o.order_number} — {format(new Date(o.created_at), "MMM dd, yyyy")}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Reason</Label>
-                <Select value={reason} onValueChange={setReason}>
-                  <SelectTrigger><SelectValue placeholder="Select a reason" /></SelectTrigger>
-                  <SelectContent>
-                    {REASONS.map((r) => (<SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Details (Optional)</Label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the issue..." rows={3} />
-              </div>
-              <Button onClick={handleSubmit} disabled={submitting} className="w-full">
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
-                Submit Request
-              </Button>
+      <p className="text-xs text-muted-foreground">
+        Returns accepted within {returnWindowDays} days of delivery
+      </p>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Submit Return Request</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Select Order</Label>
+              <Select value={selectedOrder} onValueChange={setSelectedOrder}>
+                <SelectTrigger><SelectValue placeholder="Choose an order" /></SelectTrigger>
+                <SelectContent>
+                  {orders.map((o) => (
+                    <SelectItem key={o.id} value={o.id}>#{o.order_number} — {format(new Date(o.created_at), "MMM dd, yyyy")}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </DialogContent>
-        </Dialog>
-      </motion.div>
+            <div>
+              <Label>Reason</Label>
+              <Select value={reason} onValueChange={setReason}>
+                <SelectTrigger><SelectValue placeholder="Select a reason" /></SelectTrigger>
+                <SelectContent>
+                  {REASONS.map((r) => (<SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Details (Optional)</Label>
+              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe the issue..." rows={3} />
+            </div>
+            <Button onClick={handleSubmit} disabled={submitting} className="w-full">
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
+              Submit Request
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {requests.length === 0 ? (
         <motion.div variants={itemVariants}>
