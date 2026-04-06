@@ -61,8 +61,10 @@ export function StoreFooter() {
   const { data: footerContent } = usePageContent("footer");
   const content = (footerContent?.content as any) || {};
 
-  const storeName = content.store_name || settings?.STORE_NAME || "Your Store";
-  const storeLogo = settings?.STORE_LOGO || null;
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
+  const storeName = headerCont.store_name || content.store_name || "";
+  const storeLogo = headerCont.store_logo || null;
   const storeDescription = content.store_description || settings?.STORE_DESCRIPTION || "Quality products at affordable prices.";
   const storeEmail = content.store_email || settings?.STORE_EMAIL || "";
   const storePhone = content.store_phone || settings?.STORE_PHONE || "";
