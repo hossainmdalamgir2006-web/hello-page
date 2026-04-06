@@ -55,7 +55,7 @@ function mergeSection(def: SectionDef, override: SiteContentOverride | null): Me
     subtitle: override?.subtitle ?? def.defaultSubtitle ?? null,
     badgeText: override?.badge_text ?? def.defaultBadge ?? null,
     imageUrl: override?.image_url ?? null,
-    content: { ...(def.defaultContent || {}), ...(override?.content || {}) },
+    content: mergeContent(def.defaultContent || {}, override?.content || {}),
     sortOrder: override?.sort_order ?? null,
   };
 }
