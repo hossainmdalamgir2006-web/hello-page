@@ -77,8 +77,8 @@ export function StoreFooter() {
   const socialLinksArr: { label: string; href: string; logo?: string }[] = content.social_links || [];
   const hasSocial = socialLinksArr.length > 0;
 
-  const shopLinks = content.shop_links || defaultShopLinks;
-  const helpLinks = content.help_links || defaultHelpLinks;
+  const shopLinks = (content.shop_links?.length ? content.shop_links : null) || defaultShopLinks;
+  const helpLinks = (content.help_links?.length ? content.help_links : null) || defaultHelpLinks;
   const copyrightText = content.copyright_text || "All rights reserved.";
 
   return (
