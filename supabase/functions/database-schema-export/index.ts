@@ -435,7 +435,7 @@ Deno.serve(async (req) => {
       constraints: constraints?.length || 0,
       indexes: indexes?.length || 0,
       policies: policies?.length || 0,
-      functions: appFunctions.length,
+      functions: appFunctions.length + helperFns.length,
       triggers: triggers?.length || 0,
       enums: enums?.length || 0,
       storage_buckets: storageBuckets?.length || 0,
