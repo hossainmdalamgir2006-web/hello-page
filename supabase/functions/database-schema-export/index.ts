@@ -145,7 +145,20 @@ Deno.serve(async (req) => {
       sql += "\n";
     }
 
-    return new Response(JSON.stringify({ sql, success: true }), {
+    // Build stats
+    const tableNames = columns ? [...new Set(columns.map((c: any) => c.table_name))] : [];
+    const stats = {
+      tables: tableNames.length,
+      columns: columns?.length || 0,
+      constraints: constraints?.length || 0,
+      indexes: indexes?.length || 0,
+      policies: policies?.length || 0,
+      functions: functions?.length || 0,
+      triggers: triggers?.length || 0,
+      enums: enums?.length || 0,
+    };
+
+    return new Response(JSON.stringify({ schema: sql, stats, success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
