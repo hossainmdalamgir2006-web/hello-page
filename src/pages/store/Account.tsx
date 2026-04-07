@@ -485,11 +485,10 @@ export default function Account() {
             label: values.label,
             full_name: values.full_name,
             phone: values.phone,
-            street: values.street,
+            street_address: values.street,
             area: values.area || null,
             city: values.city,
             postal_code: values.postal_code || null,
-            address_type: values.address_type as string,
           })
           .eq('id', editingAddress.id);
 
