@@ -6,6 +6,49 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Helper RPCs used only for export — exclude from output
+const HELPER_RPC_NAMES = [
+  "get_table_columns",
+  "get_table_constraints",
+  "get_table_indexes",
+  "get_rls_policies",
+  "get_db_functions",
+  "get_db_triggers",
+  "get_enum_types",
+  "get_storage_policies",
+  "get_storage_buckets",
+];
+
+// Functions that do NOT reference any table — safe to create before tables
+const PRE_TABLE_FUNCTIONS = [
+  "has_admin_role",
+  "get_2fa_status",
+];
+
+// Map PostgreSQL internal array type names to proper SQL syntax
+const ARRAY_TYPE_MAP: Record<string, string> = {
+  _text: "text[]",
+  _uuid: "uuid[]",
+  _int4: "integer[]",
+  _int8: "bigint[]",
+  _bool: "boolean[]",
+  _float4: "real[]",
+  _float8: "double precision[]",
+  _numeric: "numeric[]",
+  _varchar: "varchar[]",
+  _timestamptz: "timestamptz[]",
+  _timestamp: "timestamp[]",
+  _jsonb: "jsonb[]",
+  _json: "json[]",
+};
+
+function mapColumnType(udtName: string, charMaxLen: number | null): string {
+  if (ARRAY_TYPE_MAP[udtName]) return ARRAY_TYPE_MAP[udtName];
+  let t = udtName;
+  if (charMaxLen) t += `(${charMaxLen})`;
+  return t;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -76,24 +119,33 @@ Deno.serve(async (req) => {
       adminClient.rpc("get_storage_buckets"),
     ]);
 
+    // Filter out helper RPCs from functions list
+    const appFunctions = (functions || []).filter(
+      (f: any) => !HELPER_RPC_NAMES.includes(f.routine_name)
+    );
+
+    // Split into pre-table and post-table functions
+    const preTableFns = appFunctions.filter((f: any) =>
+      PRE_TABLE_FUNCTIONS.includes(f.routine_name)
+    );
+    const postTableFns = appFunctions.filter(
+      (f: any) => !PRE_TABLE_FUNCTIONS.includes(f.routine_name)
+    );
+
     // Build SQL output
     let sql = "-- ============================================\n";
     sql += "-- Complete Database Schema Export\n";
     sql += `-- Generated at: ${new Date().toISOString()}\n`;
     sql += "-- ============================================\n\n";
 
-    // =============================================
     // 1. EXTENSIONS
-    // =============================================
     sql += "-- ============================================\n";
     sql += "-- Extensions\n";
     sql += "-- ============================================\n";
-    sql += "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\" WITH SCHEMA extensions;\n";
-    sql += "CREATE EXTENSION IF NOT EXISTS \"pgcrypto\" WITH SCHEMA extensions;\n\n";
+    sql += 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;\n';
+    sql += 'CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA extensions;\n\n';
 
-    // =============================================
-    // 2. ENUM TYPES with IF NOT EXISTS guards
-    // =============================================
+    // 2. ENUM TYPES
     if (enums?.length) {
       sql += "-- ============================================\n";
       sql += "-- Enum Types\n";
@@ -112,47 +164,40 @@ Deno.serve(async (req) => {
       }
     }
 
-    // =============================================
-    // 3. HELPER FUNCTIONS FIRST (has_admin_role before tables)
-    // =============================================
-    if (functions?.length) {
+    // 3. PRE-TABLE FUNCTIONS (no table dependencies)
+    if (preTableFns.length) {
       sql += "-- ============================================\n";
-      sql += "-- Functions (helper functions first)\n";
+      sql += "-- Pre-table Helper Functions\n";
       sql += "-- ============================================\n";
-
-      // Sort: has_admin_role first, then alphabetical
-      const sortedFunctions = [...functions].sort((a: any, b: any) => {
+      // has_admin_role first
+      const sorted = [...preTableFns].sort((a: any, b: any) => {
         if (a.routine_name === "has_admin_role") return -1;
         if (b.routine_name === "has_admin_role") return 1;
         return a.routine_name.localeCompare(b.routine_name);
       });
-
-      for (const f of sortedFunctions) {
+      for (const f of sorted) {
         sql += `-- Function: ${f.routine_name}\n`;
         sql += `${f.full_definition};\n\n`;
       }
     }
 
-    // =============================================
     // 4. TABLES with PRIMARY KEY
-    // =============================================
+    const pkMap: Record<string, string[]> = {};
+    if (constraints?.length) {
+      for (const c of constraints) {
+        if (c.constraint_type === "PRIMARY KEY") {
+          if (!pkMap[c.table_name]) pkMap[c.table_name] = [];
+          if (!pkMap[c.table_name].includes(c.column_name)) {
+            pkMap[c.table_name].push(c.column_name);
+          }
+        }
+      }
+    }
+
     if (columns?.length) {
       sql += "-- ============================================\n";
       sql += "-- Tables\n";
       sql += "-- ============================================\n";
-
-      // Build PK map from constraints
-      const pkMap: Record<string, string[]> = {};
-      if (constraints?.length) {
-        for (const c of constraints) {
-          if (c.constraint_type === "PRIMARY KEY") {
-            if (!pkMap[c.table_name]) pkMap[c.table_name] = [];
-            if (!pkMap[c.table_name].includes(c.column_name)) {
-              pkMap[c.table_name].push(c.column_name);
-            }
-          }
-        }
-      }
 
       const tableMap: Record<string, any[]> = {};
       for (const col of columns) {
@@ -164,14 +209,13 @@ Deno.serve(async (req) => {
         sql += `\n-- Table: ${tableName}\n`;
         sql += `CREATE TABLE IF NOT EXISTS public.${tableName} (\n`;
         const colDefs = cols.map((c: any) => {
-          let def = `  ${c.column_name} ${c.udt_name}`;
-          if (c.character_maximum_length) def += `(${c.character_maximum_length})`;
+          const typeName = mapColumnType(c.udt_name, c.character_maximum_length);
+          let def = `  ${c.column_name} ${typeName}`;
           if (c.is_nullable === "NO") def += " NOT NULL";
           if (c.column_default) def += ` DEFAULT ${c.column_default}`;
           return def;
         });
 
-        // Add PRIMARY KEY constraint
         const pkCols = pkMap[tableName];
         if (pkCols?.length) {
           colDefs.push(`  PRIMARY KEY (${pkCols.join(", ")})`);
@@ -183,9 +227,7 @@ Deno.serve(async (req) => {
       sql += "\n";
     }
 
-    // =============================================
     // 5. UNIQUE CONSTRAINTS
-    // =============================================
     if (constraints?.length) {
       const uniqueConstraints = constraints.filter(
         (c: any) => c.constraint_type === "UNIQUE"
@@ -194,8 +236,6 @@ Deno.serve(async (req) => {
         sql += "-- ============================================\n";
         sql += "-- Unique Constraints\n";
         sql += "-- ============================================\n";
-
-        // Group by constraint name
         const ucMap: Record<string, { table: string; columns: string[] }> = {};
         for (const c of uniqueConstraints) {
           if (!ucMap[c.constraint_name]) {
@@ -205,7 +245,6 @@ Deno.serve(async (req) => {
             ucMap[c.constraint_name].columns.push(c.column_name);
           }
         }
-
         for (const [name, info] of Object.entries(ucMap)) {
           sql += `DO $$ BEGIN\n`;
           sql += `  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '${name}') THEN\n`;
@@ -216,9 +255,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // =============================================
     // 6. FOREIGN KEY CONSTRAINTS
-    // =============================================
     if (constraints?.length) {
       const fkConstraints = constraints.filter(
         (c: any) => c.constraint_type === "FOREIGN KEY"
@@ -227,8 +264,6 @@ Deno.serve(async (req) => {
         sql += "-- ============================================\n";
         sql += "-- Foreign Key Constraints\n";
         sql += "-- ============================================\n";
-
-        // Group by constraint name to handle composite FKs
         const fkMap: Record<string, { table: string; columns: string[]; refTable: string; refColumns: string[] }> = {};
         for (const c of fkConstraints) {
           if (!fkMap[c.constraint_name]) {
@@ -246,7 +281,6 @@ Deno.serve(async (req) => {
             fkMap[c.constraint_name].refColumns.push(c.foreign_column_name);
           }
         }
-
         for (const [name, info] of Object.entries(fkMap)) {
           sql += `DO $$ BEGIN\n`;
           sql += `  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '${name}') THEN\n`;
@@ -257,17 +291,27 @@ Deno.serve(async (req) => {
       }
     }
 
-    // =============================================
-    // 7. INDEXES
-    // =============================================
+    // 7. POST-TABLE FUNCTIONS (reference tables)
+    if (postTableFns.length) {
+      sql += "-- ============================================\n";
+      sql += "-- Post-table Functions (depend on tables)\n";
+      sql += "-- ============================================\n";
+      const sorted = [...postTableFns].sort((a: any, b: any) =>
+        a.routine_name.localeCompare(b.routine_name)
+      );
+      for (const f of sorted) {
+        sql += `-- Function: ${f.routine_name}\n`;
+        sql += `${f.full_definition};\n\n`;
+      }
+    }
+
+    // 8. INDEXES
     if (indexes?.length) {
       sql += "-- ============================================\n";
       sql += "-- Indexes\n";
       sql += "-- ============================================\n";
       for (const idx of indexes) {
-        // Skip primary key indexes (already created with table)
         if (idx.indexname?.endsWith("_pkey")) continue;
-        // Add IF NOT EXISTS to CREATE INDEX
         let indexDef = idx.indexdef;
         if (indexDef && !indexDef.includes("IF NOT EXISTS")) {
           indexDef = indexDef.replace("CREATE INDEX ", "CREATE INDEX IF NOT EXISTS ");
@@ -278,9 +322,7 @@ Deno.serve(async (req) => {
       sql += "\n";
     }
 
-    // =============================================
-    // 8. ENABLE RLS on all tables
-    // =============================================
+    // 9. ENABLE RLS
     if (columns?.length) {
       sql += "-- ============================================\n";
       sql += "-- Enable Row Level Security\n";
@@ -292,22 +334,16 @@ Deno.serve(async (req) => {
       sql += "\n";
     }
 
-    // =============================================
-    // 9. RLS POLICIES with DROP IF EXISTS
-    // =============================================
+    // 10. RLS POLICIES
     if (policies?.length) {
       sql += "-- ============================================\n";
       sql += "-- RLS Policies\n";
       sql += "-- ============================================\n";
       for (const p of policies) {
-        // Drop first to allow re-run
         sql += `DROP POLICY IF EXISTS "${p.policyname}" ON public.${p.tablename};\n`;
         sql += `CREATE POLICY "${p.policyname}" ON public.${p.tablename}`;
-        if (p.permissive === "PERMISSIVE") {
-          sql += ` AS PERMISSIVE`;
-        } else if (p.permissive === "RESTRICTIVE") {
-          sql += ` AS RESTRICTIVE`;
-        }
+        if (p.permissive === "PERMISSIVE") sql += ` AS PERMISSIVE`;
+        else if (p.permissive === "RESTRICTIVE") sql += ` AS RESTRICTIVE`;
         sql += ` FOR ${p.cmd}`;
         sql += ` TO ${p.roles?.join(", ") || "public"}`;
         if (p.qual) sql += ` USING (${p.qual})`;
@@ -316,9 +352,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // =============================================
-    // 10. STORAGE BUCKETS
-    // =============================================
+    // 11. STORAGE BUCKETS
     if (storageBuckets?.length) {
       sql += "-- ============================================\n";
       sql += "-- Storage Buckets\n";
@@ -330,9 +364,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // =============================================
-    // 11. STORAGE POLICIES with DROP IF EXISTS
-    // =============================================
+    // 12. STORAGE POLICIES
     if (storagePolicies?.length) {
       sql += "-- ============================================\n";
       sql += "-- Storage Policies\n";
@@ -340,11 +372,8 @@ Deno.serve(async (req) => {
       for (const p of storagePolicies) {
         sql += `DROP POLICY IF EXISTS "${p.policyname}" ON storage.${p.tablename};\n`;
         sql += `CREATE POLICY "${p.policyname}" ON storage.${p.tablename}`;
-        if (p.permissive === "PERMISSIVE") {
-          sql += ` AS PERMISSIVE`;
-        } else if (p.permissive === "RESTRICTIVE") {
-          sql += ` AS RESTRICTIVE`;
-        }
+        if (p.permissive === "PERMISSIVE") sql += ` AS PERMISSIVE`;
+        else if (p.permissive === "RESTRICTIVE") sql += ` AS RESTRICTIVE`;
         sql += ` FOR ${p.cmd}`;
         sql += ` TO ${p.roles?.join(", ") || "public"}`;
         if (p.qual) sql += ` USING (${p.qual})`;
@@ -353,9 +382,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // =============================================
-    // 12. TRIGGERS
-    // =============================================
+    // 13. TRIGGERS
     if (triggers?.length) {
       sql += "-- ============================================\n";
       sql += "-- Triggers\n";
@@ -366,9 +393,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // =============================================
-    // 13. REALTIME PUBLICATION
-    // =============================================
+    // 14. REALTIME PUBLICATION
     const realtimeTables = [
       "live_chat_conversations",
       "live_chat_messages",
@@ -393,7 +418,7 @@ Deno.serve(async (req) => {
       constraints: constraints?.length || 0,
       indexes: indexes?.length || 0,
       policies: policies?.length || 0,
-      functions: functions?.length || 0,
+      functions: appFunctions.length,
       triggers: triggers?.length || 0,
       enums: enums?.length || 0,
       storage_buckets: storageBuckets?.length || 0,
