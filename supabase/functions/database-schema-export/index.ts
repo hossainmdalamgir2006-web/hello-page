@@ -174,7 +174,7 @@ Deno.serve(async (req) => {
       sql += "-- ============================================\n";
       for (const f of helperFns) {
         sql += `-- Function: ${f.routine_name}\n`;
-        sql += `CREATE OR REPLACE ${f.full_definition};\n\n`;
+        sql += `${f.full_definition};\n\n`;
       }
     }
 
