@@ -78,17 +78,13 @@ export function AbandonedCartTable({ carts, isLoading, onRefresh }: AbandonedCar
       if (error) throw error;
 
       // Update reminder count in database
-      const updateData: Record<string, any> = {
+      const now = new Date().toISOString();
+      const updateData = {
         reminder_sent_count: cart.reminder_sent_count + 1,
+        ...(reminderType === 'first' ? { first_reminder_sent_at: now } : {}),
+        ...(reminderType === 'second' ? { second_reminder_sent_at: now } : {}),
+        ...(reminderType === 'final' ? { final_reminder_sent_at: now } : {}),
       };
-      
-      if (reminderType === 'first') {
-        updateData.first_reminder_sent_at = new Date().toISOString();
-      } else if (reminderType === 'second') {
-        updateData.second_reminder_sent_at = new Date().toISOString();
-      } else {
-        updateData.final_reminder_sent_at = new Date().toISOString();
-      }
 
       await supabase
         .from('abandoned_carts')

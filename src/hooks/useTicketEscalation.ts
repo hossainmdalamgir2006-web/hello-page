@@ -17,24 +17,12 @@ export function useTicketEscalation() {
       reason: string;
       newPriority?: string;
     }) => {
-      const updates: Record<string, unknown> = {
+      const updates = {
         escalation_reason: reason,
         escalated_at: new Date().toISOString(),
+        ...(escalatedTo ? { escalated_to: escalatedTo, assigned_to: escalatedTo } : {}),
+        priority: newPriority || "urgent",
       };
-
-      if (escalatedTo) {
-        updates.escalated_to = escalatedTo;
-        updates.assigned_to = escalatedTo;
-      }
-
-      if (newPriority) {
-        updates.priority = newPriority;
-      }
-
-      // Always bump to at least "high" if not already urgent
-      if (!newPriority) {
-        updates.priority = "urgent";
-      }
 
       const { error } = await supabase
         .from("support_tickets")

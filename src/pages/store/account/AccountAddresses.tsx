@@ -102,7 +102,7 @@ export default function AccountAddresses() {
     try {
       if (editingAddress) {
         const { error } = await supabase.from("user_addresses")
-          .update({ label: values.label, full_name: values.full_name, phone: values.phone, street: values.street, area: values.area || null, city: values.city, postal_code: values.postal_code || null, address_type: values.address_type })
+          .update({ label: values.label, full_name: values.full_name, phone: values.phone, street_address: values.street, area: values.area || null, city: values.city, postal_code: values.postal_code || null })
           .eq("id", editingAddress.id);
         if (error) throw error;
         toast({ title: t('common.save'), description: t('account.updateAddress') });

@@ -455,8 +455,7 @@ export default function Account() {
     setSavingNotifications(true);
 
     try {
-      const updateData: Record<string, boolean> = {};
-      updateData[`notify_${key}`] = value;
+      const updateData = { [`notify_${key}`]: value } as any;
 
       const { error } = await supabase
         .from('profiles')
@@ -486,11 +485,10 @@ export default function Account() {
             label: values.label,
             full_name: values.full_name,
             phone: values.phone,
-            street: values.street,
+            street_address: values.street,
             area: values.area || null,
             city: values.city,
             postal_code: values.postal_code || null,
-            address_type: values.address_type,
           })
           .eq('id', editingAddress.id);
 

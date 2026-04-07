@@ -141,9 +141,10 @@ export function useShippingData() {
   // Update zone
   const updateZone = async (id: string, updates: Partial<ShippingZone>) => {
     try {
+      const { name_bn, rates, ...dbUpdates } = updates as any;
       const { error } = await supabase
         .from('shipping_zones')
-        .update(updates)
+        .update(dbUpdates)
         .eq('id', id);
 
       if (error) throw error;

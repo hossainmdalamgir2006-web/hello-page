@@ -500,10 +500,10 @@ export function useLiveChatMessages(conversationId: string | null, customerName?
       if (msgError) throw msgError;
 
       // Update conversation's updated_at and reset unread count for agent messages
-      const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
-      if (sender === "agent") {
-        updateData.unread_count = 0;
-      }
+      const updateData = {
+        updated_at: new Date().toISOString(),
+        ...(sender === "agent" ? { unread_count: 0 } : {}),
+      };
 
       const { error: convError } = await supabase
         .from("live_chat_conversations")
