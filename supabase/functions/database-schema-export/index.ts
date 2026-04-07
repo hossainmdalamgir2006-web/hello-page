@@ -119,7 +119,10 @@ Deno.serve(async (req) => {
       adminClient.rpc("get_storage_buckets"),
     ]);
 
-    // Filter out helper RPCs from functions list
+    // Separate helper RPCs from app functions
+    const helperFns = (functions || []).filter(
+      (f: any) => HELPER_RPC_NAMES.includes(f.routine_name)
+    );
     const appFunctions = (functions || []).filter(
       (f: any) => !HELPER_RPC_NAMES.includes(f.routine_name)
     );
