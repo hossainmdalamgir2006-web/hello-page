@@ -393,6 +393,9 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Build stats
+    const tableNames = columns ? [...new Set(columns.map((c: any) => c.table_name))] : [];
+
     // 14. REALTIME PUBLICATION
     const candidateRealtimeTables = [
       "live_chat_conversations",
@@ -412,9 +415,6 @@ Deno.serve(async (req) => {
       }
       sql += "\n";
     }
-
-    // Build stats
-    const tableNames = columns ? [...new Set(columns.map((c: any) => c.table_name))] : [];
     const stats = {
       tables: tableNames.length,
       columns: columns?.length || 0,
