@@ -394,7 +394,7 @@ Deno.serve(async (req) => {
     }
 
     // 14. REALTIME PUBLICATION
-    const realtimeTables = [
+    const candidateRealtimeTables = [
       "live_chat_conversations",
       "live_chat_messages",
       "notifications",
@@ -402,12 +402,14 @@ Deno.serve(async (req) => {
       "support_tickets",
       "support_ticket_messages",
     ];
-    sql += "-- ============================================\n";
-    sql += "-- Realtime Publication\n";
-    sql += "-- ============================================\n";
-    for (const t of realtimeTables) {
-      sql += `ALTER PUBLICATION supabase_realtime ADD TABLE public.${t};\n`;
-    }
+    const realtimeTables = candidateRealtimeTables.filter(t => tableNames.includes(t));
+    if (realtimeTables.length) {
+      sql += "-- ============================================\n";
+      sql += "-- Realtime Publication\n";
+      sql += "-- ============================================\n";
+      for (const t of realtimeTables) {
+        sql += `ALTER PUBLICATION supabase_realtime ADD TABLE public.${t};\n`;
+      }
     sql += "\n";
 
     // Build stats
