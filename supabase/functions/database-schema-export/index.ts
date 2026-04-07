@@ -167,6 +167,17 @@ Deno.serve(async (req) => {
       }
     }
 
+    // 2.5. HELPER RPC FUNCTIONS (needed for schema export/backup)
+    if (helperFns.length) {
+      sql += "-- ============================================\n";
+      sql += "-- Helper RPC Functions (for schema export/backup)\n";
+      sql += "-- ============================================\n";
+      for (const f of helperFns) {
+        sql += `-- Function: ${f.routine_name}\n`;
+        sql += `CREATE OR REPLACE ${f.full_definition};\n\n`;
+      }
+    }
+
     // 3. PRE-TABLE FUNCTIONS (no table dependencies)
     if (preTableFns.length) {
       sql += "-- ============================================\n";
