@@ -119,7 +119,10 @@ Deno.serve(async (req) => {
       adminClient.rpc("get_storage_buckets"),
     ]);
 
-    // Filter out helper RPCs from functions list
+    // Separate helper RPCs from app functions
+    const helperFns = (functions || []).filter(
+      (f: any) => HELPER_RPC_NAMES.includes(f.routine_name)
+    );
     const appFunctions = (functions || []).filter(
       (f: any) => !HELPER_RPC_NAMES.includes(f.routine_name)
     );
@@ -161,6 +164,17 @@ Deno.serve(async (req) => {
         sql += `    CREATE TYPE public.${name} AS ENUM (${labels.map((l) => `'${l}'`).join(", ")});\n`;
         sql += `  END IF;\n`;
         sql += `END $$;\n\n`;
+      }
+    }
+
+    // 2.5. HELPER RPC FUNCTIONS (needed for schema export/backup)
+    if (helperFns.length) {
+      sql += "-- ============================================\n";
+      sql += "-- Helper RPC Functions (for schema export/backup)\n";
+      sql += "-- ============================================\n";
+      for (const f of helperFns) {
+        sql += `-- Function: ${f.routine_name}\n`;
+        sql += `${f.full_definition};\n\n`;
       }
     }
 
@@ -421,7 +435,7 @@ Deno.serve(async (req) => {
       constraints: constraints?.length || 0,
       indexes: indexes?.length || 0,
       policies: policies?.length || 0,
-      functions: appFunctions.length,
+      functions: appFunctions.length + helperFns.length,
       triggers: triggers?.length || 0,
       enums: enums?.length || 0,
       storage_buckets: storageBuckets?.length || 0,
