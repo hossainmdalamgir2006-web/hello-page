@@ -3745,6 +3745,16 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_storage_buckets: {
+        Args: never
+        Returns: {
+          allowed_mime_types: string[]
+          file_size_limit: number
+          id: string
+          name: string
+          public: boolean
+        }[]
+      }
       get_storage_policies: {
         Args: never
         Returns: {
