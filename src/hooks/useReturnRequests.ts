@@ -75,8 +75,11 @@ export function useReturnRequests() {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status, admin_notes }: { id: string; status: string; admin_notes?: string }) => {
-      const update: Record<string, unknown> = { status, updated_at: new Date().toISOString() };
-      if (admin_notes !== undefined) update.admin_notes = admin_notes;
+      const update = {
+        status,
+        updated_at: new Date().toISOString(),
+        ...(admin_notes !== undefined ? { admin_notes } : {}),
+      };
 
       const { error } = await supabase
         .from('return_requests')

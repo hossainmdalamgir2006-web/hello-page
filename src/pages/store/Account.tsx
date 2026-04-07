@@ -489,7 +489,7 @@ export default function Account() {
             area: values.area || null,
             city: values.city,
             postal_code: values.postal_code || null,
-            address_type: values.address_type,
+            address_type: values.address_type as string,
           })
           .eq('id', editingAddress.id);
 

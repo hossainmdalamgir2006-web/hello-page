@@ -59,8 +59,7 @@ export default function AccountNotificationPreferences() {
     setNotifications(prev => ({ ...prev, [key]: value }));
     setSaving(true);
     try {
-      const updateData: Record<string, boolean> = {};
-      updateData[`notify_${key}`] = value;
+      const updateData = { [`notify_${key}`]: value } as any;
       const { error } = await supabase.from("profiles").update(updateData).eq("user_id", user.id);
       if (error) throw error;
     } catch (error: any) {
