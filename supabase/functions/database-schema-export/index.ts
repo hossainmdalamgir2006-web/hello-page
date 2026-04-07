@@ -410,7 +410,8 @@ Deno.serve(async (req) => {
       for (const t of realtimeTables) {
         sql += `ALTER PUBLICATION supabase_realtime ADD TABLE public.${t};\n`;
       }
-    sql += "\n";
+      sql += "\n";
+    }
 
     // Build stats
     const tableNames = columns ? [...new Set(columns.map((c: any) => c.table_name))] : [];
