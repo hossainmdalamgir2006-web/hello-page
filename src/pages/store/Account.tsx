@@ -455,8 +455,7 @@ export default function Account() {
     setSavingNotifications(true);
 
     try {
-      const updateData: Record<string, boolean> = {};
-      updateData[`notify_${key}`] = value;
+      const updateData = { [`notify_${key}`]: value } as any;
 
       const { error } = await supabase
         .from('profiles')
