@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { generateInvoicePDF, type InvoiceTemplateConfig } from "@/utils/generateInvoicePDF";
+import { useDocumentTemplates } from "@/hooks/useDocumentTemplates";
 import { formatPrice } from "@/lib/formatPrice";
 import { motion } from "framer-motion";
 
@@ -28,6 +29,7 @@ export default function AccountInvoice() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const { getTemplateConfig } = useDocumentTemplates();
 
   useEffect(() => {
     if (!user) return;
@@ -51,45 +53,32 @@ export default function AccountInvoice() {
     fetch();
   }, [user]);
 
-  const generatePDF = (order: any) => {
+  const handleDownload = (order: any) => {
     setDownloading(order.id);
     try {
-      const doc = new jsPDF();
-      const w = doc.internal.pageSize.getWidth();
-      doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.text("INVOICE", 14, 25);
-      doc.setFontSize(10); doc.setFont("helvetica", "normal");
-      doc.text(`Order: #${order.order_number}`, 14, 35);
-      doc.text(`Date: ${format(new Date(order.created_at), "MMM dd, yyyy")}`, 14, 41);
-      doc.text(`Payment: ${order.payment_method || "N/A"}`, 14, 47);
-      doc.text(`Status: ${order.payment_status || "pending"}`, 14, 53);
+      const cfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
       const addr = order.shipping_address;
+      let addressStr = "N/A";
       if (addr) {
-        doc.text("Ship To:", w - 80, 35);
-        doc.text(addr.name || "", w - 80, 41);
-        doc.text(addr.address || "", w - 80, 47);
-        doc.text(`${addr.city || ""}, ${addr.area || ""}`, w - 80, 53);
-        doc.text(addr.phone || "", w - 80, 59);
+        if (typeof addr === "string") addressStr = addr;
+        else addressStr = [addr.name, addr.address, addr.city, addr.area].filter(Boolean).join(", ");
       }
-      let y = 70;
-      doc.setFillColor(245, 245, 245); doc.rect(14, y, w - 28, 8, "F");
-      doc.setFont("helvetica", "bold"); doc.setFontSize(9);
-      doc.text("Product", 16, y + 6); doc.text("Qty", 120, y + 6); doc.text("Price", 140, y + 6); doc.text("Total", 170, y + 6);
-      y += 12; doc.setFont("helvetica", "normal");
-      for (const item of order.items) {
-        doc.text(item.product_name.substring(0, 40), 16, y);
-        doc.text(String(item.quantity), 120, y);
-        doc.text(formatPrice(item.unit_price), 140, y);
-        doc.text(formatPrice(item.total_price), 170, y);
-        y += 7;
-      }
-      y += 5; doc.setDrawColor(200); doc.line(14, y, w - 14, y); y += 8;
       const subtotal = order.items.reduce((s: number, i: any) => s + Number(i.total_price), 0);
-      doc.text("Subtotal:", 140, y); doc.text(formatPrice(subtotal), 170, y); y += 7;
-      doc.text("Shipping:", 140, y); doc.text(formatPrice(order.shipping_cost || 0), 170, y);
-      if (Number(order.discount_amount) > 0) { y += 7; doc.text("Discount:", 140, y); doc.text(`-${formatPrice(order.discount_amount)}`, 170, y); }
-      y += 7; doc.setFont("helvetica", "bold");
-      doc.text("Total:", 140, y); doc.text(formatPrice(order.total_amount), 170, y);
-      doc.save(`Invoice-${order.order_number}.pdf`);
+      generateInvoicePDF({
+        order_number: order.order_number,
+        created_at: order.created_at,
+        customer_name: addr?.name || "Customer",
+        customer_email: "",
+        customer_phone: addr?.phone || "",
+        shipping_address: addressStr,
+        items: order.items,
+        subtotal,
+        shipping_cost: order.shipping_cost || 0,
+        discount: order.discount_amount || 0,
+        total: order.total_amount,
+        payment_method: order.payment_method || "N/A",
+        payment_status: order.payment_status || "pending",
+      }, cfg);
       toast.success(t('account.invoiceDownloaded'));
     } catch { toast.error(t('account.failedToGenerate')); }
     finally { setDownloading(null); }
