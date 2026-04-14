@@ -57,7 +57,8 @@ import {
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
-import { generateInvoicePDF } from '@/utils/generateInvoicePDF';
+import { generateInvoicePDF, type InvoiceTemplateConfig } from '@/utils/generateInvoicePDF';
+import { useDocumentTemplates } from '@/hooks/useDocumentTemplates';
 import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
@@ -103,6 +104,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addItem } = useCart();
+  const { getTemplateConfig } = useDocumentTemplates();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -193,7 +195,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
       payment_method: order.payment_method === 'cod' ? 'Cash on Delivery' : order.payment_method,
       payment_status: order.payment_status,
     };
-    generateInvoicePDF(invoiceData);
+    generateInvoicePDF(invoiceData, getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined);
   };
 
   return (

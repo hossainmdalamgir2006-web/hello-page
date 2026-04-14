@@ -1088,6 +1088,36 @@ export type Database = {
         }
         Relationships: []
       }
+      document_templates: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_templates: {
         Row: {
           body_html: string | null
