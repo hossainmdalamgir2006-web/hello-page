@@ -214,7 +214,7 @@ export default function Customers() {
         />
 
         {/* Stats Cards */}
-        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-3">
           {[
             { label: "Total Customers", value: stats.total.toString(), icon: Users, color: "primary" },
             { label: "New This Month", value: stats.newThisMonth.toString(), icon: UserPlus, color: "success" },
