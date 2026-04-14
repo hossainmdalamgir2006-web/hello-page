@@ -61,12 +61,6 @@ import { CustomerSegmentTabs, segments } from "@/components/admin/CustomerSegmen
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatPrice } from "@/lib/formatPrice";
 
-const tierConfig = {
-  bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
-  silver: { color: "bg-slate-400/10 text-slate-500 border-slate-400/20", minSpent: 20000 },
-  gold: { color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20", minSpent: 50000 },
-  platinum: { color: "bg-violet-500/10 text-violet-500 border-violet-500/20", minSpent: 80000 },
-};
 
 const statusConfig = {
   active: { color: "bg-success/10 text-success border-success/20", icon: CheckCircle2 },
@@ -79,12 +73,6 @@ const getCustomerName = (customer: Customer): string => {
   return customer.full_name || customer.email?.split('@')[0] || 'Unknown';
 };
 
-const getLoyaltyTier = (totalSpent: number): keyof typeof tierConfig => {
-  if (totalSpent >= 80000) return 'platinum';
-  if (totalSpent >= 50000) return 'gold';
-  if (totalSpent >= 20000) return 'silver';
-  return 'bronze';
-};
 
 const getCity = (address: any): string | null => {
   if (!address) return null;
@@ -101,7 +89,7 @@ export default function Customers() {
   } = useCustomersData();
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
-  const [tierFilter, setTierFilter] = useState<string>("all");
+  
   const [activeSegment, setActiveSegment] = useState("all");
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -109,9 +97,6 @@ export default function Customers() {
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
   const [savingNotes, setSavingNotes] = useState(false);
 
-  const platinumCount = useMemo(() => {
-    return customers.filter(c => getLoyaltyTier(Number(c.total_spent)) === 'platinum').length;
-  }, [customers]);
 
   // Apply segment filter first
   const segmentFilter = useMemo(() => {
@@ -136,12 +121,8 @@ export default function Customers() {
       });
     }
 
-    if (tierFilter !== "all") {
-      result = result.filter(c => getLoyaltyTier(Number(c.total_spent)) === tierFilter);
-    }
-
     return result;
-  }, [customers, searchQuery, tierFilter, segmentFilter]);
+  }, [customers, searchQuery, segmentFilter]);
 
   const { sortedData: sortedCustomers, sortKey, sortDirection, handleSort } = useSorting(filteredCustomers);
 
@@ -157,7 +138,7 @@ export default function Customers() {
     { key: "phone" as const, header: "Phone" },
     { key: "total_orders" as const, header: "Total Orders" },
     { key: "total_spent" as const, header: "Total Spent" },
-    { key: (c: Customer) => getLoyaltyTier(Number(c.total_spent)), header: "Tier" },
+    
     { key: "status" as const, header: "Status" },
     { key: (c: Customer) => (c.tags || []).join(', '), header: "Tags" },
     { key: (c: Customer) => c.notes || '', header: "Notes" },
@@ -245,7 +226,7 @@ export default function Customers() {
             { label: "Total Customers", value: stats.total.toString(), icon: Users, color: "primary" },
             { label: "New This Month", value: stats.newThisMonth.toString(), icon: UserPlus, color: "success" },
             { label: "Total Revenue", value: formatPrice(stats.totalRevenue), icon: DollarSign, color: "accent" },
-            { label: "Platinum Members", value: platinumCount.toString(), icon: Crown, color: "warning" },
+            
           ].map((card) => {
             const IconComp = card.icon;
             const bgMap: Record<string,string> = { primary: "bg-primary/10 text-primary", accent: "bg-accent/10 text-accent", success: "bg-success/10 text-success", warning: "bg-warning/10 text-warning" };
@@ -286,18 +267,6 @@ export default function Customers() {
                 className="pl-10"
               />
             </div>
-            <Select value={tierFilter} onValueChange={setTierFilter}>
-              <SelectTrigger className="w-36 bg-card">
-                <SelectValue placeholder="Tier" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover">
-                <SelectItem value="all">All Tiers</SelectItem>
-                <SelectItem value="platinum">Platinum</SelectItem>
-                <SelectItem value="gold">Gold</SelectItem>
-                <SelectItem value="silver">Silver</SelectItem>
-                <SelectItem value="bronze">Bronze</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div className="flex gap-2">
             <Button
