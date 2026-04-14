@@ -371,7 +371,7 @@ export default function Customers() {
                   ) : (
                     paginatedCustomers.map((customer) => {
                       const customerName = getCustomerName(customer);
-                      const tier = getLoyaltyTier(Number(customer.total_spent));
+                      
                       const status = getStatus(customer.status);
                       const StatusIcon = statusConfig[status].icon;
                       const customerTags = customer.tags || [];
