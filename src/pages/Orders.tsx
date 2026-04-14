@@ -70,8 +70,9 @@ import { MobileQuickStatusDrawer } from "@/components/orders/MobileQuickStatusDr
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { OrderStatsCards } from "@/components/orders/OrderStatsCards";
 import { OrderDetailDialog } from "@/components/orders/OrderDetailDialog";
-import { generateInvoicePDF, generateBulkInvoicePDF, orderToInvoiceData } from "@/utils/generateInvoicePDF";
-import { generatePackingSlip } from "@/utils/generatePackingSlip";
+import { generateInvoicePDF, generateBulkInvoicePDF, orderToInvoiceData, type InvoiceTemplateConfig } from "@/utils/generateInvoicePDF";
+import { generatePackingSlip, type PackingSlipTemplateConfig } from "@/utils/generatePackingSlip";
+import { useDocumentTemplates } from "@/hooks/useDocumentTemplates";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import { DataExport } from "@/components/ui/data-export";
@@ -109,6 +110,7 @@ const getShippingAddressString = (address: any): string => {
 export default function Orders() {
   const { orders, stats, isLoading, updateStatus, updatePaymentStatus, verifyPayment, deleteOrder, isVerifying } = useOrdersData();
   const { updateTags } = useOrderTags();
+  const { getTemplateConfig } = useDocumentTemplates();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
@@ -182,7 +184,7 @@ export default function Orders() {
       items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
       total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
     });
-    generateInvoicePDF(invoiceData);
+    generateInvoicePDF(invoiceData, getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined);
   };
 
   const handlePrintPackingSlip = (order: Order) => {
@@ -191,7 +193,7 @@ export default function Orders() {
       customer_phone: order.customer_phone, shipping_address: getShippingAddressString(order.shipping_address),
       items: order.items.map(item => ({ product_name: item.product_name, quantity: item.quantity, unit_price: item.unit_price })),
       notes: order.notes,
-    });
+    }, getTemplateConfig("packing_slip") as PackingSlipTemplateConfig | undefined);
     toast.success('Packing slip downloaded');
   };
 
