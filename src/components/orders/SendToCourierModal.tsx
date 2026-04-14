@@ -25,6 +25,8 @@ import { Separator } from "@/components/ui/separator";
 import { Truck, Package, MapPin, Phone, User, Loader2, CheckCircle2 } from "lucide-react";
 import { useSteadfastCourier, type SteadfastOrder } from "@/hooks/useSteadfastCourier";
 import { usePathaoCourier, type PathaoOrder, type PathaoCity, type PathaoZone, type PathaoArea } from "@/hooks/usePathaoCourier";
+import { useRedXCourier, type RedXParcel } from "@/hooks/useRedXCourier";
+import { usePaperflyCourier, type PaperflyParcel } from "@/hooks/usePaperflyCourier";
 import { useShipmentsData } from "@/hooks/useShipmentsData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -51,18 +53,27 @@ interface SendToCourierModalProps {
   onSuccess?: () => void;
 }
 
-type CourierType = "steadfast" | "pathao";
+type CourierType = "steadfast" | "pathao" | "redx" | "paperfly";
+
+const courierOptions: { value: CourierType; label: string; desc: string; logo: string }[] = [
+  { value: "steadfast", label: "Steadfast", desc: "Fast & Reliable", logo: "/logos/steadfast.svg" },
+  { value: "pathao", label: "Pathao", desc: "Wide Coverage", logo: "/logos/pathao.svg" },
+  { value: "redx", label: "RedX", desc: "Express Delivery", logo: "/logos/redx.svg" },
+  { value: "paperfly", label: "Paperfly", desc: "Nationwide", logo: "/logos/paperfly.svg" },
+];
 
 export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: SendToCourierModalProps) {
   const [selectedCourier, setSelectedCourier] = useState<CourierType>("steadfast");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Steadfast state
+  // Courier hooks
   const steadfastCourier = useSteadfastCourier();
+  const pathaoCourier = usePathaoCourier();
+  const redxCourier = useRedXCourier();
+  const paperflyCourier = usePaperflyCourier();
 
   // Pathao state
-  const pathaoCourier = usePathaoCourier();
   const [cities, setCities] = useState<PathaoCity[]>([]);
   const [zones, setZones] = useState<PathaoZone[]>([]);
   const [areas, setAreas] = useState<PathaoArea[]>([]);
@@ -116,7 +127,6 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
       if (cities.length === 0) {
         pathaoCourier.getCities().then(setCities).catch(console.error);
       }
-      // Fetch Pathao store_id from settings
       (supabase
         .from('store_settings' as any)
         .select('value')
@@ -149,10 +159,13 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
     }
   }, [selectedZone]);
 
+  const getCourierDisplayName = (courier: CourierType) => {
+    return courierOptions.find(c => c.value === courier)?.label || courier;
+  };
+
   const handleSubmit = async () => {
     if (!order) return;
 
-    // Validation
     if (!recipientName || !recipientPhone || !recipientAddress) {
       toast.error("Please fill in all required fields");
       return;
@@ -185,7 +198,7 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
           consignmentId = result.consignment.consignment_id?.toString() || "";
           trackingCode = result.consignment.tracking_code || "";
         }
-      } else {
+      } else if (selectedCourier === "pathao") {
         if (!pathaoStoreId) {
           throw new Error("Pathao Store ID is not set. Please select a Store from Settings > Integrations.");
         }
@@ -210,6 +223,35 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
           consignmentId = result.data.consignment_id || "";
           trackingCode = result.data.tracking_code || "";
         }
+      } else if (selectedCourier === "redx") {
+        const redxParcel: RedXParcel = {
+          customer_name: recipientName,
+          customer_phone: recipientPhone,
+          delivery_area: recipientAddress,
+          customer_address: recipientAddress,
+          merchant_invoice_id: order.order_number,
+          cash_collection_amount: codAmount,
+          parcel_weight: 0.5,
+          instruction: note || undefined,
+        };
+
+        const result = await redxCourier.createParcel(redxParcel);
+        trackingCode = result?.result?.tracking_id || result?.tracking_id || "";
+        consignmentId = trackingCode;
+      } else if (selectedCourier === "paperfly") {
+        const paperflyParcel: PaperflyParcel = {
+          customer_name: recipientName,
+          customer_mobile: recipientPhone,
+          customer_address: recipientAddress,
+          customer_invoice: order.order_number,
+          cash_collection: codAmount,
+          special_instruction: note || undefined,
+          parcel_weight: 0.5,
+        };
+
+        const result = await paperflyCourier.createParcel(paperflyParcel);
+        trackingCode = result?.tracking_code || result?.data?.tracking_code || "";
+        consignmentId = trackingCode;
       }
 
       // Save to shipments table
@@ -229,7 +271,7 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
       });
 
       setSubmitted(true);
-      toast.success(`Order sent to ${selectedCourier === 'steadfast' ? 'Steadfast' : 'Pathao'} successfully`);
+      toast.success(`Order sent to ${getCourierDisplayName(selectedCourier)} successfully`);
       onSuccess?.();
       
       setTimeout(() => {
@@ -279,36 +321,26 @@ export function SendToCourierModal({ open, onOpenChange, order, onSuccess }: Sen
               <RadioGroup
                 value={selectedCourier}
                 onValueChange={(value) => setSelectedCourier(value as CourierType)}
-                className="grid grid-cols-2 gap-3"
+                className="grid grid-cols-2 sm:grid-cols-4 gap-3"
               >
-                <Label
-                  htmlFor="steadfast"
-                  className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
-                    selectedCourier === "steadfast"
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  }`}
-                >
-                  <RadioGroupItem value="steadfast" id="steadfast" />
-                  <div>
-                    <p className="font-medium">Steadfast</p>
-                    <p className="text-xs text-muted-foreground">Fast & Reliable</p>
-                  </div>
-                </Label>
-                <Label
-                  htmlFor="pathao"
-                  className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
-                    selectedCourier === "pathao"
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  }`}
-                >
-                  <RadioGroupItem value="pathao" id="pathao" />
-                  <div>
-                    <p className="font-medium">Pathao</p>
-                    <p className="text-xs text-muted-foreground">Wide Coverage</p>
-                  </div>
-                </Label>
+                {courierOptions.map((courier) => (
+                  <Label
+                    key={courier.value}
+                    htmlFor={courier.value}
+                    className={`flex flex-col items-center gap-2 p-4 border rounded-lg cursor-pointer transition-colors ${
+                      selectedCourier === courier.value
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <RadioGroupItem value={courier.value} id={courier.value} className="sr-only" />
+                    <img src={courier.logo} alt={courier.label} className="h-6 w-auto object-contain" />
+                    <div className="text-center">
+                      <p className="font-medium text-sm">{courier.label}</p>
+                      <p className="text-[10px] text-muted-foreground">{courier.desc}</p>
+                    </div>
+                  </Label>
+                ))}
               </RadioGroup>
             </div>
 
