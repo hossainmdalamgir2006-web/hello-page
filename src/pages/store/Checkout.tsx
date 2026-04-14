@@ -797,8 +797,7 @@ export default function Checkout() {
                                   <div className="flex-1">
                                     <div className="flex items-center justify-between">
                                       <p className="font-medium">
-                                        {method.name}
-                                        {method.name_bn && <span className="text-muted-foreground ml-1">({method.name_bn})</span>}
+                                       {method.name}
                                       </p>
                                       {methodCodCharge > 0 && (
                                         <span className="text-xs text-warning bg-warning/10 px-2 py-0.5 rounded">+{formatPrice(methodCodCharge)}</span>

@@ -105,7 +105,7 @@ export function useEnabledPaymentMethods() {
             name: definition?.name || config.name || methodId,
             name_bn: definition?.name_bn || config.name_bn || methodId,
             icon: definition?.icon || "💳",
-            logo_url: config.logo_url,
+            logo_url: config.logo_url || definition?.default_logo || null,
             qr_code_url: qrCodeUrl,
             description: definition?.description || config.description || "Custom payment method",
             account_number: accountNumber,
