@@ -1,42 +1,56 @@
 
 
-## Plan: SendToCourierModal ও BulkSendToCourierModal-এ RedX ও Paperfly যোগ করা
+## Plan: Invoice ও Packing Slip এর জন্য Dynamic Template System
 
 ### সমস্যা
-`SendToCourierModal` এবং `BulkSendToCourierModal` — দুটোতেই শুধু Steadfast ও Pathao আছে। কিন্তু RedX ও Paperfly-র hook এবং edge function আগেই তৈরি আছে। Modal-এ এই দুটো option যোগ করতে হবে।
+বর্তমানে Invoice এবং Packing Slip এর ডিজাইন হার্ডকোডেড (`generateInvoicePDF.ts`, `generatePackingSlip.ts`)। Admin panel থেকে এগুলো কাস্টমাইজ করার কোনো উপায় নেই।
 
-### পরিবর্তন
+### সমাধান
+একটি নতুন `document_templates` টেবিল তৈরি করে admin panel-এ একটি ম্যানেজমেন্ট পেজ যোগ করা, যেখান থেকে Invoice ও Packing Slip এর layout, colors, store info, footer text ইত্যাদি কাস্টমাইজ করা যাবে। Template data JSON হিসেবে সেভ হবে এবং PDF generation সময় সেই config ব্যবহার হবে।
 
-#### 1. `src/components/orders/SendToCourierModal.tsx`
-- `CourierType` update: `"steadfast" | "pathao" | "redx" | "paperfly"`
-- Import `useRedXCourier` ও `usePaperflyCourier` hooks
-- Courier selection grid: `grid-cols-2` → `grid-cols-2 sm:grid-cols-4` — ৪টি courier card (Steadfast, Pathao, RedX, Paperfly) with logos
-- `handleSubmit`-এ RedX ও Paperfly branch যোগ:
-  - **RedX:** `createParcel()` call with `customer_name`, `customer_phone`, `delivery_area`, `customer_address`, `merchant_invoice_id`, `cash_collection_amount`
-  - **Paperfly:** `createParcel()` call with similar fields
-- Response থেকে `tracking_id` / `consignment_id` extract করে shipment save
+### পরিবর্তনসমূহ
 
-#### 2. `src/components/orders/BulkSendToCourierModal.tsx`
-- Same `CourierType` update
-- Import RedX ও Paperfly hooks
-- ৪টি courier radio option যোগ
-- Bulk processing loop-এ RedX ও Paperfly handling যোগ
-
-### Technical Details
-
-```text
-SendToCourierModal changes:
-├── Import useRedXCourier, usePaperflyCourier
-├── CourierType = "steadfast" | "pathao" | "redx" | "paperfly"
-├── 4 radio cards (grid-cols-2 sm:grid-cols-4)
-├── handleSubmit → add redx/paperfly branches
-│   ├── redx: redxCourier.createParcel({...})
-│   └── paperfly: paperflyCourier.createParcel({...})
-└── Save to shipments with courier = "redx" | "paperfly"
-
-BulkSendToCourierModal: same pattern
+#### 1. Database: `document_templates` টেবিল তৈরি
+```sql
+CREATE TABLE public.document_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type TEXT NOT NULL UNIQUE, -- 'invoice' | 'packing_slip'
+  name TEXT NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  config JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
 ```
+Config JSON-এ থাকবে:
+- **Invoice**: `store_name`, `store_address`, `store_phone`, `store_email`, `store_logo_url`, `accent_color`, `show_payment_info`, `footer_text`, `show_qr_code`, `currency_symbol`
+- **Packing Slip**: `store_name`, `accent_color`, `show_notes`, `show_signature`, `footer_text`
 
-### কোনো Database বা Edge Function পরিবর্তন লাগবে না
-RedX ও Paperfly-র hooks এবং edge functions আগেই তৈরি আছে। শুধু UI modal-এ option যোগ করতে হবে।
+Default seed data insert করা হবে দুটো template-এর জন্য।
+
+RLS: Admin-only access (read/write via `has_admin_role`).
+
+#### 2. নতুন Hook: `src/hooks/useDocumentTemplates.ts`
+- `document_templates` থেকে CRUD operations
+- `getTemplateConfig(type)` — Invoice/Packing Slip config ফেচ করবে
+
+#### 3. নতুন Admin Page: Document Templates Settings
+- Sidebar-এ "Document Templates" লিংক যোগ (`/admin/system-settings/documents`)
+- Route যোগ `App.tsx`-এ
+- পেজে দুটো template card: Invoice ও Packing Slip
+- প্রতিটিতে config editor (store info, colors, footer text ইত্যাদি)
+- Live preview button (sample data দিয়ে PDF generate করে দেখাবে)
+
+#### 4. PDF Generators আপডেট
+- **`generateInvoicePDF.ts`**: config parameter accept করবে; store info, colors, footer সব config থেকে নেবে
+- **`generatePackingSlip.ts`**: একইভাবে config থেকে dynamic values নেবে
+- **`AccountInvoice.tsx`**: template config ফেচ করে PDF generation-এ পাঠাবে
+
+#### 5. Orders Page আপডেট
+- `Orders.tsx`-এ Invoice/Packing Slip generation-এ document template config ব্যবহার করবে
+
+### ফাইল পরিবর্তন
+- **নতুন**: `src/hooks/useDocumentTemplates.ts`, `src/pages/system-settings/DocumentTemplatesPage.tsx`, `src/components/settings/DocumentTemplateEditor.tsx`
+- **এডিট**: `src/utils/generateInvoicePDF.ts`, `src/utils/generatePackingSlip.ts`, `src/pages/Orders.tsx`, `src/pages/store/account/AccountInvoice.tsx`, `src/App.tsx`, `src/components/admin/AdminSidebar.tsx`
+- **Migration**: `document_templates` টেবিল + seed data + RLS
 
