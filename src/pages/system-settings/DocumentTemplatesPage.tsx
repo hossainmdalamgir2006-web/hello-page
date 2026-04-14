@@ -10,7 +10,7 @@ export default function DocumentTemplatesPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <AdminPageHeader title="Document Templates" subtitle="Customize Invoice and Packing Slip templates" />
+        <AdminPageHeader title="Document Templates" description="Customize Invoice and Packing Slip templates" />
         <div className="grid gap-6 md:grid-cols-2">
           <Skeleton className="h-[500px]" />
           <Skeleton className="h-[500px]" />
@@ -23,7 +23,7 @@ export default function DocumentTemplatesPage() {
     <>
       <SEOHead title="Document Templates" noIndex />
       <div className="space-y-6">
-        <AdminPageHeader title="Document Templates" subtitle="Customize your Invoice and Packing Slip PDF layouts, branding, and content" />
+        <AdminPageHeader title="Document Templates" description="Customize your Invoice and Packing Slip PDF layouts, branding, and content" />
         <div className="grid gap-6 lg:grid-cols-2">
           {templates.map((template) => (
             <DocumentTemplateEditor

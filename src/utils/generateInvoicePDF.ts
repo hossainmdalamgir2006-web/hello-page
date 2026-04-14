@@ -27,20 +27,42 @@ interface InvoiceData {
   store_email?: string;
 }
 
-const COLORS = {
-  primary: [15, 23, 42] as [number, number, number],      // Slate 900
-  accent: [59, 130, 246] as [number, number, number],      // Blue 500
-  accentLight: [219, 234, 254] as [number, number, number], // Blue 100
-  gold: [180, 142, 58] as [number, number, number],         // Warm Gold
-  text: [30, 41, 59] as [number, number, number],           // Slate 800
-  textMuted: [100, 116, 139] as [number, number, number],   // Slate 500
-  textLight: [148, 163, 184] as [number, number, number],   // Slate 400
-  border: [226, 232, 240] as [number, number, number],      // Slate 200
-  bgLight: [248, 250, 252] as [number, number, number],     // Slate 50
-  white: [255, 255, 255] as [number, number, number],
-  success: [22, 163, 74] as [number, number, number],       // Green 600
-  danger: [220, 38, 38] as [number, number, number],        // Red 600
-};
+export interface InvoiceTemplateConfig {
+  store_name?: string;
+  store_address?: string;
+  store_phone?: string;
+  store_email?: string;
+  store_logo_url?: string;
+  accent_color?: string;
+  show_payment_info?: boolean;
+  footer_text?: string;
+  show_qr_code?: boolean;
+  currency_symbol?: string;
+  show_store_info?: boolean;
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [59, 130, 246];
+}
+
+function getColors(accentHex?: string) {
+  const accent = accentHex ? hexToRgb(accentHex) : [59, 130, 246] as [number, number, number];
+  return {
+    primary: [15, 23, 42] as [number, number, number],
+    accent: accent as [number, number, number],
+    accentLight: [219, 234, 254] as [number, number, number],
+    gold: [180, 142, 58] as [number, number, number],
+    text: [30, 41, 59] as [number, number, number],
+    textMuted: [100, 116, 139] as [number, number, number],
+    textLight: [148, 163, 184] as [number, number, number],
+    border: [226, 232, 240] as [number, number, number],
+    bgLight: [248, 250, 252] as [number, number, number],
+    white: [255, 255, 255] as [number, number, number],
+    success: [22, 163, 74] as [number, number, number],
+    danger: [220, 38, 38] as [number, number, number],
+  };
+}
 
 function generateSingleInvoice(doc: jsPDF, data: InvoiceData, startY = 0): void {
   const pageWidth = doc.internal.pageSize.getWidth();
