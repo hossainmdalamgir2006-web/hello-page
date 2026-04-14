@@ -122,7 +122,7 @@ export default function AccountInvoice() {
                   <Badge variant={order.payment_status === "paid" ? "default" : "secondary"}>
                     {order.payment_status || t('account.pending')}
                   </Badge>
-                  <Button size="sm" variant="outline" onClick={() => generatePDF(order)} disabled={downloading === order.id}>
+                  <Button size="sm" variant="outline" onClick={() => handleDownload(order)} disabled={downloading === order.id}>
                     {downloading === order.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                     <span className="ml-1.5">{t('common.download')}</span>
                   </Button>
