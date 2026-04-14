@@ -236,7 +236,7 @@ export default function Customers() {
         <AdminPageHeader
           title="Customers"
           description={`Manage your customer base (${customers.length} customers)`}
-          actions={<CustomerQuickLookup customers={customers} onSelect={viewDetails} />}
+          actions={null}
         />
 
         {/* Stats Cards */}
@@ -384,7 +384,6 @@ export default function Customers() {
                       Total Spent
                     </SortableTableHead>
                     <TableHead className="text-right">Avg Order</TableHead>
-                    <TableHead>Tier</TableHead>
                     <TableHead>Tags</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="w-12"></TableHead>
@@ -448,12 +447,6 @@ export default function Customers() {
                             {customer.total_orders > 0
                               ? `${formatPrice(Math.round(Number(customer.total_spent) / customer.total_orders))}`
                               : '—'}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className={cn("gap-1 capitalize", tierConfig[tier].color)}>
-                              <Crown className="h-3 w-3" />
-                              {tier}
-                            </Badge>
                           </TableCell>
                           <TableCell>
                             <div className="flex flex-wrap gap-1 max-w-[150px]">
