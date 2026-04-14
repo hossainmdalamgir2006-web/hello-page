@@ -104,6 +104,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { addItem } = useCart();
+  const { getTemplateConfig } = useDocumentTemplates();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -194,7 +195,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
       payment_method: order.payment_method === 'cod' ? 'Cash on Delivery' : order.payment_method,
       payment_status: order.payment_status,
     };
-    generateInvoicePDF(invoiceData);
+    generateInvoicePDF(invoiceData, getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined);
   };
 
   return (
