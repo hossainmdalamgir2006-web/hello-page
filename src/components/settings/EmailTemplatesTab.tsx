@@ -57,7 +57,7 @@ const templateCategoryMap: Record<string, string[]> = {
 };
 
 const categoryIcons: Record<string, Record<string, React.ElementType>> = {
-  order: { order_confirmation: ShoppingCart, shipping_notification: Package, delivery_confirmation: CheckCircle2, order_cancelled: XCircle, order_status_update: ClipboardList, refund_confirmation: DollarSign, return_request: RotateCcw, payment_verified: CheckCircle2, new_order_admin: ShoppingCart, payment_failed: XCircle, shipping_delayed: Clock, tracking_updated: Package },
+  order: { order_confirmation: ShoppingCart, shipping_notification: Package, delivery_confirmation: CheckCircle2, order_cancelled: XCircle, order_status_update: ClipboardList, refund_confirmation: DollarSign, return_request: RotateCcw, payment_verified: CheckCircle2, new_order_admin: ShoppingCart, payment_failed: XCircle, shipping_delayed: Clock, tracking_updated: Package, invoice_email: FileText },
   auth: { password_reset: RefreshCw, welcome_email: UserCheck, email_verification_otp: KeyRound, password_changed: KeyRound },
   marketing: { abandoned_cart: Clock, review_request: Send, coupon_promo: Tag, wishlist_price_drop: TrendingDown, back_in_stock: PackageCheck, new_review_admin: Send, review_approved: CheckCircle2, low_rating_alert: AlertCircle },
   security: { lockout_alert: AlertCircle, unlock_alert: CheckCircle2, login_alert: Shield, suspicious_login: AlertCircle, new_device_login: Shield, two_factor_enabled: Shield, two_factor_disabled: AlertCircle, session_terminated: XCircle, ip_blocked: Shield, geo_blocked: AlertCircle },
