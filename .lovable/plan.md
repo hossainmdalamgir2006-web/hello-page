@@ -1,57 +1,42 @@
-## Fix: Pathao Courier Edge Function — নিজের Supabase-এ কাজ করছে না
+
+
+## Plan: SendToCourierModal ও BulkSendToCourierModal-এ RedX ও Paperfly যোগ করা
 
 ### সমস্যা
+`SendToCourierModal` এবং `BulkSendToCourierModal` — দুটোতেই শুধু Steadfast ও Pathao আছে। কিন্তু RedX ও Paperfly-র hook এবং edge function আগেই তৈরি আছে। Modal-এ এই দুটো option যোগ করতে হবে।
 
-তোমার অন্য সব edge function `Deno.serve()` ব্যবহার করে — যেটা নতুন Supabase Edge Runtime-এ কাজ করে। কিন্তু **pathao-courier** function পুরোনো `serve` import ব্যবহার করছে:
+### পরিবর্তন
 
-```typescript
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-```
+#### 1. `src/components/orders/SendToCourierModal.tsx`
+- `CourierType` update: `"steadfast" | "pathao" | "redx" | "paperfly"`
+- Import `useRedXCourier` ও `usePaperflyCourier` hooks
+- Courier selection grid: `grid-cols-2` → `grid-cols-2 sm:grid-cols-4` — ৪টি courier card (Steadfast, Pathao, RedX, Paperfly) with logos
+- `handleSubmit`-এ RedX ও Paperfly branch যোগ:
+  - **RedX:** `createParcel()` call with `customer_name`, `customer_phone`, `delivery_area`, `customer_address`, `merchant_invoice_id`, `cash_collection_amount`
+  - **Paperfly:** `createParcel()` call with similar fields
+- Response থেকে `tracking_id` / `consignment_id` extract করে shipment save
 
-নতুন Supabase Edge Runtime-এ এই পুরোনো import কাজ নাও করতে পারে। এছাড়া CORS headers-এও কিছু header missing আছে যেগুলো অন্য function-এ আছে।
+#### 2. `src/components/orders/BulkSendToCourierModal.tsx`
+- Same `CourierType` update
+- Import RedX ও Paperfly hooks
+- ৪টি courier radio option যোগ
+- Bulk processing loop-এ RedX ও Paperfly handling যোগ
 
-### সমাধান
-
-**File:** `supabase/functions/pathao-courier/index.ts`
-
-1. **পুরোনো `serve` import সরিয়ে `Deno.serve` ব্যবহার করো** — অন্য সব working function-এর মতো
-2. **CORS headers update করো** — অন্য function-গুলোতে যে extended headers আছে সেগুলো add করো
-
-### Changes
+### Technical Details
 
 ```text
-// BEFORE (line 1):
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+SendToCourierModal changes:
+├── Import useRedXCourier, usePaperflyCourier
+├── CourierType = "steadfast" | "pathao" | "redx" | "paperfly"
+├── 4 radio cards (grid-cols-2 sm:grid-cols-4)
+├── handleSubmit → add redx/paperfly branches
+│   ├── redx: redxCourier.createParcel({...})
+│   └── paperfly: paperflyCourier.createParcel({...})
+└── Save to shipments with courier = "redx" | "paperfly"
 
-// AFTER:
-// (remove the import entirely)
-
-// BEFORE (lines 4-7):
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-// AFTER:
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
-
-// BEFORE (~line 155):
-serve(async (req) => {
-
-// AFTER:
-Deno.serve(async (req) => {
+BulkSendToCourierModal: same pattern
 ```
 
-### সারাংশ
+### কোনো Database বা Edge Function পরিবর্তন লাগবে না
+RedX ও Paperfly-র hooks এবং edge functions আগেই তৈরি আছে। শুধু UI modal-এ option যোগ করতে হবে।
 
-
-| Item         | Before                  | After                                |
-| ------------ | ----------------------- | ------------------------------------ |
-| Server API   | `serve()` from deno std | `Deno.serve()` (native)              |
-| CORS headers | 4 headers               | 8 headers (matching other functions) |
-
-
-এই change করার পর নিজের Supabase-এ redeploy করলে Pathao function কাজ করবে।...............update koro tumi
