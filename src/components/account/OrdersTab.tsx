@@ -57,7 +57,8 @@ import {
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
-import { generateInvoicePDF } from '@/utils/generateInvoicePDF';
+import { generateInvoicePDF, type InvoiceTemplateConfig } from '@/utils/generateInvoicePDF';
+import { useDocumentTemplates } from '@/hooks/useDocumentTemplates';
 import { formatPrice } from "@/lib/formatPrice";
 
 interface OrderItem {
