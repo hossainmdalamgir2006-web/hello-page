@@ -68,24 +68,26 @@ async function loadImageAsBase64(url: string): Promise<string | null> {
 
 async function getStoreConfig() {
   try {
-    const [settingsRes, pageRes, footerRes] = await Promise.all([
+    const [settingsRes, pageRes, footerRes, templateRes] = await Promise.all([
       supabase.from("store_settings").select("key, setting_value")
         .in("key", ["STORE_EMAIL", "STORE_PHONE", "STORE_ADDRESS"]),
       supabase.from("page_contents").select("content").eq("page_slug", "header").maybeSingle(),
       supabase.from("page_contents").select("content").eq("page_slug", "footer_settings").maybeSingle(),
+      supabase.from("document_templates").select("config").eq("type", "invoice").eq("is_active", true).maybeSingle(),
     ]);
 
     const map: Record<string, string> = {};
     settingsRes.data?.forEach((r: any) => { if (r.setting_value) map[r.key] = r.setting_value; });
     const hdr = pageRes.data?.content as any;
     const footer = footerRes.data?.content as any;
+    const tplCfg = templateRes.data?.config as any;
 
     return {
-      store_name: hdr?.store_name || footer?.store_name || "Your Store",
-      store_logo_url: hdr?.store_logo || footer?.store_logo || "",
-      store_address: footer?.store_address || map["STORE_ADDRESS"] || "",
-      store_email: footer?.store_email || map["STORE_EMAIL"] || "",
-      store_phone: footer?.store_phone || map["STORE_PHONE"] || "",
+      store_name: hdr?.store_name || tplCfg?.store_name || footer?.store_name || "Your Store",
+      store_logo_url: hdr?.store_logo || tplCfg?.store_logo_url || footer?.store_logo || "",
+      store_address: tplCfg?.store_address || footer?.store_address || map["STORE_ADDRESS"] || "",
+      store_email: tplCfg?.store_email || footer?.store_email || map["STORE_EMAIL"] || "",
+      store_phone: tplCfg?.store_phone || footer?.store_phone || map["STORE_PHONE"] || "",
     };
   } catch {
     return { store_name: "Your Store", store_logo_url: "", store_address: "", store_email: "", store_phone: "" };
