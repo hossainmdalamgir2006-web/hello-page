@@ -275,6 +275,45 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_assign_rules: {
+        Row: {
+          assign_to: string | null
+          assign_to_email: string | null
+          conditions: Json
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: number | null
+          rule_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          assign_to?: string | null
+          assign_to_email?: string | null
+          conditions?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority?: number | null
+          rule_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          assign_to?: string | null
+          assign_to_email?: string | null
+          conditions?: Json
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: number | null
+          rule_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       auto_discount_rules: {
         Row: {
           conditions: Json | null
