@@ -60,6 +60,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { generateInvoicePDF, type InvoiceTemplateConfig } from '@/utils/generateInvoicePDF';
 import { useDocumentTemplates } from '@/hooks/useDocumentTemplates';
 import { formatPrice } from "@/lib/formatPrice";
+import { usePageContent } from "@/hooks/useSiteContent";
 
 interface OrderItem {
   id: string;
@@ -105,6 +106,8 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
   const { toast } = useToast();
   const { addItem } = useCart();
   const { getTemplateConfig } = useDocumentTemplates();
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -195,7 +198,13 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
       payment_method: order.payment_method === 'cod' ? 'Cash on Delivery' : order.payment_method,
       payment_status: order.payment_status,
     };
-    generateInvoicePDF(invoiceData, getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined);
+    const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+    const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
+      ...templateCfg,
+      store_name: headerCont.store_name || templateCfg.store_name || "YOUR STORE",
+      store_logo_url: headerCont.store_logo || templateCfg.store_logo_url || "",
+    } : undefined;
+    generateInvoicePDF(invoiceData, cfg);
   };
 
   return (

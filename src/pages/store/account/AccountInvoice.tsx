@@ -61,10 +61,12 @@ export default function AccountInvoice() {
     try {
       const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
       // Merge store name from Header Settings if not set in template
+      const headerStoreName = headerCont.store_name || "";
+      const headerStoreLogo = headerCont.store_logo || "";
       const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
         ...templateCfg,
-        store_name: templateCfg.store_name || headerCont.store_name || "YOUR STORE",
-        store_logo_url: templateCfg.store_logo_url || headerCont.store_logo || "",
+        store_name: headerStoreName || templateCfg.store_name || "YOUR STORE",
+        store_logo_url: headerStoreLogo || templateCfg.store_logo_url || "",
       } : undefined;
       const addr = order.shipping_address;
       let addressStr = "N/A";

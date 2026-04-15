@@ -80,7 +80,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatPrice } from "@/lib/formatPrice";
-
+import { usePageContent } from "@/hooks/useSiteContent";
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -111,6 +111,8 @@ export default function Orders() {
   const { orders, stats, isLoading, updateStatus, updatePaymentStatus, verifyPayment, deleteOrder, isVerifying } = useOrdersData();
   const { updateTags } = useOrderTags();
   const { getTemplateConfig } = useDocumentTemplates();
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
@@ -184,7 +186,13 @@ export default function Orders() {
       items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
       total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
     });
-    generateInvoicePDF(invoiceData, getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined);
+    const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+    const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
+      ...templateCfg,
+      store_name: headerCont.store_name || templateCfg.store_name || "YOUR STORE",
+      store_logo_url: headerCont.store_logo || templateCfg.store_logo_url || "",
+    } : undefined;
+    generateInvoicePDF(invoiceData, cfg);
   };
 
   const handlePrintPackingSlip = (order: Order) => {
@@ -259,7 +267,13 @@ export default function Orders() {
       items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
       total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
     }));
-    generateBulkInvoicePDF(invoicesData);
+    const templateCfg2 = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+    const bulkCfg: InvoiceTemplateConfig | undefined = templateCfg2 ? {
+      ...templateCfg2,
+      store_name: headerCont.store_name || templateCfg2.store_name || "YOUR STORE",
+      store_logo_url: headerCont.store_logo || templateCfg2.store_logo_url || "",
+    } : undefined;
+    generateBulkInvoicePDF(invoicesData, bulkCfg);
     toast.success(`${selectedOrders.length} invoices combined into one PDF`);
   };
   const handleBulkDelete = () => {
