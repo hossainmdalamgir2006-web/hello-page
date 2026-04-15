@@ -15,9 +15,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { format, subDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
+import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { 
   FileText, Download, Calendar as CalendarIcon, Clock, BarChart3, TrendingUp, Users, ShoppingCart,
-  Package, DollarSign, Plus, Play, Trash2, Filter, Mail, RefreshCw, AlertCircle
+  Package, DollarSign, Plus, Play, Trash2, Filter, Mail, RefreshCw, AlertCircle, Eye
 } from "lucide-react";
 
 // ─── Types ───
