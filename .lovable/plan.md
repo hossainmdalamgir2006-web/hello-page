@@ -1,63 +1,39 @@
 
 
-# Auto Discount Rules — আরও Rule Type ও Condition যোগ করা
+# Trash Activity Log Fix — `trash_log` টেবিল তৈরি
 
-## বর্তমান অবস্থা
-- **UI-তে Rule Type অপশন**: শুধু 3টি — `Cart Value`, `First Order`, `Bulk Purchase`
-- **Label map-এ আছে**: 6টি — `cart_total`, `first_order`, `birthday`, `loyalty_tier`, `abandoned_cart`, `bulk_purchase`
-- **Backend logic (`useAutoDiscountRules.ts`)**: শুধু `cart_total` টাইপ প্রসেস করে, বাকিগুলো ignore হয়
-- **Condition ফিল্ড**: শুধু একটা text input — কোনো dynamic/contextual UI নেই
+## সমস্যা
+`trash_log` টেবিল ডাটাবেসে নেই। কোড (`useGlobalTrash.ts`, `auto-clean-trash` edge function) এই টেবিলে read/write করার চেষ্টা করে কিন্তু 404 পায়।
 
-## Plan
+## সমাধান
 
-### Step 1: Rule Type dropdown-এ সব অপশন যোগ (Coupons.tsx)
-`SelectContent`-এ নতুন অপশন যোগ:
-- `cart_total` — Cart Value (আছে)
-- `first_order` — First Order (আছে)
-- `bulk_purchase` — Bulk Purchase (আছে)
-- `item_quantity` — Item Quantity (নতুন)
-- `category_based` — Category Based (নতুন)
-- `time_based` — Time/Schedule Based (নতুন)
+### Step 1: Database Migration — `trash_log` টেবিল তৈরি
+```sql
+CREATE TABLE public.trash_log (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  entity_type text NOT NULL,
+  entity_id text NOT NULL,
+  entity_name text NOT NULL,
+  action text NOT NULL,
+  performed_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+  performed_by_email text,
+  created_at timestamptz DEFAULT now()
+);
 
-`ruleTypeLabels` map-এ `item_quantity`, `category_based`, `time_based` যোগ করা। `birthday`, `loyalty_tier`, `abandoned_cart` রিমুভ (কারণ এগুলো কার্যকরভাবে ব্যবহৃত হয় না)।
+ALTER TABLE public.trash_log ENABLE ROW LEVEL SECURITY;
 
-### Step 2: Dynamic Condition UI (Coupons.tsx)
-Rule type অনুযায়ী condition ফিল্ড পরিবর্তন:
-- **cart_total**: Min Purchase Amount (number input)
-- **first_order**: No condition needed (auto-detect)
-- **bulk_purchase**: Min Quantity (number input)
-- **item_quantity**: Min Items in Cart (number input)
-- **category_based**: Category select (existing categories থেকে)
-- **time_based**: Start/End date pickers (already in DB schema)
+CREATE POLICY "Admins can view trash log"
+  ON public.trash_log FOR SELECT TO authenticated
+  USING (public.has_admin_role(auth.uid()));
 
-`newRule` state-এ `min_purchase`, `max_discount`, `starts_at`, `expires_at`, `conditions` (jsonb) ফিল্ড যোগ।
+CREATE POLICY "Authenticated can insert trash log"
+  ON public.trash_log FOR INSERT TO authenticated
+  WITH CHECK (true);
+```
 
-### Step 3: Create mutation update (Coupons.tsx)
-Insert logic-এ নতুন ফিল্ডগুলো map করা:
-- `min_purchase` — cart_total, item_quantity থেকে
-- `conditions` — category_based-এর জন্য `{ categories: [...] }`
-- `starts_at`/`expires_at` — time_based-এর জন্য
-- `max_discount` — সব টাইপে optional cap
-
-### Step 4: calculateDiscount logic update (useAutoDiscountRules.ts)
-`calculateDiscount` ফাংশনে নতুন rule types handle করা:
-- **item_quantity**: cart items count চেক
-- **first_order**: user-এর order count চেক (placeholder — requires order history)
-- **bulk_purchase**: total quantity চেক
-- **category_based**: cart items-এর category match চেক
-- **time_based**: existing date validation (already works)
-
-Function signature update: `calculateDiscount(cartTotal, cartItems?)` — items array optional parameter হিসেবে।
-
-### Step 5: Cart/Checkout integration update
-`CartDrawer.tsx`, `Cart.tsx`, `Checkout.tsx`-এ `calculateDiscount` call-এ `items` pass করা যেন নতুন rule types কাজ করে।
+### Step 2: No code changes needed
+`useGlobalTrash.ts` already has correct `logTrashAction` and `fetchActivityLog` functions that use `trash_log`. Once the table exists, everything will work automatically.
 
 ### Files to modify
-1. `src/pages/Coupons.tsx` — UI form, mutation, labels
-2. `src/hooks/useAutoDiscountRules.ts` — calculation logic
-3. `src/components/store/CartDrawer.tsx` — pass items
-4. `src/pages/store/Cart.tsx` — pass items
-5. `src/pages/store/Checkout.tsx` — pass items
-
-No database changes needed — existing `auto_discount_rules` table already has `conditions` (jsonb), `min_purchase`, `max_discount`, `starts_at`, `expires_at` columns.
+- Database migration only (1 new table + RLS policies)
 
