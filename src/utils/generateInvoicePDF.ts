@@ -436,18 +436,20 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   if (footerText) doc.text(footerText, pageWidth / 2, footerY + 3, { align: "center", maxWidth: contentWidth - 10 });
 }
 
-export function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): void {
+export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): Promise<void> {
+  const logoData = await loadImageAsBase64(config?.store_logo_url || "");
   const doc = new jsPDF();
-  generateSingleInvoice(doc, data, config);
+  generateSingleInvoice(doc, data, config, 0, logoData);
   doc.save(`Invoice-${data.order_number}.pdf`);
 }
 
-export function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): void {
+export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): Promise<void> {
   if (invoices.length === 0) return;
+  const logoData = await loadImageAsBase64(config?.store_logo_url || "");
   const doc = new jsPDF();
   invoices.forEach((data, index) => {
     if (index > 0) doc.addPage();
-    generateSingleInvoice(doc, data, config);
+    generateSingleInvoice(doc, data, config, 0, logoData);
   });
   doc.save(`Invoices-Bulk-${invoices.length}.pdf`);
 }
