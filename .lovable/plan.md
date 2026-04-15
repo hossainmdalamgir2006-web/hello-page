@@ -1,28 +1,28 @@
 
 
-## Plan: Payment Method Logo in Invoice PDF
+## Plan: Invoice PDF — Status Badge Center Fix ও Due Date / Terms Remove
 
 ### সমস্যা
-Invoice PDF-এ Payment Method section-এ শুধু method name দেখায় (e.g., "payoneer"), কিন্তু method-এর logo দেখায় না।
+
+1. **Status badge text centered না**: Badge-এর মধ্যে text vertically/horizontally ঠিকমতো center হচ্ছে না। কারণ: `doc.getTextWidth(statusLabel)` call হচ্ছে কিন্তু তখন font size সেট করা হয়নি (6.5)। Font size সেট হওয়ার আগে width মাপলে ভুল width আসে, ফলে badge ও text misalign হয়।
+
+2. **Due Date সরানো**: Header meta section-এ "Due Date: 23 April 2026" hardcoded দেখাচ্ছে — user এটা চান না।
+
+3. **"Payment due within 7 days" সরানো**: Terms & Conditions section-এ এই line hardcoded — user এটা রাখেননি।
 
 ### পরিবর্তন
 
-#### 1. `src/utils/generateInvoicePDF.ts`
-- `InvoiceData` interface-এ `payment_method_logo?: string` ফিল্ড যোগ করা
-- Payment Method section-এ logo image render করা (name-এর উপরে বা পাশে ছোট icon হিসেবে ~10x10mm)
-- `loadImageAsBase64` ব্যবহার করে logo fetch করা
-- `generateSingleInvoice`-এ নতুন `paymentLogoData` parameter নেওয়া
+#### `src/utils/generateInvoicePDF.ts`
 
-#### 2. `src/pages/store/account/AccountInvoice.tsx`
-- Order-এর `payment_method` name দিয়ে `payment_methods` table থেকে matching method-এর `logo_url` fetch করা
-- `generateInvoicePDF`-এ `payment_method_logo` pass করা
+1. **Status badge fix** (lines 206-224):
+   - Font size (6.5) আগে সেট করা, তারপর `getTextWidth()` call — এতে badge width সঠিক হবে এবং text center-এ আসবে।
 
-#### 3. `src/pages/Orders.tsx` ও `src/components/account/OrdersTab.tsx`
-- একইভাবে payment method logo URL pass করা (যদি invoice download এখান থেকেও হয়)
+2. **Due Date remove** (lines 197-203):
+   - পুরো "Due Date" block মুছে ফেলা (metaY += 6, text "Due Date:", dueDate calculation সব)।
+
+3. **Terms "Payment due within 7 days" remove** (line 431):
+   - এই line মুছে ফেলা, বাকি দুটি term (Returns, Damaged items) রাখা, Y offset adjust করা।
 
 ### ফাইল
-- **Edit**: `src/utils/generateInvoicePDF.ts` — logo rendering in payment section
-- **Edit**: `src/pages/store/account/AccountInvoice.tsx` — fetch & pass payment logo
-- **Edit**: `src/pages/Orders.tsx` — pass payment logo
-- **Edit**: `src/components/account/OrdersTab.tsx` — pass payment logo
+- **Edit**: `src/utils/generateInvoicePDF.ts` — ৩টি fix
 
