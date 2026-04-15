@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useContactMessages, ContactMessage } from "@/hooks/useContactMessages";
-import { BulkActionBar } from "./BulkActionBar";
+
 import { useContactMessageReplies } from "@/hooks/useContactMessageReplies";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,14 +50,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 export function ContactMessagesTab() {
-  const { messages, isLoading, unreadCount, unrepliedCount, markAsRead, markAsUnread, markAsReplied, deleteMessage, bulkMarkAsRead, bulkMarkAsUnread, bulkDelete, isBulkDeleting, isBulkUpdating } = useContactMessages();
+  const { messages, isLoading, unreadCount, unrepliedCount, markAsRead, markAsUnread, markAsReplied, deleteMessage } = useContactMessages();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "unread" | "read" | "unreplied" | "replied">("all");
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  
   
   // Reply state
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
@@ -167,27 +166,6 @@ export function ContactMessagesTab() {
     }
   };
 
-  // Selection handlers
-  const toggleSelection = (id: string) => {
-    const newSet = new Set(selectedIds);
-    if (newSet.has(id)) newSet.delete(id);
-    else newSet.add(id);
-    setSelectedIds(newSet);
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedIds.size === filteredMessages.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(filteredMessages.map((m) => m.id)));
-    }
-  };
-
-  const clearSelection = () => setSelectedIds(new Set());
-
-  const handleBulkMarkRead = () => { bulkMarkAsRead(Array.from(selectedIds)); clearSelection(); };
-  const handleBulkMarkUnread = () => { bulkMarkAsUnread(Array.from(selectedIds)); clearSelection(); };
-  const handleBulkDelete = () => { bulkDelete(Array.from(selectedIds)); clearSelection(); };
 
   if (isLoading) {
     return (
@@ -269,32 +247,6 @@ export function ContactMessagesTab() {
         </div>
       </div>
 
-      {/* Bulk Action Bar */}
-      <BulkActionBar
-        selectedCount={selectedIds.size}
-        onClearSelection={clearSelection}
-        onBulkDelete={handleBulkDelete}
-        onBulkStatusChange={(status) => {
-          if (status === "open") handleBulkMarkUnread();
-          else if (status === "resolved") handleBulkMarkRead();
-        }}
-        showStatusOptions={["open", "resolved"]}
-        isDeleting={isBulkDeleting}
-        isUpdating={isBulkUpdating}
-      />
-
-      {/* Select All */}
-      {filteredMessages.length > 0 && (
-        <div className="flex items-center gap-2 px-2">
-          <Checkbox
-            checked={selectedIds.size === filteredMessages.length && filteredMessages.length > 0}
-            onCheckedChange={toggleSelectAll}
-          />
-          <span className="text-sm text-muted-foreground">
-            Select All ({filteredMessages.length})
-          </span>
-        </div>
-      )}
 
       {/* Messages List */}
       <Card>
@@ -311,23 +263,15 @@ export function ContactMessagesTab() {
               </div>
             ) : (
               <div className="divide-y">
-                {filteredMessages.map((message) => {
-                  const isSelected = selectedIds.has(message.id);
-                  return (
+                {filteredMessages.map((message) => (
                   <div
                     key={message.id}
                     className={`p-4 hover:bg-muted/50 transition-colors ${
                       !message.is_read ? "bg-primary/5" : ""
-                    } ${isSelected ? "ring-2 ring-primary ring-inset" : ""}`}
+                    }`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3">
-                        <Checkbox
-                          checked={isSelected}
-                          onCheckedChange={() => toggleSelection(message.id)}
-                          className="mt-1"
-                          onClick={(e) => e.stopPropagation()}
-                        />
                       <div
                         className="flex-1 cursor-pointer"
                         onClick={() => handleViewMessage(message)}
@@ -422,10 +366,9 @@ export function ContactMessagesTab() {
                         </DropdownMenu>
                       </div>
                     </div>
+                    </div>
                   </div>
-                  </div>
-                  );
-                })}
+                ))}
               </div>
             )}
           </ScrollArea>
