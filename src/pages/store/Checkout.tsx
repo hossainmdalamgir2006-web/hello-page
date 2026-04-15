@@ -171,7 +171,7 @@ export default function Checkout() {
   }, [formData.city, zonesWithRates, selectedZoneId]);
 
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
-  const autoDiscount = couponState?.autoDiscount || calculateAutoDiscount(subtotal, items);
+  const autoDiscount = couponState?.autoDiscount || calculateAutoDiscount(subtotal, selectedItems);
   const activeAutoRules = getActiveRules().filter(rule => rule.rule_type === "cart_total" ? (rule.min_purchase && subtotal >= rule.min_purchase) : true);
   
   const couponDiscount = appliedCoupon?.discountAmount || couponState?.discountAmount || 0;
