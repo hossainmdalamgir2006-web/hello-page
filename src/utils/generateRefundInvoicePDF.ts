@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import { supabase } from "@/integrations/supabase/client";
+import { PAYMENT_METHOD_DEFINITIONS } from "@/data/paymentMethodDefinitions";
 
 interface RefundInvoiceData {
   order_number: string;
@@ -38,6 +39,15 @@ const C = {
   success: [22, 163, 74] as RGB,
 };
 
+function getPaymentLogoUrl(paymentMethod: string, dbLogoUrl?: string): string {
+  if (dbLogoUrl) return dbLogoUrl;
+  const code = paymentMethod?.toLowerCase().replace(/\s+/g, '_') || '';
+  const def = PAYMENT_METHOD_DEFINITIONS.find(
+    d => d.method_id === code || d.name.toLowerCase() === code
+  );
+  return def?.default_logo || "";
+}
+
 async function loadImageAsBase64(url: string): Promise<string | null> {
   if (!url) return null;
   try {
@@ -58,25 +68,27 @@ async function loadImageAsBase64(url: string): Promise<string | null> {
 
 async function getStoreConfig() {
   try {
-    const [settingsRes, pageRes] = await Promise.all([
+    const [settingsRes, pageRes, footerRes] = await Promise.all([
       supabase.from("store_settings").select("key, setting_value")
         .in("key", ["STORE_EMAIL", "STORE_PHONE", "STORE_ADDRESS"]),
       supabase.from("page_contents").select("content").eq("page_slug", "header").maybeSingle(),
+      supabase.from("page_contents").select("content").eq("page_slug", "footer_settings").maybeSingle(),
     ]);
 
     const map: Record<string, string> = {};
     settingsRes.data?.forEach((r: any) => { if (r.setting_value) map[r.key] = r.setting_value; });
     const hdr = pageRes.data?.content as any;
+    const footer = footerRes.data?.content as any;
 
     return {
-      store_name: hdr?.store_name || "YOUR STORE",
-      store_logo_url: hdr?.store_logo || "",
-      store_address: map["STORE_ADDRESS"] || "",
-      store_email: map["STORE_EMAIL"] || "",
-      store_phone: map["STORE_PHONE"] || "",
+      store_name: hdr?.store_name || footer?.store_name || "Your Store",
+      store_logo_url: hdr?.store_logo || footer?.store_logo || "",
+      store_address: footer?.store_address || map["STORE_ADDRESS"] || "",
+      store_email: footer?.store_email || map["STORE_EMAIL"] || "",
+      store_phone: footer?.store_phone || map["STORE_PHONE"] || "",
     };
   } catch {
-    return { store_name: "YOUR STORE", store_logo_url: "", store_address: "", store_email: "", store_phone: "" };
+    return { store_name: "Your Store", store_logo_url: "", store_address: "", store_email: "", store_phone: "" };
   }
 }
 
@@ -87,8 +99,14 @@ const fmt = (n: number) => {
 
 export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise<void> {
   const store = await getStoreConfig();
-  const logoData = await loadImageAsBase64(store.store_logo_url);
   const storeName = data.store_name || store.store_name;
+
+  // Load images in parallel
+  const pmLogoUrl = getPaymentLogoUrl(data.payment_method);
+  const [logoData, pmLogoData] = await Promise.all([
+    loadImageAsBase64(store.store_logo_url),
+    loadImageAsBase64(pmLogoUrl),
+  ]);
 
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -105,13 +123,11 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   let y = 18;
 
   // ─── HEADER ───
+  let logoDrawn = false;
   if (logoData) {
-    try { doc.addImage(logoData, "PNG", margin + 2, y - 4, 20, 20); } catch { drawFallbackLogo(); }
-  } else {
-    drawFallbackLogo();
+    try { doc.addImage(logoData, "PNG", margin + 2, y - 4, 20, 20); logoDrawn = true; } catch { /* fallback */ }
   }
-
-  function drawFallbackLogo() {
+  if (!logoDrawn) {
     doc.setFillColor(...C.primary);
     doc.circle(margin + 12, y + 6, 10, "F");
     doc.setFont("helvetica", "bold");
@@ -194,8 +210,7 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   const billX = margin + 10;
   const orderX = margin + halfW + 10;
 
-  // Calculate dynamic box height
-  let leftLines = 1; // name
+  let leftLines = 1;
   if (data.customer_phone) leftLines++;
   if (data.customer_email) leftLines++;
   const boxH = Math.max(44, 18 + leftLines * 6 + 6);
@@ -220,7 +235,6 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
 
   let secY = y + 10;
 
-  // Section labels
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
   doc.setTextColor(...C.danger);
@@ -229,30 +243,25 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   doc.text("ORIGINAL ORDER", orderX, secY);
   secY += 8;
 
-  // Customer name
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setTextColor(...C.primary);
   doc.text(data.customer_name, billX, secY);
 
-  // Order number on right
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
   doc.setTextColor(...C.primary);
   doc.text(`Order #${data.order_number}`, orderX, secY);
   secY += 6;
 
-  // Left: customer contact | Right: order details — row by row
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...C.textMuted);
 
-  // Row 1
   if (data.customer_phone) doc.text(data.customer_phone, billX, secY);
   doc.text(`Total: ${fmt(data.original_total)}`, orderX, secY);
   secY += 5;
 
-  // Row 2
   doc.setTextColor(...C.textMuted);
   if (data.customer_email) doc.text(data.customer_email, billX, secY);
   doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, secY);
@@ -284,7 +293,6 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   const colUnitPrice = margin + contentWidth * 0.72;
   const colTotal = margin + contentWidth - 5;
 
-  // Table header
   doc.setFillColor(...C.primary);
   doc.roundedRect(margin, y, contentWidth, 13, 2, 2, "F");
   doc.setFont("helvetica", "bold");
@@ -297,7 +305,6 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   doc.text("Total", colTotal, y + 8.5, { align: "right" });
   y += 16;
 
-  // Table rows
   data.items.forEach((item, index) => {
     if (y > pageHeight - 80) { doc.addPage(); y = 20; }
 
@@ -338,7 +345,7 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
     y += rowH;
   });
 
-  y += 6;
+  y += 8;
 
   // ─── TOTALS ───
   const totalsLabelX = margin + contentWidth * 0.55;
@@ -350,13 +357,13 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   doc.text("Original Total", totalsLabelX, y, { align: "right" });
   doc.setTextColor(...C.text);
   doc.text(fmt(data.original_total), totalsValueX, y, { align: "right" });
-  y += 8;
+  y += 10;
 
   // Separator
   doc.setDrawColor(...C.border);
   doc.setLineWidth(0.5);
-  doc.line(totalsLabelX - 30, y - 2, totalsValueX, y - 2);
-  y += 4;
+  doc.line(totalsLabelX - 30, y - 3, totalsValueX, y - 3);
+  y += 6;
 
   // Refund total with danger background bar
   const grandTotalBarW = totalsValueX - (totalsLabelX - 30);
@@ -374,7 +381,7 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   const footerAreaY = pageHeight - 32;
   const bottomY = Math.max(y, footerAreaY - 28);
 
-  doc.setDrawColor(...C.danger);
+  doc.setDrawColor(...C.border);
   doc.setLineWidth(0.5);
   doc.line(margin, bottomY, margin + contentWidth, bottomY);
   let bsY = bottomY + 8;
@@ -388,16 +395,27 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   doc.setFontSize(8);
   doc.setTextColor(...C.primary);
   doc.text("Payment Method", col1X, bsY);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.5);
-  doc.setTextColor(...C.textMuted);
-  doc.text(data.payment_method || "N/A", col1X, bsY + 5);
 
-  // Note
+  // Payment logo + text
+  const pmY = bsY + 5;
+  if (pmLogoData) {
+    try { doc.addImage(pmLogoData, "PNG", col1X, pmY - 3, 12, 12); } catch { /* skip */ }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C.textMuted);
+    doc.text(data.payment_method || "N/A", col1X + 14, pmY + 3);
+  } else {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C.textMuted);
+    doc.text(data.payment_method || "N/A", col1X, pmY);
+  }
+
+  // Terms & Conditions
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
   doc.setTextColor(...C.primary);
-  doc.text("Note", col2X, bsY);
+  doc.text("Terms & Conditions", col2X, bsY);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(6.5);
   doc.setTextColor(...C.textMuted);
