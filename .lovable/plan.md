@@ -1,56 +1,34 @@
 
 
-## Plan: Invoice ও Packing Slip এর জন্য Dynamic Template System
+## Invoice PDF — সমস্যা ও সমাধান
 
-### সমস্যা
-বর্তমানে Invoice এবং Packing Slip এর ডিজাইন হার্ডকোডেড (`generateInvoicePDF.ts`, `generatePackingSlip.ts`)। Admin panel থেকে এগুলো কাস্টমাইজ করার কোনো উপায় নেই।
+### চিহ্নিত সমস্যাগুলো:
 
-### সমাধান
-একটি নতুন `document_templates` টেবিল তৈরি করে admin panel-এ একটি ম্যানেজমেন্ট পেজ যোগ করা, যেখান থেকে Invoice ও Packing Slip এর layout, colors, store info, footer text ইত্যাদি কাস্টমাইজ করা যাবে। Template data JSON হিসেবে সেভ হবে এবং PDF generation সময় সেই config ব্যবহার হবে।
+1. **Currency Symbol ভাঙা** — "৳" (BDT Taka) সাইন "ó" হিসেবে দেখাচ্ছে। jsPDF-এর default Helvetica ফন্ট বাংলা/ইউনিকোড ক্যারেক্টার সাপোর্ট করে না। ফিক্স: `৳` এর বদলে `BDT ` বা `Tk` ব্যবহার করতে হবে, অথবা `toLocaleString("en-BD")` formatting ঠিক করতে হবে।
 
-### পরিবর্তনসমূহ
+2. **"INVOICE" ও "Invoice No:" টেক্সট ওভারল্যাপ** — হেডারে INVOICE title এবং Invoice No লেবেল একে অপরের উপর পড়ছে। Position coordinates adjust করতে হবে।
 
-#### 1. Database: `document_templates` টেবিল তৈরি
-```sql
-CREATE TABLE public.document_templates (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type TEXT NOT NULL UNIQUE, -- 'invoice' | 'packing_slip'
-  name TEXT NOT NULL,
-  is_active BOOLEAN DEFAULT true,
-  config JSONB NOT NULL DEFAULT '{}',
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-```
-Config JSON-এ থাকবে:
-- **Invoice**: `store_name`, `store_address`, `store_phone`, `store_email`, `store_logo_url`, `accent_color`, `show_payment_info`, `footer_text`, `show_qr_code`, `currency_symbol`
-- **Packing Slip**: `store_name`, `accent_color`, `show_notes`, `show_signature`, `footer_text`
+3. **"Your Store" ও "Premium E-Commerce"** — এগুলো হার্ডকোডেড ডিফল্ট। Admin যদি Document Templates সেটিংসে store name সেট করে তাহলে আসবে, তবে "Premium E-Commerce" সাবটাইটেল সম্পূর্ণ হার্ডকোডেড — এটি রিমুভ করতে হবে বা configurable করতে হবে।
 
-Default seed data insert করা হবে দুটো template-এর জন্য।
+4. **"Thank you for your business!"** — ডিফল্ট ফুটার টেক্সট, Admin template settings থেকে কাস্টমাইজ করা যায়।
 
-RLS: Admin-only access (read/write via `has_admin_role`).
+5. **Bill To / Ship To তে email দেখাচ্ছে** — Customer email order data তে pass হচ্ছে না (empty string), কিন্তু তারপরও দেখাচ্ছে — এটা ঠিক করতে হবে।
 
-#### 2. নতুন Hook: `src/hooks/useDocumentTemplates.ts`
-- `document_templates` থেকে CRUD operations
-- `getTemplateConfig(type)` — Invoice/Packing Slip config ফেচ করবে
+6. **Paid Badge দেখাচ্ছে না** — payment_status check করতে হবে।
 
-#### 3. নতুন Admin Page: Document Templates Settings
-- Sidebar-এ "Document Templates" লিংক যোগ (`/admin/system-settings/documents`)
-- Route যোগ `App.tsx`-এ
-- পেজে দুটো template card: Invoice ও Packing Slip
-- প্রতিটিতে config editor (store info, colors, footer text ইত্যাদি)
-- Live preview button (sample data দিয়ে PDF generate করে দেখাবে)
+### পরিবর্তন
 
-#### 4. PDF Generators আপডেট
-- **`generateInvoicePDF.ts`**: config parameter accept করবে; store info, colors, footer সব config থেকে নেবে
-- **`generatePackingSlip.ts`**: একইভাবে config থেকে dynamic values নেবে
-- **`AccountInvoice.tsx`**: template config ফেচ করে PDF generation-এ পাঠাবে
+#### ফাইল: `src/utils/generateInvoicePDF.ts`
 
-#### 5. Orders Page আপডেট
-- `Orders.tsx`-এ Invoice/Packing Slip generation-এ document template config ব্যবহার করবে
+1. **Currency fix**: `৳` কে `Tk` দিয়ে replace করা (jsPDF helvetica ফন্টে ৳ রেন্ডার হয় না)
+2. **"Premium E-Commerce" রিমুভ** করা
+3. **INVOICE ও Invoice No: এর positioning fix** — INVOICE title কে উপরে এবং meta info কে নিচে সরানো যাতে overlap না হয়
+4. **Empty email/phone skip** — শুধু non-empty values দেখানো
+5. **`toLocaleString` fix** — `"en-BD"` locale কাজ নাও করতে পারে, `"en-IN"` বা manual formatting ব্যবহার
 
-### ফাইল পরিবর্তন
-- **নতুন**: `src/hooks/useDocumentTemplates.ts`, `src/pages/system-settings/DocumentTemplatesPage.tsx`, `src/components/settings/DocumentTemplateEditor.tsx`
-- **এডিট**: `src/utils/generateInvoicePDF.ts`, `src/utils/generatePackingSlip.ts`, `src/pages/Orders.tsx`, `src/pages/store/account/AccountInvoice.tsx`, `src/App.tsx`, `src/components/admin/AdminSidebar.tsx`
-- **Migration**: `document_templates` টেবিল + seed data + RLS
+#### ফাইল: `src/hooks/useDocumentTemplates.ts` / `src/pages/store/account/AccountInvoice.tsx`
+- কোনো পরিবর্তন লাগবে না, এগুলো ঠিকই config pass করছে
+
+### সারাংশ
+মূলত PDF rendering engine-এ ৪-৫টা ফিক্স দরকার — currency encoding, layout overlap, hardcoded subtitle removal, এবং empty field handling।
 
