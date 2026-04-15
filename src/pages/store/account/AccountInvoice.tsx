@@ -75,6 +75,17 @@ export default function AccountInvoice() {
         else addressStr = [addr.name, addr.address, addr.city, addr.area].filter(Boolean).join(", ");
       }
       const subtotal = order.items.reduce((s: number, i: any) => s + Number(i.total_price), 0);
+      // Fetch payment method logo
+      let paymentMethodLogo = "";
+      if (order.payment_method) {
+        const { data: pmData } = await supabase
+          .from("payment_methods")
+          .select("logo_url")
+          .or(`code.eq.${order.payment_method},name.eq.${order.payment_method}`)
+          .limit(1)
+          .maybeSingle();
+        if (pmData?.logo_url) paymentMethodLogo = pmData.logo_url;
+      }
       await generateInvoicePDF({
         order_number: order.order_number,
         created_at: order.created_at,
@@ -89,6 +100,7 @@ export default function AccountInvoice() {
         total: order.total_amount,
         payment_method: order.payment_method || "N/A",
         payment_status: order.payment_status || "pending",
+        payment_method_logo: paymentMethodLogo,
       }, cfg);
       toast.success(t('account.invoiceDownloaded'));
     } catch { toast.error(t('account.failedToGenerate')); }
