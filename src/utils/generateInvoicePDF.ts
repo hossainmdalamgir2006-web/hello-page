@@ -45,6 +45,25 @@ export interface InvoiceTemplateConfig {
 
 type RGB = [number, number, number];
 
+// Hardcoded fallback logos for common payment methods
+const FALLBACK_PAYMENT_LOGOS: Record<string, string> = {
+  bkash: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Bkash_logo.png/220px-Bkash_logo.png",
+  nagad: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Nagad_logo.svg/220px-Nagad_logo.svg.png",
+  rocket: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Dutch-Bangla_Bank_Rocket_logo.png/220px-Dutch-Bangla_Bank_Rocket_logo.png",
+  upay: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/UCB_Upay_Logo.png/220px-UCB_Upay_Logo.png",
+  paypal: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/220px-PayPal.svg.png",
+  stripe: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/220px-Stripe_Logo%2C_revised_2016.svg.png",
+  payoneer: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Payoneer_logo.svg/220px-Payoneer_logo.svg.png",
+  cod: "",
+  cash_on_delivery: "",
+};
+
+function getPaymentLogoUrl(paymentMethod: string, dbLogoUrl?: string): string {
+  if (dbLogoUrl) return dbLogoUrl;
+  const code = paymentMethod?.toLowerCase().replace(/\s+/g, '_') || '';
+  return FALLBACK_PAYMENT_LOGOS[code] || "";
+}
+
 async function loadImageAsBase64(url: string): Promise<string | null> {
   if (!url) return null;
   try {
