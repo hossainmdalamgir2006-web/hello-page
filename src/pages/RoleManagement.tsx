@@ -20,8 +20,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Search, Shield, ShieldCheck, User, Crown, AlertTriangle } from 'lucide-react';
 import { RoleFilterBar } from '@/components/admin/roles/RoleFilterBar';
-import { RoleChangeHistory } from '@/components/admin/roles/RoleChangeHistory';
-import { RolePermissionsOverview } from '@/components/admin/roles/RolePermissionsOverview';
+import { RoleDetailsCard } from '@/components/admin/roles/RoleDetailsCard';
 import { format } from 'date-fns';
 
 type AppRole = 'user' | 'admin' | 'manager' | 'support';

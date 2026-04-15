@@ -1,5 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, X, Info } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 
 const permissions = [
   { name: 'View Store', user: true, support: true, manager: true, admin: true },
@@ -23,42 +22,33 @@ const roleLabels: Record<string, string> = { user: 'User', support: 'Support', m
 
 export function RolePermissionsOverview() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Info className="h-5 w-5" />
-          Role Permissions Overview
-        </CardTitle>
-        <CardDescription>Access levels for each role</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/50">
-                <th className="text-left p-3 font-medium">Permission</th>
-                {roles.map((r) => (
-                  <th key={r} className="text-center p-3 font-medium min-w-[80px]">{roleLabels[r]}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {permissions.map((perm) => (
-                <tr key={perm.name} className="border-b last:border-0 hover:bg-muted/30">
-                  <td className="p-3 text-muted-foreground">{perm.name}</td>
-                  {roles.map((r) => (
-                    <td key={r} className="text-center p-3">
-                      {perm[r] ? (
-                        <Check className="h-4 w-4 text-emerald-500 mx-auto" />
-                      ) : (
-                        <X className="h-4 w-4 text-muted-foreground/40 mx-auto" />
-                      )}
-                    </td>
-                  ))}
-                </tr>
+    <div className="rounded-md border overflow-x-auto mt-2">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b bg-muted/50">
+            <th className="text-left p-3 font-medium">Permission</th>
+            {roles.map((r) => (
+              <th key={r} className="text-center p-3 font-medium min-w-[80px]">{roleLabels[r]}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {permissions.map((perm) => (
+            <tr key={perm.name} className="border-b last:border-0 hover:bg-muted/30">
+              <td className="p-3 text-muted-foreground">{perm.name}</td>
+              {roles.map((r) => (
+                <td key={r} className="text-center p-3">
+                  {perm[r] ? (
+                    <Check className="h-4 w-4 text-emerald-500 mx-auto" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground/40 mx-auto" />
+                  )}
+                </td>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
