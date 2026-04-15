@@ -1,9 +1,12 @@
+import { useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertTriangle, Clock, Flame } from "lucide-react";
 import { useSLAConfig } from "@/hooks/useSLAConfig";
 import { LiveChatConversation } from "@/hooks/useLiveChat";
 import { SupportTicket } from "@/hooks/useSupportTickets";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface SLABreachAlertProps {
   conversations: LiveChatConversation[];
@@ -11,7 +14,8 @@ interface SLABreachAlertProps {
 }
 
 export function SLABreachAlert({ conversations, tickets }: SLABreachAlertProps) {
-  const { checkSLAStatus } = useSLAConfig();
+  const { checkSLAStatus, config } = useSLAConfig();
+  const notifiedIdsRef = useRef<Set<string>>(new Set());
 
   // Check for SLA breaches in conversations
   const breachedChats = conversations.filter(conv => {
@@ -34,6 +38,62 @@ export function SLABreachAlert({ conversations, tickets }: SLABreachAlertProps) 
 
   const totalBreaches = breachedChats.length + breachedTickets.length;
 
+  // Auto-notify agents on SLA breach
+  useEffect(() => {
+    if (!config.autoNotifyOnBreach || totalBreaches === 0) return;
+
+    const sendBreachNotifications = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Notify for breached chats
+      for (const conv of breachedChats) {
+        const notifKey = `chat-${conv.id}`;
+        if (notifiedIdsRef.current.has(notifKey)) continue;
+
+        const targetUserId = conv.assigned_to || user.id;
+        
+        await supabase.from("notifications").insert({
+          user_id: targetUserId,
+          title: "⚠️ SLA Breach — Live Chat",
+          message: `Chat from ${conv.customer_name || "Unknown"} has exceeded SLA response time`,
+          type: "sla_breach",
+          data: { conversation_id: conv.id, entity_type: "chat" } as any,
+        });
+        
+        notifiedIdsRef.current.add(notifKey);
+      }
+
+      // Notify for breached tickets
+      for (const ticket of breachedTickets) {
+        const notifKey = `ticket-${ticket.id}`;
+        if (notifiedIdsRef.current.has(notifKey)) continue;
+
+        const targetUserId = ticket.assigned_to || user.id;
+        
+        await supabase.from("notifications").insert({
+          user_id: targetUserId,
+          title: "⚠️ SLA Breach — Support Ticket",
+          message: `Ticket #${ticket.ticket_number || ticket.id.slice(0, 8)} (${ticket.priority}) has exceeded SLA response time`,
+          type: "sla_breach",
+          data: { ticket_id: ticket.id, entity_type: "ticket" } as any,
+        });
+        
+        notifiedIdsRef.current.add(notifKey);
+      }
+
+      if (breachedChats.length + breachedTickets.length > 0) {
+        const newBreaches = [...breachedChats, ...breachedTickets].filter(
+          item => !notifiedIdsRef.current.has(`chat-${'customer_name' in item ? item.id : ''}`) &&
+                  !notifiedIdsRef.current.has(`ticket-${'ticket_number' in item ? item.id : ''}`)
+        );
+        // Only toast if there were genuinely new breaches processed
+      }
+    };
+
+    sendBreachNotifications();
+  }, [totalBreaches, config.autoNotifyOnBreach]);
+
   if (totalBreaches === 0) return null;
 
   return (
@@ -51,6 +111,11 @@ export function SLABreachAlert({ conversations, tickets }: SLABreachAlertProps) 
               <Badge variant="destructive" className="text-xs">
                 {totalBreaches}
               </Badge>
+              {config.autoNotifyOnBreach && (
+                <Badge variant="outline" className="text-xs text-warning border-warning/30">
+                  Auto-Notify ON
+                </Badge>
+              )}
             </div>
             <div className="flex flex-wrap gap-3 mt-1 text-xs text-muted-foreground">
               {breachedChats.length > 0 && (
