@@ -5,8 +5,11 @@ import { toast } from "sonner";
 export interface SLAConfig {
   firstResponseMinutes: number;
   resolutionHours: number;
+  lowPriorityResponseMinutes: number;
   highPriorityResponseMinutes: number;
   urgentPriorityResponseMinutes: number;
+  criticalPriorityResponseMinutes: number;
+  autoNotifyOnBreach: boolean;
 }
 
 const SLA_CONFIG_KEY = "sla_config";
@@ -14,8 +17,11 @@ const SLA_CONFIG_KEY = "sla_config";
 const DEFAULT_SLA: SLAConfig = {
   firstResponseMinutes: 60,
   resolutionHours: 24,
+  lowPriorityResponseMinutes: 120,
   highPriorityResponseMinutes: 30,
   urgentPriorityResponseMinutes: 15,
+  criticalPriorityResponseMinutes: 5,
+  autoNotifyOnBreach: true,
 };
 
 export function useSLAConfig() {
@@ -69,8 +75,10 @@ export function useSLAConfig() {
 
   const getSLATargetForPriority = useCallback((priority: string): number => {
     switch (priority) {
+      case "critical": return config.criticalPriorityResponseMinutes;
       case "urgent": return config.urgentPriorityResponseMinutes;
       case "high": return config.highPriorityResponseMinutes;
+      case "low": return config.lowPriorityResponseMinutes;
       default: return config.firstResponseMinutes;
     }
   }, [config]);
