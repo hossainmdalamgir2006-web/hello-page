@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useContactMessages, ContactMessage } from "@/hooks/useContactMessages";
+import { BulkActionBar } from "./BulkActionBar";
 import { useContactMessageReplies } from "@/hooks/useContactMessageReplies";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,13 +50,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 export function ContactMessagesTab() {
-  const { messages, isLoading, unreadCount, unrepliedCount, markAsRead, markAsUnread, markAsReplied, deleteMessage } = useContactMessages();
+  const { messages, isLoading, unreadCount, unrepliedCount, markAsRead, markAsUnread, markAsReplied, deleteMessage, bulkMarkAsRead, bulkMarkAsUnread, bulkDelete, isBulkDeleting, isBulkUpdating } = useContactMessages();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "unread" | "read" | "unreplied" | "replied">("all");
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   
   // Reply state
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
