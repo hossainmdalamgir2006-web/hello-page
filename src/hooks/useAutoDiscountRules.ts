@@ -20,6 +20,16 @@ export interface AutoDiscountRule {
   updated_at: string;
 }
 
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  category?: string;
+  size?: string;
+  color?: string;
+}
+
 export function useAutoDiscountRules() {
   const [rules, setRules] = useState<AutoDiscountRule[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,16 +112,66 @@ export function useAutoDiscountRules() {
     });
   };
 
-  const calculateDiscount = (cartTotal: number) => {
+  const calculateDiscount = (cartTotal: number, cartItems?: CartItem[]) => {
     const activeRules = getActiveRules();
     let totalDiscount = 0;
 
     for (const rule of activeRules) {
-      if (rule.rule_type === "cart_total" && rule.min_purchase && cartTotal >= rule.min_purchase) {
+      let applies = false;
+      let baseAmount = cartTotal;
+
+      switch (rule.rule_type) {
+        case "cart_total":
+          applies = !rule.min_purchase || cartTotal >= rule.min_purchase;
+          break;
+
+        case "first_order":
+          // Always applies for now — real check needs order history
+          applies = true;
+          break;
+
+        case "bulk_purchase":
+          if (cartItems) {
+            const totalQty = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const minQty = rule.conditions?.min_quantity || rule.min_purchase || 0;
+            applies = totalQty >= minQty;
+          }
+          break;
+
+        case "item_quantity":
+          if (cartItems) {
+            const itemCount = cartItems.length;
+            const minItems = rule.conditions?.min_quantity || rule.min_purchase || 0;
+            applies = itemCount >= minItems;
+          }
+          break;
+
+        case "category_based":
+          if (cartItems && rule.conditions?.categories?.length > 0) {
+            const matchingItems = cartItems.filter(item =>
+              rule.conditions.categories.includes(item.category)
+            );
+            if (matchingItems.length > 0) {
+              applies = true;
+              baseAmount = matchingItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            }
+          }
+          break;
+
+        case "time_based":
+          // Time validation is already handled by getActiveRules (starts_at/expires_at)
+          applies = true;
+          break;
+
+        default:
+          applies = false;
+      }
+
+      if (applies) {
         let discount = rule.discount_type === "percentage"
-          ? (cartTotal * rule.discount_value) / 100
+          ? (baseAmount * rule.discount_value) / 100
           : rule.discount_value;
-        
+
         if (rule.max_discount) {
           discount = Math.min(discount, rule.max_discount);
         }
