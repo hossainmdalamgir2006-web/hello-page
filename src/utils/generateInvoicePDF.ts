@@ -21,6 +21,7 @@ interface InvoiceData {
   total: number;
   payment_method: string;
   payment_status: string;
+  payment_method_logo?: string;
   store_name?: string;
   store_address?: string;
   store_phone?: string;
@@ -85,7 +86,7 @@ function buildColors(accentHex?: string) {
   };
 }
 
-function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTemplateConfig, startY = 0, logoData?: string | null): void {
+function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTemplateConfig, startY = 0, logoData?: string | null, paymentLogoData?: string | null): void {
   const C = buildColors(cfg?.accent_color);
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -392,10 +393,18 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     doc.setTextColor(...C.primary);
     doc.text("Payment Method", col1X, y);
     y += 5;
+    // Payment method logo + name
+    let pmTextX = col1X;
+    if (paymentLogoData) {
+      try {
+        doc.addImage(paymentLogoData, "PNG", col1X, y - 3.5, 8, 8);
+        pmTextX = col1X + 10;
+      } catch { /* ignore */ }
+    }
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(...C.textMuted);
-    doc.text(data.payment_method || "N/A", col1X, y);
+    doc.text(data.payment_method || "N/A", pmTextX, y);
 
     // Terms
     const termsY = y - 5;
@@ -437,19 +446,29 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
 }
 
 export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): Promise<void> {
-  const logoData = await loadImageAsBase64(config?.store_logo_url || "");
+  const [logoData, paymentLogoData] = await Promise.all([
+    loadImageAsBase64(config?.store_logo_url || ""),
+    loadImageAsBase64(data.payment_method_logo || ""),
+  ]);
   const doc = new jsPDF();
-  generateSingleInvoice(doc, data, config, 0, logoData);
+  generateSingleInvoice(doc, data, config, 0, logoData, paymentLogoData);
   doc.save(`Invoice-${data.order_number}.pdf`);
 }
 
 export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): Promise<void> {
   if (invoices.length === 0) return;
   const logoData = await loadImageAsBase64(config?.store_logo_url || "");
+  // Load all unique payment logos
+  const uniqueLogos = [...new Set(invoices.map(i => i.payment_method_logo).filter(Boolean))] as string[];
+  const logoMap = new Map<string, string | null>();
+  await Promise.all(uniqueLogos.map(async (url) => {
+    logoMap.set(url, await loadImageAsBase64(url));
+  }));
   const doc = new jsPDF();
   invoices.forEach((data, index) => {
     if (index > 0) doc.addPage();
-    generateSingleInvoice(doc, data, config, 0, logoData);
+    const pmLogo = data.payment_method_logo ? logoMap.get(data.payment_method_logo) : null;
+    generateSingleInvoice(doc, data, config, 0, logoData, pmLogo);
   });
   doc.save(`Invoices-Bulk-${invoices.length}.pdf`);
 }
