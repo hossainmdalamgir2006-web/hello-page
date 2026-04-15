@@ -398,6 +398,8 @@ export default function Reports() {
     }
   };
 
+  const generatingCount = reports.filter(r => r.status === 'generating').length;
+
   return (
     <>
       <div className="space-y-6">
