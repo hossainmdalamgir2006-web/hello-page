@@ -465,9 +465,10 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
 }
 
 export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): Promise<void> {
+  const pmLogoUrl = getPaymentLogoUrl(data.payment_method, data.payment_method_logo || undefined);
   const [logoData, paymentLogoData] = await Promise.all([
     loadImageAsBase64(config?.store_logo_url || ""),
-    loadImageAsBase64(data.payment_method_logo || ""),
+    loadImageAsBase64(pmLogoUrl),
   ]);
   const doc = new jsPDF();
   generateSingleInvoice(doc, data, config, 0, logoData, paymentLogoData);
@@ -477,8 +478,9 @@ export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemp
 export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): Promise<void> {
   if (invoices.length === 0) return;
   const logoData = await loadImageAsBase64(config?.store_logo_url || "");
-  // Load all unique payment logos
-  const uniqueLogos = [...new Set(invoices.map(i => i.payment_method_logo).filter(Boolean))] as string[];
+  // Resolve all payment logo URLs (DB or fallback)
+  const resolvedLogos = invoices.map(i => getPaymentLogoUrl(i.payment_method, i.payment_method_logo || undefined));
+  const uniqueLogos = [...new Set(resolvedLogos.filter(Boolean))];
   const logoMap = new Map<string, string | null>();
   await Promise.all(uniqueLogos.map(async (url) => {
     logoMap.set(url, await loadImageAsBase64(url));
@@ -486,7 +488,8 @@ export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: I
   const doc = new jsPDF();
   invoices.forEach((data, index) => {
     if (index > 0) doc.addPage();
-    const pmLogo = data.payment_method_logo ? logoMap.get(data.payment_method_logo) : null;
+    const pmUrl = getPaymentLogoUrl(data.payment_method, data.payment_method_logo || undefined);
+    const pmLogo = pmUrl ? logoMap.get(pmUrl) : null;
     generateSingleInvoice(doc, data, config, 0, logoData, pmLogo);
   });
   doc.save(`Invoices-Bulk-${invoices.length}.pdf`);
