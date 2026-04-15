@@ -74,8 +74,8 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 16;
   const contentWidth = pageWidth - margin * 2;
-  const currencySymbol = cfg?.currency_symbol || "৳";
-  const fmt = (n: number) => `${currencySymbol}${n.toLocaleString("en-BD")}`;
+  const currencySymbol = cfg?.currency_symbol || "Tk";
+  const fmt = (n: number) => `${currencySymbol}${n.toLocaleString("en-IN")}`;
 
   const storeName = cfg?.store_name || data.store_name || "YOUR STORE";
   const storeAddress = cfg?.store_address || data.store_address || "";
@@ -108,30 +108,26 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   doc.text(storeName, margin + 22, y + 4);
 
   // Subtitle
-  if (showStoreInfo) {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7);
-    doc.setTextColor(...C.textMuted);
-    doc.text("Premium E-Commerce", margin + 22, y + 10);
-  }
+  // Removed hardcoded "Premium E-Commerce" subtitle
 
   // INVOICE title + Paid badge
   const rightX = pageWidth - margin;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   doc.setTextColor(...C.primary);
-  doc.text("INVOICE", rightX - 30, y + 4, { align: "right" });
+  doc.text("INVOICE", rightX, y - 2, { align: "right" });
 
   // Paid badge
-  if (data.payment_status === "paid") {
-    const badgeX = rightX - 2;
-    const badgeY = y - 2;
+  const pStatus = (data.payment_status || "").toLowerCase();
+  if (pStatus === "paid") {
+    const badgeX = rightX;
+    const badgeY = y + 4;
     doc.setFillColor(22, 163, 74);
-    doc.roundedRect(badgeX - 18, badgeY, 20, 10, 3, 3, "F");
+    doc.roundedRect(badgeX - 20, badgeY, 20, 8, 3, 3, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(7);
+    doc.setFontSize(6.5);
     doc.setTextColor(...C.white);
-    doc.text("Paid", badgeX - 8, badgeY + 6.5, { align: "center" });
+    doc.text("PAID", badgeX - 10, badgeY + 5.5, { align: "center" });
   }
 
   y += 18;
@@ -147,7 +143,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   }
 
   // Invoice meta on right
-  let metaY = y - 12;
+  let metaY = y - 8;
   const metaLabelX = rightX - 55;
   const metaValueX = rightX;
 
@@ -215,14 +211,14 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   let bY = secY;
   const addressLines = doc.splitTextToSize(data.shipping_address || "N/A", halfW - 16);
   addressLines.forEach((line: string) => { doc.text(line, billX, bY); bY += 4.5; });
-  if (data.customer_phone) { doc.text(data.customer_phone, billX, bY); bY += 4.5; }
-  if (data.customer_email) { doc.text(data.customer_email, billX, bY); }
+  if (data.customer_phone && data.customer_phone.trim()) { doc.text(data.customer_phone, billX, bY); bY += 4.5; }
+  if (data.customer_email && data.customer_email.trim()) { doc.text(data.customer_email, billX, bY); }
 
   // Ship To details
   let sY = secY;
   addressLines.forEach((line: string) => { doc.text(line, shipX, sY); sY += 4.5; });
-  if (data.customer_phone) { doc.text(data.customer_phone, shipX, sY); sY += 4.5; }
-  if (data.customer_email) { doc.text(data.customer_email, shipX, sY); }
+  if (data.customer_phone && data.customer_phone.trim()) { doc.text(data.customer_phone, shipX, sY); sY += 4.5; }
+  if (data.customer_email && data.customer_email.trim()) { doc.text(data.customer_email, shipX, sY); }
 
   y += 46;
 
