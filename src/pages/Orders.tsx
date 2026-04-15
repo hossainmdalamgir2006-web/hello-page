@@ -267,7 +267,13 @@ export default function Orders() {
       items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
       total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
     }));
-    generateBulkInvoicePDF(invoicesData);
+    const templateCfg2 = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+    const bulkCfg: InvoiceTemplateConfig | undefined = templateCfg2 ? {
+      ...templateCfg2,
+      store_name: headerCont.store_name || templateCfg2.store_name || "YOUR STORE",
+      store_logo_url: headerCont.store_logo || templateCfg2.store_logo_url || "",
+    } : undefined;
+    generateBulkInvoicePDF(invoicesData, bulkCfg);
     toast.success(`${selectedOrders.length} invoices combined into one PDF`);
   };
   const handleBulkDelete = () => {
