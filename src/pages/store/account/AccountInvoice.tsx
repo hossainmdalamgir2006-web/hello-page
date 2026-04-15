@@ -31,6 +31,8 @@ export default function AccountInvoice() {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
   const { getTemplateConfig } = useDocumentTemplates();
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
 
   useEffect(() => {
     if (!user) return;
