@@ -208,12 +208,21 @@ export default function Orders() {
   };
 
   const handlePrintPackingSlip = async (order: Order) => {
+    const slipTemplateCfg = getTemplateConfig("packing_slip") as PackingSlipTemplateConfig | undefined;
+    const slipCfg: PackingSlipTemplateConfig | undefined = slipTemplateCfg ? {
+      ...slipTemplateCfg,
+      store_name: headerCont.store_name || slipTemplateCfg.store_name || "YOUR STORE",
+      store_logo_url: headerCont.store_logo || slipTemplateCfg.store_logo_url || "",
+    } : {
+      store_name: headerCont.store_name || "YOUR STORE",
+      store_logo_url: headerCont.store_logo || "",
+    };
     await generatePackingSlip({
       order_number: order.order_number, created_at: order.created_at, customer_name: order.customer_name,
       customer_phone: order.customer_phone, shipping_address: getShippingAddressString(order.shipping_address),
       items: order.items.map(item => ({ product_name: item.product_name, quantity: item.quantity, unit_price: item.unit_price })),
       notes: order.notes,
-    }, getTemplateConfig("packing_slip") as PackingSlipTemplateConfig | undefined);
+    }, slipCfg);
     toast.success('Packing slip downloaded');
   };
 
