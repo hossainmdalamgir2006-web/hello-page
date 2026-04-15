@@ -186,7 +186,13 @@ export default function Orders() {
       items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
       total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
     });
-    generateInvoicePDF(invoiceData, getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined);
+    const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+    const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
+      ...templateCfg,
+      store_name: headerCont.store_name || templateCfg.store_name || "YOUR STORE",
+      store_logo_url: headerCont.store_logo || templateCfg.store_logo_url || "",
+    } : undefined;
+    generateInvoicePDF(invoiceData, cfg);
   };
 
   const handlePrintPackingSlip = (order: Order) => {
