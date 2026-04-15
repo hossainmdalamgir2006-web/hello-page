@@ -379,11 +379,13 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
 
   y += 22;
 
-  // ─── BOTTOM SECTION ───
+  // ─── BOTTOM SECTION: Payment, Terms, Signature (matches Invoice layout) ───
   const footerAreaY = pageHeight - 32;
-  const bottomY = Math.max(y, footerAreaY - 28);
+  const bottomSectionH = 28;
+  const bottomY = Math.max(y, footerAreaY - bottomSectionH);
 
-  doc.setDrawColor(...C.border);
+  // Accent separator line (danger theme like invoice uses accent)
+  doc.setDrawColor(...C.danger);
   doc.setLineWidth(0.5);
   doc.line(margin, bottomY, margin + contentWidth, bottomY);
   let bsY = bottomY + 8;
@@ -392,50 +394,48 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   const col2X = margin + contentWidth * 0.35;
   const col3X = margin + contentWidth * 0.7;
 
-  // Payment Method
+  // Payment Method (matching invoice pattern exactly)
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
   doc.setTextColor(...C.primary);
   doc.text("Payment Method", col1X, bsY);
-
-  // Payment logo + text
-  const pmY = bsY + 5;
+  bsY += 5;
+  let pmTextX = col1X;
   if (pmLogoData) {
-    try { doc.addImage(pmLogoData, "PNG", col1X, pmY - 3, 12, 12); } catch { /* skip */ }
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7.5);
-    doc.setTextColor(...C.textMuted);
-    doc.text(data.payment_method || "N/A", col1X + 14, pmY + 3);
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7.5);
-    doc.setTextColor(...C.textMuted);
-    doc.text(data.payment_method || "N/A", col1X, pmY);
+    try {
+      doc.addImage(pmLogoData, "PNG", col1X, bsY - 3.5, 8, 8);
+      pmTextX = col1X + 10;
+    } catch { /* ignore */ }
   }
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.textMuted);
+  doc.text(data.payment_method || "N/A", pmTextX, bsY);
 
-  // Terms & Conditions
+  // Terms & Conditions (aligned with invoice pattern)
+  const termsY = bsY - 5;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
   doc.setTextColor(...C.primary);
-  doc.text("Terms & Conditions", col2X, bsY);
+  doc.text("Terms & Conditions", col2X, termsY);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(6.5);
   doc.setTextColor(...C.textMuted);
-  doc.text("• This is a credit note for the refund", col2X, bsY + 5);
-  doc.text("• Contact support for any queries", col2X, bsY + 9);
+  doc.text("• This is a credit note for the refund", col2X, termsY + 5);
+  doc.text("• Contact support for any queries", col2X, termsY + 9);
 
   // Authorized Signature
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
   doc.setTextColor(...C.primary);
-  doc.text("Authorized Signature", col3X, bsY);
+  doc.text("Authorized Signature", col3X, termsY);
   doc.setDrawColor(...C.border);
   doc.setLineWidth(0.3);
-  doc.line(col3X, bsY + 12, col3X + 45, bsY + 12);
+  doc.line(col3X, termsY + 12, col3X + 45, termsY + 12);
   doc.setFont("helvetica", "italic");
   doc.setFontSize(7);
   doc.setTextColor(...C.textMuted);
-  doc.text(`${storeName} Authority`, col3X + 5, bsY + 17);
+  doc.text(`${storeName} Authority`, col3X + 5, termsY + 17);
 
   // ─── FOOTER ───
   const footerY = pageHeight - 18;
