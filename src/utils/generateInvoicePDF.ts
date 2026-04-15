@@ -74,8 +74,11 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 16;
   const contentWidth = pageWidth - margin * 2;
-  const currencySymbol = cfg?.currency_symbol || "Tk";
-  const fmt = (n: number) => `${currencySymbol}${n.toLocaleString("en-IN")}`;
+  const currencySymbol = cfg?.currency_symbol || "BDT";
+  const fmt = (n: number) => {
+    const formatted = Math.abs(n).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return `${currencySymbol} ${formatted}`;
+  };
 
   const storeName = cfg?.store_name || data.store_name || "YOUR STORE";
   const storeAddress = cfg?.store_address || data.store_address || "";
@@ -107,28 +110,12 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   doc.setTextColor(...C.primary);
   doc.text(storeName, margin + 22, y + 4);
 
-  // Subtitle
-  // Removed hardcoded "Premium E-Commerce" subtitle
-
-  // INVOICE title + Paid badge
+  // INVOICE title on right
   const rightX = pageWidth - margin;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   doc.setTextColor(...C.primary);
-  doc.text("INVOICE", rightX, y - 2, { align: "right" });
-
-  // Paid badge
-  const pStatus = (data.payment_status || "").toLowerCase();
-  if (pStatus === "paid") {
-    const badgeX = rightX;
-    const badgeY = y + 4;
-    doc.setFillColor(22, 163, 74);
-    doc.roundedRect(badgeX - 20, badgeY, 20, 8, 3, 3, "F");
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(6.5);
-    doc.setTextColor(...C.white);
-    doc.text("PAID", badgeX - 10, badgeY + 5.5, { align: "center" });
-  }
+  doc.text("INVOICE", rightX, y + 4, { align: "right" });
 
   y += 18;
 
@@ -142,7 +129,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     if (storePhone) { doc.text(storePhone, margin, y); y += 4; }
   }
 
-  // Invoice meta on right
+  // Invoice meta on right — starts after INVOICE title
   let metaY = y - 8;
   const metaLabelX = rightX - 55;
   const metaValueX = rightX;
@@ -170,24 +157,46 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   dueDate.setDate(dueDate.getDate() + 7);
   doc.text(dueDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }), metaValueX, metaY, { align: "right" });
 
+  // Paid badge — separate line below meta
+  metaY += 7;
+  const pStatus = (data.payment_status || "").toLowerCase();
+  if (pStatus === "paid") {
+    const badgeX = metaValueX;
+    doc.setFillColor(22, 163, 74);
+    doc.roundedRect(badgeX - 20, metaY - 2, 20, 8, 3, 3, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(6.5);
+    doc.setTextColor(...C.white);
+    doc.text("PAID", badgeX - 10, metaY + 3.5, { align: "center" });
+  }
+
   y = Math.max(y, metaY) + 10;
 
   // ─── BILL TO / SHIP TO ───
-  doc.setFillColor(...C.bgLight);
-  doc.roundedRect(margin, y, contentWidth, 38, 3, 3, "F");
-  doc.setDrawColor(...C.borderLight);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(margin, y, contentWidth, 38, 3, 3);
-
+  // Calculate dynamic height
   const halfW = contentWidth / 2;
   const billX = margin + 8;
   const shipX = margin + halfW + 8;
+
+  const addressLines = doc.splitTextToSize(data.shipping_address || "N/A", halfW - 16);
+  let contactLines = 0;
+  if (data.customer_phone && data.customer_phone.trim()) contactLines++;
+  if (data.customer_email && data.customer_email.trim()) contactLines++;
+  const boxContentH = 8 + 7 + 6 + (addressLines.length * 4.5) + (contactLines * 4.5) + 4;
+  const boxH = Math.max(38, boxContentH);
+
+  doc.setFillColor(...C.bgLight);
+  doc.roundedRect(margin, y, contentWidth, boxH, 3, 3, "F");
+  doc.setDrawColor(...C.borderLight);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(margin, y, contentWidth, boxH, 3, 3);
+
   let secY = y + 8;
 
   // Divider
   doc.setDrawColor(...C.border);
   doc.setLineWidth(0.3);
-  doc.line(margin + halfW, y + 5, margin + halfW, y + 33);
+  doc.line(margin + halfW, y + 5, margin + halfW, y + boxH - 5);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7);
@@ -209,7 +218,6 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
 
   // Bill To details
   let bY = secY;
-  const addressLines = doc.splitTextToSize(data.shipping_address || "N/A", halfW - 16);
   addressLines.forEach((line: string) => { doc.text(line, billX, bY); bY += 4.5; });
   if (data.customer_phone && data.customer_phone.trim()) { doc.text(data.customer_phone, billX, bY); bY += 4.5; }
   if (data.customer_email && data.customer_email.trim()) { doc.text(data.customer_email, billX, bY); }
@@ -220,7 +228,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   if (data.customer_phone && data.customer_phone.trim()) { doc.text(data.customer_phone, shipX, sY); sY += 4.5; }
   if (data.customer_email && data.customer_email.trim()) { doc.text(data.customer_email, shipX, sY); }
 
-  y += 46;
+  y += boxH + 8;
 
   // ─── ITEMS TABLE ───
   const colHash = margin + 5;
@@ -293,7 +301,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     y += rowH;
   });
 
-  y += 8;
+  y += 4;
 
   // ─── TOTALS ───
   const totalsLabelX = margin + contentWidth * 0.55;
@@ -380,7 +388,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   }
 
   // ─── FOOTER ───
-  const footerY = pageHeight - 18;
+  const footerY = Math.max(y + 8, pageHeight - 18);
   doc.setFillColor(248, 250, 252);
   doc.roundedRect(margin, footerY - 4, contentWidth, 12, 2, 2, "F");
   doc.setFont("helvetica", "normal");
