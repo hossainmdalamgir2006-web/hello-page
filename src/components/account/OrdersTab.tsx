@@ -178,7 +178,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
     }
   };
 
-  const downloadInvoiceForOrder = (order: Order) => {
+  const downloadInvoiceForOrder = async (order: Order) => {
     const invoiceData = {
       order_number: order.order_number,
       created_at: order.created_at,
