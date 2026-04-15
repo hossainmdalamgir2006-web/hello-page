@@ -272,20 +272,39 @@ export default function Orders() {
     clearSelection();
   };
   const handleBulkInvoiceDownload = () => { selectedOrders.forEach(o => generateInvoice(o)); toast.success(`${selectedOrders.length} invoices downloaded`); };
-  const handleBulkInvoicePrint = () => {
-    const invoicesData = selectedOrders.map(order => orderToInvoiceData({
-      order_number: order.order_number, created_at: order.created_at, customer_name: order.customer_name,
-      customer_email: order.customer_email, customer_phone: order.customer_phone, shipping_address: order.shipping_address,
-      items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
-      total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
-    }));
+  const handleBulkInvoicePrint = async () => {
+    // Fetch payment logos for all unique payment methods
+    const uniqueMethods = [...new Set(selectedOrders.map(o => o.payment_method).filter(Boolean))];
+    const logoMap = new Map<string, string>();
+    if (uniqueMethods.length > 0) {
+      const { data: pmRows } = await supabase
+        .from("payment_methods")
+        .select("code, name, logo_url")
+        .or(uniqueMethods.map(m => `code.eq.${m},name.eq.${m}`).join(","));
+      (pmRows || []).forEach((pm: any) => {
+        if (pm.logo_url) {
+          logoMap.set(pm.code, pm.logo_url);
+          logoMap.set(pm.name, pm.logo_url);
+        }
+      });
+    }
+    const invoicesData = selectedOrders.map(order => {
+      const d = orderToInvoiceData({
+        order_number: order.order_number, created_at: order.created_at, customer_name: order.customer_name,
+        customer_email: order.customer_email, customer_phone: order.customer_phone, shipping_address: order.shipping_address,
+        items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
+        total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
+      });
+      d.payment_method_logo = logoMap.get(order.payment_method) || "";
+      return d;
+    });
     const templateCfg2 = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
     const bulkCfg: InvoiceTemplateConfig | undefined = templateCfg2 ? {
       ...templateCfg2,
       store_name: headerCont.store_name || templateCfg2.store_name || "YOUR STORE",
       store_logo_url: headerCont.store_logo || templateCfg2.store_logo_url || "",
     } : undefined;
-    generateBulkInvoicePDF(invoicesData, bulkCfg);
+    await generateBulkInvoicePDF(invoicesData, bulkCfg);
     toast.success(`${selectedOrders.length} invoices combined into one PDF`);
   };
   const handleBulkDelete = () => {
