@@ -167,6 +167,28 @@ export function ContactMessagesTab() {
     }
   };
 
+  // Selection handlers
+  const toggleSelection = (id: string) => {
+    const newSet = new Set(selectedIds);
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
+    setSelectedIds(newSet);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredMessages.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredMessages.map((m) => m.id)));
+    }
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const handleBulkMarkRead = () => { bulkMarkAsRead(Array.from(selectedIds)); clearSelection(); };
+  const handleBulkMarkUnread = () => { bulkMarkAsUnread(Array.from(selectedIds)); clearSelection(); };
+  const handleBulkDelete = () => { bulkDelete(Array.from(selectedIds)); clearSelection(); };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
