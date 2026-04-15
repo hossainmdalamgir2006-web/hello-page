@@ -207,8 +207,8 @@ export default function Orders() {
     await generateInvoicePDF(invoiceData, cfg);
   };
 
-  const handlePrintPackingSlip = (order: Order) => {
-    generatePackingSlip({
+  const handlePrintPackingSlip = async (order: Order) => {
+    await generatePackingSlip({
       order_number: order.order_number, created_at: order.created_at, customer_name: order.customer_name,
       customer_phone: order.customer_phone, shipping_address: getShippingAddressString(order.shipping_address),
       items: order.items.map(item => ({ product_name: item.product_name, quantity: item.quantity, unit_price: item.unit_price })),
