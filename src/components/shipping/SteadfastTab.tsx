@@ -158,7 +158,7 @@ export const SteadfastTab = forwardRef<HTMLDivElement, SteadfastTabProps>(functi
     <div ref={ref} className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold flex items-center gap-2">
-          <img src="/logos/steadfast.svg" alt="Steadfast" className="h-5 w-5 object-contain" />
+          <img src="/logos/steadfast.svg" alt="Steadfast" className="h-6 w-auto object-contain" />
           Steadfast Courier
         </h2>
         <div className="flex items-center gap-2">

@@ -223,10 +223,10 @@ export default function Shipping() {
         {/* Main Content Tabs */}
         <Tabs defaultValue="steadfast" className="space-y-4">
           <TabsList className="flex flex-wrap h-auto gap-1">
-            <TabsTrigger value="steadfast" className="gap-1.5"><img src="/logos/steadfast.svg" alt="Steadfast" className="h-4 w-4 object-contain" /> Steadfast</TabsTrigger>
-            <TabsTrigger value="pathao" className="gap-1.5"><img src="/logos/pathao.svg" alt="Pathao" className="h-4 w-4 object-contain" /> Pathao</TabsTrigger>
-            <TabsTrigger value="redx" className="gap-1.5"><img src="/logos/redx.svg" alt="RedX" className="h-4 w-4 object-contain" /> RedX</TabsTrigger>
-            <TabsTrigger value="paperfly" className="gap-1.5"><img src="/logos/paperfly.svg" alt="Paperfly" className="h-4 w-4 object-contain" /> Paperfly</TabsTrigger>
+            <TabsTrigger value="steadfast" className="gap-1.5"><img src="/logos/steadfast.svg" alt="Steadfast" className="h-5 w-auto object-contain" /> Steadfast</TabsTrigger>
+            <TabsTrigger value="pathao" className="gap-1.5"><img src="/logos/pathao.svg" alt="Pathao" className="h-5 w-auto object-contain" /> Pathao</TabsTrigger>
+            <TabsTrigger value="redx" className="gap-1.5"><img src="/logos/redx.svg" alt="RedX" className="h-5 w-auto object-contain" /> RedX</TabsTrigger>
+            <TabsTrigger value="paperfly" className="gap-1.5"><img src="/logos/paperfly.svg" alt="Paperfly" className="h-5 w-auto object-contain" /> Paperfly</TabsTrigger>
             
             <TabsTrigger value="zones">Shipping Zones</TabsTrigger>
             <TabsTrigger value="rates">Rate Config</TabsTrigger>

@@ -136,7 +136,7 @@ export const RedXTab = forwardRef<HTMLDivElement, RedXTabProps>(function RedXTab
     <div ref={ref} className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold flex items-center gap-2">
-          <img src="/logos/redx.svg" alt="RedX" className="h-5 w-5 object-contain" />
+          <img src="/logos/redx.svg" alt="RedX" className="h-6 w-auto object-contain" />
           RedX Courier
         </h2>
         <div className="flex items-center gap-2">
