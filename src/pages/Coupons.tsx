@@ -157,7 +157,12 @@ export default function Coupons() {
     rule_type: "cart_total",
     condition: "",
     discount_type: "percentage",
-    discount_value: 0
+    discount_value: 0,
+    min_purchase: 0,
+    max_discount: 0,
+    starts_at: undefined as Date | undefined,
+    expires_at: undefined as Date | undefined,
+    selectedCategories: [] as string[],
   });
 
   // Fetch coupons from database
@@ -284,9 +289,13 @@ export default function Coupons() {
       name: string;
       description: string | null;
       rule_type: string;
-      condition: string;
       discount_type: string;
       discount_value: number;
+      min_purchase: number | null;
+      max_discount: number | null;
+      starts_at: string | null;
+      expires_at: string | null;
+      conditions: any;
     }) => {
       const { data, error } = await supabase
         .from('auto_discount_rules')
@@ -294,9 +303,13 @@ export default function Coupons() {
           name: ruleData.name,
           description: ruleData.description,
           rule_type: ruleData.rule_type,
-          min_purchase: ruleData.condition ? parseFloat(ruleData.condition) : null,
           discount_type: ruleData.discount_type,
           discount_value: ruleData.discount_value,
+          min_purchase: ruleData.min_purchase,
+          max_discount: ruleData.max_discount,
+          starts_at: ruleData.starts_at,
+          expires_at: ruleData.expires_at,
+          conditions: ruleData.conditions,
           is_active: true
         }])
         .select()
@@ -314,7 +327,12 @@ export default function Coupons() {
         rule_type: "cart_total",
         condition: "",
         discount_type: "percentage",
-        discount_value: 0
+        discount_value: 0,
+        min_purchase: 0,
+        max_discount: 0,
+        starts_at: undefined,
+        expires_at: undefined,
+        selectedCategories: [],
       });
       toast.success("Auto rule created successfully");
     },
@@ -479,13 +497,25 @@ export default function Coupons() {
       return;
     }
 
+    let conditions: any = null;
+    if (newRule.rule_type === "category_based" && newRule.selectedCategories.length > 0) {
+      conditions = { categories: newRule.selectedCategories };
+    }
+    if (newRule.rule_type === "bulk_purchase" || newRule.rule_type === "item_quantity") {
+      conditions = { min_quantity: newRule.min_purchase || 0 };
+    }
+
     createRuleMutation.mutate({
       name: newRule.name,
       description: newRule.description || null,
       rule_type: newRule.rule_type,
-      condition: newRule.condition || '',
       discount_type: newRule.discount_type,
       discount_value: newRule.discount_value,
+      min_purchase: ["cart_total"].includes(newRule.rule_type) ? (newRule.min_purchase || null) : null,
+      max_discount: newRule.max_discount || null,
+      starts_at: newRule.starts_at ? newRule.starts_at.toISOString() : null,
+      expires_at: newRule.expires_at ? newRule.expires_at.toISOString() : null,
+      conditions,
     });
   };
 
@@ -521,10 +551,10 @@ export default function Coupons() {
   const ruleTypeLabels: Record<string, string> = {
     cart_total: "Cart Value",
     first_order: "First Order",
-    birthday: "Birthday",
-    loyalty_tier: "Loyalty Tier",
-    abandoned_cart: "Abandoned Cart",
-    bulk_purchase: "Bulk Purchase"
+    bulk_purchase: "Bulk Purchase",
+    item_quantity: "Item Quantity",
+    category_based: "Category Based",
+    time_based: "Time/Schedule",
   };
 
   if (couponsLoading) {
