@@ -193,8 +193,6 @@ export default function Messages() {
               <BarChart3 className="h-3.5 w-3.5 mr-1" />
               Analytics
             </TabsTrigger>
-              CSAT
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="contact">
@@ -215,8 +213,6 @@ export default function Messages() {
 
           <TabsContent value="analytics" className="space-y-4">
             <MessageAnalyticsTab />
-          </TabsContent>
-            <CSATDashboard />
           </TabsContent>
         </Tabs>
       </div>
