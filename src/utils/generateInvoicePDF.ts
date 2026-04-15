@@ -115,7 +115,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   const storeAddress = cfg?.store_address || data.store_address || "";
   const storePhone = cfg?.store_phone || data.store_phone || "";
   const storeEmail = cfg?.store_email || data.store_email || "";
-  const footerText = cfg?.footer_text ?? "Thank you for your purchase! If you have any questions, contact us at " + storeEmail;
+  const footerText = cfg?.footer_text ?? "Thank you for your business!";
   const showPaymentInfo = cfg?.show_payment_info ?? true;
   const showStoreInfo = cfg?.show_store_info ?? true;
 
@@ -127,42 +127,47 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   let y = startY + 18;
 
   // ─── HEADER SECTION ───
-  // Logo - image or fallback circle
+  // Logo - image or fallback circle (bigger: 20mm)
   if (logoData) {
     try {
-      doc.addImage(logoData, "PNG", margin + 2, y - 3, 16, 16);
+      doc.addImage(logoData, "PNG", margin + 2, y - 4, 20, 20);
     } catch {
-      // Fallback to circle if image fails
       doc.setFillColor(...C.primary);
-      doc.circle(margin + 10, y + 5, 8, "F");
+      doc.circle(margin + 12, y + 6, 10, "F");
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
+      doc.setFontSize(14);
       doc.setTextColor(...C.white);
-      doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+      doc.text(storeName.charAt(0).toUpperCase(), margin + 12, y + 10, { align: "center" });
     }
   } else {
     doc.setFillColor(...C.primary);
-    doc.circle(margin + 10, y + 5, 8, "F");
+    doc.circle(margin + 12, y + 6, 10, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
+    doc.setFontSize(14);
     doc.setTextColor(...C.white);
-    doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+    doc.text(storeName.charAt(0).toUpperCase(), margin + 12, y + 10, { align: "center" });
   }
 
-  // Store name
+  // Store name (bigger: 20pt)
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
+  doc.setFontSize(20);
   doc.setTextColor(...C.primary);
-  doc.text(storeName, margin + 22, y + 4);
+  doc.text(storeName, margin + 26, y + 5);
 
   // INVOICE title on right
   const rightX = pageWidth - margin;
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
+  doc.setFontSize(24);
   doc.setTextColor(...C.primary);
-  doc.text("INVOICE", rightX, y + 4, { align: "right" });
+  doc.text("INVOICE", rightX, y + 5, { align: "right" });
 
-  y += 18;
+  // Accent line under INVOICE title
+  doc.setDrawColor(...C.accent);
+  doc.setLineWidth(1.2);
+  const invTitleW = 42;
+  doc.line(rightX - invTitleW, y + 9, rightX, y + 9);
+
+  y += 22;
 
   // Store address info
   if (showStoreInfo) {
@@ -174,7 +179,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     if (storePhone) { doc.text(storePhone, margin, y); y += 4; }
   }
 
-  // Invoice meta on right — starts after INVOICE title
+  // Invoice meta on right
   let metaY = y - 8;
   const metaLabelX = rightX - 55;
   const metaValueX = rightX;
@@ -194,8 +199,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   doc.setTextColor(...C.text);
   doc.text(new Date(data.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }), metaValueX, metaY, { align: "right" });
 
-
-  // Payment status badge — always show
+  // Payment status badge
   metaY += 7;
   const pStatus = (data.payment_status || "pending").toLowerCase();
   const statusLabel = pStatus.toUpperCase();
@@ -216,20 +220,19 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   doc.setTextColor(...C.white);
   doc.text(statusLabel, badgeX - badgeW / 2, metaY + 3.5, { align: "center" });
 
-  y = Math.max(y, metaY) + 10;
+  y = Math.max(y, metaY) + 12;
 
   // ─── BILL TO / SHIP TO ───
-  // Calculate dynamic height
   const halfW = contentWidth / 2;
-  const billX = margin + 8;
-  const shipX = margin + halfW + 8;
+  const billX = margin + 10;
+  const shipX = margin + halfW + 10;
 
-  const addressLines = doc.splitTextToSize(data.shipping_address || "N/A", halfW - 16);
+  const addressLines = doc.splitTextToSize(data.shipping_address || "N/A", halfW - 18);
   let contactLines = 0;
   if (data.customer_phone && data.customer_phone.trim()) contactLines++;
   if (data.customer_email && data.customer_email.trim()) contactLines++;
-  const boxContentH = 8 + 7 + 6 + (addressLines.length * 4.5) + (contactLines * 4.5) + 4;
-  const boxH = Math.max(38, boxContentH);
+  const boxContentH = 10 + 8 + 6 + (addressLines.length * 4.5) + (contactLines * 4.5) + 6;
+  const boxH = Math.max(42, boxContentH);
 
   doc.setFillColor(...C.bgLight);
   doc.roundedRect(margin, y, contentWidth, boxH, 3, 3, "F");
@@ -237,19 +240,26 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   doc.setLineWidth(0.3);
   doc.roundedRect(margin, y, contentWidth, boxH, 3, 3);
 
-  let secY = y + 8;
+  // Left accent borders
+  doc.setDrawColor(...C.accent);
+  doc.setLineWidth(1.5);
+  doc.line(margin + 2, y + 6, margin + 2, y + boxH - 6);
+  doc.line(margin + halfW + 2, y + 6, margin + halfW + 2, y + boxH - 6);
 
   // Divider
   doc.setDrawColor(...C.border);
   doc.setLineWidth(0.3);
   doc.line(margin + halfW, y + 5, margin + halfW, y + boxH - 5);
 
-  doc.setFont("helvetica", "normal");
+  let secY = y + 10;
+
+  // Section labels in accent color
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
-  doc.setTextColor(...C.textMuted);
+  doc.setTextColor(...C.accent);
   doc.text("BILL TO", billX, secY);
   doc.text("SHIP TO", shipX, secY);
-  secY += 7;
+  secY += 8;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
@@ -274,7 +284,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   if (data.customer_phone && data.customer_phone.trim()) { doc.text(data.customer_phone, shipX, sY); sY += 4.5; }
   if (data.customer_email && data.customer_email.trim()) { doc.text(data.customer_email, shipX, sY); }
 
-  y += boxH + 8;
+  y += boxH + 10;
 
   // ─── ITEMS TABLE ───
   const colHash = margin + 5;
@@ -283,35 +293,35 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   const colUnitPrice = margin + contentWidth * 0.72;
   const colTotal = margin + contentWidth - 5;
 
-  // Table header
+  // Table header (taller: 13)
   doc.setFillColor(...C.primary);
-  doc.roundedRect(margin, y, contentWidth, 11, 2, 2, "F");
+  doc.roundedRect(margin, y, contentWidth, 13, 2, 2, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
   doc.setTextColor(...C.white);
-  doc.text("#", colHash, y + 7);
-  doc.text("Product", colProduct, y + 7);
-  doc.text("Qty", colQty, y + 7, { align: "center" });
-  doc.text("Unit Price", colUnitPrice, y + 7, { align: "right" });
-  doc.text("Total", colTotal, y + 7, { align: "right" });
-  y += 14;
+  doc.text("#", colHash, y + 8.5);
+  doc.text("Product", colProduct, y + 8.5);
+  doc.text("Qty", colQty, y + 8.5, { align: "center" });
+  doc.text("Unit Price", colUnitPrice, y + 8.5, { align: "right" });
+  doc.text("Total", colTotal, y + 8.5, { align: "right" });
+  y += 16;
 
-  // Table rows
+  // Table rows (taller: 16)
   data.items.forEach((item, index) => {
     if (y > pageHeight - 80) { doc.addPage(); y = 20; }
 
-    const rowH = 14;
+    const rowH = 16;
     if (index % 2 === 0) {
       doc.setFillColor(...C.white);
     } else {
-      doc.setFillColor(...C.bgLight);
+      doc.setFillColor(245, 247, 250);
     }
-    doc.rect(margin, y - 4, contentWidth, rowH, "F");
+    doc.rect(margin, y - 5, contentWidth, rowH, "F");
 
     // Row bottom border
     doc.setDrawColor(...C.borderLight);
     doc.setLineWidth(0.2);
-    doc.line(margin, y + rowH - 4, margin + contentWidth, y + rowH - 4);
+    doc.line(margin, y + rowH - 5, margin + contentWidth, y + rowH - 5);
 
     // Row number
     doc.setFont("helvetica", "normal");
@@ -347,7 +357,7 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     y += rowH;
   });
 
-  y += 4;
+  y += 6;
 
   // ─── TOTALS ───
   const totalsLabelX = margin + contentWidth * 0.55;
@@ -374,20 +384,29 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   doc.line(totalsLabelX - 30, y - 2, totalsValueX, y - 2);
   y += 4;
 
+  // Grand Total with accent background bar
+  const grandTotalBarW = totalsValueX - (totalsLabelX - 30);
+  doc.setFillColor(...C.accent);
+  doc.roundedRect(totalsLabelX - 30, y - 5, grandTotalBarW, 14, 2, 2, "F");
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
-  doc.setTextColor(...C.primary);
-  doc.text("Grand Total", totalsLabelX, y, { align: "right" });
-  doc.setTextColor(...C.accent);
-  doc.text(fmt(data.total), totalsValueX, y, { align: "right" });
-  y += 16;
+  doc.setFontSize(12);
+  doc.setTextColor(...C.white);
+  doc.text("Grand Total", totalsLabelX, y + 3, { align: "right" });
+  doc.text(fmt(data.total), totalsValueX, y + 3, { align: "right" });
+  y += 18;
 
   // ─── BOTTOM SECTION: Payment, Terms, Signature ───
+  // Calculate bottom section position — anchor near footer
+  const footerAreaY = pageHeight - 32;
+  const bottomSectionH = 28;
+  const bottomY = showPaymentInfo ? Math.max(y, footerAreaY - bottomSectionH) : y;
+
   if (showPaymentInfo) {
-    doc.setDrawColor(...C.border);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y, margin + contentWidth, y);
-    y += 8;
+    // Accent separator line
+    doc.setDrawColor(...C.accent);
+    doc.setLineWidth(0.5);
+    doc.line(margin, bottomY, margin + contentWidth, bottomY);
+    let bsY = bottomY + 8;
 
     const col1X = margin;
     const col2X = margin + contentWidth * 0.35;
@@ -397,23 +416,22 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(...C.primary);
-    doc.text("Payment Method", col1X, y);
-    y += 5;
-    // Payment method logo + name
+    doc.text("Payment Method", col1X, bsY);
+    bsY += 5;
     let pmTextX = col1X;
     if (paymentLogoData) {
       try {
-        doc.addImage(paymentLogoData, "PNG", col1X, y - 3.5, 8, 8);
+        doc.addImage(paymentLogoData, "PNG", col1X, bsY - 3.5, 8, 8);
         pmTextX = col1X + 10;
       } catch { /* ignore */ }
     }
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(...C.textMuted);
-    doc.text(data.payment_method || "N/A", pmTextX, y);
+    doc.text(data.payment_method || "N/A", pmTextX, bsY);
 
     // Terms
-    const termsY = y - 5;
+    const termsY = bsY - 5;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(...C.primary);
@@ -436,12 +454,10 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     doc.setFontSize(7);
     doc.setTextColor(...C.textMuted);
     doc.text(`${storeName} Authority`, col3X + 5, termsY + 17);
-
-    y += 20;
   }
 
   // ─── FOOTER ───
-  const footerY = Math.max(y + 8, pageHeight - 18);
+  const footerY = pageHeight - 18;
   doc.setFillColor(248, 250, 252);
   doc.roundedRect(margin, footerY - 4, contentWidth, 12, 2, 2, "F");
   doc.setFont("helvetica", "normal");
