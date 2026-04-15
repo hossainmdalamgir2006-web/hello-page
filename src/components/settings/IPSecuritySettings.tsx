@@ -36,7 +36,9 @@ import {
   Clock,
   AlertTriangle,
   Settings,
-  Activity
+  Activity,
+  Smartphone,
+  Monitor
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -64,12 +66,26 @@ interface GeoRule {
 
 interface RateLimitSetting {
   id: string;
-  endpoint: string;
+  setting_key: string;
+  endpoint: string | null;
   max_requests: number;
+  time_window_seconds: number;
+  block_duration_seconds: number;
   window_seconds: number;
   is_enabled: boolean;
   created_at: string;
   updated_at: string;
+}
+
+interface BlockedDevice {
+  id: string;
+  device_fingerprint: string | null;
+  device_name: string | null;
+  user_agent: string | null;
+  reason: string | null;
+  is_permanent: boolean;
+  blocked_until: string | null;
+  created_at: string;
 }
 
 const COMMON_COUNTRIES = [
@@ -91,11 +107,14 @@ export function IPSecuritySettings() {
   const [blockedIPs, setBlockedIPs] = useState<BlockedIP[]>([]);
   const [geoRules, setGeoRules] = useState<GeoRule[]>([]);
   const [rateLimitSettings, setRateLimitSettings] = useState<RateLimitSetting[]>([]);
+  const [blockedDevices, setBlockedDevices] = useState<BlockedDevice[]>([]);
   const [activeTab, setActiveTab] = useState('blocked-ips');
   
   // Dialog states
   const [showBlockIPDialog, setShowBlockIPDialog] = useState(false);
   const [showGeoRuleDialog, setShowGeoRuleDialog] = useState(false);
+  const [showAddRateLimitDialog, setShowAddRateLimitDialog] = useState(false);
+  const [showBlockDeviceDialog, setShowBlockDeviceDialog] = useState(false);
   const [newIP, setNewIP] = useState('');
   const [newIPReason, setNewIPReason] = useState('');
   const [newIPPermanent, setNewIPPermanent] = useState(false);
@@ -103,17 +122,32 @@ export function IPSecuritySettings() {
   const [newCountryCode, setNewCountryCode] = useState('');
   const [newCountryReason, setNewCountryReason] = useState('');
 
+  // Rate limit dialog states
+  const [newRLEndpoint, setNewRLEndpoint] = useState('');
+  const [newRLMaxRequests, setNewRLMaxRequests] = useState('100');
+  const [newRLTimeWindow, setNewRLTimeWindow] = useState('60');
+  const [newRLBlockDuration, setNewRLBlockDuration] = useState('300');
+
+  // Device block dialog states
+  const [newDeviceFingerprint, setNewDeviceFingerprint] = useState('');
+  const [newDeviceName, setNewDeviceName] = useState('');
+  const [newDeviceUserAgent, setNewDeviceUserAgent] = useState('');
+  const [newDeviceReason, setNewDeviceReason] = useState('');
+  const [newDevicePermanent, setNewDevicePermanent] = useState(true);
+  const [newDeviceDuration, setNewDeviceDuration] = useState('24');
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch blocked IPs
-      const { data: ipsData, error: ipsError } = await supabase
-        .from('blocked_ips')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const [ipsRes, geoRes, settingsRes, devicesRes] = await Promise.all([
+        supabase.from('blocked_ips').select('*').order('created_at', { ascending: false }),
+        supabase.from('geo_blocking_rules').select('*').order('created_at', { ascending: false }),
+        supabase.from('ip_rate_limit_settings').select('*'),
+        supabase.from('blocked_devices').select('*').order('created_at', { ascending: false }),
+      ]);
 
-      if (ipsError) throw ipsError;
-      setBlockedIPs((ipsData || []).map((ip: any) => ({
+      if (ipsRes.error) throw ipsRes.error;
+      setBlockedIPs((ipsRes.data || []).map((ip: any) => ({
         id: ip.id,
         ip_address: String(ip.ip_address),
         reason: ip.reason,
@@ -123,14 +157,8 @@ export function IPSecuritySettings() {
         created_at: ip.created_at,
       })));
 
-      // Fetch geo rules
-      const { data: geoData, error: geoError } = await supabase
-        .from('geo_blocking_rules')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (geoError) throw geoError;
-      setGeoRules((geoData || []).map((rule: any) => ({
+      if (geoRes.error) throw geoRes.error;
+      setGeoRules((geoRes.data || []).map((rule: any) => ({
         id: rule.id,
         country_code: rule.country_code,
         country_name: rule.country_name,
@@ -140,20 +168,30 @@ export function IPSecuritySettings() {
         updated_at: rule.updated_at,
       })));
 
-      // Fetch rate limit settings
-      const { data: settingsData, error: settingsError } = await supabase
-        .from('ip_rate_limit_settings')
-        .select('*');
+      if (settingsRes.error) throw settingsRes.error;
+      setRateLimitSettings((settingsRes.data || []).map((s: any) => ({
+        id: s.id,
+        setting_key: s.setting_key,
+        endpoint: s.endpoint,
+        max_requests: s.max_requests,
+        time_window_seconds: s.time_window_seconds,
+        block_duration_seconds: s.block_duration_seconds,
+        window_seconds: s.window_seconds,
+        is_enabled: s.is_enabled,
+        created_at: s.created_at,
+        updated_at: s.updated_at,
+      })));
 
-      if (settingsError) throw settingsError;
-      setRateLimitSettings((settingsData || []).map((setting: any) => ({
-        id: setting.id,
-        endpoint: setting.endpoint,
-        max_requests: setting.max_requests,
-        window_seconds: setting.window_seconds,
-        is_enabled: setting.is_enabled,
-        created_at: setting.created_at,
-        updated_at: setting.updated_at,
+      if (devicesRes.error) throw devicesRes.error;
+      setBlockedDevices((devicesRes.data || []).map((d: any) => ({
+        id: d.id,
+        device_fingerprint: d.device_fingerprint,
+        device_name: d.device_name,
+        user_agent: d.user_agent,
+        reason: d.reason,
+        is_permanent: d.is_permanent,
+        blocked_until: d.blocked_until,
+        created_at: d.created_at,
       })));
     } catch (error: any) {
       console.error('Error fetching data:', error);
@@ -173,7 +211,6 @@ export function IPSecuritySettings() {
       return;
     }
 
-    // Basic IP validation
     const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     if (!ipRegex.test(newIP.trim())) {
       toast.error('Please enter a valid IP address');
@@ -207,13 +244,8 @@ export function IPSecuritySettings() {
 
   const handleUnblockIP = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('blocked_ips')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('blocked_ips').delete().eq('id', id);
       if (error) throw error;
-
       toast.success(`IP has been unblocked`);
       fetchData();
     } catch (error: any) {
@@ -254,13 +286,8 @@ export function IPSecuritySettings() {
 
   const handleRemoveGeoRule = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('geo_blocking_rules')
-        .delete()
-        .eq('id', id);
-
+      const { error } = await supabase.from('geo_blocking_rules').delete().eq('id', id);
       if (error) throw error;
-
       toast.success('Geo rule removed');
       fetchData();
     } catch (error: any) {
@@ -275,15 +302,104 @@ export function IPSecuritySettings() {
         .update({ 
           ...updates,
           updated_at: new Date().toISOString()
-        })
+        } as any)
         .eq('id', id);
 
       if (error) throw error;
-
       toast.success('Rate limit setting updated');
       fetchData();
     } catch (error: any) {
       toast.error('Failed to update setting: ' + error.message);
+    }
+  };
+
+  const handleAddRateLimitRule = async () => {
+    if (!newRLEndpoint.trim()) {
+      toast.error('Please enter an endpoint name');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('ip_rate_limit_settings')
+        .insert({
+          setting_key: newRLEndpoint.trim().toLowerCase().replace(/\s+/g, '_'),
+          endpoint: newRLEndpoint.trim(),
+          max_requests: parseInt(newRLMaxRequests) || 100,
+          time_window_seconds: parseInt(newRLTimeWindow) || 60,
+          block_duration_seconds: parseInt(newRLBlockDuration) || 300,
+          window_seconds: parseInt(newRLTimeWindow) || 60,
+          is_enabled: true,
+        });
+
+      if (error) throw error;
+
+      toast.success('Rate limit rule added');
+      setShowAddRateLimitDialog(false);
+      setNewRLEndpoint('');
+      setNewRLMaxRequests('100');
+      setNewRLTimeWindow('60');
+      setNewRLBlockDuration('300');
+      fetchData();
+    } catch (error: any) {
+      toast.error('Failed to add rate limit rule: ' + error.message);
+    }
+  };
+
+  const handleDeleteRateLimitRule = async (id: string) => {
+    try {
+      const { error } = await supabase.from('ip_rate_limit_settings').delete().eq('id', id);
+      if (error) throw error;
+      toast.success('Rate limit rule deleted');
+      fetchData();
+    } catch (error: any) {
+      toast.error('Failed to delete rule: ' + error.message);
+    }
+  };
+
+  const handleBlockDevice = async () => {
+    if (!newDeviceFingerprint.trim() && !newDeviceUserAgent.trim()) {
+      toast.error('Please enter a device fingerprint or user agent');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('blocked_devices')
+        .insert({
+          device_fingerprint: newDeviceFingerprint.trim() || null,
+          device_name: newDeviceName.trim() || null,
+          user_agent: newDeviceUserAgent.trim() || null,
+          reason: newDeviceReason.trim() || 'Manually blocked',
+          blocked_by: user?.id,
+          is_permanent: newDevicePermanent,
+          blocked_until: newDevicePermanent ? null : new Date(Date.now() + parseInt(newDeviceDuration) * 60 * 60 * 1000).toISOString(),
+        });
+
+      if (error) throw error;
+
+      toast.success('Device has been blocked');
+      setShowBlockDeviceDialog(false);
+      setNewDeviceFingerprint('');
+      setNewDeviceName('');
+      setNewDeviceUserAgent('');
+      setNewDeviceReason('');
+      setNewDevicePermanent(true);
+      setNewDeviceDuration('24');
+      fetchData();
+    } catch (error: any) {
+      toast.error('Failed to block device: ' + error.message);
+    }
+  };
+
+  const handleUnblockDevice = async (id: string) => {
+    try {
+      const { error } = await supabase.from('blocked_devices').delete().eq('id', id);
+      if (error) throw error;
+      toast.success('Device has been unblocked');
+      fetchData();
+    } catch (error: any) {
+      toast.error('Failed to unblock device: ' + error.message);
     }
   };
 
@@ -294,6 +410,10 @@ export function IPSecuritySettings() {
 
   const activeBlockedIPs = blockedIPs.filter(ip => 
     ip.is_permanent || !isExpired(ip.blocked_until, ip.is_permanent)
+  );
+
+  const activeBlockedDevices = blockedDevices.filter(d =>
+    d.is_permanent || !isExpired(d.blocked_until, d.is_permanent)
   );
 
   if (loading) {
@@ -309,11 +429,12 @@ export function IPSecuritySettings() {
   return (
     <div className="space-y-6">
       {/* Stats Overview */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-5">
         {[
           { label: "Blocked IPs", value: activeBlockedIPs.length, icon: Ban, iconBg: "bg-destructive/10 text-destructive", border: "border-l-destructive", cardBg: "bg-destructive/5 dark:bg-destructive/10" },
           { label: "Blocked Countries", value: geoRules.filter(r => r.is_blocked).length, icon: Globe, iconBg: "bg-primary/10 text-primary", border: "border-l-primary", cardBg: "bg-primary/5 dark:bg-primary/10" },
-          { label: "Permanent Blocks", value: blockedIPs.filter(ip => ip.is_permanent).length, icon: Shield, iconBg: "bg-warning/10 text-warning", border: "border-l-warning", cardBg: "bg-warning/5 dark:bg-warning/10" },
+          { label: "Blocked Devices", value: activeBlockedDevices.length, icon: Smartphone, iconBg: "bg-orange-500/10 text-orange-500", border: "border-l-orange-500", cardBg: "bg-orange-500/5 dark:bg-orange-500/10" },
+          { label: "Rate Limit Rules", value: rateLimitSettings.filter(r => r.is_enabled).length, icon: Clock, iconBg: "bg-warning/10 text-warning", border: "border-l-warning", cardBg: "bg-warning/5 dark:bg-warning/10" },
           { label: "Geo-Blocking", value: geoRules.filter(r => r.is_blocked).length > 0 ? 'ON' : 'OFF', icon: Activity, iconBg: "bg-success/10 text-success", border: "border-l-success", cardBg: "bg-success/5 dark:bg-success/10" },
         ].map((stat) => (
           <div
@@ -340,10 +461,10 @@ export function IPSecuritySettings() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-accent" />
-                IP Security & Geo-Blocking
+                IP Security, Device Blocking & Geo-Blocking
               </CardTitle>
               <CardDescription>
-                Manage IP-based rate limiting and geographic access restrictions
+                Manage IP blocking, device blocking, rate limiting and geographic access restrictions
               </CardDescription>
             </div>
             <Button variant="outline" size="icon" onClick={fetchData}>
@@ -353,18 +474,26 @@ export function IPSecuritySettings() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="blocked-ips" className="gap-2">
                 <Ban className="h-4 w-4" />
-                Blocked IPs
+                <span className="hidden sm:inline">Blocked IPs</span>
+                <span className="sm:hidden">IPs</span>
+              </TabsTrigger>
+              <TabsTrigger value="device-blocking" className="gap-2">
+                <Smartphone className="h-4 w-4" />
+                <span className="hidden sm:inline">Device Blocking</span>
+                <span className="sm:hidden">Devices</span>
               </TabsTrigger>
               <TabsTrigger value="geo-blocking" className="gap-2">
                 <Globe className="h-4 w-4" />
-                Geo-Blocking
+                <span className="hidden sm:inline">Geo-Blocking</span>
+                <span className="sm:hidden">Geo</span>
               </TabsTrigger>
               <TabsTrigger value="rate-limits" className="gap-2">
                 <Settings className="h-4 w-4" />
-                Rate Limits
+                <span className="hidden sm:inline">Rate Limits</span>
+                <span className="sm:hidden">Limits</span>
               </TabsTrigger>
             </TabsList>
 
@@ -506,6 +635,161 @@ export function IPSecuritySettings() {
               </div>
             </TabsContent>
 
+            {/* Device Blocking Tab */}
+            <TabsContent value="device-blocking" className="space-y-4">
+              <div className="flex justify-end">
+                <Dialog open={showBlockDeviceDialog} onOpenChange={setShowBlockDeviceDialog}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Block Device
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Block Device</DialogTitle>
+                      <DialogDescription>
+                        Block a device by fingerprint or user agent string
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="deviceName">Device Name (optional)</Label>
+                        <Input
+                          id="deviceName"
+                          placeholder="e.g. Chrome on Windows"
+                          value={newDeviceName}
+                          onChange={(e) => setNewDeviceName(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="deviceFingerprint">Device Fingerprint</Label>
+                        <Input
+                          id="deviceFingerprint"
+                          placeholder="Unique device identifier"
+                          value={newDeviceFingerprint}
+                          onChange={(e) => setNewDeviceFingerprint(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="deviceUA">User Agent</Label>
+                        <Input
+                          id="deviceUA"
+                          placeholder="Mozilla/5.0..."
+                          value={newDeviceUserAgent}
+                          onChange={(e) => setNewDeviceUserAgent(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="deviceReason">Reason (optional)</Label>
+                        <Input
+                          id="deviceReason"
+                          placeholder="Suspicious bot activity"
+                          value={newDeviceReason}
+                          onChange={(e) => setNewDeviceReason(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="devicePermanent">Permanent Block</Label>
+                        <Switch
+                          id="devicePermanent"
+                          checked={newDevicePermanent}
+                          onCheckedChange={setNewDevicePermanent}
+                        />
+                      </div>
+                      {!newDevicePermanent && (
+                        <div className="space-y-2">
+                          <Label>Block Duration</Label>
+                          <Select value={newDeviceDuration} onValueChange={setNewDeviceDuration}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">1 hour</SelectItem>
+                              <SelectItem value="6">6 hours</SelectItem>
+                              <SelectItem value="24">24 hours</SelectItem>
+                              <SelectItem value="72">3 days</SelectItem>
+                              <SelectItem value="168">7 days</SelectItem>
+                              <SelectItem value="720">30 days</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShowBlockDeviceDialog(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleBlockDevice}>Block Device</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Device</TableHead>
+                      <TableHead>Fingerprint / User Agent</TableHead>
+                      <TableHead>Reason</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Blocked At</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {blockedDevices.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                          No blocked devices
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      blockedDevices.map((device) => (
+                        <TableRow key={device.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Monitor className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">{device.device_name || 'Unknown Device'}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate font-mono">
+                            {device.device_fingerprint || device.user_agent || 'N/A'}
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground max-w-[150px] truncate">
+                            {device.reason || 'No reason'}
+                          </TableCell>
+                          <TableCell>
+                            {device.is_permanent ? (
+                              <Badge variant="destructive">Permanent</Badge>
+                            ) : isExpired(device.blocked_until, device.is_permanent) ? (
+                              <Badge variant="secondary">Expired</Badge>
+                            ) : (
+                              <Badge variant="default">Active</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {formatDistanceToNow(new Date(device.created_at), { addSuffix: true })}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleUnblockDevice(device.id)}
+                            >
+                              <Check className="h-3 w-3 mr-1" />
+                              Unblock
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+
             {/* Geo-Blocking Tab */}
             <TabsContent value="geo-blocking" className="space-y-4">
               <div className="flex items-center justify-between">
@@ -617,21 +901,108 @@ export function IPSecuritySettings() {
 
             {/* Rate Limits Tab */}
             <TabsContent value="rate-limits" className="space-y-4">
+              <div className="flex justify-end">
+                <Dialog open={showAddRateLimitDialog} onOpenChange={setShowAddRateLimitDialog}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Rule
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add Rate Limit Rule</DialogTitle>
+                      <DialogDescription>
+                        Configure a new rate limiting rule for an endpoint
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="rlEndpoint">Endpoint / Rule Name</Label>
+                        <Input
+                          id="rlEndpoint"
+                          placeholder="e.g. Login, API, Checkout"
+                          value={newRLEndpoint}
+                          onChange={(e) => setNewRLEndpoint(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="rlMaxRequests">Max Requests</Label>
+                        <Input
+                          id="rlMaxRequests"
+                          type="number"
+                          placeholder="100"
+                          value={newRLMaxRequests}
+                          onChange={(e) => setNewRLMaxRequests(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="rlTimeWindow">Time Window (seconds)</Label>
+                        <Input
+                          id="rlTimeWindow"
+                          type="number"
+                          placeholder="60"
+                          value={newRLTimeWindow}
+                          onChange={(e) => setNewRLTimeWindow(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="rlBlockDuration">Block Duration (seconds)</Label>
+                        <Input
+                          id="rlBlockDuration"
+                          type="number"
+                          placeholder="300"
+                          value={newRLBlockDuration}
+                          onChange={(e) => setNewRLBlockDuration(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setShowAddRateLimitDialog(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleAddRateLimitRule}>Add Rule</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
               <div className="grid gap-4">
                 {rateLimitSettings.length === 0 ? (
                   <Card>
                     <CardContent className="py-8 text-center text-muted-foreground">
-                      No rate limit settings configured
+                      No rate limit settings configured. Click "Add Rule" to create one.
                     </CardContent>
                   </Card>
                 ) : (
                   rateLimitSettings.map((setting) => (
                     <Card key={setting.id}>
                       <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          {setting.endpoint}
-                        </CardTitle>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-base flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            {setting.endpoint || setting.setting_key}
+                          </CardTitle>
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <Label className="text-xs">Enabled</Label>
+                              <Switch
+                                checked={setting.is_enabled}
+                                onCheckedChange={(checked) => handleUpdateRateLimitSetting(setting.id, {
+                                  is_enabled: checked
+                                })}
+                              />
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => handleDeleteRateLimitRule(setting.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
                       </CardHeader>
                       <CardContent>
                         <div className="grid gap-4 md:grid-cols-3">
@@ -649,22 +1020,25 @@ export function IPSecuritySettings() {
                             <Label>Time Window (seconds)</Label>
                             <Input
                               type="number"
-                              value={setting.window_seconds}
-                              onChange={(e) => handleUpdateRateLimitSetting(setting.id, {
-                                window_seconds: parseInt(e.target.value) || 60
-                              })}
+                              value={setting.window_seconds || setting.time_window_seconds}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value) || 60;
+                                handleUpdateRateLimitSetting(setting.id, {
+                                  window_seconds: val,
+                                  time_window_seconds: val,
+                                });
+                              }}
                             />
                           </div>
-                          <div className="space-y-2 flex items-center justify-center">
-                            <div className="flex items-center gap-2">
-                              <Label>Enabled</Label>
-                              <Switch
-                                checked={setting.is_enabled}
-                                onCheckedChange={(checked) => handleUpdateRateLimitSetting(setting.id, {
-                                  is_enabled: checked
-                                })}
-                              />
-                            </div>
+                          <div className="space-y-2">
+                            <Label>Block Duration (seconds)</Label>
+                            <Input
+                              type="number"
+                              value={setting.block_duration_seconds}
+                              onChange={(e) => handleUpdateRateLimitSetting(setting.id, {
+                                block_duration_seconds: parseInt(e.target.value) || 300
+                              })}
+                            />
                           </div>
                         </div>
                       </CardContent>

@@ -401,6 +401,42 @@ export type Database = {
         }
         Relationships: []
       }
+      blocked_devices: {
+        Row: {
+          blocked_by: string | null
+          blocked_until: string | null
+          created_at: string
+          device_fingerprint: string | null
+          device_name: string | null
+          id: string
+          is_permanent: boolean
+          reason: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          blocked_by?: string | null
+          blocked_until?: string | null
+          created_at?: string
+          device_fingerprint?: string | null
+          device_name?: string | null
+          id?: string
+          is_permanent?: boolean
+          reason?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          blocked_by?: string | null
+          blocked_until?: string | null
+          created_at?: string
+          device_fingerprint?: string | null
+          device_name?: string | null
+          id?: string
+          is_permanent?: boolean
+          reason?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       blocked_ips: {
         Row: {
           blocked_by: string | null
