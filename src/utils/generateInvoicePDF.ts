@@ -59,7 +59,9 @@ function getPaymentLogoUrl(paymentMethod: string, dbLogoUrl?: string): string {
 async function loadImageAsBase64(url: string): Promise<string | null> {
   if (!url) return null;
   try {
-    const response = await fetch(url);
+    // Make relative URLs absolute
+    const absoluteUrl = url.startsWith('/') ? `${window.location.origin}${url}` : url;
+    const response = await fetch(absoluteUrl);
     if (!response.ok) return null;
     const blob = await response.blob();
     return new Promise((resolve) => {
