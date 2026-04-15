@@ -756,6 +756,54 @@ export default function Reports() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Preview Dialog */}
+      <Dialog open={!!previewData} onOpenChange={(open) => !open && setPreviewData(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5" />
+              Preview: {previewData?.name}
+            </DialogTitle>
+            <DialogDescription>Showing first {previewData?.rows.length || 0} rows</DialogDescription>
+          </DialogHeader>
+          <div className="overflow-auto max-h-[55vh] border rounded-lg">
+            {previewData && (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {previewData.headers.map((h, i) => (
+                      <TableHead key={i} className="whitespace-nowrap">{h}</TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {previewData.rows.map((row, ri) => (
+                    <TableRow key={ri}>
+                      {row.map((cell, ci) => (
+                        <TableCell key={ci} className="whitespace-nowrap max-w-[200px] truncate">{cell}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPreviewData(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm */}
+      <DeleteConfirmModal
+        open={!!deleteReportId}
+        onOpenChange={(open) => !open && setDeleteReportId(null)}
+        onConfirm={handleDeleteReport}
+        title="Delete Report"
+        itemName={deleteReportName}
+        isLoading={isDeleting}
+      />
     </>
   );
 }
