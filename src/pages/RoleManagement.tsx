@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-
 import { useAuth } from '@/contexts/AuthContext';
-
 import { supabase } from '@/integrations/supabase/client';
 import { logAuditAction } from '@/lib/auditLog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,32 +9,23 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Search, Shield, ShieldCheck, User, Crown, AlertTriangle } from 'lucide-react';
+import { RoleFilterBar } from '@/components/admin/roles/RoleFilterBar';
+import { RoleChangeHistory } from '@/components/admin/roles/RoleChangeHistory';
+import { RolePermissionsOverview } from '@/components/admin/roles/RolePermissionsOverview';
+import { format } from 'date-fns';
 
 type AppRole = 'user' | 'admin' | 'manager' | 'support';
+type FilterValue = 'all' | AppRole;
 
 interface UserWithRole {
   id: string;
@@ -45,6 +34,7 @@ interface UserWithRole {
   avatar_url: string | null;
   role: AppRole;
   created_at: string;
+  last_sign_in_at: string | null;
 }
 
 const roleConfig: Record<AppRole, { label: string; icon: React.ReactNode; color: string }> = {
@@ -56,11 +46,11 @@ const roleConfig: Record<AppRole, { label: string; icon: React.ReactNode; color:
 
 export default function RoleManagement() {
   const { user } = useAuth();
-  
   const { toast } = useToast();
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState<FilterValue>('all');
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [newRole, setNewRole] = useState<AppRole>('user');
@@ -74,13 +64,11 @@ export default function RoleManagement() {
 
   const checkAdminStatus = async () => {
     if (!user) return;
-    
     const { data } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
       .single();
-    
     setIsAdmin(data?.role === 'admin');
   };
 
@@ -90,14 +78,26 @@ export default function RoleManagement() {
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
-
       if (profilesError) throw profilesError;
 
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('*');
-
       if (rolesError) throw rolesError;
+
+      // Fetch last sign in from login_activity
+      const { data: loginData } = await supabase
+        .from('login_activity')
+        .select('user_id, created_at')
+        .eq('status', 'success')
+        .order('created_at', { ascending: false });
+
+      const lastSignInMap = new Map<string, string>();
+      loginData?.forEach((l) => {
+        if (l.user_id && !lastSignInMap.has(l.user_id)) {
+          lastSignInMap.set(l.user_id, l.created_at);
+        }
+      });
 
       const usersWithRoles: UserWithRole[] = (profiles || []).map((profile) => {
         const userRole = roles?.find((r) => r.user_id === profile.user_id);
@@ -108,17 +108,14 @@ export default function RoleManagement() {
           avatar_url: profile.avatar_url,
           role: (userRole?.role as AppRole) || 'user',
           created_at: profile.created_at,
+          last_sign_in_at: lastSignInMap.get(profile.user_id) || null,
         };
       });
 
       setUsers(usersWithRoles);
     } catch (error: any) {
       console.error('Error fetching users:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Failed to fetch users',
-        description: error.message,
-      });
+      toast({ variant: 'destructive', title: 'Failed to fetch users', description: error.message });
     } finally {
       setLoading(false);
     }
@@ -132,10 +129,8 @@ export default function RoleManagement() {
 
   const confirmRoleChange = async () => {
     if (!selectedUser) return;
-    
     setUpdating(true);
     try {
-      // Check if role exists
       const { data: existingRole } = await supabase
         .from('user_roles')
         .select('*')
@@ -143,31 +138,23 @@ export default function RoleManagement() {
         .single();
 
       if (existingRole) {
-        // Update existing role
         const { error } = await supabase
           .from('user_roles')
           .update({ role: newRole })
           .eq('user_id', selectedUser.user_id);
-
         if (error) throw error;
       } else {
-        // Insert new role
         const { error } = await supabase
           .from('user_roles')
           .insert({ user_id: selectedUser.user_id, role: newRole });
-
         if (error) throw error;
       }
 
-      // Update local state
       setUsers(users.map((u) =>
         u.user_id === selectedUser.user_id ? { ...u, role: newRole } : u
       ));
 
-      toast({
-        title: 'Role Updated',
-        description: `Role updated to ${roleConfig[newRole].label}`,
-      });
+      toast({ title: 'Role Updated', description: `Role updated to ${roleConfig[newRole].label}` });
 
       logAuditAction({
         action: 'update',
@@ -177,63 +164,61 @@ export default function RoleManagement() {
         old_value: { role: selectedUser.role },
         new_value: { role: newRole },
       });
-      
+
       setIsDialogOpen(false);
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Update Failed',
-        description: error.message,
-      });
+      toast({ variant: 'destructive', title: 'Update Failed', description: error.message });
     } finally {
       setUpdating(false);
     }
   };
 
-  const filteredUsers = users.filter((u) =>
-    u.full_name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const roleCounts: Record<AppRole, number> = {
+    user: users.filter((u) => u.role === 'user').length,
+    support: users.filter((u) => u.role === 'support').length,
+    manager: users.filter((u) => u.role === 'manager').length,
+    admin: users.filter((u) => u.role === 'admin').length,
+  };
+
+  const filteredUsers = users.filter((u) => {
+    const matchesSearch = u.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRole = roleFilter === 'all' || u.role === roleFilter;
+    return matchesSearch && matchesRole;
+  });
 
   const getInitials = (name: string | null) => {
-    if (name) {
-      return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
-    }
+    if (name) return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
     return 'U';
   };
 
   if (!isAdmin) {
     return (
-      <>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
-          <p className="text-muted-foreground max-w-md">
-            You don't have permission to access this page. Only admins can manage roles.
-          </p>
-        </div>
-      </>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+        <p className="text-muted-foreground max-w-md">
+          You don't have permission to access this page. Only admins can manage roles.
+        </p>
+      </div>
     );
   }
 
   return (
     <>
       <div className="space-y-6">
-        <AdminPageHeader
-          title="Role Management"
-          description="Manage user roles and permissions"
-        />
+        <AdminPageHeader title="Role Management" description="Manage user roles and permissions" />
 
         {/* Stats */}
         <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
           {[
-            { label: "Users", value: users.filter((u) => u.role === 'user').length.toString(), icon: User, color: "primary" },
-            { label: "Staff", value: users.filter((u) => u.role === 'support' || u.role === 'manager').length.toString(), icon: ShieldCheck, color: "accent" },
-            { label: "Admins", value: users.filter((u) => u.role === 'admin').length.toString(), icon: Crown, color: "warning" },
+            { label: "Users", value: roleCounts.user.toString(), icon: User, color: "primary" },
+            { label: "Staff", value: (roleCounts.support + roleCounts.manager).toString(), icon: ShieldCheck, color: "accent" },
+            { label: "Admins", value: roleCounts.admin.toString(), icon: Crown, color: "warning" },
           ].map((card) => {
             const IconComp = card.icon;
-            const bgMap: Record<string,string> = { primary: "bg-primary/10 text-primary", accent: "bg-accent/10 text-accent", success: "bg-success/10 text-success", warning: "bg-warning/10 text-warning" };
-            const borderMap: Record<string,string> = { primary: "border-l-primary", accent: "border-l-accent", success: "border-l-success", warning: "border-l-warning" };
-            const cardBgMap: Record<string,string> = { primary: "bg-primary/5 dark:bg-primary/10", accent: "bg-accent/5 dark:bg-accent/10", success: "bg-success/5 dark:bg-success/10", warning: "bg-warning/5 dark:bg-warning/10" };
+            const bgMap: Record<string, string> = { primary: "bg-primary/10 text-primary", accent: "bg-accent/10 text-accent", warning: "bg-warning/10 text-warning" };
+            const borderMap: Record<string, string> = { primary: "border-l-primary", accent: "border-l-accent", warning: "border-l-warning" };
+            const cardBgMap: Record<string, string> = { primary: "bg-primary/5 dark:bg-primary/10", accent: "bg-accent/5 dark:bg-accent/10", warning: "bg-warning/5 dark:bg-warning/10" };
             return (
               <div key={card.label} className={`group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300 hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px] ${borderMap[card.color]} ${cardBgMap[card.color]} animate-fade-in`}>
                 <div className="flex items-center gap-3">
@@ -259,17 +244,19 @@ export default function RoleManagement() {
             </CardTitle>
             <CardDescription>Manage roles for all registered users</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="mb-4">
-              <div className="relative max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+          <CardContent className="space-y-4">
+            {/* Filter Bar */}
+            <RoleFilterBar activeFilter={roleFilter} onFilterChange={setRoleFilter} counts={roleCounts} />
+
+            {/* Search */}
+            <div className="relative max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
 
             {loading ? (
@@ -283,13 +270,15 @@ export default function RoleManagement() {
                     <TableRow>
                       <TableHead>User</TableHead>
                       <TableHead>Role</TableHead>
+                      <TableHead>Joined</TableHead>
+                      <TableHead>Last Active</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredUsers.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                           No users found
                         </TableCell>
                       </TableRow>
@@ -315,6 +304,12 @@ export default function RoleManagement() {
                               <span className="ml-1">{roleConfig[userItem.role].label}</span>
                             </Badge>
                           </TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {userItem.created_at ? format(new Date(userItem.created_at), 'MMM d, yyyy') : '—'}
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {userItem.last_sign_in_at ? format(new Date(userItem.last_sign_in_at), 'MMM d, yyyy HH:mm') : '—'}
+                          </TableCell>
                           <TableCell>
                             <Button
                               variant="outline"
@@ -334,6 +329,12 @@ export default function RoleManagement() {
             )}
           </CardContent>
         </Card>
+
+        {/* Role Permissions Overview */}
+        <RolePermissionsOverview />
+
+        {/* Role Change History */}
+        <RoleChangeHistory />
       </div>
 
       {/* Role Change Dialog */}
@@ -352,36 +353,22 @@ export default function RoleManagement() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="user">
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    User
-                  </div>
+                  <div className="flex items-center gap-2"><User className="h-4 w-4" /> User</div>
                 </SelectItem>
                 <SelectItem value="support">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4" />
-                    Support
-                  </div>
+                  <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> Support</div>
                 </SelectItem>
                 <SelectItem value="manager">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4" />
-                    Manager
-                  </div>
+                  <div className="flex items-center gap-2"><Shield className="h-4 w-4" /> Manager</div>
                 </SelectItem>
                 <SelectItem value="admin">
-                  <div className="flex items-center gap-2">
-                    <Crown className="h-4 w-4" />
-                    Admin
-                  </div>
+                  <div className="flex items-center gap-2"><Crown className="h-4 w-4" /> Admin</div>
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
             <Button onClick={confirmRoleChange} disabled={updating}>
               {updating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Confirm
