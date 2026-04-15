@@ -194,13 +194,6 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   doc.setTextColor(...C.text);
   doc.text(new Date(data.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }), metaValueX, metaY, { align: "right" });
 
-  metaY += 6;
-  doc.setTextColor(...C.textMuted);
-  doc.text("Due Date:", metaLabelX, metaY);
-  doc.setTextColor(...C.text);
-  const dueDate = new Date(data.created_at);
-  dueDate.setDate(dueDate.getDate() + 7);
-  doc.text(dueDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }), metaValueX, metaY, { align: "right" });
 
   // Payment status badge — always show
   metaY += 7;
@@ -214,12 +207,12 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     refunded: [100, 116, 139],
   };
   const badgeColor: RGB = badgeColors[pStatus] || [100, 116, 139];
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(6.5);
   const badgeW = Math.max(22, doc.getTextWidth(statusLabel) + 8);
   const badgeX = metaValueX;
   doc.setFillColor(...badgeColor);
   doc.roundedRect(badgeX - badgeW, metaY - 2, badgeW, 8, 3, 3, "F");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(6.5);
   doc.setTextColor(...C.white);
   doc.text(statusLabel, badgeX - badgeW / 2, metaY + 3.5, { align: "center" });
 
@@ -428,9 +421,8 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
     doc.setFont("helvetica", "normal");
     doc.setFontSize(6.5);
     doc.setTextColor(...C.textMuted);
-    doc.text("• Payment due within 7 days", col2X, termsY + 5);
-    doc.text("• Returns accepted within 3 days", col2X, termsY + 9);
-    doc.text("• Damaged items must be reported within 24hrs", col2X, termsY + 13);
+    doc.text("• Returns accepted within 3 days", col2X, termsY + 5);
+    doc.text("• Damaged items must be reported within 24hrs", col2X, termsY + 9);
 
     // Authorized Signature
     doc.setFont("helvetica", "bold");
