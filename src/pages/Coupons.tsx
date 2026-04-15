@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { formatPrice } from "@/lib/formatPrice";
+import { useCategoriesCache } from "@/hooks/useCategoriesCache";
 
 // Updated interface to match DB schema
 interface Coupon {
@@ -130,6 +131,7 @@ const discountTypeConfig: Record<string, { label: string; icon: any }> = {
 
 export default function Coupons() {
   const queryClient = useQueryClient();
+  const { data: categories = [] } = useCategoriesCache();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
