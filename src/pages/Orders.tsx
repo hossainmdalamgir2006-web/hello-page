@@ -80,7 +80,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { useSorting } from "@/hooks/useSorting";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatPrice } from "@/lib/formatPrice";
-
+import { usePageContent } from "@/hooks/useSiteContent";
 
 const statusConfig: Record<OrderStatus, { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: "Pending", color: "bg-warning/10 text-warning border-warning/20", icon: Clock },
@@ -111,6 +111,8 @@ export default function Orders() {
   const { orders, stats, isLoading, updateStatus, updatePaymentStatus, verifyPayment, deleteOrder, isVerifying } = useOrdersData();
   const { updateTags } = useOrderTags();
   const { getTemplateConfig } = useDocumentTemplates();
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
