@@ -468,20 +468,21 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
 }
 
 export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): Promise<void> {
+  const enrichedConfig = await enrichConfigWithStoreSettings(config);
   const pmLogoUrl = getPaymentLogoUrl(data.payment_method, data.payment_method_logo || undefined);
   const [logoData, paymentLogoData] = await Promise.all([
-    loadImageAsBase64(config?.store_logo_url || ""),
+    loadImageAsBase64(enrichedConfig?.store_logo_url || ""),
     loadImageAsBase64(pmLogoUrl),
   ]);
   const doc = new jsPDF();
-  generateSingleInvoice(doc, data, config, 0, logoData, paymentLogoData);
+  generateSingleInvoice(doc, data, enrichedConfig, 0, logoData, paymentLogoData);
   doc.save(`Invoice-${data.order_number}.pdf`);
 }
 
 export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): Promise<void> {
   if (invoices.length === 0) return;
-  const logoData = await loadImageAsBase64(config?.store_logo_url || "");
-  // Resolve all payment logo URLs (DB or fallback)
+  const enrichedConfig = await enrichConfigWithStoreSettings(config);
+  const logoData = await loadImageAsBase64(enrichedConfig?.store_logo_url || "");
   const resolvedLogos = invoices.map(i => getPaymentLogoUrl(i.payment_method, i.payment_method_logo || undefined));
   const uniqueLogos = [...new Set(resolvedLogos.filter(Boolean))];
   const logoMap = new Map<string, string | null>();
@@ -493,7 +494,7 @@ export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: I
     if (index > 0) doc.addPage();
     const pmUrl = getPaymentLogoUrl(data.payment_method, data.payment_method_logo || undefined);
     const pmLogo = pmUrl ? logoMap.get(pmUrl) : null;
-    generateSingleInvoice(doc, data, config, 0, logoData, pmLogo);
+    generateSingleInvoice(doc, data, enrichedConfig, 0, logoData, pmLogo);
   });
   doc.save(`Invoices-Bulk-${invoices.length}.pdf`);
 }
