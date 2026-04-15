@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -53,6 +54,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { formatPrice } from "@/lib/formatPrice";
+import { useCategoriesCache } from "@/hooks/useCategoriesCache";
 
 // Updated interface to match DB schema
 interface Coupon {
@@ -130,6 +132,7 @@ const discountTypeConfig: Record<string, { label: string; icon: any }> = {
 
 export default function Coupons() {
   const queryClient = useQueryClient();
+  const { data: categories = [] } = useCategoriesCache();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
@@ -157,7 +160,12 @@ export default function Coupons() {
     rule_type: "cart_total",
     condition: "",
     discount_type: "percentage",
-    discount_value: 0
+    discount_value: 0,
+    min_purchase: 0,
+    max_discount: 0,
+    starts_at: undefined as Date | undefined,
+    expires_at: undefined as Date | undefined,
+    selectedCategories: [] as string[],
   });
 
   // Fetch coupons from database
@@ -284,9 +292,13 @@ export default function Coupons() {
       name: string;
       description: string | null;
       rule_type: string;
-      condition: string;
       discount_type: string;
       discount_value: number;
+      min_purchase: number | null;
+      max_discount: number | null;
+      starts_at: string | null;
+      expires_at: string | null;
+      conditions: any;
     }) => {
       const { data, error } = await supabase
         .from('auto_discount_rules')
@@ -294,9 +306,13 @@ export default function Coupons() {
           name: ruleData.name,
           description: ruleData.description,
           rule_type: ruleData.rule_type,
-          min_purchase: ruleData.condition ? parseFloat(ruleData.condition) : null,
           discount_type: ruleData.discount_type,
           discount_value: ruleData.discount_value,
+          min_purchase: ruleData.min_purchase,
+          max_discount: ruleData.max_discount,
+          starts_at: ruleData.starts_at,
+          expires_at: ruleData.expires_at,
+          conditions: ruleData.conditions,
           is_active: true
         }])
         .select()
@@ -314,7 +330,12 @@ export default function Coupons() {
         rule_type: "cart_total",
         condition: "",
         discount_type: "percentage",
-        discount_value: 0
+        discount_value: 0,
+        min_purchase: 0,
+        max_discount: 0,
+        starts_at: undefined,
+        expires_at: undefined,
+        selectedCategories: [],
       });
       toast.success("Auto rule created successfully");
     },
@@ -479,13 +500,25 @@ export default function Coupons() {
       return;
     }
 
+    let conditions: any = null;
+    if (newRule.rule_type === "category_based" && newRule.selectedCategories.length > 0) {
+      conditions = { categories: newRule.selectedCategories };
+    }
+    if (newRule.rule_type === "bulk_purchase" || newRule.rule_type === "item_quantity") {
+      conditions = { min_quantity: newRule.min_purchase || 0 };
+    }
+
     createRuleMutation.mutate({
       name: newRule.name,
       description: newRule.description || null,
       rule_type: newRule.rule_type,
-      condition: newRule.condition || '',
       discount_type: newRule.discount_type,
       discount_value: newRule.discount_value,
+      min_purchase: ["cart_total"].includes(newRule.rule_type) ? (newRule.min_purchase || null) : null,
+      max_discount: newRule.max_discount || null,
+      starts_at: newRule.starts_at ? newRule.starts_at.toISOString() : null,
+      expires_at: newRule.expires_at ? newRule.expires_at.toISOString() : null,
+      conditions,
     });
   };
 
@@ -521,10 +554,10 @@ export default function Coupons() {
   const ruleTypeLabels: Record<string, string> = {
     cart_total: "Cart Value",
     first_order: "First Order",
-    birthday: "Birthday",
-    loyalty_tier: "Loyalty Tier",
-    abandoned_cart: "Abandoned Cart",
-    bulk_purchase: "Bulk Purchase"
+    bulk_purchase: "Bulk Purchase",
+    item_quantity: "Item Quantity",
+    category_based: "Category Based",
+    time_based: "Time/Schedule",
   };
 
   if (couponsLoading) {
@@ -976,7 +1009,7 @@ export default function Coupons() {
 
         {/* Create Auto Rule Dialog */}
         <Dialog open={ruleDialogOpen} onOpenChange={setRuleDialogOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>New Auto Rule</DialogTitle>
               <DialogDescription>
@@ -1002,7 +1035,7 @@ export default function Coupons() {
               </div>
               <div className="space-y-2">
                 <Label>Rule Type</Label>
-                <Select value={newRule.rule_type} onValueChange={(v) => setNewRule({ ...newRule, rule_type: v })}>
+                <Select value={newRule.rule_type} onValueChange={(v) => setNewRule({ ...newRule, rule_type: v, min_purchase: 0, selectedCategories: [], starts_at: undefined, expires_at: undefined })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -1010,17 +1043,105 @@ export default function Coupons() {
                     <SelectItem value="cart_total">Cart Value</SelectItem>
                     <SelectItem value="first_order">First Order</SelectItem>
                     <SelectItem value="bulk_purchase">Bulk Purchase</SelectItem>
+                    <SelectItem value="item_quantity">Item Quantity</SelectItem>
+                    <SelectItem value="category_based">Category Based</SelectItem>
+                    <SelectItem value="time_based">Time/Schedule</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Condition</Label>
-                <Input
-                  value={newRule.condition}
-                  onChange={(e) => setNewRule({ ...newRule, condition: e.target.value })}
-                  placeholder="cart_total >= 1000"
-                />
-              </div>
+
+              {/* Dynamic Condition Fields */}
+              {newRule.rule_type === "cart_total" && (
+                <div className="space-y-2">
+                  <Label>Minimum Cart Value (৳)</Label>
+                  <Input
+                    type="number"
+                    value={newRule.min_purchase}
+                    onChange={(e) => setNewRule({ ...newRule, min_purchase: Number(e.target.value) })}
+                    placeholder="e.g. 1000"
+                  />
+                </div>
+              )}
+
+              {(newRule.rule_type === "bulk_purchase" || newRule.rule_type === "item_quantity") && (
+                <div className="space-y-2">
+                  <Label>{newRule.rule_type === "bulk_purchase" ? "Min Total Quantity" : "Min Items in Cart"}</Label>
+                  <Input
+                    type="number"
+                    value={newRule.min_purchase}
+                    onChange={(e) => setNewRule({ ...newRule, min_purchase: Number(e.target.value) })}
+                    placeholder="e.g. 3"
+                  />
+                </div>
+              )}
+
+              {newRule.rule_type === "category_based" && (
+                <div className="space-y-2">
+                  <Label>Select Categories</Label>
+                  <div className="border rounded-md p-3 max-h-40 overflow-y-auto space-y-2">
+                    {categories.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No categories found</p>
+                    ) : (
+                      categories.map((cat) => (
+                        <label key={cat.id} className="flex items-center gap-2 cursor-pointer text-sm">
+                          <Checkbox
+                            checked={newRule.selectedCategories.includes(cat.id)}
+                            onCheckedChange={(checked) => {
+                              setNewRule({
+                                ...newRule,
+                                selectedCategories: checked
+                                  ? [...newRule.selectedCategories, cat.id]
+                                  : newRule.selectedCategories.filter(id => id !== cat.id)
+                              });
+                            }}
+                          />
+                          {cat.name}
+                        </label>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {newRule.rule_type === "time_based" && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Start Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start text-left font-normal">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {newRule.starts_at ? format(newRule.starts_at, 'dd MMM yyyy') : 'Select'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar mode="single" selected={newRule.starts_at} onSelect={(d) => setNewRule({ ...newRule, starts_at: d })} className="pointer-events-auto" />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>End Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start text-left font-normal">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {newRule.expires_at ? format(newRule.expires_at, 'dd MMM yyyy') : 'Select'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar mode="single" selected={newRule.expires_at} onSelect={(d) => setNewRule({ ...newRule, expires_at: d })} className="pointer-events-auto" />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+              )}
+
+              {newRule.rule_type === "first_order" && (
+                <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
+                  This discount will automatically apply to customers placing their first order.
+                </p>
+              )}
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Discount Type</Label>
@@ -1042,6 +1163,16 @@ export default function Coupons() {
                     onChange={(e) => setNewRule({ ...newRule, discount_value: Number(e.target.value) })}
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Max Discount Cap (৳) <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                <Input
+                  type="number"
+                  value={newRule.max_discount}
+                  onChange={(e) => setNewRule({ ...newRule, max_discount: Number(e.target.value) })}
+                  placeholder="Leave 0 for no cap"
+                />
               </div>
             </div>
             <DialogFooter>

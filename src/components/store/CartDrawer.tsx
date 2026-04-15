@@ -14,7 +14,7 @@ export function CartDrawer() {
   const { t } = useLanguage();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
 
-  const autoDiscount = calculateAutoDiscount(subtotal);
+  const autoDiscount = calculateAutoDiscount(subtotal, items);
   const activeAutoRules = getActiveRules().filter(rule => 
     rule.rule_type === "cart_total" && rule.min_purchase && subtotal >= rule.min_purchase
   );

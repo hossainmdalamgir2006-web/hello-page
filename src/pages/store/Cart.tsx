@@ -50,10 +50,11 @@ export default function Cart() {
 
   
   const checkoutSubtotal = selectedSubtotal;
-  const autoDiscount = calculateAutoDiscount(checkoutSubtotal);
-  const activeAutoRules = getActiveRules().filter(rule => 
-    rule.rule_type === "cart_total" && rule.min_purchase && checkoutSubtotal >= rule.min_purchase
-  );
+  const autoDiscount = calculateAutoDiscount(checkoutSubtotal, selectedItems);
+  const activeAutoRules = getActiveRules().filter(rule => {
+    if (rule.rule_type === "cart_total") return rule.min_purchase && checkoutSubtotal >= rule.min_purchase;
+    return true;
+  });
   
   const couponDiscount = appliedCoupon?.discountAmount || 0;
   const discount = Math.max(couponDiscount, autoDiscount);
