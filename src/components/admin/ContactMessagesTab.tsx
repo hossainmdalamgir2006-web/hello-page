@@ -423,7 +423,9 @@ export function ContactMessagesTab() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  </div>
+                  );
+                })}
               </div>
             )}
           </ScrollArea>
