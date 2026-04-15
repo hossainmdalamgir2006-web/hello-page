@@ -1,38 +1,28 @@
-## Plan: Invoice PDF — Currency, Store Name ও Payment Status Fix
+
+
+## Plan: Payment Method Logo in Invoice PDF
 
 ### সমস্যা
-
-1. **Currency ভাঙা**: Database-এ `currency_symbol` = `"৳"` সেভ আছে, যেটা jsPDF Helvetica ফন্টে `ó` হিসেবে রেন্ডার হয়। Code-এ fallback `"BDT"` ঠিক আছে, কিন্তু DB config এটাকে override করছে।
-
-fix koro ..Database-এ currency_symbol = "BDT"  TE UPDATE KORO
-
-1. **Store Name static**: DB-তে `"Your Store"` হার্ডকোডেড — Admin যদি আপডেট না করে তাহলে এটাই থাকে।
-
-fix.../admin/system-settings/store  Header Settings theke Store Name Store Logo niba
-
-1. **Payment Status Badge**: শুধু `"paid"` হলে দেখায়, অন্য status (pending, failed, unpaid) দেখায় না।
-2. Payment Method e  method name + logo dekhaba    
+Invoice PDF-এ Payment Method section-এ শুধু method name দেখায় (e.g., "payoneer"), কিন্তু method-এর logo দেখায় না।
 
 ### পরিবর্তন
 
-#### 1. Database Migration
+#### 1. `src/utils/generateInvoicePDF.ts`
+- `InvoiceData` interface-এ `payment_method_logo?: string` ফিল্ড যোগ করা
+- Payment Method section-এ logo image render করা (name-এর উপরে বা পাশে ছোট icon হিসেবে ~10x10mm)
+- `loadImageAsBase64` ব্যবহার করে logo fetch করা
+- `generateSingleInvoice`-এ নতুন `paymentLogoData` parameter নেওয়া
 
-- `document_templates` টেবিলে invoice config-এর `currency_symbol` কে `"৳"` থেকে `"BDT"` আপডেট করা।
+#### 2. `src/pages/store/account/AccountInvoice.tsx`
+- Order-এর `payment_method` name দিয়ে `payment_methods` table থেকে matching method-এর `logo_url` fetch করা
+- `generateInvoicePDF`-এ `payment_method_logo` pass করা
 
-#### 2. `src/utils/generateInvoicePDF.ts`
-
-- **Payment Status Badge**: সব status-এর জন্য badge দেখানো:
-  - `paid` → Green badge
-  - `pending` → Orange/Yellow badge
-  - `failed`/`cancelled` → Red badge
-  - অন্য যেকোনো → Gray badge
-- Badge text হবে status এর uppercase version।
-
-#### 3. Store Name Dynamic
-
-- Store name ইতোমধ্যে config থেকে আসে (`cfg?.store_name`)। Admin panel-এ Document Templates সেটিংসে store name আপডেট করলেই dynamic হবে। কোড পরিবর্তন লাগবে না — শুধু DB seed fix।
+#### 3. `src/pages/Orders.tsx` ও `src/components/account/OrdersTab.tsx`
+- একইভাবে payment method logo URL pass করা (যদি invoice download এখান থেকেও হয়)
 
 ### ফাইল
+- **Edit**: `src/utils/generateInvoicePDF.ts` — logo rendering in payment section
+- **Edit**: `src/pages/store/account/AccountInvoice.tsx` — fetch & pass payment logo
+- **Edit**: `src/pages/Orders.tsx` — pass payment logo
+- **Edit**: `src/components/account/OrdersTab.tsx` — pass payment logo
 
-- **Migration**: `currency_symbol` update
-- **Edit**: `src/utils/generateInvoicePDF.ts` — payment badge সব status-এ দেখানো
