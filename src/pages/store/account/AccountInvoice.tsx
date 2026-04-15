@@ -56,7 +56,7 @@ export default function AccountInvoice() {
     fetch();
   }, [user]);
 
-  const handleDownload = (order: any) => {
+  const handleDownload = async (order: any) => {
     setDownloading(order.id);
     try {
       const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
@@ -75,7 +75,7 @@ export default function AccountInvoice() {
         else addressStr = [addr.name, addr.address, addr.city, addr.area].filter(Boolean).join(", ");
       }
       const subtotal = order.items.reduce((s: number, i: any) => s + Number(i.total_price), 0);
-      generateInvoicePDF({
+      await generateInvoicePDF({
         order_number: order.order_number,
         created_at: order.created_at,
         customer_name: addr?.name || "Customer",

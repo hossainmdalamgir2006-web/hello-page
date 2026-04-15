@@ -179,7 +179,7 @@ export default function Orders() {
 
   const viewDetails = (order: Order) => { setSelectedOrder(order); setDetailsOpen(true); };
 
-  const generateInvoice = (order: Order) => {
+  const generateInvoice = async (order: Order) => {
     const invoiceData = orderToInvoiceData({
       order_number: order.order_number, created_at: order.created_at, customer_name: order.customer_name,
       customer_email: order.customer_email, customer_phone: order.customer_phone, shipping_address: order.shipping_address,
@@ -192,7 +192,7 @@ export default function Orders() {
       store_name: headerCont.store_name || templateCfg.store_name || "YOUR STORE",
       store_logo_url: headerCont.store_logo || templateCfg.store_logo_url || "",
     } : undefined;
-    generateInvoicePDF(invoiceData, cfg);
+    await generateInvoicePDF(invoiceData, cfg);
   };
 
   const handlePrintPackingSlip = (order: Order) => {

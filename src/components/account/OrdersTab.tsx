@@ -204,7 +204,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
       store_name: headerCont.store_name || templateCfg.store_name || "YOUR STORE",
       store_logo_url: headerCont.store_logo || templateCfg.store_logo_url || "",
     } : undefined;
-    generateInvoicePDF(invoiceData, cfg);
+    await generateInvoicePDF(invoiceData, cfg);
   };
 
   return (
