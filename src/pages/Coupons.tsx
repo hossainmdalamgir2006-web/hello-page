@@ -935,7 +935,7 @@ export default function Coupons() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="percentage">Percentage (%)</SelectItem>
-                      <SelectItem value="fixed">Fixed Amount (৳)</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount (BDT)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -950,7 +950,7 @@ export default function Coupons() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Minimum Order (৳)</Label>
+                  <Label>Minimum Order (BDT)</Label>
                   <Input
                     type="number"
                     value={newCoupon.minimum_order_amount}
@@ -1053,7 +1053,7 @@ export default function Coupons() {
               {/* Dynamic Condition Fields */}
               {newRule.rule_type === "cart_total" && (
                 <div className="space-y-2">
-                  <Label>Minimum Cart Value (৳)</Label>
+                  <Label>Minimum Cart Value (BDT)</Label>
                   <Input
                     type="number"
                     value={newRule.min_purchase}
@@ -1151,7 +1151,7 @@ export default function Coupons() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="percentage">Percentage (%)</SelectItem>
-                      <SelectItem value="fixed">Fixed Amount (৳)</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount (BDT)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1166,7 +1166,7 @@ export default function Coupons() {
               </div>
 
               <div className="space-y-2">
-                <Label>Max Discount Cap (৳) <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                <Label>Max Discount Cap (BDT) <span className="text-muted-foreground text-xs">(optional)</span></Label>
                 <Input
                   type="number"
                   value={newRule.max_discount}
