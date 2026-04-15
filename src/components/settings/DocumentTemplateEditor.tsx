@@ -61,7 +61,7 @@ export function DocumentTemplateEditor({ template, onSave }: Props) {
       }, invoiceConfig);
     } else {
       const slipConfig = config as PackingSlipTemplateConfig;
-      generatePackingSlip({
+      await generatePackingSlip({
         order_number: "SAMPLE-001",
         created_at: new Date().toISOString(),
         customer_name: "John Doe",
