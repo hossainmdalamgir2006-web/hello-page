@@ -59,7 +59,13 @@ export default function AccountInvoice() {
   const handleDownload = (order: any) => {
     setDownloading(order.id);
     try {
-      const cfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+      const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+      // Merge store name from Header Settings if not set in template
+      const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
+        ...templateCfg,
+        store_name: templateCfg.store_name || headerCont.store_name || "YOUR STORE",
+        store_logo_url: templateCfg.store_logo_url || headerCont.store_logo || "",
+      } : undefined;
       const addr = order.shipping_address;
       let addressStr = "N/A";
       if (addr) {
