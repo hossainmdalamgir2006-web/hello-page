@@ -347,7 +347,56 @@ export default function Reports() {
     toast.success("Schedule deleted");
   };
 
-  const generatingCount = reports.filter(r => r.status === 'generating').length;
+  // Preview report from storage
+  const handlePreview = async (report: GeneratedReport) => {
+    if (!report.filePath) { toast.error("No file available"); return; }
+    setPreviewLoading(true);
+    try {
+      const { data, error } = await supabase.storage.from("reports").download(report.filePath);
+      if (error || !data) throw new Error("Download failed");
+      const text = await data.text();
+      const lines = text.replace(/^\ufeff/, "").split("\n").filter(Boolean);
+      if (lines.length === 0) throw new Error("Empty file");
+      const headers = lines[0].split(",").map(h => h.replace(/^"|"$/g, ""));
+      const rows = lines.slice(1, 21).map(line => {
+        const row: string[] = [];
+        let current = "";
+        let inQuotes = false;
+        for (const char of line) {
+          if (char === '"') { inQuotes = !inQuotes; }
+          else if (char === ',' && !inQuotes) { row.push(current); current = ""; }
+          else { current += char; }
+        }
+        row.push(current);
+        return row;
+      });
+      setPreviewData({ headers, rows, name: report.name });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to preview report");
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  // Delete single report
+  const handleDeleteReport = async () => {
+    if (!deleteReportId) return;
+    setIsDeleting(true);
+    try {
+      const report = reports.find(r => r.id === deleteReportId);
+      if (report?.filePath) {
+        await supabase.storage.from("reports").remove([report.filePath]);
+      }
+      await supabase.from("generated_reports").delete().eq("id", deleteReportId);
+      setReports(prev => prev.filter(r => r.id !== deleteReportId));
+      toast.success("Report deleted");
+    } catch {
+      toast.error("Failed to delete report");
+    } finally {
+      setIsDeleting(false);
+      setDeleteReportId(null);
+    }
+  };
 
   return (
     <>
