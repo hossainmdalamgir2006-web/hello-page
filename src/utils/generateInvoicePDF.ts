@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import { PAYMENT_METHOD_DEFINITIONS } from "@/data/paymentMethodDefinitions";
+import { supabase } from "@/integrations/supabase/client";
 
 interface InvoiceItem {
   product_name: string;
@@ -466,21 +467,44 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   if (footerText) doc.text(footerText, pageWidth / 2, footerY + 3, { align: "center", maxWidth: contentWidth - 10 });
 }
 
+// Fetch store info from store_settings DB and merge into config as fallback
+async function enrichConfigWithStoreSettings(config?: InvoiceTemplateConfig): Promise<InvoiceTemplateConfig | undefined> {
+  try {
+    const { data } = await supabase
+      .from("store_settings" as any)
+      .select("key, setting_value")
+      .in("key", ["STORE_EMAIL", "STORE_PHONE", "STORE_ADDRESS"]);
+    if (!data || data.length === 0) return config;
+    const map: Record<string, string> = {};
+    (data as any[]).forEach((r: any) => { if (r.setting_value) map[r.key] = r.setting_value; });
+    const merged: InvoiceTemplateConfig = {
+      ...(config || {}),
+      store_address: config?.store_address || map["STORE_ADDRESS"] || "",
+      store_email: config?.store_email || map["STORE_EMAIL"] || "",
+      store_phone: config?.store_phone || map["STORE_PHONE"] || "",
+    };
+    return merged;
+  } catch {
+    return config;
+  }
+}
+
 export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): Promise<void> {
+  const enrichedConfig = await enrichConfigWithStoreSettings(config);
   const pmLogoUrl = getPaymentLogoUrl(data.payment_method, data.payment_method_logo || undefined);
   const [logoData, paymentLogoData] = await Promise.all([
-    loadImageAsBase64(config?.store_logo_url || ""),
+    loadImageAsBase64(enrichedConfig?.store_logo_url || ""),
     loadImageAsBase64(pmLogoUrl),
   ]);
   const doc = new jsPDF();
-  generateSingleInvoice(doc, data, config, 0, logoData, paymentLogoData);
+  generateSingleInvoice(doc, data, enrichedConfig, 0, logoData, paymentLogoData);
   doc.save(`Invoice-${data.order_number}.pdf`);
 }
 
 export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): Promise<void> {
   if (invoices.length === 0) return;
-  const logoData = await loadImageAsBase64(config?.store_logo_url || "");
-  // Resolve all payment logo URLs (DB or fallback)
+  const enrichedConfig = await enrichConfigWithStoreSettings(config);
+  const logoData = await loadImageAsBase64(enrichedConfig?.store_logo_url || "");
   const resolvedLogos = invoices.map(i => getPaymentLogoUrl(i.payment_method, i.payment_method_logo || undefined));
   const uniqueLogos = [...new Set(resolvedLogos.filter(Boolean))];
   const logoMap = new Map<string, string | null>();
@@ -492,7 +516,7 @@ export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: I
     if (index > 0) doc.addPage();
     const pmUrl = getPaymentLogoUrl(data.payment_method, data.payment_method_logo || undefined);
     const pmLogo = pmUrl ? logoMap.get(pmUrl) : null;
-    generateSingleInvoice(doc, data, config, 0, logoData, pmLogo);
+    generateSingleInvoice(doc, data, enrichedConfig, 0, logoData, pmLogo);
   });
   doc.save(`Invoices-Bulk-${invoices.length}.pdf`);
 }
