@@ -269,6 +269,33 @@ export function ContactMessagesTab() {
         </div>
       </div>
 
+      {/* Bulk Action Bar */}
+      <BulkActionBar
+        selectedCount={selectedIds.size}
+        onClearSelection={clearSelection}
+        onBulkDelete={handleBulkDelete}
+        onBulkStatusChange={(status) => {
+          if (status === "open") handleBulkMarkUnread();
+          else if (status === "resolved") handleBulkMarkRead();
+        }}
+        showStatusOptions={["open", "resolved"]}
+        isDeleting={isBulkDeleting}
+        isUpdating={isBulkUpdating}
+      />
+
+      {/* Select All */}
+      {filteredMessages.length > 0 && (
+        <div className="flex items-center gap-2 px-2">
+          <Checkbox
+            checked={selectedIds.size === filteredMessages.length && filteredMessages.length > 0}
+            onCheckedChange={toggleSelectAll}
+          />
+          <span className="text-sm text-muted-foreground">
+            Select All ({filteredMessages.length})
+          </span>
+        </div>
+      )}
+
       {/* Messages List */}
       <Card>
         <CardHeader className="pb-3">
@@ -284,14 +311,23 @@ export function ContactMessagesTab() {
               </div>
             ) : (
               <div className="divide-y">
-                {filteredMessages.map((message) => (
+                {filteredMessages.map((message) => {
+                  const isSelected = selectedIds.has(message.id);
+                  return (
                   <div
                     key={message.id}
                     className={`p-4 hover:bg-muted/50 transition-colors ${
                       !message.is_read ? "bg-primary/5" : ""
-                    }`}
+                    } ${isSelected ? "ring-2 ring-primary ring-inset" : ""}`}
                   >
                     <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3">
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={() => toggleSelection(message.id)}
+                          className="mt-1"
+                          onClick={(e) => e.stopPropagation()}
+                        />
                       <div
                         className="flex-1 cursor-pointer"
                         onClick={() => handleViewMessage(message)}
