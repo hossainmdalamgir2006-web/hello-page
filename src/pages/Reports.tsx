@@ -15,9 +15,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import { format, subDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
+import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { 
   FileText, Download, Calendar as CalendarIcon, Clock, BarChart3, TrendingUp, Users, ShoppingCart,
-  Package, DollarSign, Plus, Play, Trash2, Filter, Mail, RefreshCw, AlertCircle
+  Package, DollarSign, Plus, Play, Trash2, Filter, Mail, RefreshCw, AlertCircle, Eye
 } from "lucide-react";
 
 // ─── Types ───
@@ -161,6 +162,11 @@ export default function Reports() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [dbStats, setDbStats] = useState({ orders: 0, products: 0, customers: 0 });
   const [loadingReports, setLoadingReports] = useState(true);
+  const [previewData, setPreviewData] = useState<{ headers: string[]; rows: string[][]; name: string } | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [deleteReportId, setDeleteReportId] = useState<string | null>(null);
+  const [deleteReportName, setDeleteReportName] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [newSchedule, setNewSchedule] = useState({
     name: "", type: "", frequency: "daily" as ScheduledReport['frequency'], recipients: ""
@@ -341,6 +347,57 @@ export default function Reports() {
     toast.success("Schedule deleted");
   };
 
+  // Preview report from storage
+  const handlePreview = async (report: GeneratedReport) => {
+    if (!report.filePath) { toast.error("No file available"); return; }
+    setPreviewLoading(true);
+    try {
+      const { data, error } = await supabase.storage.from("reports").download(report.filePath);
+      if (error || !data) throw new Error("Download failed");
+      const text = await data.text();
+      const lines = text.replace(/^\ufeff/, "").split("\n").filter(Boolean);
+      if (lines.length === 0) throw new Error("Empty file");
+      const headers = lines[0].split(",").map(h => h.replace(/^"|"$/g, ""));
+      const rows = lines.slice(1, 21).map(line => {
+        const row: string[] = [];
+        let current = "";
+        let inQuotes = false;
+        for (const char of line) {
+          if (char === '"') { inQuotes = !inQuotes; }
+          else if (char === ',' && !inQuotes) { row.push(current); current = ""; }
+          else { current += char; }
+        }
+        row.push(current);
+        return row;
+      });
+      setPreviewData({ headers, rows, name: report.name });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to preview report");
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  // Delete single report
+  const handleDeleteReport = async () => {
+    if (!deleteReportId) return;
+    setIsDeleting(true);
+    try {
+      const report = reports.find(r => r.id === deleteReportId);
+      if (report?.filePath) {
+        await supabase.storage.from("reports").remove([report.filePath]);
+      }
+      await supabase.from("generated_reports").delete().eq("id", deleteReportId);
+      setReports(prev => prev.filter(r => r.id !== deleteReportId));
+      toast.success("Report deleted");
+    } catch {
+      toast.error("Failed to delete report");
+    } finally {
+      setIsDeleting(false);
+      setDeleteReportId(null);
+    }
+  };
+
   const generatingCount = reports.filter(r => r.status === 'generating').length;
 
   return (
@@ -477,9 +534,17 @@ export default function Reports() {
                               )}
                             </TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" disabled={report.status !== 'ready'} onClick={() => handleDownload(report)}>
-                                <Download className="h-4 w-4" />
-                              </Button>
+                              <div className="flex items-center justify-end gap-1">
+                                <Button variant="ghost" size="icon" disabled={report.status !== 'ready' || previewLoading} onClick={() => handlePreview(report)} title="Preview">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" disabled={report.status !== 'ready'} onClick={() => handleDownload(report)} title="Download">
+                                  <Download className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => { setDeleteReportId(report.id); setDeleteReportName(report.name); }} title="Delete">
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
@@ -691,6 +756,54 @@ export default function Reports() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Preview Dialog */}
+      <Dialog open={!!previewData} onOpenChange={(open) => !open && setPreviewData(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="h-5 w-5" />
+              Preview: {previewData?.name}
+            </DialogTitle>
+            <DialogDescription>Showing first {previewData?.rows.length || 0} rows</DialogDescription>
+          </DialogHeader>
+          <div className="overflow-auto max-h-[55vh] border rounded-lg">
+            {previewData && (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {previewData.headers.map((h, i) => (
+                      <TableHead key={i} className="whitespace-nowrap">{h}</TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {previewData.rows.map((row, ri) => (
+                    <TableRow key={ri}>
+                      {row.map((cell, ci) => (
+                        <TableCell key={ci} className="whitespace-nowrap max-w-[200px] truncate">{cell}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPreviewData(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm */}
+      <DeleteConfirmModal
+        open={!!deleteReportId}
+        onOpenChange={(open) => !open && setDeleteReportId(null)}
+        onConfirm={handleDeleteReport}
+        title="Delete Report"
+        itemName={deleteReportName}
+        isLoading={isDeleting}
+      />
     </>
   );
 }
