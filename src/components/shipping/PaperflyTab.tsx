@@ -134,7 +134,7 @@ export const PaperflyTab = forwardRef<HTMLDivElement, PaperflyTabProps>(function
     <div ref={ref} className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold flex items-center gap-2">
-          <img src="/logos/paperfly.svg" alt="Paperfly" className="h-5 w-5 object-contain" />
+          <img src="/logos/paperfly.svg" alt="Paperfly" className="h-6 w-auto object-contain" />
           Paperfly Courier
         </h2>
         <div className="flex items-center gap-2">
