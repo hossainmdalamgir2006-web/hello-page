@@ -1,28 +1,37 @@
+## Plan: Invoice PDF Design — Professional Upgrade
 
+### বর্তমান সমস্যাগুলো (Screenshot থেকে)
 
-## Plan: Invoice PDF — Status Badge Center Fix ও Due Date / Terms Remove
+1. **Store info section** খালি — logo আছে কিন্তু address/email/phone দেখাচ্ছে না (data নেই হয়তো)  
 
-### সমস্যা
+fix .../admin/system-settings/store  Footer Settings  ei khane paba store info
 
-1. **Status badge text centered না**: Badge-এর মধ্যে text vertically/horizontally ঠিকমতো center হচ্ছে না। কারণ: `doc.getTextWidth(statusLabel)` call হচ্ছে কিন্তু তখন font size সেট করা হয়নি (6.5)। Font size সেট হওয়ার আগে width মাপলে ভুল width আসে, ফলে badge ও text misalign হয়।
+1. **Overall spacing** কিছু জায়গায় cramped, কিছু জায়গায় অনেক empty space
+2. **Bottom section** (Payment, Terms, Signature) পেজের মাঝে floating — footer-এর কাছে push করা ভালো হবে
 
-2. **Due Date সরানো**: Header meta section-এ "Due Date: 23 April 2026" hardcoded দেখাচ্ছে — user এটা চান না।
-
-3. **"Payment due within 7 days" সরানো**: Terms & Conditions section-এ এই line hardcoded — user এটা রাখেননি।
-
-### পরিবর্তন
+### Proposed Professional Improvements
 
 #### `src/utils/generateInvoicePDF.ts`
 
-1. **Status badge fix** (lines 206-224):
-   - Font size (6.5) আগে সেট করা, তারপর `getTextWidth()` call — এতে badge width সঠিক হবে এবং text center-এ আসবে।
-
-2. **Due Date remove** (lines 197-203):
-   - পুরো "Due Date" block মুছে ফেলা (metaY += 6, text "Due Date:", dueDate calculation সব)।
-
-3. **Terms "Payment due within 7 days" remove** (line 431):
-   - এই line মুছে ফেলা, বাকি দুটি term (Returns, Damaged items) রাখা, Y offset adjust করা।
+1. **Header upgrade**:
+  - Store logo বড় করা (16→20mm)
+  - INVOICE title-এর নিচে একটি subtle accent color line/bar
+  - Store name font size একটু বড় (18→20)
+2. **Bill To / Ship To section**:
+  - Left accent border (2px accent color) যোগ করা each box-এ
+  - Section label ("BILL TO", "SHIP TO") accent color-এ
+3. **Items table polish**:
+  - Header row height বাড়ানো (11→13)
+  - Row height বাড়ানো (14→16) — আরও breathable
+  - Alternate row colors আরও subtle
+4. **Grand Total section**:
+  - Grand total row-এ accent color background bar যোগ করা
+  - White text on accent background — visually distinct
+5. **Bottom section layout fix**:
+  - Payment/Terms/Signature section-কে footer-এর ঠিক উপরে anchor করা
+  - Thin accent line separator
+6. **Overall spacing**: Margin ও section gaps fine-tune করা
 
 ### ফাইল
-- **Edit**: `src/utils/generateInvoicePDF.ts` — ৩টি fix
 
+- **Edit**: `src/utils/generateInvoicePDF.ts` — Full design refresh
