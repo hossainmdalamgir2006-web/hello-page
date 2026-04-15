@@ -157,18 +157,26 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   dueDate.setDate(dueDate.getDate() + 7);
   doc.text(dueDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }), metaValueX, metaY, { align: "right" });
 
-  // Paid badge — separate line below meta
+  // Payment status badge — always show
   metaY += 7;
-  const pStatus = (data.payment_status || "").toLowerCase();
-  if (pStatus === "paid") {
-    const badgeX = metaValueX;
-    doc.setFillColor(22, 163, 74);
-    doc.roundedRect(badgeX - 20, metaY - 2, 20, 8, 3, 3, "F");
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(6.5);
-    doc.setTextColor(...C.white);
-    doc.text("PAID", badgeX - 10, metaY + 3.5, { align: "center" });
-  }
+  const pStatus = (data.payment_status || "pending").toLowerCase();
+  const statusLabel = pStatus.toUpperCase();
+  const badgeColors: Record<string, RGB> = {
+    paid: [22, 163, 74],
+    pending: [217, 119, 6],
+    failed: [220, 38, 38],
+    cancelled: [220, 38, 38],
+    refunded: [100, 116, 139],
+  };
+  const badgeColor: RGB = badgeColors[pStatus] || [100, 116, 139];
+  const badgeW = Math.max(22, doc.getTextWidth(statusLabel) + 8);
+  const badgeX = metaValueX;
+  doc.setFillColor(...badgeColor);
+  doc.roundedRect(badgeX - badgeW, metaY - 2, badgeW, 8, 3, 3, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(6.5);
+  doc.setTextColor(...C.white);
+  doc.text(statusLabel, badgeX - badgeW / 2, metaY + 3.5, { align: "center" });
 
   y = Math.max(y, metaY) + 10;
 

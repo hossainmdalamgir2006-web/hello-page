@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { generateInvoicePDF, type InvoiceTemplateConfig } from "@/utils/generateInvoicePDF";
 import { useDocumentTemplates } from "@/hooks/useDocumentTemplates";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { formatPrice } from "@/lib/formatPrice";
 import { motion } from "framer-motion";
 
@@ -30,6 +31,8 @@ export default function AccountInvoice() {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
   const { getTemplateConfig } = useDocumentTemplates();
+  const { data: headerContent } = usePageContent("header");
+  const headerCont = (headerContent?.content as any) || {};
 
   useEffect(() => {
     if (!user) return;
@@ -56,7 +59,13 @@ export default function AccountInvoice() {
   const handleDownload = (order: any) => {
     setDownloading(order.id);
     try {
-      const cfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+      const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
+      // Merge store name from Header Settings if not set in template
+      const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
+        ...templateCfg,
+        store_name: templateCfg.store_name || headerCont.store_name || "YOUR STORE",
+        store_logo_url: templateCfg.store_logo_url || headerCont.store_logo || "",
+      } : undefined;
       const addr = order.shipping_address;
       let addressStr = "N/A";
       if (addr) {
