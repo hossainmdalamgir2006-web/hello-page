@@ -25,6 +25,8 @@ export interface PackingSlipTemplateConfig {
   footer_text?: string;
   store_logo_url?: string;
   show_store_info?: boolean;
+  store_address?: string;
+  store_phone?: string;
 }
 
 type RGB = [number, number, number];
@@ -38,12 +40,14 @@ function buildColors(accentHex?: string) {
   const primary: RGB = accentHex ? hexToRgb(accentHex) : [15, 23, 42];
   return {
     primary,
-    accent: [59, 130, 246] as RGB,
+    accent: [37, 99, 235] as RGB,
     text: [30, 41, 59] as RGB,
     textMuted: [100, 116, 139] as RGB,
     border: [226, 232, 240] as RGB,
+    borderLight: [241, 245, 249] as RGB,
     bgLight: [248, 250, 252] as RGB,
     white: [255, 255, 255] as RGB,
+    accentBg: [239, 246, 255] as RGB,
   };
 }
 
@@ -52,164 +56,262 @@ export function generatePackingSlip(data: PackingSlipData, config?: PackingSlipT
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
-  let y = 5;
+  const margin = 16;
+  const contentWidth = pageWidth - margin * 2;
 
   const storeName = config?.store_name || data.store_name || 'YOUR STORE';
+  const storeAddress = config?.store_address || '';
+  const storePhone = config?.store_phone || '';
   const showNotes = config?.show_notes ?? true;
   const showSignature = config?.show_signature ?? true;
+  const totalQty = data.items.reduce((sum, item) => sum + item.quantity, 0);
 
-  // TOP ACCENT BAR
-  doc.setFillColor(...C.primary);
-  doc.rect(0, 0, pageWidth, 4, "F");
-  y = 20;
-
-  // HEADER
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(22);
-  doc.setTextColor(...C.primary);
-  doc.text(storeName, margin, y);
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(24);
-  doc.setTextColor(200, 200, 210);
-  doc.text('PACKING SLIP', pageWidth - margin, y, { align: 'right' });
-  y += 12;
-
-  // Order info bar
-  doc.setFillColor(...C.bgLight);
-  doc.roundedRect(margin, y - 4, pageWidth - margin * 2, 16, 3, 3, 'F');
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(...C.textMuted);
-  doc.text('Order:', margin + 5, y + 4);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...C.text);
-  doc.text(data.order_number, margin + 22, y + 4);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...C.textMuted);
-  doc.text('Date:', pageWidth - margin - 60, y + 4);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...C.text);
-  doc.text(new Date(data.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }), pageWidth - margin - 43, y + 4);
-  y += 22;
-
-  // SHIP TO
-  doc.setFillColor(...C.accent);
-  doc.roundedRect(margin, y - 4, 55, 10, 2, 2, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.setTextColor(...C.white);
-  doc.text('SHIP TO', margin + 5, y + 2);
-  y += 12;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...C.text);
-  doc.text(data.customer_name, margin, y);
-  y += 6;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(...C.textMuted);
-  if (data.customer_phone) { doc.text(`📱 ${data.customer_phone}`, margin, y); y += 6; }
-  if (data.shipping_address) {
-    doc.text('📍 ', margin, y);
-    const addressLines = doc.splitTextToSize(data.shipping_address, pageWidth - margin - 30);
-    addressLines.forEach((line: string, i: number) => {
-      doc.text(line, margin + 6, y);
-      if (i < addressLines.length - 1) y += 5;
-    });
-    y += 5;
-  }
-  y += 10;
-
-  // ITEMS TABLE
-  doc.setFillColor(...C.primary);
-  doc.roundedRect(margin, y - 5, pageWidth - margin * 2, 12, 2, 2, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.setTextColor(...C.white);
-  doc.text('#', margin + 5, y + 2);
-  doc.text('ITEM DESCRIPTION', margin + 16, y + 2);
-  doc.text('QTY', pageWidth - margin - 40, y + 2, { align: 'right' });
-  doc.text('CHECK', pageWidth - margin - 8, y + 2, { align: 'right' });
-  y += 12;
-
-  data.items.forEach((item, index) => {
-    if (y > pageHeight - 60) { doc.addPage(); y = 20; }
-    if (index % 2 === 0) { doc.setFillColor(...C.bgLight); doc.rect(margin, y - 5, pageWidth - margin * 2, 10, 'F'); }
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(...C.accent);
-    doc.text(`${index + 1}`, margin + 5, y);
-    const maxWidth = pageWidth - margin * 2 - 70;
-    const productName = doc.splitTextToSize(item.product_name, maxWidth);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...C.text);
-    doc.text(productName[0], margin + 16, y);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...C.primary);
-    doc.text(`×${item.quantity}`, pageWidth - margin - 40, y, { align: 'right' });
-    doc.setDrawColor(...C.border);
-    doc.setLineWidth(0.8);
-    doc.roundedRect(pageWidth - margin - 14, y - 4, 7, 7, 1, 1);
-    y += productName.length > 1 ? 14 : 10;
-  });
-  y += 6;
-
-  // SUMMARY BAR
+  // ─── OUTER CARD BORDER ───
   doc.setDrawColor(...C.border);
   doc.setLineWidth(0.5);
-  doc.line(margin, y, pageWidth - margin, y);
-  y += 10;
-  const totalQty = data.items.reduce((sum, item) => sum + item.quantity, 0);
-  doc.setFillColor(...C.accent);
-  doc.roundedRect(margin, y - 5, 80, 14, 3, 3, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
+  doc.roundedRect(10, 8, pageWidth - 20, pageHeight - 16, 4, 4);
+
+  let y = 18;
+
+  // ─── HEADER ───
+  // Logo circle
+  doc.setFillColor(...C.primary);
+  doc.circle(margin + 10, y + 5, 8, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
   doc.setTextColor(...C.white);
-  doc.text(`Total Items: ${totalQty}`, margin + 8, y + 3);
-  doc.setTextColor(...C.textMuted);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.text(`${data.items.length} product(s)`, margin + 90, y + 3);
+  doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+
+  // Store name
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(...C.primary);
+  doc.text(storeName, margin + 22, y + 8);
+
+  // PACKING SLIP title
+  const rightX = pageWidth - margin;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.setTextColor(...C.primary);
+  doc.text("PACKING SLIP", rightX, y + 6, { align: "right" });
+
   y += 18;
 
-  // NOTES
-  if (showNotes && data.notes) {
-    doc.setFillColor(255, 251, 235);
-    doc.roundedRect(margin, y - 4, pageWidth - margin * 2, 6 + doc.splitTextToSize(data.notes, pageWidth - margin * 2 - 16).length * 5, 3, 3, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.setTextColor(146, 120, 50);
-    doc.text('📋 ORDER NOTES', margin + 5, y + 2);
-    y += 8;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(100, 80, 30);
-    const noteLines = doc.splitTextToSize(data.notes, pageWidth - margin * 2 - 16);
-    noteLines.forEach((line: string) => { doc.text(line, margin + 5, y); y += 5; });
-    y += 8;
-  }
+  // Store info
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.textMuted);
+  if (storeAddress) { doc.text(storeAddress, margin, y); y += 4; }
+  if (storePhone) { doc.text(storePhone, margin, y); y += 4; }
 
-  // SIGNATURE SECTION
-  if (showSignature) {
-    y = Math.max(y + 15, pageHeight - 50);
-    doc.setDrawColor(...C.border);
-    doc.setLineWidth(0.5);
-    doc.line(margin, y, margin + 65, y);
-    doc.setFont('helvetica', 'normal');
+  // Meta info on right
+  let metaY = y - 8;
+  const metaLabelX = rightX - 50;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.textMuted);
+  doc.text("Order No:", metaLabelX, metaY);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...C.primary);
+  doc.text(data.order_number, rightX, metaY, { align: "right" });
+
+  metaY += 6;
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...C.textMuted);
+  doc.text("Date:", metaLabelX, metaY);
+  doc.setTextColor(...C.text);
+  doc.text(new Date(data.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }), rightX, metaY, { align: "right" });
+
+  metaY += 6;
+  doc.setTextColor(...C.textMuted);
+  doc.text("Total Items:", metaLabelX, metaY);
+  // Items badge
+  doc.setFillColor(...C.accentBg);
+  const badgeText = `${totalQty} pcs`;
+  const badgeW = doc.getTextWidth(badgeText) + 6;
+  doc.roundedRect(rightX - badgeW, metaY - 3.5, badgeW, 5.5, 1.5, 1.5, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(...C.accent);
+  doc.text(badgeText, rightX - badgeW / 2, metaY + 0.5, { align: "center" });
+
+  y = Math.max(y, metaY) + 10;
+
+  // ─── SHIP TO ───
+  doc.setFillColor(...C.bgLight);
+  doc.roundedRect(margin, y, contentWidth, 32, 3, 3, "F");
+  doc.setDrawColor(...C.borderLight);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(margin, y, contentWidth, 32, 3, 3);
+
+  let shipY = y + 8;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(...C.textMuted);
+  doc.text("SHIP TO", margin + 8, shipY);
+  shipY += 8;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.setTextColor(...C.primary);
+  doc.text(data.customer_name, margin + 8, shipY);
+  shipY += 6;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.textMuted);
+  if (data.shipping_address) {
+    const addrLines = doc.splitTextToSize(data.shipping_address, contentWidth - 16);
+    addrLines.forEach((line: string) => { doc.text(line, margin + 8, shipY); shipY += 4.5; });
+  }
+  if (data.customer_phone) { doc.text(data.customer_phone, margin + 8, shipY); }
+
+  y += 40;
+
+  // ─── ITEMS TABLE ───
+  const colHash = margin + 8;
+  const colItem = margin + 20;
+  const colSku = margin + contentWidth * 0.45;
+  const colLoc = margin + contentWidth * 0.6;
+  const colQty = margin + contentWidth * 0.76;
+  const colCheck = margin + contentWidth - 12;
+
+  // Table header
+  doc.setFillColor(...C.primary);
+  doc.roundedRect(margin, y, contentWidth, 11, 2, 2, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.white);
+  doc.text("#", colHash, y + 7);
+  doc.text("Item", colItem, y + 7);
+  doc.text("SKU", colSku, y + 7);
+  doc.text("Location", colLoc, y + 7);
+  doc.text("Qty", colQty, y + 7, { align: "center" });
+  doc.text("\u2713 Packed", colCheck, y + 7, { align: "center" });
+  y += 14;
+
+  // Table rows
+  data.items.forEach((item, index) => {
+    if (y > pageHeight - 70) { doc.addPage(); y = 20; }
+
+    const rowH = 14;
+
+    // Row background
+    if (index % 2 !== 0) {
+      doc.setFillColor(...C.bgLight);
+      doc.rect(margin, y - 4, contentWidth, rowH, "F");
+    }
+
+    // Row bottom border
+    doc.setDrawColor(...C.borderLight);
+    doc.setLineWidth(0.2);
+    doc.line(margin, y + rowH - 4, margin + contentWidth, y + rowH - 4);
+
+    // Number
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(...C.textMuted);
-    doc.text('Packed By', margin + 15, y + 8);
-    doc.text('Date: ___________', margin + 5, y + 14);
-    doc.line(pageWidth - margin - 65, y, pageWidth - margin, y);
-    doc.text('Checked By', pageWidth - margin - 50, y + 8);
-    doc.text('Date: ___________', pageWidth - margin - 60, y + 14);
+    doc.text(`${index + 1}`, colHash, y + 3);
+
+    // Item name
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...C.primary);
+    const maxNameW = colSku - colItem - 5;
+    const nameLines = doc.splitTextToSize(item.product_name, maxNameW);
+    doc.text(nameLines[0], colItem, y + 3);
+
+    // SKU placeholder
+    doc.setFont("courier", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...C.textMuted);
+    doc.text("—", colSku, y + 3);
+
+    // Location placeholder
+    doc.text("—", colLoc, y + 3);
+
+    // Qty
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(...C.primary);
+    doc.text(item.quantity.toString(), colQty, y + 4, { align: "center" });
+
+    // Checkbox
+    doc.setDrawColor(...C.border);
+    doc.setLineWidth(0.6);
+    doc.roundedRect(colCheck - 3, y - 1, 7, 7, 1, 1);
+
+    y += rowH;
+  });
+
+  y += 8;
+
+  // ─── SUMMARY ───
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y, margin + contentWidth, y);
+  y += 8;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.text);
+  doc.text(`\u2611 Total SKUs: ${data.items.length}`, margin, y);
+  doc.text(`|   Total Pieces: ${totalQty}`, margin + 40, y);
+  y += 12;
+
+  // ─── PACKING NOTES ───
+  if (showNotes) {
+    doc.setDrawColor(...C.border);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, margin + contentWidth, y);
+    y += 8;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(...C.primary);
+    doc.text("Packing Notes", margin, y);
+
+    if (showSignature) {
+      doc.text("Packed By", rightX - 30, y);
+    }
+
+    y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C.textMuted);
+
+    if (data.notes) {
+      const noteLines = doc.splitTextToSize(data.notes, contentWidth * 0.6);
+      noteLines.forEach((line: string) => {
+        doc.text(`• ${line}`, margin, y);
+        y += 5;
+      });
+    } else {
+      doc.text("• Handle with care", margin, y); y += 5;
+      doc.text("• Include invoice copy inside package", margin, y); y += 5;
+      doc.text("• Double-check quantities before sealing", margin, y); y += 5;
+    }
+
+    if (showSignature) {
+      doc.setDrawColor(...C.border);
+      doc.setLineWidth(0.3);
+      doc.line(rightX - 45, y - 2, rightX, y - 2);
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7);
+      doc.setTextColor(...C.textMuted);
+      doc.text("Signature & Date", rightX - 25, y + 4);
+    }
   }
 
-  // Bottom accent bar
-  doc.setFillColor(...C.primary);
-  doc.rect(0, pageHeight - 4, pageWidth, 4, "F");
+  // ─── FOOTER ───
+  const footerY = pageHeight - 18;
+  doc.setFillColor(...C.accentBg);
+  doc.roundedRect(margin, footerY - 4, contentWidth, 12, 2, 2, "F");
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(...C.accent);
+  doc.text("This is a packing slip — no pricing information included", pageWidth / 2, footerY + 3, { align: "center" });
 
   doc.save(`packing-slip-${data.order_number}.pdf`);
 }
