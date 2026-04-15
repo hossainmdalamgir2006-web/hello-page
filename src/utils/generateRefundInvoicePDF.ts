@@ -242,28 +242,20 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   doc.text(`Order #${data.order_number}`, orderX, secY);
   secY += 6;
 
-  // Customer contact details
+  // Left: customer contact | Right: order details — row by row
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...C.textMuted);
-  if (data.customer_phone) {
-    doc.text(data.customer_phone, billX, secY);
-    doc.text(`Total: ${fmt(data.original_total)}`, orderX, secY);
-    secY += 5;
-  } else {
-    doc.text(`Total: ${fmt(data.original_total)}`, orderX, secY);
-  }
-  if (data.customer_email) {
-    doc.setTextColor(...C.textMuted);
-    doc.text(data.customer_email, billX, secY);
-    if (!data.customer_phone) secY += 5;
-    doc.setTextColor(...C.textMuted);
-    doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, data.customer_phone ? secY : secY - 5);
-    if (data.customer_phone) secY += 5;
-  } else {
-    doc.setTextColor(...C.textMuted);
-    doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, secY);
-  }
+
+  // Row 1
+  if (data.customer_phone) doc.text(data.customer_phone, billX, secY);
+  doc.text(`Total: ${fmt(data.original_total)}`, orderX, secY);
+  secY += 5;
+
+  // Row 2
+  doc.setTextColor(...C.textMuted);
+  if (data.customer_email) doc.text(data.customer_email, billX, secY);
+  doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, secY);
 
   y += boxH + 8;
 
