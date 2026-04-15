@@ -193,7 +193,12 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   const halfW = contentWidth / 2;
   const billX = margin + 10;
   const orderX = margin + halfW + 10;
-  const boxH = 42;
+
+  // Calculate dynamic box height
+  let leftLines = 1; // name
+  if (data.customer_phone) leftLines++;
+  if (data.customer_email) leftLines++;
+  const boxH = Math.max(44, 18 + leftLines * 6 + 6);
 
   doc.setFillColor(...C.bgLight);
   doc.roundedRect(margin, y, contentWidth, boxH, 3, 3, "F");
@@ -215,6 +220,7 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
 
   let secY = y + 10;
 
+  // Section labels
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
   doc.setTextColor(...C.danger);
@@ -223,23 +229,33 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   doc.text("ORIGINAL ORDER", orderX, secY);
   secY += 8;
 
+  // Customer name
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setTextColor(...C.primary);
   doc.text(data.customer_name, billX, secY);
+
+  // Order number on right
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(...C.primary);
+  doc.text(`Order #${data.order_number}`, orderX, secY);
+  secY += 6;
+
+  // Left: customer contact | Right: order details — row by row
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...C.textMuted);
-  doc.text(fmt(data.original_total), orderX, secY);
+
+  // Row 1
+  if (data.customer_phone) doc.text(data.customer_phone, billX, secY);
+  doc.text(`Total: ${fmt(data.original_total)}`, orderX, secY);
   secY += 5;
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
+  // Row 2
   doc.setTextColor(...C.textMuted);
-  if (data.customer_phone) { doc.text(data.customer_phone, billX, secY); }
+  if (data.customer_email) doc.text(data.customer_email, billX, secY);
   doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, secY);
-  secY += 5;
-  if (data.customer_email) { doc.text(data.customer_email, billX, secY); }
 
   y += boxH + 8;
 
