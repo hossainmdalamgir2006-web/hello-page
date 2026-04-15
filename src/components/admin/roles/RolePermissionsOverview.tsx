@@ -60,7 +60,5 @@ export function RolePermissionsOverview() {
             </tbody>
           </table>
         </div>
-      </CardContent>
-    </Card>
   );
 }
