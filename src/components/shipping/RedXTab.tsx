@@ -288,6 +288,68 @@ export const RedXTab = forwardRef<HTMLDivElement, RedXTabProps>(function RedXTab
         </CardContent>
       </Card>
 
+      {/* All Pending Orders Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>All Pending Orders</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order Number</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Payment</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pendingOrders.map((order) => {
+                const alreadySent = redxShipments.some(s => s.order_id === order.id);
+                return (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-mono text-sm">{order.order_number}</TableCell>
+                    <TableCell>{order.customer_name}</TableCell>
+                    <TableCell>{order.customer_phone}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {typeof order.shipping_address === 'string' 
+                        ? order.shipping_address 
+                        : `${order.shipping_address?.street || ''}, ${order.shipping_address?.city || ''}`}
+                    </TableCell>
+                    <TableCell>{formatPrice(order.total)}</TableCell>
+                    <TableCell>
+                      <Badge variant={order.payment_method === 'cod' ? 'outline' : 'default'}>
+                        {order.payment_method === 'cod' ? 'COD' : 'Paid'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {alreadySent ? (
+                        <Badge variant="secondary">Sent</Badge>
+                      ) : (
+                        <Button size="sm" onClick={() => openSendDialog(order)}>
+                          <Send className="h-3 w-3 mr-1" />
+                          Send to RedX
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              {pendingOrders.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    No pending orders
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
       <Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
         <DialogContent>
           <DialogHeader>
