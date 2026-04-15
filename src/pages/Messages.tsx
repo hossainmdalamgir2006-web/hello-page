@@ -16,6 +16,7 @@ import {
   Users,
   Timer,
   Star,
+  BarChart3,
 } from "lucide-react";
 import { ContactMessagesTab } from "@/components/admin/ContactMessagesTab";
 import { LiveChatTab } from "@/components/admin/LiveChatTab";
@@ -23,6 +24,8 @@ import { SupportTicketsTab } from "@/components/admin/SupportTicketsTab";
 import { AgentWorkloadStats } from "@/components/admin/AgentWorkloadStats";
 import { SLABreachAlert } from "@/components/admin/SLABreachAlert";
 import { CSATDashboard } from "@/components/admin/CSATDashboard";
+import { MessageAnalyticsTab } from "@/components/admin/MessageAnalyticsTab";
+import { AutoAssignRulesDialog } from "@/components/admin/AutoAssignRulesDialog";
 import { useContactMessages } from "@/hooks/useContactMessages";
 import { useLiveChat } from "@/hooks/useLiveChat";
 import { useSupportTickets } from "@/hooks/useSupportTickets";
@@ -92,6 +95,7 @@ export default function Messages() {
           description="Manage customer inquiries and support tickets"
           actions={
           <div className="flex gap-2 flex-wrap mt-2 sm:mt-0">
+            <AutoAssignRulesDialog />
             <KnowledgeBaseSheet />
             <Button
               variant={showAgentStats ? "default" : "outline"}
@@ -185,6 +189,10 @@ export default function Messages() {
               <Star className="h-3.5 w-3.5 mr-1" />
               CSAT
             </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex-1 sm:flex-none">
+              <BarChart3 className="h-3.5 w-3.5 mr-1" />
+              Analytics
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="contact">
@@ -201,6 +209,10 @@ export default function Messages() {
 
           <TabsContent value="csat" className="space-y-4">
             <CSATDashboard />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-4">
+            <MessageAnalyticsTab />
           </TabsContent>
         </Tabs>
       </div>

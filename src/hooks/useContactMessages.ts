@@ -115,6 +115,61 @@ export function useContactMessages() {
     },
   });
 
+  const bulkMarkAsRead = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase
+        .from("contact_messages")
+        .update({ is_read: true })
+        .in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      toast.success("Messages marked as read");
+    },
+    onError: () => toast.error("Failed to mark messages as read"),
+  });
+
+  const bulkMarkAsUnread = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase
+        .from("contact_messages")
+        .update({ is_read: false })
+        .in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      toast.success("Messages marked as unread");
+    },
+    onError: () => toast.error("Failed to mark messages as unread"),
+  });
+
+  const bulkDelete = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase
+        .from("contact_messages")
+        .update({ deleted_at: new Date().toISOString() } as any)
+        .in("id", ids);
+      if (error) throw error;
+      return ids;
+    },
+    onSuccess: (_data, ids) => {
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      toast.success(`${ids.length} message(s) moved to trash`, {
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            await supabase.from("contact_messages").update({ deleted_at: null } as any).in("id", ids);
+            queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+          },
+        },
+        duration: 5000,
+      });
+    },
+    onError: () => toast.error("Failed to move to trash"),
+  });
+
   const unreadCount = messages.filter((m) => !m.is_read).length;
   const unrepliedCount = messages.filter((m) => !m.replied_at).length;
 
@@ -128,5 +183,10 @@ export function useContactMessages() {
     markAsUnread: markAsUnread.mutate,
     markAsReplied: markAsReplied.mutate,
     deleteMessage: deleteMessage.mutate,
+    bulkMarkAsRead: bulkMarkAsRead.mutate,
+    bulkMarkAsUnread: bulkMarkAsUnread.mutate,
+    bulkDelete: bulkDelete.mutate,
+    isBulkDeleting: bulkDelete.isPending,
+    isBulkUpdating: bulkMarkAsRead.isPending || bulkMarkAsUnread.isPending,
   };
 }
