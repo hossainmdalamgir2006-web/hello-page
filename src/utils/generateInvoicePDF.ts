@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import { PAYMENT_METHOD_DEFINITIONS } from "@/data/paymentMethodDefinitions";
 
 interface InvoiceItem {
   product_name: string;
