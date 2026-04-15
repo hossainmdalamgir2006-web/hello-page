@@ -180,12 +180,24 @@ export default function Orders() {
   const viewDetails = (order: Order) => { setSelectedOrder(order); setDetailsOpen(true); };
 
   const generateInvoice = async (order: Order) => {
+    // Fetch payment method logo
+    let paymentMethodLogo = "";
+    if (order.payment_method) {
+      const { data: pmData } = await supabase
+        .from("payment_methods")
+        .select("logo_url")
+        .or(`code.eq.${order.payment_method},name.eq.${order.payment_method}`)
+        .limit(1)
+        .maybeSingle();
+      if (pmData?.logo_url) paymentMethodLogo = pmData.logo_url;
+    }
     const invoiceData = orderToInvoiceData({
       order_number: order.order_number, created_at: order.created_at, customer_name: order.customer_name,
       customer_email: order.customer_email, customer_phone: order.customer_phone, shipping_address: order.shipping_address,
       items: order.items, subtotal: order.subtotal, shipping_cost: order.shipping_cost, discount: order.discount,
       total: order.total, payment_method: order.payment_method, payment_status: order.payment_status,
     });
+    invoiceData.payment_method_logo = paymentMethodLogo;
     const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
     const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
       ...templateCfg,
