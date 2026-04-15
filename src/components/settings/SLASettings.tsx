@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Clock, Shield } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Loader2, Clock, Shield, Bell } from "lucide-react";
 import { useSLAConfig, SLAConfig } from "@/hooks/useSLAConfig";
 
 export function SLASettings() {
@@ -23,11 +24,7 @@ export function SLASettings() {
     setIsSaving(false);
   };
 
-  const hasChanges =
-    localConfig.firstResponseMinutes !== config.firstResponseMinutes ||
-    localConfig.resolutionHours !== config.resolutionHours ||
-    localConfig.highPriorityResponseMinutes !== config.highPriorityResponseMinutes ||
-    localConfig.urgentPriorityResponseMinutes !== config.urgentPriorityResponseMinutes;
+  const hasChanges = JSON.stringify(localConfig) !== JSON.stringify(config);
 
   if (isLoading) {
     return (
@@ -38,6 +35,54 @@ export function SLASettings() {
       </Card>
     );
   }
+
+  const priorityFields = [
+    {
+      id: "critical-priority",
+      label: "Critical Priority Response (minutes)",
+      value: localConfig.criticalPriorityResponseMinutes,
+      key: "criticalPriorityResponseMinutes" as const,
+      fallback: 5,
+      iconColor: "text-destructive",
+      desc: "Highest urgency — immediate response needed",
+    },
+    {
+      id: "urgent-priority",
+      label: "Urgent Priority Response (minutes)",
+      value: localConfig.urgentPriorityResponseMinutes,
+      key: "urgentPriorityResponseMinutes" as const,
+      fallback: 15,
+      iconColor: "text-destructive",
+      desc: "Very high urgency items",
+    },
+    {
+      id: "high-priority",
+      label: "High Priority Response (minutes)",
+      value: localConfig.highPriorityResponseMinutes,
+      key: "highPriorityResponseMinutes" as const,
+      fallback: 30,
+      iconColor: "text-warning",
+      desc: "Important items requiring quick attention",
+    },
+    {
+      id: "first-response",
+      label: "Default / Medium Response (minutes)",
+      value: localConfig.firstResponseMinutes,
+      key: "firstResponseMinutes" as const,
+      fallback: 60,
+      iconColor: "",
+      desc: "Normal priority tickets & chats",
+    },
+    {
+      id: "low-priority",
+      label: "Low Priority Response (minutes)",
+      value: localConfig.lowPriorityResponseMinutes,
+      key: "lowPriorityResponseMinutes" as const,
+      fallback: 120,
+      iconColor: "text-muted-foreground",
+      desc: "Non-urgent items, longer response window",
+    },
+  ];
 
   return (
     <Card>
@@ -51,29 +96,30 @@ export function SLASettings() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid gap-6 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="first-response" className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              Default First Response (minutes)
-            </Label>
-            <Input
-              id="first-response"
-              type="number"
-              min={1}
-              value={localConfig.firstResponseMinutes}
-              onChange={(e) =>
-                setLocalConfig((prev) => ({
-                  ...prev,
-                  firstResponseMinutes: parseInt(e.target.value) || 60,
-                }))
-              }
-              className="w-40"
-            />
-            <p className="text-xs text-muted-foreground">
-              Response time for normal priority tickets
-            </p>
-          </div>
+        {/* Priority Response Times */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {priorityFields.map((field) => (
+            <div key={field.id} className="space-y-2">
+              <Label htmlFor={field.id} className="flex items-center gap-2">
+                <Clock className={`h-4 w-4 ${field.iconColor}`} />
+                {field.label}
+              </Label>
+              <Input
+                id={field.id}
+                type="number"
+                min={1}
+                value={field.value}
+                onChange={(e) =>
+                  setLocalConfig((prev) => ({
+                    ...prev,
+                    [field.key]: parseInt(e.target.value) || field.fallback,
+                  }))
+                }
+                className="w-40"
+              />
+              <p className="text-xs text-muted-foreground">{field.desc}</p>
+            </div>
+          ))}
 
           <div className="space-y-2">
             <Label htmlFor="resolution-hours" className="flex items-center gap-2">
@@ -93,50 +139,27 @@ export function SLASettings() {
               }
               className="w-40"
             />
-            <p className="text-xs text-muted-foreground">
-              Maximum time to resolve a ticket
-            </p>
+            <p className="text-xs text-muted-foreground">Maximum time to resolve a ticket</p>
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="high-priority" className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-warning" />
-              High Priority রেসপন্স (মিনিট)
-            </Label>
-            <Input
-              id="high-priority"
-              type="number"
-              min={1}
-              value={localConfig.highPriorityResponseMinutes}
-              onChange={(e) =>
-                setLocalConfig((prev) => ({
-                  ...prev,
-                  highPriorityResponseMinutes: parseInt(e.target.value) || 30,
-                }))
-              }
-              className="w-40"
-            />
+        {/* Auto Notification Toggle */}
+        <div className="flex items-center justify-between rounded-lg border p-4">
+          <div className="flex items-center gap-3">
+            <Bell className="h-5 w-5 text-warning" />
+            <div>
+              <p className="font-medium text-sm">Auto-Notify on SLA Breach</p>
+              <p className="text-xs text-muted-foreground">
+                Automatically send notifications to agents when SLA targets are missed
+              </p>
+            </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="urgent-priority" className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-destructive" />
-              Urgent Priority রেসপন্স (মিনিট)
-            </Label>
-            <Input
-              id="urgent-priority"
-              type="number"
-              min={1}
-              value={localConfig.urgentPriorityResponseMinutes}
-              onChange={(e) =>
-                setLocalConfig((prev) => ({
-                  ...prev,
-                  urgentPriorityResponseMinutes: parseInt(e.target.value) || 15,
-                }))
-              }
-              className="w-40"
-            />
-          </div>
+          <Switch
+            checked={localConfig.autoNotifyOnBreach}
+            onCheckedChange={(checked) =>
+              setLocalConfig((prev) => ({ ...prev, autoNotifyOnBreach: checked }))
+            }
+          />
         </div>
 
         <Button onClick={handleSave} disabled={!hasChanges || isSaving}>
