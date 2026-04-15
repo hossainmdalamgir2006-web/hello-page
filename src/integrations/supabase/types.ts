@@ -3464,6 +3464,39 @@ export type Database = {
         }
         Relationships: []
       }
+      trash_log: {
+        Row: {
+          action: string
+          created_at: string | null
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          id: string
+          performed_by: string | null
+          performed_by_email: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          id?: string
+          performed_by?: string | null
+          performed_by_email?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          entity_id?: string
+          entity_name?: string
+          entity_type?: string
+          id?: string
+          performed_by?: string | null
+          performed_by_email?: string | null
+        }
+        Relationships: []
+      }
       trusted_devices: {
         Row: {
           browser: string | null
