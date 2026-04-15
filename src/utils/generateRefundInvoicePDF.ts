@@ -193,7 +193,12 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   const halfW = contentWidth / 2;
   const billX = margin + 10;
   const orderX = margin + halfW + 10;
-  const boxH = 42;
+
+  // Calculate dynamic box height
+  let leftLines = 1; // name
+  if (data.customer_phone) leftLines++;
+  if (data.customer_email) leftLines++;
+  const boxH = Math.max(44, 18 + leftLines * 6 + 6);
 
   doc.setFillColor(...C.bgLight);
   doc.roundedRect(margin, y, contentWidth, boxH, 3, 3, "F");
@@ -215,6 +220,7 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
 
   let secY = y + 10;
 
+  // Section labels
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
   doc.setTextColor(...C.danger);
@@ -223,23 +229,41 @@ export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise
   doc.text("ORIGINAL ORDER", orderX, secY);
   secY += 8;
 
+  // Customer name
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setTextColor(...C.primary);
   doc.text(data.customer_name, billX, secY);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.setTextColor(...C.textMuted);
-  doc.text(fmt(data.original_total), orderX, secY);
-  secY += 5;
 
+  // Order number on right
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(...C.primary);
+  doc.text(`Order #${data.order_number}`, orderX, secY);
+  secY += 6;
+
+  // Customer contact details
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(...C.textMuted);
-  if (data.customer_phone) { doc.text(data.customer_phone, billX, secY); }
-  doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, secY);
-  secY += 5;
-  if (data.customer_email) { doc.text(data.customer_email, billX, secY); }
+  if (data.customer_phone) {
+    doc.text(data.customer_phone, billX, secY);
+    doc.text(`Total: ${fmt(data.original_total)}`, orderX, secY);
+    secY += 5;
+  } else {
+    doc.text(`Total: ${fmt(data.original_total)}`, orderX, secY);
+  }
+  if (data.customer_email) {
+    doc.setTextColor(...C.textMuted);
+    doc.text(data.customer_email, billX, secY);
+    if (!data.customer_phone) secY += 5;
+    doc.setTextColor(...C.textMuted);
+    doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, data.customer_phone ? secY : secY - 5);
+    if (data.customer_phone) secY += 5;
+  } else {
+    doc.setTextColor(...C.textMuted);
+    doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, secY);
+  }
 
   y += boxH + 8;
 
