@@ -179,6 +179,17 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
   };
 
   const downloadInvoiceForOrder = async (order: Order) => {
+    // Fetch payment method logo
+    let paymentMethodLogo = "";
+    if (order.payment_method) {
+      const { data: pmData } = await supabase
+        .from("payment_methods")
+        .select("logo_url")
+        .or(`code.eq.${order.payment_method},name.eq.${order.payment_method}`)
+        .limit(1)
+        .maybeSingle();
+      if (pmData?.logo_url) paymentMethodLogo = pmData.logo_url;
+    }
     const invoiceData = {
       order_number: order.order_number,
       created_at: order.created_at,
@@ -197,6 +208,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
       total: order.total,
       payment_method: order.payment_method === 'cod' ? 'Cash on Delivery' : order.payment_method,
       payment_status: order.payment_status,
+      payment_method_logo: paymentMethodLogo,
     };
     const templateCfg = getTemplateConfig("invoice") as InvoiceTemplateConfig | undefined;
     const cfg: InvoiceTemplateConfig | undefined = templateCfg ? {
