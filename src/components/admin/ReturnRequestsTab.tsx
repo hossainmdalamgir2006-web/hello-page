@@ -171,7 +171,7 @@ export function ReturnRequestsTab() {
       .select('product_name, quantity, unit_price, total_price')
       .eq('order_id', r.order_id);
 
-    generateRefundInvoicePDF({
+    await generateRefundInvoicePDF({
       order_number: (order as any).order_number,
       refund_date: new Date().toISOString(),
       customer_name: r.customer_name || "Customer",

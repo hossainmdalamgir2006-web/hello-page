@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RefundInvoiceData {
   order_number: string;
@@ -21,202 +22,393 @@ interface RefundInvoiceData {
   store_name?: string;
 }
 
-const COLORS = {
-  primary: [212, 175, 55] as [number, number, number],
-  dark: [26, 26, 26] as [number, number, number],
-  text: [255, 255, 255] as [number, number, number],
-  muted: [156, 163, 175] as [number, number, number],
-  danger: [239, 68, 68] as [number, number, number],
-  success: [34, 197, 94] as [number, number, number],
-  border: [55, 55, 55] as [number, number, number],
+type RGB = [number, number, number];
+
+const C = {
+  primary: [15, 23, 42] as RGB,
+  accent: [37, 99, 235] as RGB,
+  text: [30, 41, 59] as RGB,
+  textMuted: [100, 116, 139] as RGB,
+  border: [226, 232, 240] as RGB,
+  borderLight: [241, 245, 249] as RGB,
+  bgLight: [248, 250, 252] as RGB,
+  white: [255, 255, 255] as RGB,
+  danger: [220, 38, 38] as RGB,
+  dangerLight: [254, 226, 226] as RGB,
+  success: [22, 163, 74] as RGB,
 };
 
-export function generateRefundInvoicePDF(data: RefundInvoiceData): void {
+async function loadImageAsBase64(url: string): Promise<string | null> {
+  if (!url) return null;
+  try {
+    const absoluteUrl = url.startsWith('/') ? `${window.location.origin}${url}` : url;
+    const response = await fetch(absoluteUrl);
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function getStoreConfig() {
+  try {
+    const [settingsRes, pageRes] = await Promise.all([
+      supabase.from("store_settings").select("key, setting_value")
+        .in("key", ["STORE_EMAIL", "STORE_PHONE", "STORE_ADDRESS"]),
+      supabase.from("page_contents").select("content").eq("page_slug", "header").maybeSingle(),
+    ]);
+
+    const map: Record<string, string> = {};
+    settingsRes.data?.forEach((r: any) => { if (r.setting_value) map[r.key] = r.setting_value; });
+    const hdr = pageRes.data?.content as any;
+
+    return {
+      store_name: hdr?.store_name || "YOUR STORE",
+      store_logo_url: hdr?.store_logo || "",
+      store_address: map["STORE_ADDRESS"] || "",
+      store_email: map["STORE_EMAIL"] || "",
+      store_phone: map["STORE_PHONE"] || "",
+    };
+  } catch {
+    return { store_name: "YOUR STORE", store_logo_url: "", store_address: "", store_email: "", store_phone: "" };
+  }
+}
+
+const fmt = (n: number) => {
+  const formatted = Math.abs(n).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `BDT ${formatted}`;
+};
+
+export async function generateRefundInvoicePDF(data: RefundInvoiceData): Promise<void> {
+  const store = await getStoreConfig();
+  const logoData = await loadImageAsBase64(store.store_logo_url);
+  const storeName = data.store_name || store.store_name;
+
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 20;
-  let y = 20;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 16;
+  const contentWidth = pageWidth - margin * 2;
+  const rightX = pageWidth - margin;
 
-  const formatCurrency = (amount: number) => `৳${amount.toLocaleString()}`;
+  // ─── OUTER CARD BORDER ───
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(10, 8, pageWidth - 20, pageHeight - 16, 4, 4);
 
-  const drawLine = (yPos: number, color = COLORS.border) => {
-    doc.setDrawColor(...color);
-    doc.setLineWidth(0.5);
-    doc.line(margin, yPos, pageWidth - margin, yPos);
-  };
+  let y = 18;
 
-  // ========== HEADER ==========
-  doc.setFillColor(...COLORS.dark);
-  doc.rect(0, 0, pageWidth, 55, "F");
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(24);
-  doc.setTextColor(...COLORS.primary);
-  doc.text(data.store_name || "YOUR STORE", margin, y + 10);
-
-  // Refund badge
-  doc.setFillColor(...COLORS.danger);
-  doc.roundedRect(pageWidth - margin - 50, y, 50, 12, 2, 2, "F");
-  doc.setFontSize(10);
-  doc.setTextColor(255, 255, 255);
-  doc.text("REFUND", pageWidth - margin - 25, y + 8, { align: "center" });
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.setTextColor(...COLORS.muted);
-  doc.text(`Credit Note #CN-${data.order_number}`, pageWidth - margin, y + 20, { align: "right" });
-
-  const refundDate = new Date(data.refund_date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  doc.text(refundDate, pageWidth - margin, y + 27, { align: "right" });
-
-  y = 65;
-
-  // ========== CUSTOMER INFO ==========
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.setTextColor(...COLORS.primary);
-  doc.text("REFUND TO", margin, y);
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.setTextColor(60, 60, 60);
-  y += 7;
-  doc.text(data.customer_name, margin, y);
-  y += 5;
-  doc.setFontSize(9);
-  doc.setTextColor(100, 100, 100);
-  if (data.customer_phone) {
-    doc.text(`Phone: ${data.customer_phone}`, margin, y);
-    y += 5;
-  }
-  if (data.customer_email) {
-    doc.text(`Email: ${data.customer_email}`, margin, y);
-    y += 5;
+  // ─── HEADER ───
+  if (logoData) {
+    try { doc.addImage(logoData, "PNG", margin + 2, y - 4, 20, 20); } catch { drawFallbackLogo(); }
+  } else {
+    drawFallbackLogo();
   }
 
-  // Original order info
+  function drawFallbackLogo() {
+    doc.setFillColor(...C.primary);
+    doc.circle(margin + 12, y + 6, 10, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(...C.white);
+    doc.text(storeName.charAt(0).toUpperCase(), margin + 12, y + 10, { align: "center" });
+  }
+
+  // Store name
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.setTextColor(...COLORS.primary);
-  doc.text("ORIGINAL ORDER", pageWidth / 2, 65);
+  doc.setFontSize(20);
+  doc.setTextColor(...C.primary);
+  doc.text(storeName, margin + 26, y + 5);
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(100, 100, 100);
-  doc.text(`Order #${data.order_number}`, pageWidth / 2, 72);
-  doc.text(`Original Total: ${formatCurrency(data.original_total)}`, pageWidth / 2, 77);
-  doc.text(`Payment: ${data.payment_method || "N/A"}`, pageWidth / 2, 82);
-
-  y = Math.max(y, 90) + 5;
-
-  // ========== REFUND REASON ==========
-  doc.setFillColor(254, 242, 242);
-  doc.roundedRect(margin, y, pageWidth - margin * 2, 20, 3, 3, "F");
-  y += 8;
+  // CREDIT NOTE title
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...COLORS.danger);
-  doc.text("REFUND REASON", margin + 5, y);
-  y += 6;
+  doc.setFontSize(22);
+  doc.setTextColor(...C.danger);
+  doc.text("CREDIT NOTE", rightX, y + 5, { align: "right" });
+
+  // Accent line under title
+  doc.setDrawColor(...C.danger);
+  doc.setLineWidth(1.2);
+  const titleW = 55;
+  doc.line(rightX - titleW, y + 9, rightX, y + 9);
+
+  y += 22;
+
+  // Store info
   doc.setFont("helvetica", "normal");
-  doc.setTextColor(80, 80, 80);
-  doc.text(data.refund_reason || "N/A", margin + 5, y);
-  y += 12;
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.textMuted);
+  if (store.store_address) { doc.text(store.store_address, margin, y); y += 4; }
+  if (store.store_email) { doc.text(store.store_email, margin, y); y += 4; }
+  if (store.store_phone) { doc.text(store.store_phone, margin, y); y += 4; }
 
-  // ========== ITEMS TABLE ==========
-  drawLine(y);
-  y += 8;
-
-  doc.setFillColor(245, 245, 245);
-  doc.rect(margin, y - 5, pageWidth - margin * 2, 10, "F");
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(60, 60, 60);
-
-  const col1 = margin + 2;
-  const col2 = margin + 90;
-  const col3 = margin + 115;
-  const col4 = pageWidth - margin - 2;
-
-  doc.text("ITEM", col1, y);
-  doc.text("QTY", col2, y);
-  doc.text("PRICE", col3, y);
-  doc.text("TOTAL", col4, y, { align: "right" });
-
-  y += 8;
-  drawLine(y - 3);
+  // Meta info on right
+  let metaY = y - 8;
+  const metaLabelX = rightX - 55;
 
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(80, 80, 80);
-
-  data.items.forEach((item) => {
-    const productLines = doc.splitTextToSize(item.product_name, 80);
-    doc.text(productLines[0], col1, y);
-    doc.text(item.quantity.toString(), col2, y);
-    doc.text(formatCurrency(item.unit_price), col3, y);
-    doc.text(formatCurrency(item.total_price), col4, y, { align: "right" });
-    if (productLines.length > 1) {
-      for (let i = 1; i < productLines.length; i++) {
-        y += 5;
-        doc.text(productLines[i], col1, y);
-      }
-    }
-    y += 8;
-    doc.setDrawColor(230, 230, 230);
-    doc.setLineWidth(0.2);
-    doc.line(margin, y - 3, pageWidth - margin, y - 3);
-  });
-
-  y += 5;
-
-  // ========== REFUND TOTAL ==========
-  const totalsX = pageWidth - margin - 60;
-  const valuesX = pageWidth - margin;
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.setTextColor(100, 100, 100);
-  doc.text("Original Total:", totalsX, y);
-  doc.setTextColor(60, 60, 60);
-  doc.text(formatCurrency(data.original_total), valuesX, y, { align: "right" });
-  y += 10;
-
-  doc.setDrawColor(...COLORS.danger);
-  doc.setLineWidth(1);
-  doc.line(totalsX - 10, y, pageWidth - margin, y);
-  y += 8;
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(...COLORS.danger);
-  doc.text("REFUND:", totalsX, y);
-  doc.text(`-${formatCurrency(data.refund_amount)}`, valuesX, y, { align: "right" });
-  y += 10;
-
-  // Refund status
-  const statusColor = data.refund_status === "refunded" ? COLORS.success : COLORS.danger;
-  doc.setFontSize(9);
-  doc.setTextColor(...statusColor);
-  doc.text(`Status: ${data.refund_status.toUpperCase()}`, valuesX, y, { align: "right" });
-
-  y += 20;
-
-  // ========== FOOTER ==========
-  drawLine(y);
-  y += 10;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(120, 120, 120);
-  doc.text("This is a credit note for the refund processed against your order.", pageWidth / 2, y, { align: "center" });
-  y += 6;
   doc.setFontSize(8);
-  doc.text("If you have any questions, please contact our support team.", pageWidth / 2, y, { align: "center" });
+  doc.setTextColor(...C.textMuted);
+  doc.text("Credit Note:", metaLabelX, metaY);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...C.danger);
+  doc.text(`CN-${data.order_number}`, rightX, metaY, { align: "right" });
+
+  metaY += 6;
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...C.textMuted);
+  doc.text("Date:", metaLabelX, metaY);
+  doc.setTextColor(...C.text);
+  doc.text(new Date(data.refund_date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }), rightX, metaY, { align: "right" });
+
+  metaY += 6;
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...C.textMuted);
+  doc.text("Original Order:", metaLabelX, metaY);
+  doc.setTextColor(...C.text);
+  doc.text(`#${data.order_number}`, rightX, metaY, { align: "right" });
+
+  // Refund status badge
+  metaY += 7;
+  const rStatus = (data.refund_status || "none").toLowerCase();
+  const statusLabel = rStatus.toUpperCase();
+  const badgeColor: RGB = rStatus === "refunded" ? C.success : rStatus === "none" ? [100, 116, 139] : C.danger;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(6.5);
+  const badgeW = Math.max(22, doc.getTextWidth(statusLabel) + 8);
+  doc.setFillColor(...badgeColor);
+  doc.roundedRect(rightX - badgeW, metaY - 2, badgeW, 8, 3, 3, "F");
+  doc.setTextColor(...C.white);
+  doc.text(statusLabel, rightX - badgeW / 2, metaY + 3.5, { align: "center" });
+
+  y = Math.max(y, metaY) + 12;
+
+  // ─── REFUND TO / ORIGINAL ORDER ───
+  const halfW = contentWidth / 2;
+  const billX = margin + 10;
+  const orderX = margin + halfW + 10;
+  const boxH = 42;
+
+  doc.setFillColor(...C.bgLight);
+  doc.roundedRect(margin, y, contentWidth, boxH, 3, 3, "F");
+  doc.setDrawColor(...C.borderLight);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(margin, y, contentWidth, boxH, 3, 3);
+
+  // Left accent borders
+  doc.setDrawColor(...C.danger);
+  doc.setLineWidth(1.5);
+  doc.line(margin + 2, y + 6, margin + 2, y + boxH - 6);
+  doc.setDrawColor(...C.accent);
+  doc.line(margin + halfW + 2, y + 6, margin + halfW + 2, y + boxH - 6);
+
+  // Divider
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.3);
+  doc.line(margin + halfW, y + 5, margin + halfW, y + boxH - 5);
+
+  let secY = y + 10;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(...C.danger);
+  doc.text("REFUND TO", billX, secY);
+  doc.setTextColor(...C.accent);
+  doc.text("ORIGINAL ORDER", orderX, secY);
+  secY += 8;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(...C.primary);
+  doc.text(data.customer_name, billX, secY);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.textMuted);
+  doc.text(fmt(data.original_total), orderX, secY);
+  secY += 5;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.textMuted);
+  if (data.customer_phone) { doc.text(data.customer_phone, billX, secY); }
+  doc.text(`Payment: ${data.payment_method || "N/A"}`, orderX, secY);
+  secY += 5;
+  if (data.customer_email) { doc.text(data.customer_email, billX, secY); }
+
+  y += boxH + 8;
+
+  // ─── REFUND REASON ───
+  doc.setFillColor(...C.dangerLight);
+  doc.roundedRect(margin, y, contentWidth, 16, 3, 3, "F");
+  doc.setDrawColor(...C.danger);
+  doc.setLineWidth(1.5);
+  doc.line(margin + 2, y + 3, margin + 2, y + 13);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7);
+  doc.setTextColor(...C.danger);
+  doc.text("REFUND REASON", margin + 8, y + 6);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.text);
+  doc.text(data.refund_reason || "N/A", margin + 8, y + 12);
+
+  y += 22;
+
+  // ─── ITEMS TABLE ───
+  const colHash = margin + 5;
+  const colProduct = margin + 16;
+  const colQty = margin + contentWidth * 0.55;
+  const colUnitPrice = margin + contentWidth * 0.72;
+  const colTotal = margin + contentWidth - 5;
+
+  // Table header
+  doc.setFillColor(...C.primary);
+  doc.roundedRect(margin, y, contentWidth, 13, 2, 2, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.white);
+  doc.text("#", colHash, y + 8.5);
+  doc.text("Product", colProduct, y + 8.5);
+  doc.text("Qty", colQty, y + 8.5, { align: "center" });
+  doc.text("Unit Price", colUnitPrice, y + 8.5, { align: "right" });
+  doc.text("Total", colTotal, y + 8.5, { align: "right" });
+  y += 16;
+
+  // Table rows
+  data.items.forEach((item, index) => {
+    if (y > pageHeight - 80) { doc.addPage(); y = 20; }
+
+    const rowH = 16;
+    doc.setFillColor(...(index % 2 === 0 ? C.white : [245, 247, 250] as RGB));
+    doc.rect(margin, y - 5, contentWidth, rowH, "F");
+
+    doc.setDrawColor(...C.borderLight);
+    doc.setLineWidth(0.2);
+    doc.line(margin, y + rowH - 5, margin + contentWidth, y + rowH - 5);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(...C.textMuted);
+    doc.text(`${index + 1}`, colHash, y + 3);
+
+    const maxProdW = colQty - colProduct - 10;
+    const productLines = doc.splitTextToSize(item.product_name, maxProdW);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...C.primary);
+    doc.text(productLines[0], colProduct, y + 3);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(...C.text);
+    doc.text(item.quantity.toString(), colQty, y + 3, { align: "center" });
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(...C.textMuted);
+    doc.text(fmt(item.unit_price), colUnitPrice, y + 3, { align: "right" });
+
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...C.accent);
+    doc.text(fmt(item.total_price), colTotal, y + 3, { align: "right" });
+
+    y += rowH;
+  });
+
+  y += 6;
+
+  // ─── TOTALS ───
+  const totalsLabelX = margin + contentWidth * 0.55;
+  const totalsValueX = colTotal;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.5);
+  doc.setTextColor(...C.textMuted);
+  doc.text("Original Total", totalsLabelX, y, { align: "right" });
+  doc.setTextColor(...C.text);
+  doc.text(fmt(data.original_total), totalsValueX, y, { align: "right" });
+  y += 8;
+
+  // Separator
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.5);
+  doc.line(totalsLabelX - 30, y - 2, totalsValueX, y - 2);
+  y += 4;
+
+  // Refund total with danger background bar
+  const grandTotalBarW = totalsValueX - (totalsLabelX - 30);
+  doc.setFillColor(...C.danger);
+  doc.roundedRect(totalsLabelX - 30, y - 5, grandTotalBarW, 14, 2, 2, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(...C.white);
+  doc.text("Refund Amount", totalsLabelX, y + 3, { align: "right" });
+  doc.text(`-${fmt(data.refund_amount)}`, totalsValueX, y + 3, { align: "right" });
+
+  y += 22;
+
+  // ─── BOTTOM SECTION ───
+  const footerAreaY = pageHeight - 32;
+  const bottomY = Math.max(y, footerAreaY - 28);
+
+  doc.setDrawColor(...C.danger);
+  doc.setLineWidth(0.5);
+  doc.line(margin, bottomY, margin + contentWidth, bottomY);
+  let bsY = bottomY + 8;
+
+  const col1X = margin;
+  const col2X = margin + contentWidth * 0.35;
+  const col3X = margin + contentWidth * 0.7;
+
+  // Payment Method
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.primary);
+  doc.text("Payment Method", col1X, bsY);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.textMuted);
+  doc.text(data.payment_method || "N/A", col1X, bsY + 5);
+
+  // Note
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.primary);
+  doc.text("Note", col2X, bsY);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(6.5);
+  doc.setTextColor(...C.textMuted);
+  doc.text("• This is a credit note for the refund", col2X, bsY + 5);
+  doc.text("• Contact support for any queries", col2X, bsY + 9);
+
+  // Authorized Signature
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(...C.primary);
+  doc.text("Authorized Signature", col3X, bsY);
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.3);
+  doc.line(col3X, bsY + 12, col3X + 45, bsY + 12);
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7);
+  doc.setTextColor(...C.textMuted);
+  doc.text(`${storeName} Authority`, col3X + 5, bsY + 17);
+
+  // ─── FOOTER ───
+  const footerY = pageHeight - 18;
+  doc.setFillColor(248, 250, 252);
+  doc.roundedRect(margin, footerY - 4, contentWidth, 12, 2, 2, "F");
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(6.5);
+  doc.setTextColor(...C.textMuted);
+  doc.text("This credit note was generated for the refund processed against your order.", pageWidth / 2, footerY + 3, { align: "center" });
 
   doc.save(`Refund-CN-${data.order_number}.pdf`);
 }
