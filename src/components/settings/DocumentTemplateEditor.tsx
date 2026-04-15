@@ -34,10 +34,10 @@ export function DocumentTemplateEditor({ template, onSave }: Props) {
     setSaving(false);
   };
 
-  const handlePreview = () => {
+  const handlePreview = async () => {
     if (isInvoice) {
       const invoiceConfig = config as InvoiceTemplateConfig;
-      generateInvoicePDF({
+      await generateInvoicePDF({
         order_number: "SAMPLE-001",
         created_at: new Date().toISOString(),
         customer_name: "John Doe",

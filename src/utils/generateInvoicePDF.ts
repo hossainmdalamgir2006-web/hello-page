@@ -44,6 +44,23 @@ export interface InvoiceTemplateConfig {
 
 type RGB = [number, number, number];
 
+async function loadImageAsBase64(url: string): Promise<string | null> {
+  if (!url) return null;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 function hexToRgb(hex: string): RGB {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [59, 130, 246];
@@ -68,7 +85,7 @@ function buildColors(accentHex?: string) {
   };
 }
 
-function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTemplateConfig, startY = 0): void {
+function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTemplateConfig, startY = 0, logoData?: string | null): void {
   const C = buildColors(cfg?.accent_color);
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -96,13 +113,27 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   let y = startY + 18;
 
   // ─── HEADER SECTION ───
-  // Logo circle
-  doc.setFillColor(...C.primary);
-  doc.circle(margin + 10, y + 5, 8, "F");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12);
-  doc.setTextColor(...C.white);
-  doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+  // Logo - image or fallback circle
+  if (logoData) {
+    try {
+      doc.addImage(logoData, "PNG", margin + 2, y - 3, 16, 16);
+    } catch {
+      // Fallback to circle if image fails
+      doc.setFillColor(...C.primary);
+      doc.circle(margin + 10, y + 5, 8, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(...C.white);
+      doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+    }
+  } else {
+    doc.setFillColor(...C.primary);
+    doc.circle(margin + 10, y + 5, 8, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(...C.white);
+    doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+  }
 
   // Store name
   doc.setFont("helvetica", "bold");
@@ -405,18 +436,20 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   if (footerText) doc.text(footerText, pageWidth / 2, footerY + 3, { align: "center", maxWidth: contentWidth - 10 });
 }
 
-export function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): void {
+export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): Promise<void> {
+  const logoData = await loadImageAsBase64(config?.store_logo_url || "");
   const doc = new jsPDF();
-  generateSingleInvoice(doc, data, config);
+  generateSingleInvoice(doc, data, config, 0, logoData);
   doc.save(`Invoice-${data.order_number}.pdf`);
 }
 
-export function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): void {
+export async function generateBulkInvoicePDF(invoices: InvoiceData[], config?: InvoiceTemplateConfig): Promise<void> {
   if (invoices.length === 0) return;
+  const logoData = await loadImageAsBase64(config?.store_logo_url || "");
   const doc = new jsPDF();
   invoices.forEach((data, index) => {
     if (index > 0) doc.addPage();
-    generateSingleInvoice(doc, data, config);
+    generateSingleInvoice(doc, data, config, 0, logoData);
   });
   doc.save(`Invoices-Bulk-${invoices.length}.pdf`);
 }

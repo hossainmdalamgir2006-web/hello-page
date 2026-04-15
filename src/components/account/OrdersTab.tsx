@@ -178,7 +178,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
     }
   };
 
-  const downloadInvoiceForOrder = (order: Order) => {
+  const downloadInvoiceForOrder = async (order: Order) => {
     const invoiceData = {
       order_number: order.order_number,
       created_at: order.created_at,
@@ -204,7 +204,7 @@ export function OrdersTab({ orders, onRefresh }: OrdersTabProps) {
       store_name: headerCont.store_name || templateCfg.store_name || "YOUR STORE",
       store_logo_url: headerCont.store_logo || templateCfg.store_logo_url || "",
     } : undefined;
-    generateInvoicePDF(invoiceData, cfg);
+    await generateInvoicePDF(invoiceData, cfg);
   };
 
   return (
