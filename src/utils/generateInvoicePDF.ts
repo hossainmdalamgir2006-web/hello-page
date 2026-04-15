@@ -467,6 +467,28 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   if (footerText) doc.text(footerText, pageWidth / 2, footerY + 3, { align: "center", maxWidth: contentWidth - 10 });
 }
 
+// Fetch store info from store_settings DB and merge into config as fallback
+async function enrichConfigWithStoreSettings(config?: InvoiceTemplateConfig): Promise<InvoiceTemplateConfig | undefined> {
+  try {
+    const { data } = await supabase
+      .from("store_settings" as any)
+      .select("key, setting_value")
+      .in("key", ["STORE_EMAIL", "STORE_PHONE", "STORE_ADDRESS"]);
+    if (!data || data.length === 0) return config;
+    const map: Record<string, string> = {};
+    (data as any[]).forEach((r: any) => { if (r.setting_value) map[r.key] = r.setting_value; });
+    const merged: InvoiceTemplateConfig = {
+      ...(config || {}),
+      store_address: config?.store_address || map["STORE_ADDRESS"] || "",
+      store_email: config?.store_email || map["STORE_EMAIL"] || "",
+      store_phone: config?.store_phone || map["STORE_PHONE"] || "",
+    };
+    return merged;
+  } catch {
+    return config;
+  }
+}
+
 export async function generateInvoicePDF(data: InvoiceData, config?: InvoiceTemplateConfig): Promise<void> {
   const enrichedConfig = await enrichConfigWithStoreSettings(config);
   const pmLogoUrl = getPaymentLogoUrl(data.payment_method, data.payment_method_logo || undefined);
