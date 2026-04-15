@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { generateInvoicePDF, type InvoiceTemplateConfig } from "@/utils/generateInvoicePDF";
 import { useDocumentTemplates } from "@/hooks/useDocumentTemplates";
+import { usePageContent } from "@/hooks/useSiteContent";
 import { formatPrice } from "@/lib/formatPrice";
 import { motion } from "framer-motion";
 
