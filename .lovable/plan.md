@@ -1,27 +1,38 @@
+## Plan: Invoice PDF — Currency, Store Name ও Payment Status Fix
 
+### সমস্যা
 
-## Plan: Invoice PDF ফিক্স — Currency ও Layout
+1. **Currency ভাঙা**: Database-এ `currency_symbol` = `"৳"` সেভ আছে, যেটা jsPDF Helvetica ফন্টে `ó` হিসেবে রেন্ডার হয়। Code-এ fallback `"BDT"` ঠিক আছে, কিন্তু DB config এটাকে override করছে।
 
-### পরিবর্তনসমূহ (শুধু `src/utils/generateInvoicePDF.ts`)
+fix koro ..Database-এ currency_symbol = "BDT"  TE UPDATE KORO
 
-#### 1. Currency Fix
-- `fmt` function আপডেট: `toLocaleString("en-IN")` থেকে plain number formatting করা
-- Default symbol `"Tk"` থেকে `"BDT "` করা
-- Format: `BDT 2,050` (space সহ)
+1. **Store Name static**: DB-তে `"Your Store"` হার্ডকোডেড — Admin যদি আপডেট না করে তাহলে এটাই থাকে।
 
-#### 2. PAID Badge Overlap Fix
-- Badge কে Invoice No এর পাশে না রেখে আলাদা line-এ নিচে সরানো
-- Invoice No, Date, Due Date এর meta section এর spacing বাড়ানো
+fix.../admin/system-settings/store  Header Settings theke Store Name Store Logo niba
 
-#### 3. Bill To / Ship To Box Height
-- Fixed 38px height থেকে dynamic height করা — content অনুযায়ী adjust হবে
+1. **Payment Status Badge**: শুধু `"paid"` হলে দেখায়, অন্য status (pending, failed, unpaid) দেখায় না।
+2. Payment Method e  method name + logo dekhaba    
 
-#### 4. Table-to-Totals Gap
-- Items শেষ হওয়ার পর extra gap কমানো (8 → 4)
+### পরিবর্তন
 
-#### 5. Footer Dynamic Position  
-- Footer কে page bottom-এ fixed না রেখে content শেষের পরে রাখা (তবে minimum position maintain করা)
+#### 1. Database Migration
+
+- `document_templates` টেবিলে invoice config-এর `currency_symbol` কে `"৳"` থেকে `"BDT"` আপডেট করা।
+
+#### 2. `src/utils/generateInvoicePDF.ts`
+
+- **Payment Status Badge**: সব status-এর জন্য badge দেখানো:
+  - `paid` → Green badge
+  - `pending` → Orange/Yellow badge
+  - `failed`/`cancelled` → Red badge
+  - অন্য যেকোনো → Gray badge
+- Badge text হবে status এর uppercase version।
+
+#### 3. Store Name Dynamic
+
+- Store name ইতোমধ্যে config থেকে আসে (`cfg?.store_name`)। Admin panel-এ Document Templates সেটিংসে store name আপডেট করলেই dynamic হবে। কোড পরিবর্তন লাগবে না — শুধু DB seed fix।
 
 ### ফাইল
-- **এডিট**: `src/utils/generateInvoicePDF.ts`
 
+- **Migration**: `currency_symbol` update
+- **Edit**: `src/utils/generateInvoicePDF.ts` — payment badge সব status-এ দেখানো
