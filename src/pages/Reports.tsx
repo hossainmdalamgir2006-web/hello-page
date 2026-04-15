@@ -162,6 +162,11 @@ export default function Reports() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [dbStats, setDbStats] = useState({ orders: 0, products: 0, customers: 0 });
   const [loadingReports, setLoadingReports] = useState(true);
+  const [previewData, setPreviewData] = useState<{ headers: string[]; rows: string[][]; name: string } | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [deleteReportId, setDeleteReportId] = useState<string | null>(null);
+  const [deleteReportName, setDeleteReportName] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [newSchedule, setNewSchedule] = useState({
     name: "", type: "", frequency: "daily" as ScheduledReport['frequency'], recipients: ""
