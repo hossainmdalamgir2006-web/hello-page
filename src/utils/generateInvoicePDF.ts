@@ -85,7 +85,7 @@ function buildColors(accentHex?: string) {
   };
 }
 
-function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTemplateConfig, startY = 0): void {
+function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTemplateConfig, startY = 0, logoData?: string | null): void {
   const C = buildColors(cfg?.accent_color);
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -113,13 +113,27 @@ function generateSingleInvoice(doc: jsPDF, data: InvoiceData, cfg?: InvoiceTempl
   let y = startY + 18;
 
   // ─── HEADER SECTION ───
-  // Logo circle
-  doc.setFillColor(...C.primary);
-  doc.circle(margin + 10, y + 5, 8, "F");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12);
-  doc.setTextColor(...C.white);
-  doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+  // Logo - image or fallback circle
+  if (logoData) {
+    try {
+      doc.addImage(logoData, "PNG", margin + 2, y - 3, 16, 16);
+    } catch {
+      // Fallback to circle if image fails
+      doc.setFillColor(...C.primary);
+      doc.circle(margin + 10, y + 5, 8, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(...C.white);
+      doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+    }
+  } else {
+    doc.setFillColor(...C.primary);
+    doc.circle(margin + 10, y + 5, 8, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(...C.white);
+    doc.text(storeName.charAt(0).toUpperCase(), margin + 10, y + 8, { align: "center" });
+  }
 
   // Store name
   doc.setFont("helvetica", "bold");
