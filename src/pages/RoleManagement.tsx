@@ -329,11 +329,7 @@ export default function RoleManagement() {
           </CardContent>
         </Card>
 
-        {/* Role Permissions Overview */}
-        <RolePermissionsOverview />
-
-        {/* Role Change History */}
-        <RoleChangeHistory />
+        <RoleDetailsCard />
       </div>
 
       {/* Role Change Dialog */}
