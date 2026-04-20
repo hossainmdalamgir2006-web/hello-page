@@ -77,14 +77,43 @@ export default function GlobalTrash() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteItem, setDeleteItem] = useState<TrashedItem | null>(null);
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
+  const [emptyTrashConfirm, setEmptyTrashConfirm] = useState(false);
+  const [restoreFilterConfirm, setRestoreFilterConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("items");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const canRestore = isAdmin || isManager;
   const canPermanentDelete = isAdmin;
 
+  // Search-filtered items
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return items;
+    const q = searchQuery.toLowerCase();
+    return items.filter(i =>
+      i.name.toLowerCase().includes(q) ||
+      i.entity_type.toLowerCase().includes(q)
+    );
+  }, [items, searchQuery]);
+
+  // Storage impact stats
+  const storageStats = useMemo(() => {
+    const now = new Date();
+    let pendingPurge = 0;
+    let oldestDays = 0;
+    let addedToday = 0;
+    items.forEach(i => {
+      const deletedAt = new Date(i.deleted_at);
+      const daysOld = differenceInDays(now, deletedAt);
+      if (daysOld >= 23) pendingPurge++; // 30 - 7 = purge in 7 days
+      if (daysOld > oldestDays) oldestDays = daysOld;
+      if (isToday(deletedAt)) addedToday++;
+    });
+    return { pendingPurge, oldestDays, addedToday, total: items.length };
+  }, [items]);
+
   const {
     paginatedData, currentPage, pageSize, totalPages, totalItems, goToPage, changePageSize,
-  } = usePagination(items, { initialPageSize: 20 });
+  } = usePagination(filteredItems, { initialPageSize: 20 });
 
   const selectedItems = useMemo(
     () => items.filter(i => selectedIds.includes(i.id)),
@@ -96,8 +125,8 @@ export default function GlobalTrash() {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === items.length) setSelectedIds([]);
-    else setSelectedIds(items.map(i => i.id));
+    if (selectedIds.length === filteredItems.length) setSelectedIds([]);
+    else setSelectedIds(filteredItems.map(i => i.id));
   };
 
   const handleRestore = async (item: TrashedItem) => {
@@ -123,6 +152,18 @@ export default function GlobalTrash() {
     setBulkDeleteConfirm(false);
   };
 
+  const handleRestoreAllInFilter = async () => {
+    await bulkRestore(filteredItems);
+    setSelectedIds([]);
+    setRestoreFilterConfirm(false);
+  };
+
+  const handleEmptyTrash = async () => {
+    await bulkPermanentDelete(items);
+    setSelectedIds([]);
+    setEmptyTrashConfirm(false);
+  };
+
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     if (tab === "log") fetchActivityLog();
@@ -134,7 +175,7 @@ export default function GlobalTrash() {
     return counts;
   }, [items]);
 
-  const allSelected = items.length > 0 && selectedIds.length === items.length;
+  const allSelected = filteredItems.length > 0 && selectedIds.length === filteredItems.length;
 
   if (loading) {
     return (
@@ -175,6 +216,54 @@ export default function GlobalTrash() {
           }
         />
 
+        {/* Storage Impact Stats */}
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <Card className={storageStats.pendingPurge > 0 ? "border-destructive/30 bg-destructive/5" : ""}>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${storageStats.pendingPurge > 0 ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground"}`}>
+                <Flame className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Purge in 7 days</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.pendingPurge}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Total items</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.total}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500">
+                <Clock className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Oldest item</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.oldestDays}d</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
+                <Tag className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Added today</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.addedToday}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Warning */}
         <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -212,12 +301,53 @@ export default function GlobalTrash() {
               ))}
             </div>
 
+            {/* Search + Bulk Filter Actions */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name or type..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {canRestore && filteredItems.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRestoreFilterConfirm(true)}
+                    className="gap-2"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Restore All ({filteredItems.length})
+                  </Button>
+                )}
+                {canPermanentDelete && items.length > 0 && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setEmptyTrashConfirm(true)}
+                    className="gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Empty Trash
+                  </Button>
+                )}
+              </div>
+            </div>
+
             {/* Table */}
-            {items.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card py-16">
                 <Trash2 className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-semibold text-foreground">Trash is empty</h3>
-                <p className="text-sm text-muted-foreground">No deleted items found</p>
+                <h3 className="mb-2 text-lg font-semibold text-foreground">
+                  {searchQuery ? 'No matching items' : 'Trash is empty'}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {searchQuery ? `No items match "${searchQuery}"` : 'No deleted items found'}
+                </p>
               </div>
             ) : (
               <div className="rounded-lg border border-border bg-card">
@@ -382,6 +512,22 @@ export default function GlobalTrash() {
         onConfirm={handleBulkPermanentDelete}
         title="Permanently Delete Items"
         itemName={`${selectedIds.length} items`}
+      />
+
+      <DeleteConfirmModal
+        open={emptyTrashConfirm}
+        onOpenChange={() => setEmptyTrashConfirm(false)}
+        onConfirm={handleEmptyTrash}
+        title="Empty Entire Trash"
+        itemName={`ALL ${items.length} items in trash (this cannot be undone)`}
+      />
+
+      <DeleteConfirmModal
+        open={restoreFilterConfirm}
+        onOpenChange={() => setRestoreFilterConfirm(false)}
+        onConfirm={handleRestoreAllInFilter}
+        title="Restore All Filtered Items"
+        itemName={`${filteredItems.length} items`}
       />
     </>
   );
