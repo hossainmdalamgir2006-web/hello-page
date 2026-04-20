@@ -18,7 +18,6 @@ import {
   MapPin,
   Calendar,
   ShoppingBag,
-  Crown,
   DollarSign,
   Package,
   ChevronDown,
@@ -33,20 +32,6 @@ import { CustomerBlacklistDialog } from "@/components/admin/CustomerBlacklistDia
 import { useCommunicationLog } from "@/hooks/useCommunicationLog";
 import type { Customer, CustomerOrder } from "@/hooks/useCustomersData";
 import { formatPrice } from "@/lib/formatPrice";
-
-const tierConfig = {
-  bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
-  silver: { color: "bg-slate-400/10 text-slate-500 border-slate-400/20", minSpent: 20000 },
-  gold: { color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20", minSpent: 50000 },
-  platinum: { color: "bg-violet-500/10 text-violet-500 border-violet-500/20", minSpent: 80000 },
-};
-
-const getLoyaltyTier = (totalSpent: number): keyof typeof tierConfig => {
-  if (totalSpent >= 80000) return "platinum";
-  if (totalSpent >= 50000) return "gold";
-  if (totalSpent >= 20000) return "silver";
-  return "bronze";
-};
 
 const getCustomerName = (customer: Customer): string =>
   customer.full_name || customer.email?.split("@")[0] || "Unknown";
@@ -117,7 +102,6 @@ export function CustomerDetailModal({
   if (!customer) return null;
 
   const customerName = getCustomerName(customer);
-  const tier = getLoyaltyTier(Number(customer.total_spent));
   const addressStr = getAddressString(customer.address);
   const displayedOrders = showAllOrders ? allOrders : allOrders.slice(0, 5);
   const hasMoreOrders = allOrders.length > 5;
@@ -145,13 +129,6 @@ export function CustomerDetailModal({
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-lg font-semibold">{customerName}</h3>
-                  <Badge
-                    variant="outline"
-                    className={cn("gap-1 capitalize", tierConfig[tier].color)}
-                  >
-                    <Crown className="h-3 w-3" />
-                    {tier}
-                  </Badge>
                   {/* Customer Status Badge */}
                   <Badge
                     variant="outline"

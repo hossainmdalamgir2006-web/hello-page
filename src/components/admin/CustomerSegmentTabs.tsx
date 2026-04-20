@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Users,
-  Crown,
   ShieldAlert,
   Flag,
   TrendingUp,
@@ -12,13 +11,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Customer } from "@/hooks/useCustomersData";
-
-const getLoyaltyTier = (totalSpent: number) => {
-  if (totalSpent >= 80000) return "platinum";
-  if (totalSpent >= 50000) return "gold";
-  if (totalSpent >= 20000) return "silver";
-  return "bronze";
-};
 
 export interface Segment {
   id: string;
@@ -35,13 +27,6 @@ const segments: Segment[] = [
     icon: Users,
     filter: () => true,
     color: "text-foreground",
-  },
-  {
-    id: "vip",
-    label: "VIP",
-    icon: Crown,
-    filter: (c) => getLoyaltyTier(Number(c.total_spent)) === "platinum" || getLoyaltyTier(Number(c.total_spent)) === "gold",
-    color: "text-yellow-600",
   },
   {
     id: "active-buyers",
