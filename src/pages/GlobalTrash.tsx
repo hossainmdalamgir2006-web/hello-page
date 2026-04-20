@@ -77,14 +77,43 @@ export default function GlobalTrash() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteItem, setDeleteItem] = useState<TrashedItem | null>(null);
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
+  const [emptyTrashConfirm, setEmptyTrashConfirm] = useState(false);
+  const [restoreFilterConfirm, setRestoreFilterConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("items");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const canRestore = isAdmin || isManager;
   const canPermanentDelete = isAdmin;
 
+  // Search-filtered items
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return items;
+    const q = searchQuery.toLowerCase();
+    return items.filter(i =>
+      i.name.toLowerCase().includes(q) ||
+      i.entity_type.toLowerCase().includes(q)
+    );
+  }, [items, searchQuery]);
+
+  // Storage impact stats
+  const storageStats = useMemo(() => {
+    const now = new Date();
+    let pendingPurge = 0;
+    let oldestDays = 0;
+    let addedToday = 0;
+    items.forEach(i => {
+      const deletedAt = new Date(i.deleted_at);
+      const daysOld = differenceInDays(now, deletedAt);
+      if (daysOld >= 23) pendingPurge++; // 30 - 7 = purge in 7 days
+      if (daysOld > oldestDays) oldestDays = daysOld;
+      if (isToday(deletedAt)) addedToday++;
+    });
+    return { pendingPurge, oldestDays, addedToday, total: items.length };
+  }, [items]);
+
   const {
     paginatedData, currentPage, pageSize, totalPages, totalItems, goToPage, changePageSize,
-  } = usePagination(items, { initialPageSize: 20 });
+  } = usePagination(filteredItems, { initialPageSize: 20 });
 
   const selectedItems = useMemo(
     () => items.filter(i => selectedIds.includes(i.id)),
