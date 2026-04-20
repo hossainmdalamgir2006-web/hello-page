@@ -178,9 +178,16 @@ export function AllEmailNotifications() {
       const { error } = await supabase.functions.invoke('send-login-alert', {
         body: {
           email: user.email,
+          userName: user.user_metadata?.full_name || user.email.split('@')[0],
+          deviceInfo: {
+            browser: 'Test Browser',
+            os: 'Test OS',
+            device: `Test: ${notification.name}`,
+            isMobile: false,
+          },
           loginTime: new Date().toISOString(),
+          isNewDevice: false,
           ipAddress: 'Test',
-          userAgent: `Test notification: ${notification.name}`,
         },
       });
       if (error) throw error;
