@@ -318,8 +318,13 @@ export function EmailTemplatesTab({
           </DialogHeader>
           {previewTemplate?.body_html ? (
             <div className="border rounded-lg p-4 bg-background">
-              <p className="text-sm font-medium mb-2 text-muted-foreground">Subject: {previewTemplate.subject}</p>
-              <div className="border-t pt-4" dangerouslySetInnerHTML={{ __html: previewTemplate.body_html }} />
+              <p className="text-sm font-medium mb-2 text-muted-foreground">Subject: {renderWithSampleData(previewTemplate.subject)}</p>
+              <iframe
+                title="Email Preview"
+                className="w-full min-h-[500px] border-t bg-white rounded mt-2"
+                srcDoc={renderWithSampleData(previewTemplate.body_html)}
+                sandbox=""
+              />
             </div>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
