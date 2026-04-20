@@ -92,6 +92,20 @@ export function EmailTemplatesTab({
   const [searchQuery, setSearchQuery] = useState("");
   const [previewTemplate, setPreviewTemplate] = useState<EmailTemplate | null>(null);
 
+  const sampleData: Record<string, string> = {
+    customer_name: "John Doe", customer_email: "john@example.com", order_id: "ORD-12345",
+    order_number: "ORD-12345", order_total: "৳2,500", order_date: new Date().toLocaleDateString(),
+    tracking_number: "TRK-98765", store_name: "Your Store", store_url: "https://yourstore.com",
+    product_name: "Sample Product", reset_link: "https://yourstore.com/reset", otp_code: "123456",
+    coupon_code: "SAVE20", discount: "20%", amount: "৳500", date: new Date().toLocaleDateString(),
+    ip_address: "192.168.1.1", device: "Chrome on Windows", location: "Dhaka, Bangladesh",
+  };
+
+  const renderWithSampleData = (text: string | null) => {
+    if (!text) return "";
+    return text.replace(/\{\{\s*(\w+)\s*\}\}/g, (_match, key) => sampleData[key] ?? `[${key}]`);
+  };
+
   const activeCount = templates.filter(t => t.is_active).length;
   const inactiveCount = templates.filter(t => !t.is_active).length;
 
