@@ -361,19 +361,49 @@ export function AllEmailNotifications() {
                 {category.notifications.map((notification, index) => (
                   <div key={notification.id}>
                     {index > 0 && <Separator className="my-2" />}
-                    <div className="flex items-center justify-between py-2">
-                      <div className="flex-1 mr-4">
-                        <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between py-2 gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium text-sm">{notification.name}</p>
                           {getRecipientBadge(notification.recipient)}
                         </div>
                         <p className="text-sm text-muted-foreground mt-0.5">{notification.description}</p>
                       </div>
-                      <Switch
-                        checked={notifications[notification.id]}
-                        onCheckedChange={() => toggleNotification(notification.id)}
-                        disabled={saving === notification.id || saving === category.id}
-                      />
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Select
+                          value={schedules[notification.id] || 'instant'}
+                          onValueChange={(v) => saveSchedule(notification.id, v)}
+                          disabled={!notifications[notification.id] || saving === notification.id}
+                        >
+                          <SelectTrigger className="h-8 w-[130px] text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="instant">Instant</SelectItem>
+                            <SelectItem value="daily">Daily Digest</SelectItem>
+                            <SelectItem value="weekly">Weekly Summary</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="Send test email"
+                          disabled={testing === notification.id || !notifications[notification.id]}
+                          onClick={() => sendTestNotification(notification)}
+                        >
+                          {testing === notification.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Send className="h-3.5 w-3.5" />
+                          )}
+                        </Button>
+                        <Switch
+                          checked={notifications[notification.id]}
+                          onCheckedChange={() => toggleNotification(notification.id)}
+                          disabled={saving === notification.id || saving === category.id}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
