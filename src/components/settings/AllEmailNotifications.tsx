@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Mail, Shield, ShoppingCart, Package, Users, Star, CreditCard, Bell, Lock, Smartphone, Key, Globe, AlertTriangle, UserCheck, RefreshCw, Truck, MessageSquare, TrendingDown, Clock, CheckCircle, XCircle, Search, ToggleLeft } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, Mail, Shield, ShoppingCart, Package, Users, Star, CreditCard, Bell, Lock, Smartphone, Key, Globe, AlertTriangle, UserCheck, RefreshCw, Truck, MessageSquare, TrendingDown, Clock, CheckCircle, XCircle, Search, ToggleLeft, Send } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EmailNotificationCategory {
@@ -39,7 +40,9 @@ const defaultNotificationSettings: Record<string, boolean> = {
 export function AllEmailNotifications() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [testing, setTesting] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<Record<string, boolean>>(defaultNotificationSettings);
+  const [schedules, setSchedules] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
 
   const categories: EmailNotificationCategory[] = [
@@ -121,22 +124,71 @@ export function AllEmailNotifications() {
   const loadNotificationSettings = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('store_settings')
-        .select('*')
-        .eq('key', 'all_email_notifications')
-        .single();
+        .select('key, setting_value')
+        .in('key', ['all_email_notifications', 'notification_schedules']);
 
-      if (data?.setting_value) {
+      data?.forEach((row: any) => {
+        if (!row?.setting_value) return;
         try {
-          const parsed = JSON.parse(data.setting_value);
-          setNotifications(prev => ({ ...prev, ...parsed }));
+          const parsed = JSON.parse(row.setting_value);
+          if (row.key === 'all_email_notifications') {
+            setNotifications(prev => ({ ...prev, ...parsed }));
+          } else if (row.key === 'notification_schedules') {
+            setSchedules(parsed || {});
+          }
         } catch { /* ignore */ }
-      }
+      });
     } catch (error) {
       console.log('Email notification settings not found, using defaults');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const saveSchedule = async (notificationId: string, mode: string) => {
+    setSaving(notificationId);
+    try {
+      const newSchedules = { ...schedules, [notificationId]: mode };
+      const { error } = await supabase
+        .from('store_settings')
+        .upsert({
+          key: 'notification_schedules',
+          setting_value: JSON.stringify(newSchedules),
+        } as any, { onConflict: 'key' });
+      if (error) throw error;
+      setSchedules(newSchedules);
+      toast.success('Schedule updated');
+    } catch (error: any) {
+      toast.error('Failed to save schedule: ' + error.message);
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  const sendTestNotification = async (notification: EmailNotification) => {
+    setTesting(notification.id);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) {
+        toast.error('No admin email found');
+        return;
+      }
+      const { error } = await supabase.functions.invoke('send-login-alert', {
+        body: {
+          email: user.email,
+          loginTime: new Date().toISOString(),
+          ipAddress: 'Test',
+          userAgent: `Test notification: ${notification.name}`,
+        },
+      });
+      if (error) throw error;
+      toast.success(`Test sent to ${user.email}`);
+    } catch (error: any) {
+      toast.error('Test failed: ' + (error?.message || 'Unknown error'));
+    } finally {
+      setTesting(null);
     }
   };
 
@@ -309,19 +361,49 @@ export function AllEmailNotifications() {
                 {category.notifications.map((notification, index) => (
                   <div key={notification.id}>
                     {index > 0 && <Separator className="my-2" />}
-                    <div className="flex items-center justify-between py-2">
-                      <div className="flex-1 mr-4">
-                        <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between py-2 gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium text-sm">{notification.name}</p>
                           {getRecipientBadge(notification.recipient)}
                         </div>
                         <p className="text-sm text-muted-foreground mt-0.5">{notification.description}</p>
                       </div>
-                      <Switch
-                        checked={notifications[notification.id]}
-                        onCheckedChange={() => toggleNotification(notification.id)}
-                        disabled={saving === notification.id || saving === category.id}
-                      />
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Select
+                          value={schedules[notification.id] || 'instant'}
+                          onValueChange={(v) => saveSchedule(notification.id, v)}
+                          disabled={!notifications[notification.id] || saving === notification.id}
+                        >
+                          <SelectTrigger className="h-8 w-[130px] text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="instant">Instant</SelectItem>
+                            <SelectItem value="daily">Daily Digest</SelectItem>
+                            <SelectItem value="weekly">Weekly Summary</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="Send test email"
+                          disabled={testing === notification.id || !notifications[notification.id]}
+                          onClick={() => sendTestNotification(notification)}
+                        >
+                          {testing === notification.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Send className="h-3.5 w-3.5" />
+                          )}
+                        </Button>
+                        <Switch
+                          checked={notifications[notification.id]}
+                          onCheckedChange={() => toggleNotification(notification.id)}
+                          disabled={saving === notification.id || saving === category.id}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}

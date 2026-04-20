@@ -1,6 +1,7 @@
 import { EmailApiConfig } from "@/components/settings/EmailApiConfig";
 import { AllEmailNotifications } from "@/components/settings/AllEmailNotifications";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { RecentNotificationActivity } from "@/components/admin/notifications/RecentNotificationActivity";
 
 export default function NotificationsPage() {
   return (
@@ -11,6 +12,7 @@ export default function NotificationsPage() {
       />
       <EmailApiConfig />
       <AllEmailNotifications />
+      <RecentNotificationActivity />
     </div>
   );
 }
