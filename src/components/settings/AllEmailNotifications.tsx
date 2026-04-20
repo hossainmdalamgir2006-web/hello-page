@@ -40,7 +40,9 @@ const defaultNotificationSettings: Record<string, boolean> = {
 export function AllEmailNotifications() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [testing, setTesting] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<Record<string, boolean>>(defaultNotificationSettings);
+  const [schedules, setSchedules] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
 
   const categories: EmailNotificationCategory[] = [
