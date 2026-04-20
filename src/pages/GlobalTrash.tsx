@@ -301,12 +301,53 @@ export default function GlobalTrash() {
               ))}
             </div>
 
+            {/* Search + Bulk Filter Actions */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name or type..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {canRestore && filteredItems.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRestoreFilterConfirm(true)}
+                    className="gap-2"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Restore All ({filteredItems.length})
+                  </Button>
+                )}
+                {canPermanentDelete && items.length > 0 && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setEmptyTrashConfirm(true)}
+                    className="gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Empty Trash
+                  </Button>
+                )}
+              </div>
+            </div>
+
             {/* Table */}
-            {items.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card py-16">
                 <Trash2 className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-semibold text-foreground">Trash is empty</h3>
-                <p className="text-sm text-muted-foreground">No deleted items found</p>
+                <h3 className="mb-2 text-lg font-semibold text-foreground">
+                  {searchQuery ? 'No matching items' : 'Trash is empty'}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {searchQuery ? `No items match "${searchQuery}"` : 'No deleted items found'}
+                </p>
               </div>
             ) : (
               <div className="rounded-lg border border-border bg-card">
