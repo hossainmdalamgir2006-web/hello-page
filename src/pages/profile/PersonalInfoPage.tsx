@@ -5,16 +5,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Camera, User, Mail } from 'lucide-react';
+import { Loader2, Camera, User, Mail, Phone, FileText, Copy, Check, IdCard } from 'lucide-react';
+import { format } from 'date-fns';
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters').max(100),
+  phone: z.string().max(20).optional().or(z.literal('')),
+  bio: z.string().max(200, 'Bio must be 200 characters or less').optional().or(z.literal('')),
 });
 
 const emailSchema = z.object({
@@ -28,10 +32,12 @@ export default function PersonalInfoPage() {
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [roles, setRoles] = useState<string[]>([]);
 
   const profileForm = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { fullName: user?.user_metadata?.full_name || '' },
+    defaultValues: { fullName: user?.user_metadata?.full_name || '', phone: '', bio: '' },
   });
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -41,15 +47,28 @@ export default function PersonalInfoPage() {
 
   useEffect(() => {
     if (user) {
-      profileForm.reset({ fullName: user.user_metadata?.full_name || '' });
-      fetchAvatar();
+      fetchProfile();
+      fetchRoles();
     }
   }, [user]);
 
-  const fetchAvatar = async () => {
+  const fetchProfile = async () => {
     if (!user) return;
-    const { data } = await supabase.from('profiles').select('avatar_url').eq('user_id', user.id).maybeSingle();
-    if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+    const { data } = await supabase.from('profiles').select('avatar_url, full_name, phone, bio').eq('user_id', user.id).maybeSingle();
+    if (data) {
+      if (data.avatar_url) setAvatarUrl(data.avatar_url);
+      profileForm.reset({
+        fullName: data.full_name || user.user_metadata?.full_name || '',
+        phone: (data as any).phone || '',
+        bio: (data as any).bio || '',
+      });
+    }
+  };
+
+  const fetchRoles = async () => {
+    if (!user) return;
+    const { data } = await supabase.from('user_roles').select('role').eq('user_id', user.id);
+    if (data) setRoles(data.map((r: any) => r.role));
   };
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,11 +77,11 @@ export default function PersonalInfoPage() {
     const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     const MAX_SIZE = 5 * 1024 * 1024;
     if (!ALLOWED_TYPES.includes(file.type)) {
-      toast({ variant: 'destructive', title: 'Upload Failed', description: 'Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.' });
+      toast({ variant: 'destructive', title: 'Upload Failed', description: 'Invalid file type.' });
       return;
     }
     if (file.size > MAX_SIZE) {
-      toast({ variant: 'destructive', title: 'Upload Failed', description: 'File too large. Maximum size is 5MB.' });
+      toast({ variant: 'destructive', title: 'Upload Failed', description: 'Maximum size is 5MB.' });
       return;
     }
     const mimeToExt: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
@@ -90,7 +109,11 @@ export default function PersonalInfoPage() {
     try {
       const { error: authError } = await supabase.auth.updateUser({ data: { full_name: values.fullName } });
       if (authError) throw authError;
-      const { error: profileError } = await supabase.from('profiles').update({ full_name: values.fullName }).eq('user_id', user.id);
+      const { error: profileError } = await supabase.from('profiles').update({
+        full_name: values.fullName,
+        phone: values.phone || null,
+        bio: values.bio || null,
+      } as any).eq('user_id', user.id);
       if (profileError) throw profileError;
       toast({ title: 'Profile Updated', description: 'Your profile information has been saved.' });
     } catch (error: any) {
@@ -115,6 +138,13 @@ export default function PersonalInfoPage() {
     }
   };
 
+  const copyId = () => {
+    if (!user) return;
+    navigator.clipboard.writeText(user.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const getInitials = () => {
     if (user?.user_metadata?.full_name) {
       return user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -124,10 +154,7 @@ export default function PersonalInfoPage() {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
-        title="Personal Info"
-        description="Manage your profile details and email"
-      />
+      <AdminPageHeader title="Personal Info" description="Manage your profile details and email" />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left Column */}
@@ -187,6 +214,27 @@ export default function PersonalInfoPage() {
                     <FormMessage />
                   </FormItem>
                 )} />
+                <FormField control={profileForm.control} name="phone" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input className="pl-10" placeholder="+880 1XXX-XXXXXX" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={profileForm.control} name="bio" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bio <span className="text-xs text-muted-foreground">(max 200)</span></FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="A short bio about yourself..." rows={3} maxLength={200} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
                 <div className="space-y-2">
                   <FormLabel>Email</FormLabel>
                   <div className="relative">
@@ -205,6 +253,44 @@ export default function PersonalInfoPage() {
 
         {/* Right Column */}
         <div className="space-y-6">
+          {/* Account Overview */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-success">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-success/10 p-2"><IdCard className="h-5 w-5 text-success" /></div>
+              <div>
+                <h3 className="font-semibold">Account Overview</h3>
+                <p className="text-xs text-muted-foreground">Read-only account details</p>
+              </div>
+            </div>
+            <dl className="space-y-3 text-sm">
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground">Member Since</dt>
+                <dd className="font-medium">{user?.created_at ? format(new Date(user.created_at), 'MMM d, yyyy') : '—'}</dd>
+              </div>
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground">Last Sign-in</dt>
+                <dd className="font-medium">{user?.last_sign_in_at ? format(new Date(user.last_sign_in_at), 'MMM d, yyyy h:mm a') : '—'}</dd>
+              </div>
+              <div className="flex justify-between gap-4 items-center">
+                <dt className="text-muted-foreground">Roles</dt>
+                <dd className="flex flex-wrap gap-1 justify-end">
+                  {roles.length === 0 ? <span className="text-muted-foreground">user</span> : roles.map((r) => (
+                    <Badge key={r} variant="secondary" className="text-xs">{r}</Badge>
+                  ))}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-4 items-center">
+                <dt className="text-muted-foreground">Account ID</dt>
+                <dd className="flex items-center gap-2">
+                  <code className="text-xs bg-muted px-2 py-1 rounded max-w-[180px] truncate">{user?.id}</code>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={copyId}>
+                    {copied ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </dd>
+              </div>
+            </dl>
+          </div>
+
           {/* Change Email Card */}
           <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
             <div className="flex items-center gap-3 mb-4">
