@@ -2232,6 +2232,33 @@ export type Database = {
         }
         Relationships: []
       }
+      password_change_history: {
+        Row: {
+          changed_at: string
+          device_info: Json | null
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          changed_at?: string
+          device_info?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          changed_at?: string
+          device_info?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       password_history: {
         Row: {
           created_at: string
