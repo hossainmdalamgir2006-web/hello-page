@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Mail, Shield, ShoppingCart, Package, Users, Star, CreditCard, Bell, Lock, Smartphone, Key, Globe, AlertTriangle, UserCheck, RefreshCw, Truck, MessageSquare, TrendingDown, Clock, CheckCircle, XCircle, Search, ToggleLeft } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, Mail, Shield, ShoppingCart, Package, Users, Star, CreditCard, Bell, Lock, Smartphone, Key, Globe, AlertTriangle, UserCheck, RefreshCw, Truck, MessageSquare, TrendingDown, Clock, CheckCircle, XCircle, Search, ToggleLeft, Send } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface EmailNotificationCategory {
