@@ -1,49 +1,53 @@
 
 
-## Plan: Emails ও Notifications পেজে নতুন ফিচার যোগ
+User wants:
+1. Customers page theke tier system **complete remove**
+2. Account Deletion Requests page-e: bulk approve/reject + auto-purge after 30 days + user info (email/name) display
 
-### Emails Page — 3টি নতুন ফিচার
+## Plan: Customers Tier Removal + Deletion Requests Enhancement
 
-#### 1. Template Preview (HTML Live Preview)
-- EmailTemplatesTab-এ প্রতিটি টেমপ্লেটের জন্য "Preview" বাটন যোগ
-- ক্লিক করলে Dialog-এ iframe/dangerouslySetInnerHTML দিয়ে HTML preview দেখাবে
-- Variables গুলো sample data দিয়ে replace করে দেখাবে
+### Part 1: Customers Page — Tier System সম্পূর্ণ Remove
 
-#### 2. Template Duplicate
-- প্রতিটি টেমপ্লেটের action area-তে "Duplicate" বাটন
-- ক্লিক করলে টেমপ্লেটের কপি তৈরি হবে "(Copy)" suffix সহ
-- `onCreateTemplate` ব্যবহার করে নতুন entry তৈরি
+`getLoyaltyTier` ও `tierConfig` (Bronze/Silver/Gold/Platinum) ৪টি ফাইল থেকে সরানো হবে:
 
-#### 3. Email Send Log Tab
-- Emails পেজে একটি নতুন ট্যাব "Send History" যোগ
-- `email_templates` টেবিলের সাথে একটি `email_send_log` টেবিল (যদি না থাকে) তৈরি করে সাম্প্রতিক email sends দেখাবে
-- Template name, recipient, status, timestamp কলাম সহ টেবিল
+| ফাইল | পরিবর্তন |
+|------|----------|
+| `src/components/admin/CustomerSegmentTabs.tsx` | "VIP" segment ও `getLoyaltyTier` মুছে ফেলা; অন্য segments (All, Active Buyers, High Value, At Risk, Flagged, Blocked) থাকবে |
+| `src/components/admin/CustomerDetailModal.tsx` | `tierConfig`, `getLoyaltyTier`, tier Badge ও Crown icon header থেকে সরানো |
+| `src/components/admin/MobileCustomerCard.tsx` | Tier Badge ও logic সরানো |
+| `src/components/admin/CustomerQuickLookup.tsx` | Tier display সরানো, শুধু customer name/email/spent দেখাবে |
 
-### Notifications Page — 3টি নতুন ফিচার
+### Part 2: Account Deletion Requests — ৩টি নতুন ফিচার
 
-#### 4. Notification Schedule (Delivery Timing)
-- প্রতিটি notification-এ delivery mode সিলেক্ট: Instant / Daily Digest / Weekly Summary
-- `store_settings`-এ `notification_schedules` key-তে সেভ হবে
-- AllEmailNotifications কম্পোনেন্টে প্রতিটি item-এ ছোট Select/dropdown যোগ
+**A. User Info Display (email + name)**
+- `account_deletion_requests` শুধু `user_id` রাখে। আমরা parallel `profiles` query করে `email`, `full_name` JOIN করব (client-side `useQuery` map)
+- টেবিলে নতুন কলাম "User" — avatar + name + email; পুরানো `User ID` কলামটি সরানো হবে
 
-#### 5. Test Notification Button
-- প্রতিটি notification item-এ একটি ছোট "Test" বাটন
-- ক্লিক করলে logged-in admin-এর email-এ test notification পাঠাবে
-- `send-login-alert` এর মতো edge function invoke করবে
+**B. Bulk Approve/Reject**
+- প্রতিটি pending row-এ Checkbox যোগ
+- Header-এ "Select All Pending" checkbox
+- নির্বাচিত হলে উপরে একটি action bar দেখাবে: `Bulk Approve (N)` / `Bulk Reject (N)` বাটন
+- Bulk approve sequentially `delete-user-account` edge function call করবে progress toast সহ
+- Bulk reject একক `update` query-তে status='rejected' সেট করবে
 
-#### 6. Recent Notification Log
-- Notifications পেজের নিচে "Recent Activity" সেকশন
-- `notifications` টেবিল থেকে সাম্প্রতিক 20টি sent notification দেখাবে
-- Type badge, recipient, timestamp, status সহ
+**C. Auto-Purge after 30 Days**
+- Pending request ৩০ দিন পর কিছু না হলে status='expired' করে দেওয়া হবে
+- নতুন edge function: `auto-purge-deletion-requests` (Deno.serve, service role)
+- pg_cron দৈনিক একবার এই function call করবে
+- UI-তে pending row-এ "X days until auto-expire" countdown badge (existing `TrashPurgeCountdown` pattern)
+- Expired status-এর জন্য নতুন Badge variant
 
 ### ফাইল পরিবর্তন
 
 | ফাইল | কাজ |
 |------|------|
-| `src/components/settings/EmailTemplatesTab.tsx` | Preview Dialog ও Duplicate বাটন যোগ |
-| `src/pages/system-settings/EmailsPage.tsx` | Send History ট্যাব যোগ (Tabs layout) |
-| `src/components/settings/AllEmailNotifications.tsx` | Schedule dropdown ও Test বাটন যোগ |
-| `src/pages/system-settings/NotificationsPage.tsx` | Recent Activity log সেকশন যোগ |
+| `src/components/admin/CustomerSegmentTabs.tsx` | VIP/tier remove |
+| `src/components/admin/CustomerDetailModal.tsx` | Tier badge/icon remove |
+| `src/components/admin/MobileCustomerCard.tsx` | Tier remove |
+| `src/components/admin/CustomerQuickLookup.tsx` | Tier remove |
+| `src/pages/admin/AccountDeletionRequests.tsx` | User info JOIN, Checkbox bulk select, bulk action bar, expire countdown, expired badge |
+| `supabase/functions/auto-purge-deletion-requests/index.ts` | নতুন edge function (30+ দিনের pending → expired) |
+| pg_cron schedule (insert SQL) | দৈনিক purge function trigger |
 
-কোনো নতুন ডাটাবেস টেবিল লাগবে না — existing `store_settings`, `notifications` টেবিল ব্যবহার হবে।
+কোনো নতুন ডাটাবেস টেবিল লাগবে না — existing `account_deletion_requests` ও `profiles` টেবিল ব্যবহার হবে।
 
