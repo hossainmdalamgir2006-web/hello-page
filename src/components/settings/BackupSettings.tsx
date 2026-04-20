@@ -59,6 +59,7 @@ import { useBackupData, BackupRecord, RestoreResult } from "@/hooks/useBackupDat
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { BackupStorageCard } from "./BackupStorageCard";
 
 export function BackupSettings() {
   const { 
@@ -155,6 +156,9 @@ export function BackupSettings() {
 
   return (
     <div className="space-y-6">
+      {/* Storage Usage Card */}
+      <BackupStorageCard backups={backups} />
+
       {/* Migration Info Alert */}
       <Alert>
         <Info className="h-4 w-4" />

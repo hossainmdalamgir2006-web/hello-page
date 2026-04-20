@@ -25,6 +25,7 @@ import { GoogleAnalyticsSettings } from "./GoogleAnalyticsSettings";
 import { GoogleTagManagerSettings } from "./GoogleTagManagerSettings";
 import { MetaPixelSettings } from "./MetaPixelSettings";
 import { GoogleSearchConsoleSettings } from "./GoogleSearchConsoleSettings";
+import { IntegrationHealthGrid } from "./IntegrationHealthGrid";
 import { formatPrice } from "@/lib/formatPrice";
 
 export function IntegrationsSettings() {
@@ -112,6 +113,8 @@ export function IntegrationsSettings() {
 
   return (
     <div className="space-y-6">
+      <IntegrationHealthGrid />
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">

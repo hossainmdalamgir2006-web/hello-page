@@ -46,6 +46,8 @@ import {
 import { useAuditLog, AuditLogEntry } from "@/hooks/useAuditLog";
 import { DataExport } from "@/components/ui/data-export";
 import { formatDistanceToNow, format, isToday } from "date-fns";
+import { CriticalActionsAlert } from "./audit/CriticalActionsAlert";
+import { JsonDiffView } from "./audit/JsonDiffView";
 
 const actionColors: Record<string, string> = {
   create: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -142,6 +144,9 @@ export function AuditLogTab() {
 
   return (
     <div className="space-y-6">
+      {/* Critical Actions Alert */}
+      <CriticalActionsAlert logs={logs} onSelect={setSelectedLog} />
+
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
@@ -613,21 +618,10 @@ function AuditLogDetailDialog({
             </div>
           )}
 
-          {log.old_value && (
+          {(log.old_value || log.new_value) && (
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Previous Value</p>
-              <pre className="text-xs bg-red-50 dark:bg-red-900/10 p-3 rounded-lg overflow-auto max-h-32">
-                {JSON.stringify(log.old_value, null, 2)}
-              </pre>
-            </div>
-          )}
-
-          {log.new_value && (
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">New Value</p>
-              <pre className="text-xs bg-green-50 dark:bg-green-900/10 p-3 rounded-lg overflow-auto max-h-32">
-                {JSON.stringify(log.new_value, null, 2)}
-              </pre>
+              <p className="text-xs text-muted-foreground mb-2">Field-by-field Diff</p>
+              <JsonDiffView oldValue={log.old_value} newValue={log.new_value} />
             </div>
           )}
 
