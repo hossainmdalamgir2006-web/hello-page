@@ -125,8 +125,8 @@ export default function GlobalTrash() {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === items.length) setSelectedIds([]);
-    else setSelectedIds(items.map(i => i.id));
+    if (selectedIds.length === filteredItems.length) setSelectedIds([]);
+    else setSelectedIds(filteredItems.map(i => i.id));
   };
 
   const handleRestore = async (item: TrashedItem) => {
