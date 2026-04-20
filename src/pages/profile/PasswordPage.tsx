@@ -1,16 +1,19 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { usePasswordSecurity } from '@/hooks/usePasswordSecurity';
 import { PasswordStrengthIndicator } from '@/components/ui/password-strength';
-import { Loader2, Lock, Eye, EyeOff, ShieldCheck, Info } from 'lucide-react';
+import { Loader2, Lock, Eye, EyeOff, ShieldCheck, Info, History, AlertTriangle, Monitor, Smartphone } from 'lucide-react';
+import { formatDistanceToNow, format, differenceInDays } from 'date-fns';
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(6, 'Password must be at least 6 characters'),
@@ -21,7 +24,15 @@ const passwordSchema = z.object({
   path: ["confirmPassword"],
 });
 
+interface PasswordHistoryEntry {
+  id: string;
+  changed_at: string;
+  ip_address: string | null;
+  user_agent: string | null;
+}
+
 export default function PasswordPage() {
+  const { user } = useAuth();
   const { toast } = useToast();
   const { calculateStrength, checkLeakedPassword, leakCheck, resetLeakCheck } = usePasswordSecurity();
   const [isPasswordLoading, setIsPasswordLoading] = useState(false);
@@ -30,12 +41,28 @@ export default function PasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [leakCheckTimeout, setLeakCheckTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [history, setHistory] = useState<PasswordHistoryEntry[]>([]);
   const passwordStrength = calculateStrength(newPassword);
 
   const passwordForm = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
     defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
   });
+
+  useEffect(() => {
+    if (user) loadHistory();
+  }, [user]);
+
+  const loadHistory = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('password_change_history')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('changed_at', { ascending: false })
+      .limit(5);
+    if (data) setHistory(data as PasswordHistoryEntry[]);
+  };
 
   const handleNewPasswordChange = useCallback((value: string) => {
     setNewPassword(value);
@@ -49,17 +76,27 @@ export default function PasswordPage() {
 
   const onPasswordSubmit = async (values: z.infer<typeof passwordSchema>) => {
     if (leakCheck.isLeaked) {
-      toast({ variant: 'destructive', title: 'Compromised Password', description: 'This password has been exposed in data breaches. Please choose a different password.' });
+      toast({ variant: 'destructive', title: 'Compromised Password', description: 'This password has been exposed in data breaches.' });
       return;
     }
     if (passwordStrength.score < 2) {
-      toast({ variant: 'destructive', title: 'Weak Password', description: 'Please choose a stronger password that meets more requirements.' });
+      toast({ variant: 'destructive', title: 'Weak Password', description: 'Please choose a stronger password.' });
       return;
     }
     setIsPasswordLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({ password: values.newPassword });
       if (error) throw error;
+
+      // Log password change
+      if (user) {
+        await supabase.from('password_change_history').insert({
+          user_id: user.id,
+          user_agent: navigator.userAgent,
+        } as any);
+        loadHistory();
+      }
+
       passwordForm.reset();
       setNewPassword('');
       resetLeakCheck();
@@ -80,12 +117,36 @@ export default function PasswordPage() {
     </Button>
   );
 
+  const lastChange = history[0];
+  const daysSinceChange = lastChange ? differenceInDays(new Date(), new Date(lastChange.changed_at)) : null;
+  const isExpiring = daysSinceChange !== null && daysSinceChange >= 90;
+
+  const getDeviceIcon = (ua: string | null) => {
+    if (ua && (ua.includes('Mobile') || ua.includes('Android') || ua.includes('iPhone'))) return <Smartphone className="h-3.5 w-3.5" />;
+    return <Monitor className="h-3.5 w-3.5" />;
+  };
+
+  const getBrowser = (ua: string | null) => {
+    if (!ua) return 'Unknown';
+    if (ua.includes('Firefox')) return 'Firefox';
+    if (ua.includes('Edge')) return 'Edge';
+    if (ua.includes('Chrome')) return 'Chrome';
+    if (ua.includes('Safari')) return 'Safari';
+    return 'Browser';
+  };
+
   return (
     <div className="space-y-6">
-      <AdminPageHeader
-        title="Password"
-        description="Change your account password"
-      />
+      <AdminPageHeader title="Password" description="Change your account password" />
+
+      {isExpiring && (
+        <Alert variant="destructive" className="border-warning bg-warning/5 text-warning-foreground">
+          <AlertTriangle className="h-4 w-4 text-warning" />
+          <AlertDescription className="text-foreground">
+            Your password is <strong>{daysSinceChange} days old</strong> — consider updating it for better security.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left: Change Password Form */}
@@ -146,8 +207,37 @@ export default function PasswordPage() {
           </Form>
         </div>
 
-        {/* Right: Tips */}
+        {/* Right column */}
         <div className="space-y-6">
+          {/* Password History */}
+          <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-accent">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="rounded-lg bg-accent/10 p-2"><History className="h-5 w-5 text-accent" /></div>
+              <div>
+                <h3 className="font-semibold">Recent Password Changes</h3>
+                <p className="text-xs text-muted-foreground">Last 5 password updates</p>
+              </div>
+            </div>
+            {history.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-3">No password changes recorded yet.</p>
+            ) : (
+              <ul className="space-y-3">
+                {history.map((h) => (
+                  <li key={h.id} className="flex items-start gap-3 text-sm">
+                    <div className="rounded-md bg-muted p-1.5 mt-0.5">{getDeviceIcon(h.user_agent)}</div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium">{format(new Date(h.changed_at), 'MMM d, yyyy h:mm a')}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {getBrowser(h.user_agent)} • {formatDistanceToNow(new Date(h.changed_at), { addSuffix: true })}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Tips */}
           <div className="rounded-xl border border-border/50 bg-card p-5 hover:shadow-md transition-all border-l-[3px] border-l-success">
             <div className="flex items-center gap-3 mb-4">
               <div className="rounded-lg bg-success/10 p-2"><ShieldCheck className="h-5 w-5 text-success" /></div>
@@ -157,8 +247,8 @@ export default function PasswordPage() {
               </div>
             </div>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Use at least 8 characters with a mix of letters, numbers, and symbols</li>
-              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Avoid using common words or personal information</li>
+              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Use at least 8 characters with mixed letters, numbers, and symbols</li>
+              <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Avoid common words or personal information</li>
               <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Don't reuse passwords from other websites</li>
               <li className="flex items-start gap-2"><Info className="h-4 w-4 mt-0.5 text-primary shrink-0" /> Consider using a password manager</li>
             </ul>
