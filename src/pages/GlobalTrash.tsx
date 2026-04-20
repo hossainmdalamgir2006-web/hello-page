@@ -152,6 +152,18 @@ export default function GlobalTrash() {
     setBulkDeleteConfirm(false);
   };
 
+  const handleRestoreAllInFilter = async () => {
+    await bulkRestore(filteredItems);
+    setSelectedIds([]);
+    setRestoreFilterConfirm(false);
+  };
+
+  const handleEmptyTrash = async () => {
+    await bulkPermanentDelete(items);
+    setSelectedIds([]);
+    setEmptyTrashConfirm(false);
+  };
+
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     if (tab === "log") fetchActivityLog();
@@ -163,7 +175,7 @@ export default function GlobalTrash() {
     return counts;
   }, [items]);
 
-  const allSelected = items.length > 0 && selectedIds.length === items.length;
+  const allSelected = filteredItems.length > 0 && selectedIds.length === filteredItems.length;
 
   if (loading) {
     return (
