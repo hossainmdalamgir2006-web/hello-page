@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -15,14 +17,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Trash2, RotateCcw, Package, MoreVertical, AlertTriangle, ShoppingCart,
-  Award, Tag, Ticket, Clock, User, Filter, MessageSquare, Star, Image, Zap,
+  Award, Tag, Ticket, Clock, User, Filter, MessageSquare, Star, Image, Zap, Search, Flame,
 } from "lucide-react";
 import { useGlobalTrash, TrashedItem, TrashEntityType } from "@/hooks/useGlobalTrash";
 import { TrashPurgeCountdown } from "@/components/admin/TrashPurgeCountdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { usePagination } from "@/hooks/usePagination";
-import { formatDistanceToNow, format } from "date-fns";
+import { formatDistanceToNow, format, differenceInDays, isToday } from "date-fns";
 import { formatPrice } from "@/lib/formatPrice";
 
 const ENTITY_ICONS: Record<TrashEntityType, React.ElementType> = {
