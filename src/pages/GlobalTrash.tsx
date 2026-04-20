@@ -216,6 +216,54 @@ export default function GlobalTrash() {
           }
         />
 
+        {/* Storage Impact Stats */}
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <Card className={storageStats.pendingPurge > 0 ? "border-destructive/30 bg-destructive/5" : ""}>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${storageStats.pendingPurge > 0 ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground"}`}>
+                <Flame className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Purge in 7 days</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.pendingPurge}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Total items</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.total}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500">
+                <Clock className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Oldest item</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.oldestDays}d</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex items-center gap-3 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
+                <Tag className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Added today</p>
+                <p className="text-xl font-bold text-foreground">{storageStats.addedToday}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Warning */}
         <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
           <AlertTriangle className="h-4 w-4 shrink-0" />
