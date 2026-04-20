@@ -124,22 +124,71 @@ export function AllEmailNotifications() {
   const loadNotificationSettings = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('store_settings')
-        .select('*')
-        .eq('key', 'all_email_notifications')
-        .single();
+        .select('key, setting_value')
+        .in('key', ['all_email_notifications', 'notification_schedules']);
 
-      if (data?.setting_value) {
+      data?.forEach((row: any) => {
+        if (!row?.setting_value) return;
         try {
-          const parsed = JSON.parse(data.setting_value);
-          setNotifications(prev => ({ ...prev, ...parsed }));
+          const parsed = JSON.parse(row.setting_value);
+          if (row.key === 'all_email_notifications') {
+            setNotifications(prev => ({ ...prev, ...parsed }));
+          } else if (row.key === 'notification_schedules') {
+            setSchedules(parsed || {});
+          }
         } catch { /* ignore */ }
-      }
+      });
     } catch (error) {
       console.log('Email notification settings not found, using defaults');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const saveSchedule = async (notificationId: string, mode: string) => {
+    setSaving(notificationId);
+    try {
+      const newSchedules = { ...schedules, [notificationId]: mode };
+      const { error } = await supabase
+        .from('store_settings')
+        .upsert({
+          key: 'notification_schedules',
+          setting_value: JSON.stringify(newSchedules),
+        } as any, { onConflict: 'key' });
+      if (error) throw error;
+      setSchedules(newSchedules);
+      toast.success('Schedule updated');
+    } catch (error: any) {
+      toast.error('Failed to save schedule: ' + error.message);
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  const sendTestNotification = async (notification: EmailNotification) => {
+    setTesting(notification.id);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) {
+        toast.error('No admin email found');
+        return;
+      }
+      const { error } = await supabase.functions.invoke('send-login-alert', {
+        body: {
+          email: user.email,
+          loginTime: new Date().toISOString(),
+          ipAddress: 'Test',
+          userAgent: `Test notification: ${notification.name}`,
+        },
+      });
+      if (error) throw error;
+      toast.success(`Test sent to ${user.email}`);
+    } catch (error: any) {
+      toast.error('Test failed: ' + (error?.message || 'Unknown error'));
+    } finally {
+      setTesting(null);
     }
   };
 
