@@ -513,6 +513,22 @@ export default function GlobalTrash() {
         title="Permanently Delete Items"
         itemName={`${selectedIds.length} items`}
       />
+
+      <DeleteConfirmModal
+        open={emptyTrashConfirm}
+        onOpenChange={() => setEmptyTrashConfirm(false)}
+        onConfirm={handleEmptyTrash}
+        title="Empty Entire Trash"
+        itemName={`ALL ${items.length} items in trash (this cannot be undone)`}
+      />
+
+      <DeleteConfirmModal
+        open={restoreFilterConfirm}
+        onOpenChange={() => setRestoreFilterConfirm(false)}
+        onConfirm={handleRestoreAllInFilter}
+        title="Restore All Filtered Items"
+        itemName={`${filteredItems.length} items`}
+      />
     </>
   );
 }
