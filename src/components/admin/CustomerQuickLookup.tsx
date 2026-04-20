@@ -9,24 +9,9 @@ import {
 } from "@/components/ui/command";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Search, Mail, Phone } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Search, Mail, Phone } from "lucide-react";
 import type { Customer } from "@/hooks/useCustomersData";
 import { formatPrice } from "@/lib/formatPrice";
-
-const tierConfig = {
-  bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20" },
-  silver: { color: "bg-slate-400/10 text-slate-500 border-slate-400/20" },
-  gold: { color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
-  platinum: { color: "bg-violet-500/10 text-violet-500 border-violet-500/20" },
-};
-
-const getLoyaltyTier = (totalSpent: number): keyof typeof tierConfig => {
-  if (totalSpent >= 80000) return "platinum";
-  if (totalSpent >= 50000) return "gold";
-  if (totalSpent >= 20000) return "silver";
-  return "bronze";
-};
 
 const getCustomerName = (customer: Customer): string =>
   customer.full_name || customer.email?.split("@")[0] || "Unknown";
@@ -84,7 +69,6 @@ export function CustomerQuickLookup({ customers, onSelect }: CustomerQuickLookup
           <CommandGroup heading="Customers">
             {customers.slice(0, 50).map((customer) => {
               const name = getCustomerName(customer);
-              const tier = getLoyaltyTier(Number(customer.total_spent));
 
               return (
                 <CommandItem
@@ -101,13 +85,6 @@ export function CustomerQuickLookup({ customers, onSelect }: CustomerQuickLookup
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium truncate">{name}</span>
-                      <Badge
-                        variant="outline"
-                        className={cn("text-xs gap-0.5 capitalize", tierConfig[tier].color)}
-                      >
-                        <Crown className="h-2.5 w-2.5" />
-                        {tier}
-                      </Badge>
                       {customer.status === "blocked" && (
                         <Badge variant="destructive" className="text-xs">Blocked</Badge>
                       )}

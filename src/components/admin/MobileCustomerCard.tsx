@@ -9,17 +9,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, Send, MoreVertical, Crown, CheckCircle2, Clock, Ban, ChevronRight, Flag } from "lucide-react";
+import { Eye, Send, MoreVertical, CheckCircle2, Clock, Ban, ChevronRight, Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Customer } from "@/hooks/useCustomersData";
 import { formatPrice } from "@/lib/formatPrice";
-
-const tierConfig = {
-  bronze: { color: "bg-amber-700/10 text-amber-700 border-amber-700/20", minSpent: 0 },
-  silver: { color: "bg-slate-400/10 text-slate-500 border-slate-400/20", minSpent: 20000 },
-  gold: { color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20", minSpent: 50000 },
-  platinum: { color: "bg-violet-500/10 text-violet-500 border-violet-500/20", minSpent: 80000 },
-};
 
 const statusConfig = {
   active: { color: "bg-success/10 text-success border-success/20", icon: CheckCircle2, label: "Active" },
@@ -32,12 +25,6 @@ const getCustomerName = (customer: Customer): string => {
   return customer.full_name || customer.email?.split('@')[0] || 'Unknown';
 };
 
-const getLoyaltyTier = (totalSpent: number): keyof typeof tierConfig => {
-  if (totalSpent >= 80000) return 'platinum';
-  if (totalSpent >= 50000) return 'gold';
-  if (totalSpent >= 20000) return 'silver';
-  return 'bronze';
-};
 
 interface MobileCustomerCardProps {
   customer: Customer;
@@ -47,7 +34,6 @@ interface MobileCustomerCardProps {
 
 export function MobileCustomerCard({ customer, onViewDetails, onSendEmail }: MobileCustomerCardProps) {
   const name = getCustomerName(customer);
-  const tier = getLoyaltyTier(Number(customer.total_spent));
   const status = (customer.status && customer.status in statusConfig) 
     ? customer.status as keyof typeof statusConfig 
     : 'active';
@@ -73,10 +59,6 @@ export function MobileCustomerCard({ customer, onViewDetails, onSendEmail }: Mob
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
               <p className="font-semibold text-foreground truncate">{name}</p>
-              <Badge variant="outline" className={cn("gap-1 capitalize text-xs flex-shrink-0", tierConfig[tier].color)}>
-                <Crown className="h-3 w-3" />
-                {tier}
-              </Badge>
             </div>
             <p className="text-sm text-muted-foreground truncate">{customer.email || '-'}</p>
             <p className="text-xs text-muted-foreground">{customer.phone || '-'}</p>
