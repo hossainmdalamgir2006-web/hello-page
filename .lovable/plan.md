@@ -1,41 +1,49 @@
 
 
-## Plan: Security পেজে Device Block ও Rate Limits উন্নত করা
+## Plan: Emails ও Notifications পেজে নতুন ফিচার যোগ
 
-### বর্তমান অবস্থা
-- **Rate Limits** ট্যাব আছে কিন্তু শুধু existing settings দেখায়, নতুন rule যোগ করার উপায় নেই
-- **Device Block** ফিচার নেই
+### Emails Page — 3টি নতুন ফিচার
 
-### পরিবর্তনসমূহ
+#### 1. Template Preview (HTML Live Preview)
+- EmailTemplatesTab-এ প্রতিটি টেমপ্লেটের জন্য "Preview" বাটন যোগ
+- ক্লিক করলে Dialog-এ iframe/dangerouslySetInnerHTML দিয়ে HTML preview দেখাবে
+- Variables গুলো sample data দিয়ে replace করে দেখাবে
 
-#### 1. নতুন টেবিল: `blocked_devices`
-```text
-blocked_devices
-├── id (uuid, PK)
-├── device_fingerprint (text) — browser/device identifier
-├── device_name (text) — human-readable label (e.g. "Chrome on Windows")
-├── user_agent (text)
-├── reason (text, nullable)
-├── blocked_by (uuid, nullable)
-├── is_permanent (boolean, default true)
-├── blocked_until (timestamptz, nullable)
-├── created_at (timestamptz)
-```
-RLS: Admin-only (ALL).
+#### 2. Template Duplicate
+- প্রতিটি টেমপ্লেটের action area-তে "Duplicate" বাটন
+- ক্লিক করলে টেমপ্লেটের কপি তৈরি হবে "(Copy)" suffix সহ
+- `onCreateTemplate` ব্যবহার করে নতুন entry তৈরি
 
-#### 2. Rate Limits ট্যাবে "Add Rule" ফিচার
-- নতুন rate limit rule যোগ করার Dialog — Endpoint name, Max Requests, Time Window, Block Duration ইনপুট
-- প্রতিটি rule-এ Delete বাটন যোগ
+#### 3. Email Send Log Tab
+- Emails পেজে একটি নতুন ট্যাব "Send History" যোগ
+- `email_templates` টেবিলের সাথে একটি `email_send_log` টেবিল (যদি না থাকে) তৈরি করে সাম্প্রতিক email sends দেখাবে
+- Template name, recipient, status, timestamp কলাম সহ টেবিল
 
-#### 3. নতুন "Device Blocking" ট্যাব (IPSecuritySettings-এ)
-- ট্যাবে blocked device তালিকা দেখাবে (device name, user agent, reason, status, blocked date)
-- "Block Device" Dialog — device fingerprint/user agent, reason, permanent/temporary
-- Unblock বাটন প্রতিটি entry-তে
+### Notifications Page — 3টি নতুন ফিচার
 
-#### 4. ফাইল পরিবর্তন
+#### 4. Notification Schedule (Delivery Timing)
+- প্রতিটি notification-এ delivery mode সিলেক্ট: Instant / Daily Digest / Weekly Summary
+- `store_settings`-এ `notification_schedules` key-তে সেভ হবে
+- AllEmailNotifications কম্পোনেন্টে প্রতিটি item-এ ছোট Select/dropdown যোগ
+
+#### 5. Test Notification Button
+- প্রতিটি notification item-এ একটি ছোট "Test" বাটন
+- ক্লিক করলে logged-in admin-এর email-এ test notification পাঠাবে
+- `send-login-alert` এর মতো edge function invoke করবে
+
+#### 6. Recent Notification Log
+- Notifications পেজের নিচে "Recent Activity" সেকশন
+- `notifications` টেবিল থেকে সাম্প্রতিক 20টি sent notification দেখাবে
+- Type badge, recipient, timestamp, status সহ
+
+### ফাইল পরিবর্তন
 
 | ফাইল | কাজ |
 |------|------|
-| DB Migration | `blocked_devices` টেবিল ও RLS তৈরি |
-| `src/components/settings/IPSecuritySettings.tsx` | নতুন "Device Blocking" ট্যাব যোগ, Rate Limits ট্যাবে Add/Delete actions যোগ |
+| `src/components/settings/EmailTemplatesTab.tsx` | Preview Dialog ও Duplicate বাটন যোগ |
+| `src/pages/system-settings/EmailsPage.tsx` | Send History ট্যাব যোগ (Tabs layout) |
+| `src/components/settings/AllEmailNotifications.tsx` | Schedule dropdown ও Test বাটন যোগ |
+| `src/pages/system-settings/NotificationsPage.tsx` | Recent Activity log সেকশন যোগ |
+
+কোনো নতুন ডাটাবেস টেবিল লাগবে না — existing `store_settings`, `notifications` টেবিল ব্যবহার হবে।
 
