@@ -55,11 +55,11 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
   const navigate = useNavigate();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    content: true,
-    operations: true,
-    communication: true,
-    'system settings': true,
-    account: true,
+    content: false,
+    operations: false,
+    communication: false,
+    'system settings': false,
+    account: false,
   });
 
   const toggleGroup = (key: string) => {
