@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { useCart } from "@/contexts/CartContext";
+import { useCart, getCartItemKey } from "@/contexts/CartContext";
 import { useCoupon } from "@/hooks/useCoupon";
 import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
 import { useWishlist } from "@/contexts/WishlistContext";

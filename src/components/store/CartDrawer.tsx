@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { useCart } from "@/contexts/CartContext";
+import { useCart, getCartItemKey } from "@/contexts/CartContext";
 import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
 import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPrice } from "@/lib/formatPrice";
 
-const getKey = (i: { id: string; size?: string; color?: string }) => `${i.id}-${i.size || ''}-${i.color || ''}`;
+const getKey = getCartItemKey;
 
 export function CartDrawer() {
   const {
