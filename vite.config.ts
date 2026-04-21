@@ -11,15 +11,28 @@ function dndKitDepCheck(): PluginOption {
     name: "dnd-kit-dep-check",
     apply: () => true,
     configResolved(config) {
-      const { ok, missing, mismatched } = checkDndKitDeps();
+      const { ok, missing, lockfile } = checkDndKitDeps();
       const isBuild = config.command === "build";
-      // Hard fail builds if anything is outright missing.
-      if (isBuild && missing.length > 0) {
-        throw new Error(
-          `[dnd-kit] Missing required packages: ${missing.join(
-            ", ",
-          )}. Pinned versions: ${JSON.stringify(PINNED_DND_KIT)}`,
-        );
+      // Hard fail builds if anything is outright missing OR lockfile is absent
+      // / doesn't pin the required @dnd-kit versions.
+      if (isBuild) {
+        if (missing.length > 0) {
+          throw new Error(
+            `[dnd-kit] Missing required packages: ${missing.join(
+              ", ",
+            )}. Pinned versions: ${JSON.stringify(PINNED_DND_KIT)}`,
+          );
+        }
+        if (!lockfile.exists) {
+          throw new Error(
+            `[dnd-kit] No lockfile found. Commit a lockfile (bun.lock, pnpm-lock.yaml, yarn.lock, or package-lock.json) with pinned @dnd-kit versions.`,
+          );
+        }
+        if (lockfile.missingInLockfile.length > 0) {
+          throw new Error(
+            `[dnd-kit] Lockfile (${lockfile.manager}) is missing entries for: ${lockfile.missingInLockfile.join(", ")}. Run install to refresh it.`,
+          );
+        }
       }
       // Mismatches only warn (already logged by checkDndKitDeps).
       if (!ok && !isBuild) {
