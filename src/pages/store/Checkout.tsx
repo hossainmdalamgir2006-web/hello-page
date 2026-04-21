@@ -619,7 +619,7 @@ export default function Checkout() {
       </div>
 
       <div className="container mx-auto px-4 py-8 pb-24 lg:pb-8">
-        <form onSubmit={handleSubmit}>
+        <form id="checkout-form" onSubmit={handleSubmit}>
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2 space-y-4">
@@ -1177,18 +1177,16 @@ export default function Checkout() {
       </div>
 
       {/* Mobile Sticky Bottom Bar */}
-      <form onSubmit={handleSubmit}>
-        <MobileCheckoutBar
-          total={total}
-          subtotal={subtotal}
-          discount={discount}
-          shippingCost={shippingCost}
-          codCharge={codCharge}
-          itemCount={itemCount}
-          processing={processing}
-          disabled={!selectedZoneId || !selectedRateId || !acceptedTerms}
-        />
-      </form>
+      <MobileCheckoutBar
+        total={total}
+        subtotal={subtotal}
+        discount={discount}
+        shippingCost={shippingCost}
+        codCharge={codCharge}
+        itemCount={itemCount}
+        processing={processing}
+        disabled={!selectedZoneId || !selectedRateId || !acceptedTerms}
+      />
 
       {/* Order Review Modal */}
       <OrderReviewModal

@@ -81,6 +81,7 @@ export function MobileCheckoutBar({
 
         <Button
           type="submit"
+          form="checkout-form"
           size="lg"
           disabled={processing || disabled}
           className="bg-store-primary hover:bg-store-primary/90 min-w-[160px]"
