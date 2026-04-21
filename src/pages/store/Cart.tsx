@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle } from "lucide-react";
+import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle, ShieldCheck, Lock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
