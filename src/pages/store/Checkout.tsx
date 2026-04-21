@@ -502,33 +502,18 @@ export default function Checkout() {
           <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-store-primary/8 rounded-full blur-2xl" />
         </div>
         <div className="container mx-auto px-4 py-12 md:py-16 text-center relative z-10">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-store-primary/10 border border-store-primary/20 px-3 py-1 text-xs font-semibold text-store-primary mb-4">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            SSL Secured Checkout
-          </div>
           <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
             Secure Checkout
           </h1>
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
-            {itemCount} {itemCount === 1 ? 'item' : 'items'} • Complete your order in 4 quick steps
+            {itemCount} {itemCount === 1 ? 'item' : 'items'} in your bag
           </p>
         </div>
       </div>
 
       {/* Steps Bar */}
-      <div className="border-b bg-background/60 backdrop-blur sticky top-0 z-20">
+      <div className="border-b bg-background">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground -ml-2" asChild>
-              <Link to="/cart"><ChevronLeft className="h-4 w-4 mr-1" /> Back to cart</Link>
-            </Button>
-            {freeShippingEnabled && subtotal > 0 && subtotal < freeShippingThreshold && (
-              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-                <Truck className="h-3.5 w-3.5 text-store-primary" />
-                Add <span className="font-semibold text-foreground">{formatPrice(freeShippingThreshold - subtotal)}</span> more for free shipping
-              </div>
-            )}
-          </div>
           <CheckoutSteps currentStep={currentStep} />
         </div>
       </div>
