@@ -495,9 +495,16 @@ export default function Cart() {
                 {/* Totals */}
                 <div className="space-y-2.5 pt-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('store.subtotal')} ({selectedCount} {t('store.items')})</span>
+                    <span className="text-muted-foreground">
+                      {t('store.subtotal')} <span className="text-xs">({selectedCount} of {items.reduce((s, i) => s + i.quantity, 0)} {t('store.items')})</span>
+                    </span>
                     <span className="font-medium">{formatPrice(checkoutSubtotal)}</span>
                   </div>
+                  {unselectedCount > 0 && (
+                    <p className="text-xs text-muted-foreground -mt-1">
+                      {unselectedCount} {unselectedCount === 1 ? 'item' : 'items'} not selected — {formatPrice(unselectedSubtotal)}
+                    </p>
+                  )}
                   {discount > 0 && (
                     <div className="flex justify-between text-sm text-store-accent">
                       <span className="flex items-center gap-1">
