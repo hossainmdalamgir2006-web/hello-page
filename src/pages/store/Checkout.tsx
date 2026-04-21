@@ -62,7 +62,8 @@ export default function Checkout() {
   const { appliedCoupon, validateCoupon, removeCoupon, incrementCouponUsage, loading: couponLoading } = useCoupon();
   const { zonesWithRates, loading: shippingLoading } = useShippingData();
   const { paymentMethods: enabledPaymentMethods, loading: paymentMethodsLoading } = useEnabledPaymentMethods();
-  const { threshold: freeShippingThreshold } = useFreeShippingConfig();
+  const { threshold: freeShippingThreshold, enabled: freeShippingEnabled } = useFreeShippingConfig();
+  const itemCount = items.reduce((sum, it) => sum + it.quantity, 0);
 
   const [couponCode, setCouponCode] = useState("");
   const couponState = location.state as CouponState | undefined;
@@ -493,25 +494,65 @@ export default function Checkout() {
 
   return (
     <>
-      <SEOHead title={t('checkout.title')} description={t('checkout.title')} noIndex={true} />
-      {/* Page Header */}
-      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-8 overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="text-store-primary-foreground" asChild>
-              <Link to="/cart"><ChevronLeft className="h-5 w-5" /></Link>
-            </Button>
-            <h1 className="font-display text-2xl font-bold text-store-primary-foreground">{t('checkout.title')}</h1>
+      <SEOHead title="Secure Checkout" description="Complete your order securely in just a few quick steps." noIndex={true} />
+      {/* Unified Page Header */}
+      <section className="relative bg-gradient-to-br from-store-primary via-store-primary to-store-secondary overflow-hidden">
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-store-accent/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10 py-6 md:py-8">
+          {/* Top row: Back + title + trust badge */}
+          <div className="flex items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-store-primary-foreground hover:bg-white/15 hover:text-store-primary-foreground shrink-0 h-10 w-10"
+                asChild
+              >
+                <Link to="/cart" aria-label="Back to cart"><ChevronLeft className="h-5 w-5" /></Link>
+              </Button>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground leading-tight">
+                    Secure Checkout
+                  </h1>
+                  <span className="inline-flex items-center rounded-full bg-white/15 backdrop-blur px-2.5 py-0.5 text-[11px] font-semibold text-store-primary-foreground">
+                    {itemCount} {itemCount === 1 ? "item" : "items"}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-store-primary-foreground/80 mt-0.5">
+                  Complete your order in 4 quick steps
+                </p>
+              </div>
+            </div>
+            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur px-3 py-1.5 text-xs font-medium text-store-primary-foreground shrink-0">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              SSL Secured
+            </div>
+          </div>
+
+          {/* Free shipping progress (shown when enabled & not yet free) */}
+          {freeShippingEnabled && subtotal > 0 && subtotal < freeShippingThreshold && (
+            <div className="mt-4 rounded-lg bg-white/10 backdrop-blur border border-white/15 px-3 py-2 flex items-center gap-2 text-xs sm:text-sm text-store-primary-foreground">
+              <Truck className="h-4 w-4 shrink-0" />
+              <span className="flex-1 min-w-0 truncate">
+                Add <span className="font-semibold">{formatPrice(freeShippingThreshold - subtotal)}</span> more for free shipping
+              </span>
+              <div className="hidden sm:block w-32 h-1.5 rounded-full bg-white/20 overflow-hidden shrink-0">
+                <div
+                  className="h-full bg-store-primary-foreground/90 transition-all"
+                  style={{ width: `${Math.min((subtotal / freeShippingThreshold) * 100, 100)}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Steps integrated inside same gradient */}
+          <div className="mt-5 pt-4 border-t border-white/15">
+            <CheckoutSteps currentStep={currentStep} variant="onGradient" />
           </div>
         </div>
       </section>
-
-      {/* Checkout Steps */}
-      <div className="container mx-auto px-4">
-        <CheckoutSteps currentStep={currentStep} />
-      </div>
 
       <div className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit}>
