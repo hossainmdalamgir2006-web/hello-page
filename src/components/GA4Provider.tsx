@@ -79,6 +79,7 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
 
     // --- Meta Pixel ---
     safeRemoveById('meta-pixel-script');
+    safeRemoveById('meta-pixel-sdk');
 
     if (metaPixelEnabled && metaPixelId) {
       // Initialize fbq stub WITHOUT mutating DOM via insertBefore (which
