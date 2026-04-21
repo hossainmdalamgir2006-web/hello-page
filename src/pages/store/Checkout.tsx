@@ -495,64 +495,43 @@ export default function Checkout() {
   return (
     <>
       <SEOHead title="Secure Checkout" description="Complete your order securely in just a few quick steps." noIndex={true} />
-      {/* Unified Page Header */}
-      <section className="relative bg-gradient-to-br from-store-primary via-store-primary to-store-secondary overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-store-accent/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="container mx-auto px-4 relative z-10 py-6 md:py-8">
-          {/* Top row: Back + title + trust badge */}
-          <div className="flex items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-store-primary-foreground hover:bg-white/15 hover:text-store-primary-foreground shrink-0 h-10 w-10"
-                asChild
-              >
-                <Link to="/cart" aria-label="Back to cart"><ChevronLeft className="h-5 w-5" /></Link>
-              </Button>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground leading-tight">
-                    Secure Checkout
-                  </h1>
-                  <span className="inline-flex items-center rounded-full bg-white/15 backdrop-blur px-2.5 py-0.5 text-[11px] font-semibold text-store-primary-foreground">
-                    {itemCount} {itemCount === 1 ? "item" : "items"}
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-store-primary-foreground/80 mt-0.5">
-                  Complete your order in 4 quick steps
-                </p>
-              </div>
-            </div>
-            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur px-3 py-1.5 text-xs font-medium text-store-primary-foreground shrink-0">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              SSL Secured
-            </div>
-          </div>
-
-          {/* Free shipping progress (shown when enabled & not yet free) */}
-          {freeShippingEnabled && subtotal > 0 && subtotal < freeShippingThreshold && (
-            <div className="mt-4 rounded-lg bg-white/10 backdrop-blur border border-white/15 px-3 py-2 flex items-center gap-2 text-xs sm:text-sm text-store-primary-foreground">
-              <Truck className="h-4 w-4 shrink-0" />
-              <span className="flex-1 min-w-0 truncate">
-                Add <span className="font-semibold">{formatPrice(freeShippingThreshold - subtotal)}</span> more for free shipping
-              </span>
-              <div className="hidden sm:block w-32 h-1.5 rounded-full bg-white/20 overflow-hidden shrink-0">
-                <div
-                  className="h-full bg-store-primary-foreground/90 transition-all"
-                  style={{ width: `${Math.min((subtotal / freeShippingThreshold) * 100, 100)}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Steps integrated inside same gradient */}
-          <div className="mt-5 pt-4 border-t border-white/15">
-            <CheckoutSteps currentStep={currentStep} variant="onGradient" />
-          </div>
+      {/* Hero Banner - matching Cart page style */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-store-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-store-primary/8 rounded-full blur-2xl" />
         </div>
-      </section>
+        <div className="container mx-auto px-4 py-12 md:py-16 text-center relative z-10">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-store-primary/10 border border-store-primary/20 px-3 py-1 text-xs font-semibold text-store-primary mb-4">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            SSL Secured Checkout
+          </div>
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
+            Secure Checkout
+          </h1>
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
+            {itemCount} {itemCount === 1 ? 'item' : 'items'} • Complete your order in 4 quick steps
+          </p>
+        </div>
+      </div>
+
+      {/* Steps Bar */}
+      <div className="border-b bg-background/60 backdrop-blur sticky top-0 z-20">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground -ml-2" asChild>
+              <Link to="/cart"><ChevronLeft className="h-4 w-4 mr-1" /> Back to cart</Link>
+            </Button>
+            {freeShippingEnabled && subtotal > 0 && subtotal < freeShippingThreshold && (
+              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+                <Truck className="h-3.5 w-3.5 text-store-primary" />
+                Add <span className="font-semibold text-foreground">{formatPrice(freeShippingThreshold - subtotal)}</span> more for free shipping
+              </div>
+            )}
+          </div>
+          <CheckoutSteps currentStep={currentStep} />
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit}>
