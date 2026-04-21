@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { CreditCard, Truck, Mail, ChevronLeft, ShieldCheck, Tag, X, Smartphone, MapPin, Loader2, Building, Save, Clock, Sparkles, Building2, AlertCircle, FileText } from "lucide-react";
+import { CreditCard, Truck, Mail, ShieldCheck, Smartphone, MapPin, Loader2, Building, Save, Clock, Building2, AlertCircle, FileText, Zap, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 import { SEOHead } from "@/components/SEOHead";
 import { useCart } from "@/contexts/CartContext";
@@ -24,11 +25,13 @@ import { toast } from "sonner";
 import { ManualPaymentInstructions } from "@/components/checkout/ManualPaymentInstructions";
 import { BankTransferInstructions } from "@/components/checkout/BankTransferInstructions";
 import { SavedAddressSelector } from "@/components/checkout/SavedAddressSelector";
-import { CheckoutSteps } from "@/components/store/CheckoutSteps";
 import { GiftOptions } from "@/components/checkout/GiftOptions";
 import { OrderReviewModal } from "@/components/checkout/OrderReviewModal";
 import { CheckoutContactSection } from "@/components/checkout/CheckoutContactSection";
 import { CheckoutOrderSummary } from "@/components/checkout/CheckoutOrderSummary";
+import { CollapsibleSection } from "@/components/checkout/CollapsibleSection";
+import { TrustSignalsStrip } from "@/components/checkout/TrustSignalsStrip";
+import { MobileCheckoutBar } from "@/components/checkout/MobileCheckoutBar";
 import { formatPrice } from "@/lib/formatPrice";
 
 interface CouponState {
@@ -51,10 +54,17 @@ interface SavedAddress {
   is_default: boolean | null;
 }
 
+const COMMON_BD_CITIES = [
+  "Dhaka", "Chattogram", "Khulna", "Rajshahi", "Sylhet", "Barishal", "Rangpur", "Mymensingh",
+  "Cumilla", "Narayanganj", "Gazipur", "Cox's Bazar", "Jessore", "Bogura", "Dinajpur", "Tangail",
+];
+
+const stepLabels = ["Contact", "Shipping", "Payment", "Review"];
+
 export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { items: allItems, selectedItems, selectedSubtotal, subtotal: cartSubtotal, clearCart, markCartRecovered, removeSelectedItems } = useCart();
+  const { items: allItems, selectedItems, selectedSubtotal, subtotal: cartSubtotal, clearCart, markCartRecovered, removeSelectedItems, updateQuantity } = useCart();
   const items = selectedItems.length > 0 ? selectedItems : allItems;
   const subtotal = selectedItems.length > 0 ? selectedSubtotal : cartSubtotal;
   const { user } = useAuth();
@@ -72,6 +82,7 @@ export default function Checkout() {
     if (couponState?.couponCode && !appliedCoupon) {
       validateCoupon(couponState.couponCode, subtotal);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [formData, setFormData] = useState({
@@ -84,25 +95,26 @@ export default function Checkout() {
     postalCode: "",
     notes: "",
   });
-  
+
   const [selectedZoneId, setSelectedZoneId] = useState<string>("");
   const [selectedRateId, setSelectedRateId] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [transactionId, setTransactionId] = useState("");
   const [createAccount, setCreateAccount] = useState(false);
   const [processing, setProcessing] = useState(false);
-  
+
   const [useSavedShippingAddress, setUseSavedShippingAddress] = useState(true);
   const [selectedSavedAddress, setSelectedSavedAddress] = useState<SavedAddress | null>(null);
-  
+  const [hasSavedShippingAddress, setHasSavedShippingAddress] = useState(false);
+
   const [billingAddressSameAsShipping, setBillingAddressSameAsShipping] = useState(true);
   const [selectedBillingAddress, setSelectedBillingAddress] = useState<SavedAddress | null>(null);
   const [useSavedBillingAddress, setUseSavedBillingAddress] = useState(true);
   const [hasBillingAddresses, setHasBillingAddresses] = useState(false);
-  
+
   const [saveShippingAddress, setSaveShippingAddress] = useState(false);
   const [shippingAddressLabel, setShippingAddressLabel] = useState("Home");
-  
+
   const [saveBillingAddress, setSaveBillingAddress] = useState(false);
   const [billingAddressLabel, setBillingAddressLabel] = useState("Office");
   const [billingFormData, setBillingFormData] = useState({
@@ -120,21 +132,49 @@ export default function Checkout() {
   // Order review modal
   const [showReviewModal, setShowReviewModal] = useState(false);
 
-  // Checkout step tracking (visual only)
+  // Section collapse state — manually controllable
+  const [openSection, setOpenSection] = useState<"contact" | "shipping" | "payment" | null>("contact");
+
+  // Refs for scroll-to-section on Edit
+  const contactRef = useRef<HTMLDivElement>(null);
+  const shippingRef = useRef<HTMLDivElement>(null);
+  const paymentRef = useRef<HTMLDivElement>(null);
+
+  // Phone validation helper
+  const phoneRegex = /^(\+?880|0)?1[3-9]\d{8}$/;
+  const isValidPhone = phoneRegex.test(formData.phone.replace(/[\s-]/g, ''));
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValidEmail = emailRegex.test(formData.email);
+
+  // Section completion logic
+  const contactComplete = isValidEmail;
+  const shippingComplete = !!(formData.firstName && formData.lastName && isValidPhone && formData.address && formData.city && selectedZoneId && selectedRateId);
+  const paymentComplete = !!paymentMethod && (
+    !['bkash', 'nagad', 'rocket', 'upay', 'bank_transfer', 'cheque'].includes(paymentMethod) ||
+    !!transactionId.trim()
+  );
+
+  // Auto-progress to next section when current completes
+  useEffect(() => {
+    if (openSection === "contact" && contactComplete) {
+      setOpenSection("shipping");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contactComplete]);
+
+  // Checkout step tracking (visual indicator)
   const currentStep = useMemo(() => {
-    if (!formData.email) return 0;
-    if (!formData.firstName || !formData.phone || !formData.address || !formData.city) return 0;
-    if (!selectedZoneId || !selectedRateId) return 1;
-    if (!paymentMethod) return 2;
+    if (!contactComplete) return 0;
+    if (!shippingComplete) return 1;
+    if (!paymentComplete) return 2;
     return 3;
-  }, [formData, selectedZoneId, selectedRateId, paymentMethod]);
+  }, [contactComplete, shippingComplete, paymentComplete]);
 
   const selectedZone = useMemo(() => zonesWithRates.find(z => z.id === selectedZoneId), [zonesWithRates, selectedZoneId]);
   const availableRates = useMemo(() => selectedZone?.rates?.filter(r => r.is_active) || [], [selectedZone]);
   const selectedRate = useMemo(() => availableRates.find(r => r.id === selectedRateId), [availableRates, selectedRateId]);
 
   const shippingCost = useMemo(() => {
-    // Admin-controlled free shipping threshold overrides any rate
     if (subtotal >= freeShippingThreshold) return 0;
     if (!selectedRate) return 0;
     if (selectedRate.max_order_amount && subtotal >= selectedRate.max_order_amount) return 0;
@@ -162,7 +202,7 @@ export default function Checkout() {
       const matchedZone = zonesWithRates.find(zone => {
         const zoneName = zone.name.toLowerCase();
         const regions = zone.regions.map(r => r.toLowerCase());
-        return zoneName.includes(cityLower) || 
+        return zoneName.includes(cityLower) ||
                cityLower.includes(zoneName.replace(' সিটি', '').replace(' city', '')) ||
                regions.some(r => r.includes(cityLower) || cityLower.includes(r));
       });
@@ -177,31 +217,36 @@ export default function Checkout() {
 
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
   const autoDiscount = couponState?.autoDiscount || calculateAutoDiscount(subtotal, selectedItems);
-  const activeAutoRules = getActiveRules().filter(rule => rule.rule_type === "cart_total" ? (rule.min_purchase && subtotal >= rule.min_purchase) : true);
-  
+
   const couponDiscount = appliedCoupon?.discountAmount || couponState?.discountAmount || 0;
   const discount = Math.max(couponDiscount, autoDiscount);
   const isAutoDiscountApplied = autoDiscount > couponDiscount && autoDiscount > 0;
-  
+
   const codCharge = useMemo(() => {
     const selectedMethod = enabledPaymentMethods.find(m => m.method_id === paymentMethod);
     if (!selectedMethod || selectedMethod.method_id !== 'cod' || !selectedMethod.cod_charge_enabled) return 0;
     if (selectedMethod.cod_charge_type === 'percentage') return Math.round((subtotal * selectedMethod.cod_charge_value) / 100);
     return selectedMethod.cod_charge_value;
   }, [enabledPaymentMethods, paymentMethod, subtotal]);
-  
+
   const total = subtotal - discount + shippingCost + codCharge;
 
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  // Smart phone prefix: auto-prepend +880 when user starts typing digits
+  const handlePhoneChange = (raw: string) => {
+    let value = raw.replace(/[^0-9+\s-]/g, '').slice(0, 18);
+    if (value && !value.startsWith('+') && !value.startsWith('0')) {
+      // user typed digits without prefix
+      if (/^1[3-9]/.test(value)) {
+        value = `+880 ${value}`;
+      }
+    }
+    setFormData(prev => ({ ...prev, phone: value }));
   };
 
   const validateForm = (): boolean => {
     if (!formData.firstName || !formData.lastName || !formData.phone || !formData.address || !formData.city) {
       toast.error(t('checkout.fillRequired')); return false;
     }
-    const phoneRegex = /^(\+?880|0)?1[3-9]\d{8}$/;
     if (!phoneRegex.test(formData.phone.replace(/[\s-]/g, ''))) {
       toast.error(t('checkout.validPhone')); return false;
     }
@@ -212,7 +257,7 @@ export default function Checkout() {
     if (formData.postalCode && formData.postalCode.length > 10) { toast.error("Postal code must be less than 10 characters"); return false; }
     if (!formData.email) { toast.error("Please provide an email address"); return false; }
     if (!selectedZoneId || !selectedRateId) { toast.error(t('checkout.selectShipping')); return false; }
-    
+
     if (!billingAddressSameAsShipping && !useSavedBillingAddress) {
       if (!billingFormData.firstName || !billingFormData.lastName || !billingFormData.phone || !billingFormData.address || !billingFormData.city) {
         toast.error(t('checkout.fillBilling')); return false;
@@ -240,6 +285,20 @@ export default function Checkout() {
     e.preventDefault();
     if (!validateForm()) return;
     setShowReviewModal(true);
+  };
+
+  // Express checkout: jump straight to payment
+  const handleExpressCheckout = () => {
+    setOpenSection("payment");
+    setTimeout(() => paymentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+  };
+
+  const editSection = (section: "contact" | "shipping" | "payment") => {
+    setOpenSection(section);
+    setTimeout(() => {
+      const ref = section === "contact" ? contactRef : section === "shipping" ? shippingRef : paymentRef;
+      ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   };
 
   const handleConfirmOrder = async () => {
@@ -299,9 +358,7 @@ export default function Checkout() {
 
       // Deduct product stock for each ordered item
       for (const item of items) {
-        // Check if this is a variant (has size/color info indicating variant)
         if (item.size || item.color) {
-          // Try to find and update variant stock
           const variantName = item.size || item.color || '';
           const { data: variantData } = await supabase
             .from('product_variants')
@@ -309,7 +366,7 @@ export default function Checkout() {
             .eq('product_id', item.id)
             .ilike('name', `%${variantName}%`)
             .maybeSingle();
-          
+
           if (variantData) {
             await supabase
               .from('product_variants')
@@ -317,14 +374,13 @@ export default function Checkout() {
               .eq('id', variantData.id);
           }
         }
-        
-        // Always deduct from main product stock
+
         const { data: productData } = await supabase
           .from('products')
           .select('quantity')
           .eq('id', item.id)
           .single();
-        
+
         if (productData) {
           await supabase
             .from('products')
@@ -375,7 +431,7 @@ export default function Checkout() {
           toast.success(`Shipping address saved as "${shippingAddressLabel}"`);
         } catch (e) { console.error("Failed to save address:", e); }
       }
-      
+
       if (user && saveBillingAddress && !billingAddressSameAsShipping && !useSavedBillingAddress) {
         try {
           await supabase.from('user_addresses').insert({
@@ -385,18 +441,17 @@ export default function Checkout() {
           toast.success(`Billing address saved as "${billingAddressLabel}"`);
         } catch (e) { console.error("Failed to save billing address:", e); }
       }
-      
+
       await markCartRecovered(order.id);
-      // Only remove checked-out items, not the entire cart
       if (selectedItems.length > 0 && selectedItems.length < allItems.length) {
         removeSelectedItems();
       } else {
         clearCart();
       }
-      
+
       const selectedPaymentMethod = enabledPaymentMethods.find(m => m.method_id === paymentMethod);
-      
-      const orderConfirmationState = { 
+
+      const orderConfirmationState = {
         orderNumber: order.order_number,
         paymentMethod: selectedPaymentMethod ? {
           method_id: selectedPaymentMethod.method_id, name: selectedPaymentMethod.name, name_bn: selectedPaymentMethod.name_bn,
@@ -418,18 +473,16 @@ export default function Checkout() {
         shippingZone: selectedZone?.name || '',
       };
 
-      // Check if this is a gateway or bKash API mode — use real payment flow
       const isBkashApi = selectedPaymentMethod?.method_id === 'bkash' && selectedPaymentMethod?.payment_mode === 'api';
       const isGatewayMethod = selectedPaymentMethod?.type === 'gateway';
-      
+
       if (isGatewayMethod || isBkashApi) {
         try {
-          // Store order confirmation state in sessionStorage for callback
           sessionStorage.setItem('gateway_order_state', JSON.stringify(orderConfirmationState));
-          
+
           const baseUrl = window.location.origin;
           const gatewayId = selectedPaymentMethod?.method_id || paymentMethod;
-          
+
           const { data: gwData, error: gwError } = await supabase.functions.invoke('payment-gateway-init', {
             body: {
               gateway: gatewayId,
@@ -454,9 +507,8 @@ export default function Checkout() {
             throw new Error(gwData?.error || `Failed to initialize ${selectedPaymentMethod?.name || gatewayId} payment`);
           }
 
-          // Redirect to payment gateway page
           window.location.href = gwData.gatewayUrl;
-          return; // Don't navigate further
+          return;
         } catch (gwErr: any) {
           console.error('Payment gateway init failed:', gwErr);
           toast.error(`Payment gateway error: ${gwErr.message || 'Could not connect to payment gateway'}`);
@@ -465,10 +517,9 @@ export default function Checkout() {
           return;
         }
       }
-      
-      // Manual/COD methods: go directly to order confirmation
+
       navigate("/order-confirmation", { state: orderConfirmationState });
-      
+
     } catch (error: any) {
       console.error('Checkout error:', error);
       toast.error(error.message || "Failed to place order. Please try again.");
@@ -492,52 +543,151 @@ export default function Checkout() {
 
   const selectedPaymentMethodObj = enabledPaymentMethods.find(m => m.method_id === paymentMethod);
 
+  // Build summary lines for collapsed sections
+  const contactSummary = formData.email || "";
+  const shippingSummary = shippingComplete
+    ? `${formData.firstName} ${formData.lastName} • ${formData.city}${formData.postalCode ? ` ${formData.postalCode}` : ''}`
+    : "";
+  const paymentSummary = paymentComplete
+    ? `${selectedPaymentMethodObj?.name || paymentMethod}${transactionId ? ` • Trx: ${transactionId}` : ''}`
+    : "";
+
+  // Delivery estimate for review modal
+  const deliveryEstimate = selectedRate
+    ? (() => {
+        const min = selectedRate.min_days ?? 1;
+        const max = selectedRate.max_days ?? 3;
+        const today = new Date();
+        const minD = new Date(today); minD.setDate(today.getDate() + min);
+        const maxD = new Date(today); maxD.setDate(today.getDate() + max);
+        const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return `${fmt(minD)} – ${fmt(maxD)}`;
+      })()
+    : undefined;
+
   return (
     <>
       <SEOHead title="Secure Checkout" description="Complete your order securely in just a few quick steps." noIndex={true} />
-      {/* Hero Banner - matching Cart page style */}
+
+      {/* Hero Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-store-primary/5 rounded-full blur-3xl" />
           <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-store-primary/8 rounded-full blur-2xl" />
         </div>
-        <div className="container mx-auto px-4 py-12 md:py-16 text-center relative z-10">
+        <div className="container mx-auto px-4 py-10 md:py-14 text-center relative z-10">
           <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
             Secure Checkout
           </h1>
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
             {itemCount} {itemCount === 1 ? 'item' : 'items'} in your bag
           </p>
+
+          {/* 4-dot progress indicator */}
+          <div className="flex items-center justify-center gap-2 mt-6 max-w-md mx-auto">
+            {stepLabels.map((label, idx) => {
+              const isActive = idx === currentStep;
+              const isDone = idx < currentStep;
+              return (
+                <div key={label} className="flex items-center flex-1 last:flex-none">
+                  <div className="flex flex-col items-center gap-1.5 flex-1">
+                    <div
+                      className={cn(
+                        "h-2.5 w-2.5 rounded-full transition-all",
+                        isDone && "bg-store-primary",
+                        isActive && "bg-store-primary ring-4 ring-store-primary/20 scale-125",
+                        !isDone && !isActive && "bg-muted-foreground/30"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "text-[10px] sm:text-xs font-medium transition-colors hidden sm:block",
+                        (isActive || isDone) ? "text-store-primary" : "text-muted-foreground"
+                      )}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                  {idx < stepLabels.length - 1 && (
+                    <div className={cn("h-px flex-1 mx-1 transition-colors", isDone ? "bg-store-primary" : "bg-muted-foreground/20")} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pb-24 lg:pb-8">
         <form onSubmit={handleSubmit}>
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Checkout Form */}
-            <div className="lg:col-span-2 space-y-6">
-              <CheckoutContactSection
-                email={formData.email}
-                onEmailChange={(email) => setFormData(prev => ({ ...prev, email }))}
-                isLoggedIn={!!user}
-                createAccount={createAccount}
-                onCreateAccountChange={setCreateAccount}
-              />
+            <div className="lg:col-span-2 space-y-4">
+              {/* Express Checkout Banner — only logged-in users with saved addresses */}
+              {user && hasSavedShippingAddress && contactComplete && shippingComplete && openSection !== "payment" && (
+                <div className="rounded-lg border border-store-primary/30 bg-gradient-to-r from-store-primary/10 via-store-primary/5 to-transparent p-4 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="h-10 w-10 rounded-full bg-store-primary/15 flex items-center justify-center flex-shrink-0">
+                      <Zap className="h-5 w-5 text-store-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm">Express Checkout</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        Your saved address is loaded. Skip to payment to finish faster.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleExpressCheckout}
+                    className="bg-store-primary hover:bg-store-primary/90 flex-shrink-0"
+                  >
+                    Skip to Pay
+                  </Button>
+                </div>
+              )}
 
-              {/* Shipping Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5 text-store-primary" /> {t('checkout.shippingInfo')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              {/* Contact Section — Collapsible */}
+              <div ref={contactRef}>
+                <CollapsibleSection
+                  icon={<Mail className="h-4 w-4" />}
+                  title={t('store.contactInformation')}
+                  isComplete={contactComplete}
+                  isOpen={openSection === "contact" || !contactComplete}
+                  onToggle={() => setOpenSection(openSection === "contact" ? null : "contact")}
+                  summary={contactSummary}
+                  stepNumber={1}
+                >
+                  <CheckoutContactSection
+                    email={formData.email}
+                    onEmailChange={(email) => setFormData(prev => ({ ...prev, email }))}
+                    isLoggedIn={!!user}
+                    createAccount={createAccount}
+                    onCreateAccountChange={setCreateAccount}
+                    hideHeader
+                  />
+                </CollapsibleSection>
+              </div>
+
+              {/* Shipping Section — Collapsible */}
+              <div ref={shippingRef}>
+                <CollapsibleSection
+                  icon={<Truck className="h-4 w-4" />}
+                  title={t('checkout.shippingInfo')}
+                  isComplete={shippingComplete}
+                  isOpen={openSection === "shipping" || (contactComplete && !shippingComplete)}
+                  onToggle={() => setOpenSection(openSection === "shipping" ? null : "shipping")}
+                  summary={shippingSummary}
+                  stepNumber={2}
+                >
                   {user && (
                     <>
                       <SavedAddressSelector
                         userId={user.id} type="shipping"
                         onSelectAddress={(address) => {
                           if (address) {
+                            setHasSavedShippingAddress(true);
                             setSelectedSavedAddress({ id: address.id, label: address.label, full_name: address.full_name, phone: address.phone, street_address: address.street_address, area: address.area, city: address.city, postal_code: address.postal_code, is_default: address.is_default });
                             setUseSavedShippingAddress(true);
                             const nameParts = address.full_name.split(" ");
@@ -554,29 +704,56 @@ export default function Checkout() {
                     <div>
                       <Label htmlFor="firstName">{t('checkout.firstName')} *</Label>
                       <Input id="firstName" name="firstName" value={formData.firstName} onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value.slice(0, 50) }))} maxLength={50} required />
-                      <p className="text-xs text-muted-foreground mt-1">{formData.firstName.length}/50</p>
+                      {formData.firstName.length > 40 && (
+                        <p className="text-xs text-muted-foreground mt-1">{formData.firstName.length}/50</p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="lastName">{t('checkout.lastName')} *</Label>
                       <Input id="lastName" name="lastName" value={formData.lastName} onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value.slice(0, 50) }))} maxLength={50} required />
-                      <p className="text-xs text-muted-foreground mt-1">{formData.lastName.length}/50</p>
+                      {formData.lastName.length > 40 && (
+                        <p className="text-xs text-muted-foreground mt-1">{formData.lastName.length}/50</p>
+                      )}
                     </div>
                   </div>
                   <div>
                     <Label htmlFor="phone">{t('checkout.phoneNumber')} *</Label>
-                    <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 15); setFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={15} required />
+                    <div className="relative">
+                      <Input
+                        id="phone" name="phone" type="tel"
+                        value={formData.phone}
+                        onChange={(e) => handlePhoneChange(e.target.value)}
+                        placeholder="+880 1XXX-XXXXXX"
+                        maxLength={18}
+                        required
+                        className={cn(isValidPhone && "pr-9 border-green-500/50 focus-visible:ring-green-500")}
+                      />
+                      {isValidPhone && (
+                        <CheckCircle2 className="h-4 w-4 text-green-600 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground mt-1">{t('checkout.phoneFormat')}</p>
                   </div>
                   <div>
                     <Label htmlFor="address">{t('checkout.address')} *</Label>
                     <Input id="address" name="address" value={formData.address} onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value.slice(0, 200) }))} placeholder={t('checkout.houseFlatNo')} maxLength={200} required />
-                    <p className="text-xs text-muted-foreground mt-1">{formData.address.length}/200</p>
+                    {formData.address.length > 160 && (
+                      <p className="text-xs text-muted-foreground mt-1">{formData.address.length}/200</p>
+                    )}
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="city">{t('checkout.city')} *</Label>
-                      <Input id="city" name="city" value={formData.city} onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required />
-                      <p className="text-xs text-muted-foreground mt-1">{formData.city.length}/50</p>
+                      <Input
+                        id="city" name="city" value={formData.city}
+                        onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))}
+                        maxLength={50}
+                        required
+                        list="bd-cities"
+                      />
+                      <datalist id="bd-cities">
+                        {COMMON_BD_CITIES.map(city => <option key={city} value={city} />)}
+                      </datalist>
                     </div>
                     <div>
                       <Label htmlFor="postalCode">{t('checkout.postalCode')}</Label>
@@ -586,10 +763,12 @@ export default function Checkout() {
                   <div>
                     <Label htmlFor="notes">{t('checkout.orderNotes')}</Label>
                     <Input id="notes" name="notes" value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value.slice(0, 500) }))} placeholder={t('checkout.specialInstructions')} maxLength={500} />
-                    <p className="text-xs text-muted-foreground mt-1">{formData.notes.length}/500</p>
+                    {formData.notes.length > 400 && (
+                      <p className="text-xs text-muted-foreground mt-1">{formData.notes.length}/500</p>
+                    )}
                   </div>
 
-                  {/* Shipping Zone & Rate Selection */}
+                  {/* Shipping Zone & Rate */}
                   <Separator className="my-4" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm font-medium">
@@ -597,6 +776,13 @@ export default function Checkout() {
                     </div>
                     {shippingLoading ? (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> {t('checkout.loadingShipping')}</div>
+                    ) : zonesWithRates.filter(z => z.is_active).length === 0 ? (
+                      <div className="rounded-lg border border-dashed p-4 text-center space-y-2">
+                        <p className="text-sm text-muted-foreground">No shipping options available for your area.</p>
+                        <Button type="button" variant="outline" size="sm" asChild>
+                          <Link to="/contact">Contact Support</Link>
+                        </Button>
+                      </div>
                     ) : (
                       <>
                         <div>
@@ -618,9 +804,9 @@ export default function Checkout() {
                                 const isFree = rate.max_order_amount && subtotal >= rate.max_order_amount;
                                 const displayPrice = isFree ? 0 : rate.rate;
                                 return (
-                                  <label key={rate.id} className="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:border-store-primary transition-colors">
+                                  <label key={rate.id} className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:border-store-primary transition-colors">
                                     <div className="flex items-center gap-3">
-                                      <RadioGroupItem value={rate.id} />
+                                      <RadioGroupItem value={rate.id} className="h-5 w-5" />
                                       <div>
                                         <p className="font-medium text-sm">{rate.name}</p>
                                         <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -639,7 +825,12 @@ export default function Checkout() {
                             </RadioGroup>
                           </div>
                         )}
-                        {selectedZone && availableRates.length === 0 && <p className="text-sm text-muted-foreground">{t('checkout.noShippingOptions')}</p>}
+                        {selectedZone && availableRates.length === 0 && (
+                          <div className="rounded-lg border border-dashed p-4 text-center space-y-2">
+                            <p className="text-sm text-muted-foreground">No delivery options for this zone.</p>
+                            <p className="text-xs text-muted-foreground">Try selecting a different shipping zone above.</p>
+                          </div>
+                        )}
                       </>
                     )}
                   </div>
@@ -670,10 +861,10 @@ export default function Checkout() {
                       </div>
                     </>
                   )}
-                </CardContent>
-              </Card>
+                </CollapsibleSection>
+              </div>
 
-              {/* Billing Address */}
+              {/* Billing Address (kept as-is, always open since optional) */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2"><Building className="h-5 w-5 text-store-primary" /> {t('checkout.billingAddress')}</CardTitle>
@@ -713,7 +904,7 @@ export default function Checkout() {
                             </div>
                             <div>
                               <Label htmlFor="billingPhone">{t('checkout.phoneNumber')} *</Label>
-                              <Input id="billingPhone" type="tel" value={billingFormData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 15); setBillingFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={15} required={!billingAddressSameAsShipping} />
+                              <Input id="billingPhone" type="tel" value={billingFormData.phone} onChange={(e) => { const value = e.target.value.replace(/[^0-9+\s-]/g, '').slice(0, 18); setBillingFormData(prev => ({ ...prev, phone: value })); }} placeholder="+880 1XXX-XXXXXX" maxLength={18} required={!billingAddressSameAsShipping} />
                             </div>
                             <div>
                               <Label htmlFor="billingAddress">{t('checkout.address')} *</Label>
@@ -722,7 +913,7 @@ export default function Checkout() {
                             <div className="grid sm:grid-cols-2 gap-4">
                               <div>
                                 <Label htmlFor="billingCity">{t('checkout.city')} *</Label>
-                                <Input id="billingCity" value={billingFormData.city} onChange={(e) => setBillingFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} />
+                                <Input id="billingCity" value={billingFormData.city} onChange={(e) => setBillingFormData(prev => ({ ...prev, city: e.target.value.slice(0, 50) }))} maxLength={50} required={!billingAddressSameAsShipping} list="bd-cities" />
                               </div>
                               <div>
                                 <Label htmlFor="billingPostalCode">{t('checkout.postalCode')}</Label>
@@ -764,16 +955,33 @@ export default function Checkout() {
                 </CardContent>
               </Card>
 
-              {/* Payment Method */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5 text-store-primary" /> {t('checkout.paymentMethod')}</CardTitle>
-                </CardHeader>
-                <CardContent>
+              {/* Trust Signals Strip — above payment */}
+              <TrustSignalsStrip />
+
+              {/* Payment Section — Collapsible */}
+              <div ref={paymentRef}>
+                <CollapsibleSection
+                  icon={<CreditCard className="h-4 w-4" />}
+                  title={t('checkout.paymentMethod')}
+                  isComplete={paymentComplete && openSection !== "payment"}
+                  isOpen={openSection === "payment" || (shippingComplete && !paymentComplete) || openSection === null}
+                  onToggle={() => setOpenSection(openSection === "payment" ? null : "payment")}
+                  summary={paymentSummary}
+                  stepNumber={3}
+                >
                   {paymentMethodsLoading ? (
                     <div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
                   ) : enabledPaymentMethods.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-4">{t('checkout.noPaymentMethods')}</p>
+                    <div className="rounded-lg border border-dashed p-6 text-center space-y-3">
+                      <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto" />
+                      <div>
+                        <p className="font-medium">{t('checkout.noPaymentMethods')}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Please contact our team to complete your order.</p>
+                      </div>
+                      <Button type="button" variant="outline" size="sm" asChild>
+                        <Link to="/contact">Contact Support</Link>
+                      </Button>
+                    </div>
                   ) : (
                     <>
                       <RadioGroup value={paymentMethod} onValueChange={(value) => { setPaymentMethod(value); setTransactionId(""); }}>
@@ -785,7 +993,7 @@ export default function Checkout() {
                             }
                             return (
                               <label key={method.id} className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:border-store-primary transition-colors">
-                                <RadioGroupItem value={method.method_id} id={method.method_id} />
+                                <RadioGroupItem value={method.method_id} id={method.method_id} className="h-5 w-5" />
                                 <div className="flex-1 flex items-center gap-3">
                                   {method.logo_url ? (
                                     <img src={method.logo_url} alt={method.name} className="h-10 w-10 object-contain rounded" />
@@ -798,9 +1006,7 @@ export default function Checkout() {
                                   )}
                                   <div className="flex-1">
                                     <div className="flex items-center justify-between">
-                                      <p className="font-medium">
-                                       {method.name}
-                                      </p>
+                                      <p className="font-medium">{method.name}</p>
                                       {methodCodCharge > 0 && (
                                         <span className="text-xs text-warning bg-warning/10 px-2 py-0.5 rounded">+{formatPrice(methodCodCharge)}</span>
                                       )}
@@ -813,22 +1019,19 @@ export default function Checkout() {
                           })}
                         </div>
                       </RadioGroup>
-                      
+
                       {(() => {
                         const selectedMethod = enabledPaymentMethods.find(m => m.method_id === paymentMethod);
                         if (!selectedMethod) return null;
 
-                        // Manual mobile payments (bKash, Nagad, Rocket, Upay)
                         if (selectedMethod.type === 'mobile' || ['bkash', 'nagad', 'rocket', 'upay'].includes(selectedMethod.method_id)) {
                           return <ManualPaymentInstructions paymentMethod={selectedMethod} transactionId={transactionId} onTransactionIdChange={setTransactionId} />;
                         }
 
-                        // Bank transfer
                         if (selectedMethod.method_id === 'bank_transfer') {
                           return <BankTransferInstructions paymentMethod={selectedMethod} transactionId={transactionId} onTransactionIdChange={setTransactionId} />;
                         }
 
-                        // COD with charge
                         if (selectedMethod.method_id === 'cod') {
                           return (
                             <div className="mt-4 p-4 bg-muted/50 rounded-lg border">
@@ -854,7 +1057,6 @@ export default function Checkout() {
                           );
                         }
 
-                        // Cheque payment
                         if (selectedMethod.method_id === 'cheque') {
                           return (
                             <div className="space-y-4 mt-4 p-4 bg-muted/50 rounded-lg border">
@@ -882,7 +1084,6 @@ export default function Checkout() {
                           );
                         }
 
-                        // All gateway / auto payment methods (SSLCommerz, Stripe, PayPal, aamarPay, ShurjoPay, 2Checkout, Payoneer)
                         if (selectedMethod.type === 'gateway') {
                           return (
                             <div className="mt-4 p-4 bg-muted/50 rounded-lg border">
@@ -905,7 +1106,6 @@ export default function Checkout() {
                           );
                         }
 
-                        // Fallback for custom methods
                         return (
                           <div className="mt-4 p-4 bg-muted/50 rounded-lg border">
                             <p className="text-sm text-muted-foreground">{selectedMethod.description || 'Follow the instructions to complete payment.'}</p>
@@ -917,8 +1117,8 @@ export default function Checkout() {
                       })()}
                     </>
                   )}
-                </CardContent>
-              </Card>
+                </CollapsibleSection>
+              </div>
 
               {/* Gift Options */}
               <GiftOptions
@@ -965,11 +1165,30 @@ export default function Checkout() {
               selectedZoneName={selectedZone?.name}
               selectedRateName={selectedRate?.name}
               selectedRateMaxOrderAmount={selectedRate?.max_order_amount}
-              
+              selectedRateMinDays={selectedRate?.min_days}
+              selectedRateMaxDays={selectedRate?.max_days}
+              freeShippingThreshold={freeShippingThreshold}
+              freeShippingEnabled={freeShippingEnabled}
+              onUpdateQuantity={updateQuantity}
+              hideMobileSubmit
             />
           </div>
         </form>
       </div>
+
+      {/* Mobile Sticky Bottom Bar */}
+      <form onSubmit={handleSubmit}>
+        <MobileCheckoutBar
+          total={total}
+          subtotal={subtotal}
+          discount={discount}
+          shippingCost={shippingCost}
+          codCharge={codCharge}
+          itemCount={itemCount}
+          processing={processing}
+          disabled={!selectedZoneId || !selectedRateId || !acceptedTerms}
+        />
+      </form>
 
       {/* Order Review Modal */}
       <OrderReviewModal
@@ -985,6 +1204,10 @@ export default function Checkout() {
         shippingAddress={`${formData.firstName} ${formData.lastName}, ${formData.address}, ${formData.city}${formData.postalCode ? `, ${formData.postalCode}` : ''}`}
         onConfirm={handleConfirmOrder}
         processing={processing}
+        deliveryEstimate={deliveryEstimate}
+        onEditContact={() => editSection("contact")}
+        onEditShipping={() => editSection("shipping")}
+        onEditPayment={() => editSection("payment")}
       />
     </>
   );
