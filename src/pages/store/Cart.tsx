@@ -269,13 +269,33 @@ export default function Cart() {
               const key = getItemKey(item);
               const isSelected = selectedKeys.has(key);
               return (
-                <Card key={key} className={`group rounded-2xl border transition-all duration-200 hover:shadow-md ${isSelected ? 'border-store-primary/40 bg-card shadow-sm' : 'border-border/60 bg-card/50 opacity-80'}`}>
+                <Card
+                  key={key}
+                  className={`group relative rounded-2xl transition-all duration-200 hover:shadow-md cursor-pointer ${
+                    isSelected
+                      ? 'border border-store-primary/40 bg-card shadow-sm'
+                      : 'border border-dashed border-border bg-muted/20'
+                  }`}
+                  onClick={(e) => {
+                    // Toggle selection when clicking the card body (but not on links/buttons/inputs)
+                    const target = e.target as HTMLElement;
+                    if (target.closest('a, button, input, [role="button"]')) return;
+                    toggleSelected(key);
+                  }}
+                >
+                  {!isSelected && (
+                    <Badge variant="secondary" className="absolute top-3 right-12 text-[10px] font-medium bg-muted text-muted-foreground border border-border">
+                      Not in checkout
+                    </Badge>
+                  )}
                   <CardContent className="p-4 sm:p-5">
                     <div className="flex gap-4">
                       <div className="flex items-start pt-1">
                         <Checkbox
                           checked={isSelected}
                           onCheckedChange={() => toggleSelected(key)}
+                          className="h-5 w-5"
+                          aria-label={`Select ${item.name}`}
                         />
                       </div>
                       <Link to={`/product/${item.id}`} className="flex-shrink-0">
