@@ -2,7 +2,7 @@ import { CartItem } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { ShieldCheck, Loader2 } from "lucide-react";
+import { ShieldCheck, Loader2, MapPin, Truck, Pencil, CreditCard } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPrice } from "@/lib/formatPrice";
 
@@ -19,13 +19,23 @@ interface OrderReviewModalProps {
   shippingAddress: string;
   onConfirm: () => void;
   processing: boolean;
+  deliveryEstimate?: string;
+  onEditContact?: () => void;
+  onEditShipping?: () => void;
+  onEditPayment?: () => void;
 }
 
 export function OrderReviewModal({
   open, onOpenChange, items, subtotal, discount, shippingCost, codCharge, total,
   paymentMethodName, shippingAddress, onConfirm, processing,
+  deliveryEstimate, onEditContact, onEditShipping, onEditPayment,
 }: OrderReviewModalProps) {
   const { t } = useLanguage();
+
+  const handleEdit = (cb?: () => void) => {
+    onOpenChange(false);
+    setTimeout(() => cb?.(), 100);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -59,14 +69,61 @@ export function OrderReviewModal({
 
           <Separator />
 
-          <div>
-            <h4 className="font-medium text-sm text-muted-foreground mb-1">{t('store.shippingTo')}</h4>
-            <p className="text-sm">{shippingAddress}</p>
+          {/* Shipping with map preview icon and edit button */}
+          <div className="rounded-lg border bg-muted/30 p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0 flex-1">
+                <div className="h-12 w-12 rounded-lg bg-store-primary/10 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="h-5 w-5 text-store-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-medium text-sm">{t('store.shippingTo')}</h4>
+                  <p className="text-sm text-muted-foreground break-words">{shippingAddress}</p>
+                  {deliveryEstimate && (
+                    <p className="text-xs text-store-primary font-medium mt-1 flex items-center gap-1">
+                      <Truck className="h-3 w-3" /> Arrives {deliveryEstimate}
+                    </p>
+                  )}
+                </div>
+              </div>
+              {onEditShipping && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEdit(onEditShipping)}
+                  className="text-store-primary h-7 px-2 flex-shrink-0"
+                  type="button"
+                >
+                  <Pencil className="h-3 w-3 mr-1" /> Edit
+                </Button>
+              )}
+            </div>
           </div>
 
-          <div>
-            <h4 className="font-medium text-sm text-muted-foreground mb-1">{t('store.payment')}</h4>
-            <p className="text-sm">{paymentMethodName}</p>
+          {/* Payment with edit button */}
+          <div className="rounded-lg border bg-muted/30 p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0 flex-1">
+                <div className="h-12 w-12 rounded-lg bg-store-primary/10 flex items-center justify-center flex-shrink-0">
+                  <CreditCard className="h-5 w-5 text-store-primary" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-medium text-sm">{t('store.payment')}</h4>
+                  <p className="text-sm text-muted-foreground">{paymentMethodName}</p>
+                </div>
+              </div>
+              {onEditPayment && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEdit(onEditPayment)}
+                  className="text-store-primary h-7 px-2 flex-shrink-0"
+                  type="button"
+                >
+                  <Pencil className="h-3 w-3 mr-1" /> Edit
+                </Button>
+              )}
+            </div>
           </div>
 
           <Separator />
