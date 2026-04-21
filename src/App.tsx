@@ -4,6 +4,7 @@ import { Providers } from "@/components/Providers";
 import { ProtectedRoute, AdminRoute, ManagerRoute, SupportRoute } from "@/components/ProtectedRoute";
 import { AutoPageTitle } from "@/components/AutoPageTitle";
 import { TopProgressBar } from "@/components/ui/TopProgressBar";
+import { RootErrorBoundary } from "@/components/RootErrorBoundary";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { StoreLayout } from "@/layouts/StoreLayout";
 
