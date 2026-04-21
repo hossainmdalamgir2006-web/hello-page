@@ -118,7 +118,6 @@ export function CartDrawer() {
               {activeAutoRules.length > 0 && autoDiscount > 0 && (
                 <p className="text-xs text-store-accent">✨ {activeAutoRules[0].name} applied!</p>
               )}
-              <p className="text-xs text-muted-foreground text-center">{t('store.shippingTaxNote')}</p>
               <div className="grid gap-2">
                 <Button className="w-full bg-store-primary hover:bg-store-primary/90" size="lg" asChild onClick={() => setIsOpen(false)}>
                   <Link to="/checkout">{t('store.checkout')}</Link>

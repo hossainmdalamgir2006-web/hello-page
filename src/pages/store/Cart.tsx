@@ -451,9 +451,9 @@ export default function Cart() {
 
                 <Button size="lg" className="w-full bg-store-primary hover:bg-store-primary/90" onClick={handleProceedToCheckout} disabled={selectedItems.length === 0}>
                   {t('store.proceedToCheckout')} ({selectedCount} {t('store.items')})
+                <Button size="lg" className="w-full bg-store-primary hover:bg-store-primary/90" onClick={handleProceedToCheckout} disabled={selectedItems.length === 0}>
+                  {t('store.proceedToCheckout')} ({selectedCount} {t('store.items')})
                 </Button>
-
-                <p className="text-xs text-center text-muted-foreground">Taxes calculated at checkout</p>
               </CardContent>
             </Card>
           </div>
