@@ -116,7 +116,7 @@ export default function Cart() {
     removeItem(item.id, item.size, item.color);
   };
 
-  const getItemKey = (item: { id: string; size?: string; color?: string }) => `${item.id}-${item.size}-${item.color}`;
+  const getItemKey = getCartItemKey;
 
   const unselectedItems = items.filter(i => !selectedKeys.has(getItemKey(i)));
   const unselectedSubtotal = unselectedItems.reduce((s, i) => s + i.price * i.quantity, 0);
