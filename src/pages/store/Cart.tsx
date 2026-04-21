@@ -158,31 +158,21 @@ export default function Cart() {
   return (
     <>
       <SEOHead title={t('store.shoppingCart')} description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
-      {/* Refined Page Header */}
-      <section className="relative bg-gradient-to-b from-muted/40 to-background border-b border-border/50 py-10">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-store-primary/10 flex items-center justify-center ring-1 ring-store-primary/20">
-                <ShoppingBag className="h-6 w-6 text-store-primary" />
-              </div>
-              <div>
-                <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                  {t('store.shoppingCart')}
-                </h1>
-                <p className="text-muted-foreground text-sm mt-0.5">
-                  {items.length} {items.length === 1 ? 'item' : 'items'} in your bag
-                </p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm" className="rounded-full" asChild>
-              <Link to="/products">
-                <ArrowLeft className="h-4 w-4 mr-2" /> {t('store.continueShopping')}
-              </Link>
-            </Button>
-          </div>
+      {/* Hero Banner - matching Contact page style */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-store-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-store-primary/8 rounded-full blur-2xl" />
         </div>
-      </section>
+        <div className="container mx-auto px-4 py-12 md:py-16 text-center relative z-10">
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
+            {t('store.shoppingCart')}
+          </h1>
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
+            {items.length} {items.length === 1 ? 'item' : 'items'} in your bag
+          </p>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         {/* Free Shipping Progress Bar */}
