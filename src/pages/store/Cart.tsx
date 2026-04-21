@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle, ShieldCheck, Lock } from "lucide-react";
+import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle, ShieldCheck, Lock, HelpCircle, Trash2 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
