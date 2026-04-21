@@ -79,23 +79,31 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
 
     // --- Meta Pixel ---
     safeRemoveById('meta-pixel-script');
+    safeRemoveById('meta-pixel-sdk');
 
     if (metaPixelEnabled && metaPixelId) {
-      const fbScript = document.createElement('script');
-      fbScript.id = 'meta-pixel-script';
-      fbScript.textContent = `
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '${metaPixelId}');
-        fbq('track', 'PageView');
+      // Initialize fbq stub WITHOUT mutating DOM via insertBefore (which
+      // corrupts React's body child-index tracking and causes removeChild crashes).
+      // Then inject the SDK as a head-only async script — head is not React-owned.
+      const fbInit = document.createElement('script');
+      fbInit.id = 'meta-pixel-script';
+      fbInit.textContent = `
+        (function(){
+          if (window.fbq) return;
+          var n = window.fbq = function(){ n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+          if (!window._fbq) window._fbq = n;
+          n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+          window.fbq('init', '${metaPixelId}');
+          window.fbq('track', 'PageView');
+        })();
       `;
-      document.head.appendChild(fbScript);
+      document.head.appendChild(fbInit);
+
+      const fbSdk = document.createElement('script');
+      fbSdk.id = 'meta-pixel-sdk';
+      fbSdk.async = true;
+      fbSdk.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      document.head.appendChild(fbSdk);
     }
 
     // --- Google Search Console Verification ---
