@@ -17,11 +17,17 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isLoading) return;
 
+    // Safe remove helper — guards against React reconciliation race
+    const safeRemoveById = (id: string) => {
+      const el = document.getElementById(id);
+      if (el && el.parentNode) {
+        try { el.parentNode.removeChild(el); } catch { /* ignore */ }
+      }
+    };
+
     // --- GA4 ---
-    const existingScript = document.getElementById('ga4-dynamic-script');
-    const existingInline = document.getElementById('ga4-dynamic-inline');
-    if (existingScript) existingScript.remove();
-    if (existingInline) existingInline.remove();
+    safeRemoveById('ga4-dynamic-script');
+    safeRemoveById('ga4-dynamic-inline');
 
     if (isEnabled && measurementId) {
       const script = document.createElement('script');
@@ -42,10 +48,8 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
     }
 
     // --- GTM ---
-    const existingGtm = document.getElementById('gtm-dynamic-script');
-    const existingGtmNoscript = document.getElementById('gtm-dynamic-noscript');
-    if (existingGtm) existingGtm.remove();
-    if (existingGtmNoscript) existingGtmNoscript.remove();
+    safeRemoveById('gtm-dynamic-script');
+    safeRemoveById('gtm-dynamic-noscript');
 
     if (gtmEnabled && gtmContainerId) {
       const gtmScript = document.createElement('script');
@@ -59,7 +63,8 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
       `;
       document.head.appendChild(gtmScript);
 
-      // noscript iframe
+      // noscript iframe — APPEND to body end (NOT before React root) to avoid
+      // breaking React's DOM child-index tracking which causes removeChild crashes.
       const noscript = document.createElement('noscript');
       noscript.id = 'gtm-dynamic-noscript';
       const iframe = document.createElement('iframe');
@@ -69,12 +74,11 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
       iframe.style.display = 'none';
       iframe.style.visibility = 'hidden';
       noscript.appendChild(iframe);
-      document.body.insertBefore(noscript, document.body.firstChild);
+      document.body.appendChild(noscript);
     }
 
     // --- Meta Pixel ---
-    const existingFbq = document.getElementById('meta-pixel-script');
-    if (existingFbq) existingFbq.remove();
+    safeRemoveById('meta-pixel-script');
 
     if (metaPixelEnabled && metaPixelId) {
       const fbScript = document.createElement('script');
@@ -95,8 +99,7 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
     }
 
     // --- Google Search Console Verification ---
-    const existingGsc = document.getElementById('gsc-verification-meta');
-    if (existingGsc) existingGsc.remove();
+    safeRemoveById('gsc-verification-meta');
 
     if (googleSiteVerification) {
       const meta = document.createElement('meta');
