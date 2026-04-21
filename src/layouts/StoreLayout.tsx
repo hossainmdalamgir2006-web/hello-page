@@ -11,13 +11,9 @@ import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 import { useMaintenanceCheck } from "@/hooks/useMaintenanceMode";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
-import { Suspense } from "react";
-
 interface StoreLayoutProps {
   children?: ReactNode;
 }
-
-const StoreContentLoader = () => <div className="min-h-[200px]" />;
 
 export function StoreLayout({ children }: StoreLayoutProps) {
   usePageViewTracking();
@@ -55,12 +51,8 @@ export function StoreLayout({ children }: StoreLayoutProps) {
     <div className="min-h-screen flex flex-col bg-store-background">
       <StoreHeader />
       <StoreBreadcrumb />
-      <main className="flex-1 pb-16 md:pb-0">
-        {children || (
-          <Suspense fallback={<StoreContentLoader />}>
-            <Outlet />
-          </Suspense>
-        )}
+      <main key={location.pathname} className="flex-1 pb-16 md:pb-0">
+        {children || <Outlet />}
       </main>
       <StoreFooter />
       <LiveChatWidget />
