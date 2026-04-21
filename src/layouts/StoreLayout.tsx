@@ -51,7 +51,7 @@ export function StoreLayout({ children }: StoreLayoutProps) {
     <div className="min-h-screen flex flex-col bg-store-background">
       <StoreHeader />
       <StoreBreadcrumb />
-      <main className="flex-1 pb-16 md:pb-0">
+      <main key={location.pathname} className="flex-1 pb-16 md:pb-0">
         {children || <Outlet />}
       </main>
       <StoreFooter />
