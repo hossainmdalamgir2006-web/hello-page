@@ -97,155 +97,157 @@ const DocumentTemplatesPage = lazy(() => import("./pages/system-settings/Documen
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const App = () => (
-  <Providers>
-    <BrowserRouter>
-      <TopProgressBar />
-      <AutoPageTitle />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          {/* ====================== */}
-          {/* Store Frontend Routes - Nested under StoreLayout */}
-          {/* ====================== */}
-          <Route element={<StoreLayout />}>
-            <Route path="/" element={<StoreHome />} />
-            <Route path="/products" element={<StoreProducts />} />
-            <Route path="/product/:slug" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/track-order" element={<TrackOrder />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/payment-processing" element={<PaymentProcessing />} />
-            <Route path="/payment/callback" element={<PaymentCallback />} />
-            <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/shipping-info" element={<ShippingInfo />} />
-            <Route path="/returns" element={<Returns />} />
-            <Route path="/size-guide" element={<SizeGuide />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/login" element={<Login />} />
-          </Route>
-
-          {/* Customer Account Routes */}
-          <Route path="/myaccount" element={<ProtectedRoute><CustomerAccountLayout /></ProtectedRoute>}>
-            <Route index element={<AccountDashboard />} />
-            <Route path="orders" element={<AccountOrders />} />
-            <Route path="orders/:orderId" element={<AccountOrderTracking />} />
-            <Route path="orders/:orderId/invoice" element={<AccountInvoice />} />
-            <Route path="wishlist" element={<AccountWishlist />} />
-            <Route path="shopping" element={<AccountShopping />} />
-            <Route path="recently-viewed" element={<AccountRecentlyViewed />} />
-            <Route path="addresses" element={<AccountAddresses />} />
-            <Route path="security" element={<AccountSecurity />} />
-            <Route path="support" element={<AccountSupport />} />
-            <Route path="settings" element={<Navigate to="/myaccount/personal-info" replace />} />
-            <Route path="personal-info" element={<AccountSettings />} />
-            <Route path="password" element={<AccountPasswordPage />} />
-            <Route path="settings/personal-info" element={<Navigate to="/myaccount/personal-info" replace />} />
-            <Route path="settings/password" element={<Navigate to="/myaccount/password" replace />} />
-            <Route path="returns" element={<AccountReturns />} />
-            <Route path="reviews" element={<AccountReviews />} />
-            <Route path="notifications" element={<AccountNotifications />} />
-            <Route path="notification-preferences" element={<AccountNotificationPreferences />} />
-            
-            
-            <Route path="chat" element={<AccountChat />} />
-          </Route>
-
-          {/* ====================== */}
-          {/* Admin Routes */}
-          {/* ====================== */}
-          <Route element={<AdminRoute><AdminLayout /></AdminRoute>}>
-            <Route path="/admin/dashboard" element={<Index />} />
-            <Route path="/admin/products" element={<Products />} />
-            <Route path="/admin/categories" element={<Categories />} />
-            <Route path="/admin/brands" element={<Brands />} />
-            <Route path="/admin/orders" element={<Orders />} />
-            <Route path="/admin/analytics" element={<Analytics />} />
-            <Route path="/admin/customers" element={<Customers />} />
-            <Route path="/admin/settings" element={<Navigate to="/admin/system-settings/store" replace />} />
-            <Route path="/admin/system-settings" element={<Navigate to="/admin/system-settings/store" replace />} />
-            <Route path="/admin/system-settings/store" element={<SettingsStore />} />
-            <Route path="/admin/system-settings/payments" element={<SettingsPayments />} />
-            <Route path="/admin/system-settings/emails" element={<SettingsEmails />} />
-            <Route path="/admin/system-settings/notifications" element={<SettingsNotifications />} />
-            <Route path="/admin/system-settings/security" element={<SettingsSecurity />} />
-            <Route path="/admin/system-settings/audit" element={<SettingsAudit />} />
-            <Route path="/admin/system-settings/backup" element={<SettingsBackup />} />
-            <Route path="/admin/system-settings/integrations" element={<SettingsIntegrations />} />
-            <Route path="/admin/shipping" element={<Shipping />} />
-            <Route path="/admin/messages" element={<Messages />} />
-            <Route path="/admin/reports" element={<Reports />} />
-            <Route path="/admin/coupons" element={<Coupons />} />
-            <Route path="/admin/account-settings" element={<ProfileLayout />}>
-              <Route index element={<ProfilePersonal />} />
-              <Route path="personal-info" element={<ProfilePersonal />} />
-              <Route path="password" element={<ProfilePassword />} />
-              <Route path="security" element={<ProfileSecurity />} />
-              <Route path="login-activity" element={<ProfileSessions />} />
+  <RootErrorBoundary>
+    <Providers>
+      <BrowserRouter>
+        <TopProgressBar />
+        <AutoPageTitle />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* ====================== */}
+            {/* Store Frontend Routes - Nested under StoreLayout */}
+            {/* ====================== */}
+            <Route element={<StoreLayout />}>
+              <Route path="/" element={<StoreHome />} />
+              <Route path="/products" element={<StoreProducts />} />
+              <Route path="/product/:slug" element={<ProductDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/track-order" element={<TrackOrder />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
+              <Route path="/payment-processing" element={<PaymentProcessing />} />
+              <Route path="/payment/callback" element={<PaymentCallback />} />
+              <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/shipping-info" element={<ShippingInfo />} />
+              <Route path="/returns" element={<Returns />} />
+              <Route path="/size-guide" element={<SizeGuide />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/login" element={<Login />} />
             </Route>
-            
-            <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
-            <Route path="/admin/role-management" element={<RoleManagement />} />
-            <Route path="/admin/content" element={<ContentManager />} />
-            <Route path="/admin/homepage" element={<Navigate to="/admin/content" replace />} />
-            <Route path="/admin/page-content" element={<Navigate to="/admin/content" replace />} />
-            <Route path="/admin/appearance" element={<AppearanceManager />} />
-            <Route path="/admin/reviews" element={<ReviewsManager />} />
-            <Route path="/admin/trash" element={<GlobalTrash />} />
-            <Route path="/admin/account-deletion-requests" element={<AccountDeletionRequests />} />
-            <Route path="/admin/system-settings/edge-functions" element={<EdgeFunctionHealth />} />
-            <Route path="/admin/system-settings/documents" element={<DocumentTemplatesPage />} />
-            <Route path="/admin/support-settings" element={<SupportSettings />} />
-          </Route>
 
-          {/* Manager Routes */}
-          <Route element={<ManagerRoute><AdminLayout /></ManagerRoute>}>
-            <Route path="/manager/dashboard" element={<RoleDashboard />} />
-            <Route path="/manager/orders" element={<Orders />} />
-            <Route path="/manager/products" element={<Products />} />
-            <Route path="/manager/customers" element={<Customers />} />
-            <Route path="/manager/analytics" element={<Analytics />} />
-            <Route path="/manager/shipping" element={<Shipping />} />
-            <Route path="/manager/coupons" element={<Coupons />} />
-            <Route path="/manager/reports" element={<Reports />} />
-            <Route path="/manager/trash" element={<GlobalTrash />} />
-            <Route path="/manager/settings" element={<ManagerSettings />} />
-            <Route path="/manager/messages" element={<Messages />} />
-            <Route path="/manager/account-settings" element={<ProfileLayout />}>
-              <Route index element={<ProfilePersonal />} />
-              <Route path="personal-info" element={<ProfilePersonal />} />
-              <Route path="password" element={<ProfilePassword />} />
-              <Route path="security" element={<ProfileSecurity />} />
-              <Route path="login-activity" element={<ProfileSessions />} />
+            {/* Customer Account Routes */}
+            <Route path="/myaccount" element={<ProtectedRoute><CustomerAccountLayout /></ProtectedRoute>}>
+              <Route index element={<AccountDashboard />} />
+              <Route path="orders" element={<AccountOrders />} />
+              <Route path="orders/:orderId" element={<AccountOrderTracking />} />
+              <Route path="orders/:orderId/invoice" element={<AccountInvoice />} />
+              <Route path="wishlist" element={<AccountWishlist />} />
+              <Route path="shopping" element={<AccountShopping />} />
+              <Route path="recently-viewed" element={<AccountRecentlyViewed />} />
+              <Route path="addresses" element={<AccountAddresses />} />
+              <Route path="security" element={<AccountSecurity />} />
+              <Route path="support" element={<AccountSupport />} />
+              <Route path="settings" element={<Navigate to="/myaccount/personal-info" replace />} />
+              <Route path="personal-info" element={<AccountSettings />} />
+              <Route path="password" element={<AccountPasswordPage />} />
+              <Route path="settings/personal-info" element={<Navigate to="/myaccount/personal-info" replace />} />
+              <Route path="settings/password" element={<Navigate to="/myaccount/password" replace />} />
+              <Route path="returns" element={<AccountReturns />} />
+              <Route path="reviews" element={<AccountReviews />} />
+              <Route path="notifications" element={<AccountNotifications />} />
+              <Route path="notification-preferences" element={<AccountNotificationPreferences />} />
+              
+              
+              <Route path="chat" element={<AccountChat />} />
             </Route>
-          </Route>
 
-          {/* Support Routes */}
-          <Route element={<SupportRoute><AdminLayout /></SupportRoute>}>
-            <Route path="/support/dashboard" element={<RoleDashboard />} />
-            <Route path="/support/orders" element={<Orders />} />
-            <Route path="/support/customers" element={<Customers />} />
-            <Route path="/support/messages" element={<Messages />} />
-            <Route path="/support/settings" element={<SupportSettings />} />
-            <Route path="/support/account-settings" element={<ProfileLayout />}>
-              <Route index element={<ProfilePersonal />} />
-              <Route path="personal-info" element={<ProfilePersonal />} />
-              <Route path="password" element={<ProfilePassword />} />
-              <Route path="security" element={<ProfileSecurity />} />
-              <Route path="login-activity" element={<ProfileSessions />} />
+            {/* ====================== */}
+            {/* Admin Routes */}
+            {/* ====================== */}
+            <Route element={<AdminRoute><AdminLayout /></AdminRoute>}>
+              <Route path="/admin/dashboard" element={<Index />} />
+              <Route path="/admin/products" element={<Products />} />
+              <Route path="/admin/categories" element={<Categories />} />
+              <Route path="/admin/brands" element={<Brands />} />
+              <Route path="/admin/orders" element={<Orders />} />
+              <Route path="/admin/analytics" element={<Analytics />} />
+              <Route path="/admin/customers" element={<Customers />} />
+              <Route path="/admin/settings" element={<Navigate to="/admin/system-settings/store" replace />} />
+              <Route path="/admin/system-settings" element={<Navigate to="/admin/system-settings/store" replace />} />
+              <Route path="/admin/system-settings/store" element={<SettingsStore />} />
+              <Route path="/admin/system-settings/payments" element={<SettingsPayments />} />
+              <Route path="/admin/system-settings/emails" element={<SettingsEmails />} />
+              <Route path="/admin/system-settings/notifications" element={<SettingsNotifications />} />
+              <Route path="/admin/system-settings/security" element={<SettingsSecurity />} />
+              <Route path="/admin/system-settings/audit" element={<SettingsAudit />} />
+              <Route path="/admin/system-settings/backup" element={<SettingsBackup />} />
+              <Route path="/admin/system-settings/integrations" element={<SettingsIntegrations />} />
+              <Route path="/admin/shipping" element={<Shipping />} />
+              <Route path="/admin/messages" element={<Messages />} />
+              <Route path="/admin/reports" element={<Reports />} />
+              <Route path="/admin/coupons" element={<Coupons />} />
+              <Route path="/admin/account-settings" element={<ProfileLayout />}>
+                <Route index element={<ProfilePersonal />} />
+                <Route path="personal-info" element={<ProfilePersonal />} />
+                <Route path="password" element={<ProfilePassword />} />
+                <Route path="security" element={<ProfileSecurity />} />
+                <Route path="login-activity" element={<ProfileSessions />} />
+              </Route>
+              
+              <Route path="/admin/abandoned-carts" element={<AbandonedCarts />} />
+              <Route path="/admin/role-management" element={<RoleManagement />} />
+              <Route path="/admin/content" element={<ContentManager />} />
+              <Route path="/admin/homepage" element={<Navigate to="/admin/content" replace />} />
+              <Route path="/admin/page-content" element={<Navigate to="/admin/content" replace />} />
+              <Route path="/admin/appearance" element={<AppearanceManager />} />
+              <Route path="/admin/reviews" element={<ReviewsManager />} />
+              <Route path="/admin/trash" element={<GlobalTrash />} />
+              <Route path="/admin/account-deletion-requests" element={<AccountDeletionRequests />} />
+              <Route path="/admin/system-settings/edge-functions" element={<EdgeFunctionHealth />} />
+              <Route path="/admin/system-settings/documents" element={<DocumentTemplatesPage />} />
+              <Route path="/admin/support-settings" element={<SupportSettings />} />
             </Route>
-          </Route>
 
-          <Route element={<StoreLayout />}>
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  </Providers>
+            {/* Manager Routes */}
+            <Route element={<ManagerRoute><AdminLayout /></ManagerRoute>}>
+              <Route path="/manager/dashboard" element={<RoleDashboard />} />
+              <Route path="/manager/orders" element={<Orders />} />
+              <Route path="/manager/products" element={<Products />} />
+              <Route path="/manager/customers" element={<Customers />} />
+              <Route path="/manager/analytics" element={<Analytics />} />
+              <Route path="/manager/shipping" element={<Shipping />} />
+              <Route path="/manager/coupons" element={<Coupons />} />
+              <Route path="/manager/reports" element={<Reports />} />
+              <Route path="/manager/trash" element={<GlobalTrash />} />
+              <Route path="/manager/settings" element={<ManagerSettings />} />
+              <Route path="/manager/messages" element={<Messages />} />
+              <Route path="/manager/account-settings" element={<ProfileLayout />}>
+                <Route index element={<ProfilePersonal />} />
+                <Route path="personal-info" element={<ProfilePersonal />} />
+                <Route path="password" element={<ProfilePassword />} />
+                <Route path="security" element={<ProfileSecurity />} />
+                <Route path="login-activity" element={<ProfileSessions />} />
+              </Route>
+            </Route>
+
+            {/* Support Routes */}
+            <Route element={<SupportRoute><AdminLayout /></SupportRoute>}>
+              <Route path="/support/dashboard" element={<RoleDashboard />} />
+              <Route path="/support/orders" element={<Orders />} />
+              <Route path="/support/customers" element={<Customers />} />
+              <Route path="/support/messages" element={<Messages />} />
+              <Route path="/support/settings" element={<SupportSettings />} />
+              <Route path="/support/account-settings" element={<ProfileLayout />}>
+                <Route index element={<ProfilePersonal />} />
+                <Route path="personal-info" element={<ProfilePersonal />} />
+                <Route path="password" element={<ProfilePassword />} />
+                <Route path="security" element={<ProfileSecurity />} />
+                <Route path="login-activity" element={<ProfileSessions />} />
+              </Route>
+            </Route>
+
+            <Route element={<StoreLayout />}>
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </Providers>
+  </RootErrorBoundary>
 );
 
 export default App;
