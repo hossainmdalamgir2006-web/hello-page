@@ -38,10 +38,7 @@ export function Providers({ children }: { children: ReactNode }) {
                 <AuthProvider>
                   <CartProvider>
                     <WishlistProvider>
-                      {/* GA4Provider temporarily disabled for crash isolation */}
-                      <></>
-                      <GA4Provider>__NOOP__</GA4Provider>
-                      {/* <GA4Provider> */}
+                      <GA4Provider>
                         <DynamicTitleProvider>
                           <TooltipProvider>
                             <Toaster />
