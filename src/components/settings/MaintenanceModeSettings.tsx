@@ -324,7 +324,7 @@ export function MaintenanceModeSettings() {
               <code className="font-mono">203.0.113.0/24</code>). Comma or newline separated.
             </span>
             {ipPreview.valid.length > 0 && (
-              <span className="text-emerald-600 dark:text-emerald-400">
+              <span className="text-accent">
                 ✓ {ipPreview.valid.length} valid
               </span>
             )}
