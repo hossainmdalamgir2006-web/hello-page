@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useStoreSettingsCache } from "@/hooks/useStoreSettingsCache";
+import { ipMatchesWhitelist } from "@/lib/ipMatch";
 
 interface MaintenanceConfig {
   enabled: boolean;
   message: string;
   allowed_ips: string[];
   estimated_end: string | null;
+  estimated_end_timezone: string | null;
 }
 
 const DEFAULT_CONFIG: MaintenanceConfig = {
@@ -14,6 +16,7 @@ const DEFAULT_CONFIG: MaintenanceConfig = {
   message: "We're currently performing scheduled maintenance. We'll be back shortly!",
   allowed_ips: [],
   estimated_end: null,
+  estimated_end_timezone: null,
 };
 
 export function useMaintenanceMode() {
@@ -128,11 +131,12 @@ export function useMaintenanceCheck() {
     if (!parsed) {
       return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
     }
-    const isWhitelisted = visitorIP && allowedIps.includes(visitorIP);
+    const isWhitelisted = visitorIP ? ipMatchesWhitelist(visitorIP, allowedIps) : false;
     return {
       isMaintenanceMode: maintenanceEnabled && !isWhitelisted,
       message: parsed.message || DEFAULT_CONFIG.message,
       estimatedEnd: parsed.estimated_end || null,
+      estimatedEndTimezone: parsed.estimated_end_timezone || null,
     };
   }, [parsed, maintenanceEnabled, allowedIps, visitorIP]);
 
