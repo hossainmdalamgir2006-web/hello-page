@@ -58,7 +58,7 @@ export function CartDrawer() {
         ) : (
           <>
             {/* Free Shipping Progress */}
-            <FreeShippingProgress subtotal={checkoutSubtotal} threshold={2000} className="mx-1 mt-2" />
+            <FreeShippingProgress subtotal={checkoutSubtotal} className="mx-1 mt-2" />
 
             {selectedCount < itemCount && (
               <p className="text-xs text-muted-foreground px-1 -mb-2">
