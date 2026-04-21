@@ -79,19 +79,6 @@ export default function Privacy() {
       </div>
 
       <div className="container mx-auto px-4 py-10">
-        {/* Print Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="max-w-3xl mx-auto flex justify-end mb-4"
-        >
-          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => window.print()}>
-            <Printer className="h-4 w-4" />
-            Print Policy
-          </Button>
-        </motion.div>
-
         {/* Table of Contents */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
