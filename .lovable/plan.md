@@ -1,59 +1,67 @@
 
 
-## Free Shipping — Admin Controlled System
+## Checkout Page Header — Update Plan
 
-### Goal
-Hardcoded `2000 BDT` threshold-কে admin-managed dynamic system বানাব, যাতে admin **Store Settings** থেকে threshold change, banner toggle, এবং checkout-এর actual shipping calculation একসাথে control করতে পারে।
+### Current Issues (screenshots থেকে identified)
 
-### Implementation
+1. **"Title" literal text show করছে** — `t('checkout.title')` translation key properly resolve হচ্ছে না, raw label "Title" render হচ্ছে
+2. **Header design outdated** — gradient banner থেকে decorative blur, কিন্তু content শুধু একটা back button + heading, খুব empty
+3. **CheckoutSteps separately রয়েছে banner-এর নিচে** — visually disconnected, header section + steps আলাদা card মনে হয়
+4. **No trust signals in header** — secure checkout, SSL, money-back guarantee — এগুলো শুধু button-এর নিচে ছোট্ট করে আছে
+5. **Order count / progress context নেই** — user জানে না কত items checkout হচ্ছে, কোন step-এ আছে textually
 
-#### 1. Database — `store_settings` table-এ 2 keys add
-- `free_shipping_threshold` → numeric value (default `2000`)
-- `free_shipping_enabled` → `"true"` / `"false"` (default `"true"`)
+### Proposed New Header Design
 
-(কোনো schema migration লাগবে না — `store_settings` table আগেই key/value structure-এ আছে।)
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  ← Back   Secure Checkout                    🔒 SSL Secured │
+│           Complete your order in 4 quick steps              │
+│                                                             │
+│  ●━━━━━○━━━━━○━━━━━○                                        │
+│ Contact Shipping Payment Review                             │
+│  (current step highlighted with label below)                │
+└─────────────────────────────────────────────────────────────┘
+```
 
-#### 2. New hook — `src/hooks/useFreeShippingConfig.ts`
-- React Query দিয়ে `store_settings` থেকে দুটি key fetch করব (10 min cache)
-- Return: `{ threshold: number, enabled: boolean, loading: boolean }`
-- Default fallback: `{ threshold: 2000, enabled: true }` যদি settings missing হয়
+#### Specific changes:
 
-#### 3. Admin UI — Store Settings-এ নতুন section
-**File:** নতুন `src/components/settings/FreeShippingSettings.tsx`
-- Card with:
-  - Toggle switch — *"Show free shipping progress banner"*
-  - Number input — *"Free shipping threshold (BDT)"*
-  - Helper text — *"Customers with cart subtotal ≥ this value get free shipping"*
-  - Save button → use `useStoreSettings.updateMultipleSettings`
-- Register in `src/pages/system-settings/StorePage.tsx` sidebar (নতুন `{ type: "free_shipping" }` entry)
+**A. Title fix** — `checkout.title` translation key properly set করব (`"Secure Checkout"` / Bengali fallback), যাতে "Title" literal আর না দেখায়
 
-#### 4. Storefront — dynamic consumption
-- **`src/components/store/FreeShippingProgress.tsx`** → threshold prop optional হবে; hook থেকে value pull করবে। `enabled === false` হলে component `null` return করবে।
-- **`src/pages/store/Cart.tsx`** → hardcoded `threshold={2000}` remove
-- **`src/components/store/CartDrawer.tsx`** → same
+**B. Unified header card** — Banner section + CheckoutSteps merge করে single rounded card-এ আনব (gradient bg, decorative blurs preserved):
+- Left: Back button + Title + subtitle ("Complete your order in 4 quick steps")
+- Right: Trust badge ("🔒 SSL Secured" / "100% Secure")
+- Bottom: CheckoutSteps integrated inside same gradient container
 
-#### 5. Checkout sync — actual shipping calculation
-- **`src/pages/store/Checkout.tsx`** (এবং shipping calc utility যদি থাকে) → hook থেকে threshold pull করব; subtotal ≥ threshold হলে shipping cost `0` set করব (existing logic যদি hardcoded থাকে, replace করব)
-- Same threshold display হবে checkout summary-এ: *"Free shipping unlocked!"* badge
+**C. Item count badge** — Title-এর পাশে একটা small badge: `"5 items"` যাতে user confirm করতে পারে কি checkout করছে
 
-### Files to Edit/Create
+**D. Free shipping progress integration** — যদি subtotal threshold-এর কাছাকাছি, header-এর নিচে compact progress bar: *"Add BDT 250 more for free shipping"* (uses `useFreeShippingConfig`)
+
+**E. Mobile responsive** — Trust badge mobile-এ hide, subtitle smaller, back button larger touch target
+
+**F. Visual polish**
+- Gradient match storefront brand (purple → pink, current OK)
+- Heading size: `text-2xl md:text-3xl`, semibold display font
+- Subtitle: `text-sm text-store-primary-foreground/80`
+- Trust pill: `bg-white/15 backdrop-blur rounded-full px-3 py-1 text-xs`
+
+### Files to Edit
 
 | File | Change |
 |---|---|
-| `src/hooks/useFreeShippingConfig.ts` | **NEW** — fetch threshold + enabled from store_settings |
-| `src/components/settings/FreeShippingSettings.tsx` | **NEW** — admin UI card |
-| `src/pages/system-settings/StorePage.tsx` | Register new sidebar item |
-| `src/components/store/FreeShippingProgress.tsx` | Use hook, respect `enabled` flag |
-| `src/pages/store/Cart.tsx` | Remove hardcoded threshold |
-| `src/components/store/CartDrawer.tsx` | Remove hardcoded threshold |
-| `src/pages/store/Checkout.tsx` | Sync shipping calc with dynamic threshold |
-| Migration | Insert default rows for 2 new setting keys |
+| `src/pages/store/Checkout.tsx` | Replace header section (lines 497-514) with new unified design; integrate CheckoutSteps inside gradient |
+| `src/lib/translations.ts` | Verify `checkout.title` key exists and returns "Secure Checkout" / "নিরাপদ চেকআউট"; add `checkout.subtitle`, `checkout.sslSecured`, `checkout.itemCount` keys |
+| `src/components/store/CheckoutSteps.tsx` | Add optional `variant="onGradient"` prop — light text colors + translucent connectors when rendered on gradient bg |
+
+### What stays the same
+- Overall page structure, form sections, order summary card unchanged
+- Step logic (`currentStep`) unchanged
+- Breadcrumb (above header from StoreLayout) unchanged
 
 ### Expected Result
-- Admin **Store Settings → Free Shipping** tab-এ গিয়ে threshold change করতে পারবে (e.g., 2000 → 3000)
-- Toggle off করলে cart/drawer-এ banner hide হয়ে যাবে
-- Checkout-এর shipping cost calculation same threshold follow করবে — banner আর actual charge mismatch হবে না
-- React Query cache-এর জন্য change instant reflect হবে (10 min stale)
+- "Title" literal gone → proper "Secure Checkout" heading
+- Visually cohesive header — single gradient band containing title, trust signal, and steps
+- Better information hierarchy: user instantly sees *where they are*, *what's safe*, *how many items*
+- Mobile-optimized with proper touch targets and condensed trust signals
 
 Approve করলে default mode-এ implement করব।
 
