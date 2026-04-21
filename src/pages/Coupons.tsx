@@ -55,6 +55,7 @@ import {
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCategoriesCache } from "@/hooks/useCategoriesCache";
+import { FreeShippingInfoCard } from "@/components/admin/FreeShippingInfoCard";
 
 // Updated interface to match DB schema
 interface Coupon {
