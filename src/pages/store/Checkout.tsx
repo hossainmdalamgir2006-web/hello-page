@@ -511,13 +511,6 @@ export default function Checkout() {
         </div>
       </div>
 
-      {/* Steps Bar */}
-      <div className="border-b bg-background">
-        <div className="container mx-auto px-4 py-4">
-          <CheckoutSteps currentStep={currentStep} />
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit}>
           <div className="grid lg:grid-cols-3 gap-8">
