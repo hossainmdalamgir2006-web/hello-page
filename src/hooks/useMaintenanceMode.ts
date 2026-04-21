@@ -73,29 +73,71 @@ export function useMaintenanceMode() {
   return { config, loading, saving, updateConfig };
 }
 
+// Fetch visitor's public IP (cached in sessionStorage)
+async function getVisitorIP(): Promise<string | null> {
+  try {
+    const cached = sessionStorage.getItem("__visitor_ip");
+    if (cached) return cached;
+    const res = await fetch("https://api.ipify.org?format=json");
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data?.ip) {
+      sessionStorage.setItem("__visitor_ip", data.ip);
+      return data.ip;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 // Lightweight hook — reads from shared store_settings cache (no extra DB call)
 export function useMaintenanceCheck() {
   const { data: settings, isLoading } = useStoreSettingsCache();
+  const [visitorIP, setVisitorIP] = useState<string | null>(null);
 
-  const result = useMemo(() => {
-    if (!settings) {
-      return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
-    }
+  const parsed = useMemo(() => {
+    if (!settings) return null;
     const raw = settings["MAINTENANCE_MODE"];
-    if (!raw) {
-      return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
-    }
+    if (!raw) return null;
     try {
-      const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
-      return {
-        isMaintenanceMode: parsed.enabled === true,
-        message: parsed.message || DEFAULT_CONFIG.message,
-        estimatedEnd: parsed.estimated_end || null,
-      };
+      return typeof raw === "string" ? JSON.parse(raw) : raw;
     } catch {
-      return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
+      return null;
     }
   }, [settings]);
 
-  return { ...result, loading: isLoading };
+  const allowedIps: string[] = useMemo(() => {
+    const ips = parsed?.allowed_ips;
+    if (!ips) return [];
+    if (Array.isArray(ips)) return ips.map((s: string) => String(s).trim()).filter(Boolean);
+    if (typeof ips === "string") return ips.split(",").map((s) => s.trim()).filter(Boolean);
+    return [];
+  }, [parsed]);
+
+  const maintenanceEnabled = parsed?.enabled === true;
+
+  // Only fetch visitor IP if maintenance is on AND there's a whitelist to check
+  useEffect(() => {
+    if (maintenanceEnabled && allowedIps.length > 0 && visitorIP === null) {
+      getVisitorIP().then((ip) => setVisitorIP(ip));
+    }
+  }, [maintenanceEnabled, allowedIps.length, visitorIP]);
+
+  const result = useMemo(() => {
+    if (!parsed) {
+      return { isMaintenanceMode: false, message: DEFAULT_CONFIG.message, estimatedEnd: null };
+    }
+    const isWhitelisted = visitorIP && allowedIps.includes(visitorIP);
+    return {
+      isMaintenanceMode: maintenanceEnabled && !isWhitelisted,
+      message: parsed.message || DEFAULT_CONFIG.message,
+      estimatedEnd: parsed.estimated_end || null,
+    };
+  }, [parsed, maintenanceEnabled, allowedIps, visitorIP]);
+
+  // Still "loading" while we're waiting for the IP check (so we don't flash maintenance page to whitelisted users)
+  const stillResolvingIP = maintenanceEnabled && allowedIps.length > 0 && visitorIP === null;
+
+  return { ...result, loading: isLoading || stillResolvingIP };
 }
