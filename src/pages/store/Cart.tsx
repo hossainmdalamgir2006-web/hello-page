@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle } from "lucide-react";
+import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle, ShieldCheck, Lock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,15 +139,15 @@ export default function Cart() {
   if (items.length === 0 && savedItems.length === 0) {
     return (
       <>
-        <div className="container mx-auto px-4 py-16 text-center">
-          <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-store-muted flex items-center justify-center">
-            <ShoppingBag className="w-16 h-16 text-muted-foreground" />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-store-primary/10 to-store-secondary/10 flex items-center justify-center ring-1 ring-border/50">
+            <ShoppingBag className="w-16 h-16 text-store-primary/70" />
           </div>
-          <h1 className="font-display text-2xl font-bold mb-3">{t('store.cartEmpty')}</h1>
+          <h1 className="font-display text-3xl font-bold mb-3 tracking-tight">{t('store.cartEmpty')}</h1>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
             {t('store.cartEmptyDesc')}
           </p>
-          <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild>
+          <Button size="lg" className="bg-store-primary hover:bg-store-primary/90 rounded-full px-8" asChild>
             <Link to="/products">{t('store.startShopping')}</Link>
           </Button>
         </div>
@@ -158,21 +158,28 @@ export default function Cart() {
   return (
     <>
       <SEOHead title={t('store.shoppingCart')} description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
-      {/* Page Header */}
-      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-10 overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <ShoppingBag className="h-5 w-5 text-store-primary-foreground" />
+      {/* Refined Page Header */}
+      <section className="relative bg-gradient-to-b from-muted/40 to-background border-b border-border/50 py-10">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-store-primary/10 flex items-center justify-center ring-1 ring-store-primary/20">
+                <ShoppingBag className="h-6 w-6 text-store-primary" />
+              </div>
+              <div>
+                <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                  {t('store.shoppingCart')}
+                </h1>
+                <p className="text-muted-foreground text-sm mt-0.5">
+                  {items.length} {items.length === 1 ? 'item' : 'items'} in your bag
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">
-                {t('store.shoppingCart')}
-              </h1>
-              <p className="text-store-primary-foreground/70 text-sm">{items.length} {items.length === 1 ? 'item' : 'items'} in your bag</p>
-            </div>
+            <Button variant="outline" size="sm" className="rounded-full" asChild>
+              <Link to="/products">
+                <ArrowLeft className="h-4 w-4 mr-2" /> {t('store.continueShopping')}
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -181,27 +188,27 @@ export default function Cart() {
         {/* Free Shipping Progress Bar */}
         <FreeShippingProgress subtotal={checkoutSubtotal} threshold={2000} className="mb-6" />
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex justify-between items-center mb-4">
+          <div className="lg:col-span-2 space-y-3">
+            <div className="flex justify-between items-center mb-2 px-1">
               <div className="flex items-center gap-3">
                 <Checkbox
                   checked={items.length > 0 && selectedKeys.size === items.length}
                   onCheckedChange={(checked) => checked ? selectAll() : deselectAll()}
                 />
-                <p className="text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {selectedKeys.size > 0 
                     ? `${selectedKeys.size} of ${items.length} selected`
                     : `${items.length} ${items.length === 1 ? 'item' : 'items'} in your cart`
                   }
                 </p>
               </div>
-              <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={handleShareCart}>
+              <div className="flex gap-1">
+                <Button variant="ghost" size="sm" onClick={handleShareCart} className="text-muted-foreground hover:text-foreground">
                   <Share2 className="h-4 w-4 mr-1" /> {t('store.share')}
                 </Button>
-                <Button variant="ghost" size="sm" onClick={clearCart}>
+                <Button variant="ghost" size="sm" onClick={clearCart} className="text-muted-foreground hover:text-destructive">
                   {t('store.clearCart')}
                 </Button>
               </div>
@@ -211,8 +218,8 @@ export default function Cart() {
               const key = getItemKey(item);
               const isSelected = selectedKeys.has(key);
               return (
-                <Card key={key} className={`transition-colors ${isSelected ? 'ring-2 ring-store-primary/30' : 'opacity-70'}`}>
-                  <CardContent className="p-4">
+                <Card key={key} className={`group rounded-2xl border transition-all duration-200 hover:shadow-md ${isSelected ? 'border-store-primary/40 bg-card shadow-sm' : 'border-border/60 bg-card/50 opacity-80'}`}>
+                  <CardContent className="p-4 sm:p-5">
                     <div className="flex gap-4">
                       <div className="flex items-start pt-1">
                         <Checkbox
@@ -221,8 +228,8 @@ export default function Cart() {
                         />
                       </div>
                       <Link to={`/product/${item.id}`} className="flex-shrink-0">
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden bg-muted">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-muted ring-1 ring-border/50">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                         </div>
                       </Link>
                       <div className="flex-1 min-w-0">
@@ -259,8 +266,8 @@ export default function Cart() {
                         </div>
 
                         <div className="flex items-center justify-between mt-4">
-                          <div className="flex items-center gap-1 border rounded-lg">
-                            <Button variant="ghost" size="icon" className="h-8 w-8"
+                          <div className="flex items-center gap-1 border border-border/70 rounded-full bg-background">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full"
                               onClick={() => updateQuantity(item.id, item.quantity - 1, item.size, item.color)}
                             >
                               <Minus className="h-3 w-3" />
@@ -271,9 +278,9 @@ export default function Cart() {
                               max={99}
                               value={item.quantity}
                               onChange={(e) => handleQuantityInput(item, e.target.value)}
-                              className="w-12 h-8 text-center border-0 p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              className="w-10 h-8 text-center border-0 p-0 text-sm font-medium bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
-                            <Button variant="ghost" size="icon" className="h-8 w-8"
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full"
                               onClick={() => {
                                 const maxStock = stockData[item.id] ?? 99;
                                 if (item.quantity >= maxStock) {
@@ -288,9 +295,9 @@ export default function Cart() {
                             </Button>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-foreground">{formatPrice(item.price * item.quantity)}</p>
+                            <p className="font-bold text-foreground text-lg leading-tight">{formatPrice(item.price * item.quantity)}</p>
                             {item.comparePrice && (
-                              <p className="text-sm text-muted-foreground line-through">{formatPrice(item.comparePrice * item.quantity)}</p>
+                              <p className="text-xs text-muted-foreground line-through">{formatPrice(item.comparePrice * item.quantity)}</p>
                             )}
                           </div>
                         </div>
@@ -370,27 +377,24 @@ export default function Cart() {
               </div>
             )}
 
-            <Button variant="outline" asChild>
-              <Link to="/products">
-                <ArrowLeft className="h-4 w-4 mr-2" /> {t('store.continueShopping')}
-              </Link>
-            </Button>
           </div>
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle>{t('store.orderSummary')}</CardTitle>
+            <Card className="sticky top-24 rounded-2xl border-border/60 shadow-sm overflow-hidden">
+              <CardHeader className="bg-muted/30 border-b border-border/50 pb-4">
+                <CardTitle className="text-base font-semibold tracking-tight">{t('store.orderSummary')}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-5 pt-5">
                 {/* Coupon Code */}
                 {appliedCoupon ? (
-                  <div className="flex items-center justify-between p-3 bg-store-accent/10 rounded-lg border border-store-accent">
+                  <div className="flex items-center justify-between p-3 bg-store-accent/10 rounded-xl border border-store-accent/30">
                     <div className="flex items-center gap-2">
-                      <Tag className="h-4 w-4 text-store-accent" />
+                      <div className="w-8 h-8 rounded-lg bg-store-accent/20 flex items-center justify-center">
+                        <Tag className="h-4 w-4 text-store-accent" />
+                      </div>
                       <div>
-                        <p className="font-medium text-sm">{appliedCoupon.coupon.code}</p>
+                        <p className="font-semibold text-sm">{appliedCoupon.coupon.code}</p>
                         <p className="text-xs text-muted-foreground">
                           {appliedCoupon.coupon.discount_type === 'percentage'
                             ? `${appliedCoupon.coupon.discount_value}% off`
@@ -398,7 +402,7 @@ export default function Cart() {
                         </p>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={handleRemoveCoupon} className="text-destructive hover:text-destructive">
+                    <Button variant="ghost" size="icon" onClick={handleRemoveCoupon} className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full">
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -409,20 +413,19 @@ export default function Cart() {
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                      className="rounded-lg"
                     />
-                    <Button variant="outline" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()}>
+                    <Button variant="outline" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()} className="rounded-lg">
                       {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('store.apply')}
                     </Button>
                   </div>
                 )}
 
-                <Separator />
-
                 {/* Totals */}
-                <div className="space-y-2">
+                <div className="space-y-2.5 pt-1">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{t('store.subtotal')} ({selectedCount} {t('store.items')})</span>
-                    <span>{formatPrice(checkoutSubtotal)}</span>
+                    <span className="font-medium">{formatPrice(checkoutSubtotal)}</span>
                   </div>
                   {discount > 0 && (
                     <div className="flex justify-between text-sm text-store-accent">
@@ -430,28 +433,37 @@ export default function Cart() {
                         {isAutoDiscountApplied && <Sparkles className="h-3 w-3" />}
                         {isAutoDiscountApplied ? "Auto Discount" : t('store.discount')}
                       </span>
-                      <span>-{formatPrice(discount)}</span>
+                      <span className="font-medium">-{formatPrice(discount)}</span>
                     </div>
                   )}
                   {isAutoDiscountApplied && activeAutoRules.length > 0 && (
                     <p className="text-xs text-store-accent">✨ {activeAutoRules[0].name} applied!</p>
                   )}
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('store.shipping')}</span>
-                    <span className={shippingCost === 0 ? 'text-green-600 dark:text-green-400' : ''}>{shippingCost === 0 ? t('store.free') : formatPrice(shippingCost)}</span>
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                      <Truck className="h-3.5 w-3.5" /> {t('store.shipping')}
+                    </span>
+                    <span className={`font-medium ${shippingCost === 0 ? 'text-green-600 dark:text-green-400' : ''}`}>
+                      {shippingCost === 0 ? t('store.free') : formatPrice(shippingCost)}
+                    </span>
                   </div>
                 </div>
 
                 <Separator />
 
-                <div className="flex justify-between font-semibold text-lg">
-                  <span>{t('store.total')}</span>
-                  <span>{formatPrice(total)}</span>
+                <div className="flex justify-between items-baseline">
+                  <span className="font-semibold text-base">{t('store.total')}</span>
+                  <span className="font-bold text-xl text-store-primary">{formatPrice(total)}</span>
                 </div>
 
-                <Button size="lg" className="w-full bg-store-primary hover:bg-store-primary/90" onClick={handleProceedToCheckout} disabled={selectedItems.length === 0}>
-                  {t('store.proceedToCheckout')} ({selectedCount} {t('store.items')})
+                <Button size="lg" className="w-full bg-store-primary hover:bg-store-primary/90 rounded-xl h-12 font-semibold shadow-sm" onClick={handleProceedToCheckout} disabled={selectedItems.length === 0}>
+                  {t('store.proceedToCheckout')}
                 </Button>
+
+                <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
+                  <Lock className="h-3 w-3" />
+                  <span>Secure SSL Checkout</span>
+                </div>
               </CardContent>
             </Card>
           </div>
