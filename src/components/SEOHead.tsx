@@ -17,11 +17,28 @@ interface SEOHeadProps {
  * without conflicting with React's reconciliation tree (we never touch
  * elements React renders).
  */
+function safeRemove(el: Element | null) {
+  if (!el) return;
+  try {
+    if (el.parentNode) el.parentNode.removeChild(el);
+  } catch {
+    // Element already detached by React or another mutation — ignore
+  }
+}
+
+function safeAppend(el: Element) {
+  try {
+    document.head.appendChild(el);
+  } catch {
+    // Ignore if head mutation conflicts
+  }
+}
+
 function upsertMeta(attr: "name" | "property", key: string, content: string | undefined) {
   const selector = `meta[${attr}="${key}"][data-seo="1"]`;
   const existing = document.head.querySelector<HTMLMetaElement>(selector);
   if (!content) {
-    if (existing) existing.remove();
+    safeRemove(existing);
     return;
   }
   if (existing) {
@@ -32,14 +49,14 @@ function upsertMeta(attr: "name" | "property", key: string, content: string | un
   el.setAttribute(attr, key);
   el.setAttribute("data-seo", "1");
   el.setAttribute("content", content);
-  document.head.appendChild(el);
+  safeAppend(el);
 }
 
 function upsertCanonical(href: string | undefined) {
   const selector = `link[rel="canonical"][data-seo="1"]`;
   const existing = document.head.querySelector<HTMLLinkElement>(selector);
   if (!href) {
-    if (existing) existing.remove();
+    safeRemove(existing);
     return;
   }
   if (existing) {
@@ -50,14 +67,14 @@ function upsertCanonical(href: string | undefined) {
   el.setAttribute("rel", "canonical");
   el.setAttribute("data-seo", "1");
   el.setAttribute("href", href);
-  document.head.appendChild(el);
+  safeAppend(el);
 }
 
 function upsertJsonLd(data: any | null) {
   const selector = `script[type="application/ld+json"][data-seo="1"]`;
   const existing = document.head.querySelector<HTMLScriptElement>(selector);
   if (!data) {
-    if (existing) existing.remove();
+    safeRemove(existing);
     return;
   }
   if (existing) {
@@ -68,7 +85,7 @@ function upsertJsonLd(data: any | null) {
   el.setAttribute("type", "application/ld+json");
   el.setAttribute("data-seo", "1");
   el.textContent = JSON.stringify(data);
-  document.head.appendChild(el);
+  safeAppend(el);
 }
 
 export function SEOHead({
