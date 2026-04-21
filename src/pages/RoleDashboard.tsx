@@ -78,21 +78,25 @@ const RoleDashboard = () => {
       <>
         {/* Keyboard Shortcuts */}
         <SupportKeyboardShortcuts />
-        {/* Header */}
-        <AdminPageHeader
-          title={`${roleLabel} Dashboard`}
-          actions={
-            <DateRangeSelector
-              value={dateRangePreset}
-              customRange={customRange}
-              onChange={handleDateRangeChange}
-            />
-          }
-        />
 
-        {/* Welcome Banner */}
-        <div className="mb-6">
-          <WelcomeBanner basePath="/manager" />
+        {/* Unified Header + Welcome */}
+        <div className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-card via-card to-primary/5 mb-6">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+          <div className="pointer-events-none absolute -left-8 bottom-0 h-28 w-28 rounded-full bg-primary/5 blur-2xl" />
+
+          <div className="relative p-5 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                {roleLabel} Dashboard
+              </h1>
+              <DateRangeSelector
+                value={dateRangePreset}
+                customRange={customRange}
+                onChange={handleDateRangeChange}
+              />
+            </div>
+            <WelcomeBanner basePath="/manager" />
+          </div>
         </div>
 
         <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
