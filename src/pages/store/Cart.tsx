@@ -118,6 +118,29 @@ export default function Cart() {
 
   const getItemKey = (item: { id: string; size?: string; color?: string }) => `${item.id}-${item.size}-${item.color}`;
 
+  const unselectedItems = items.filter(i => !selectedKeys.has(getItemKey(i)));
+  const unselectedSubtotal = unselectedItems.reduce((s, i) => s + i.price * i.quantity, 0);
+  const unselectedCount = unselectedItems.reduce((s, i) => s + i.quantity, 0);
+
+  const handleBulkRemove = () => {
+    if (selectedCount === 0) return;
+    removeSelectedItems();
+    toast.success(`${selectedCount} ${selectedCount === 1 ? 'item' : 'items'} removed`);
+  };
+
+  const handleBulkSaveForLater = () => {
+    selectedItems.forEach(it => saveForLater(it.id, it.size, it.color));
+    toast.success(`${selectedItems.length} ${selectedItems.length === 1 ? 'item' : 'items'} saved for later`);
+  };
+
+  const handleBulkMoveToWishlist = () => {
+    selectedItems.forEach(it => {
+      addToWishlist(it.id);
+      removeItem(it.id, it.size, it.color);
+    });
+    toast.success(`${selectedItems.length} ${selectedItems.length === 1 ? 'item' : 'items'} moved to wishlist`);
+  };
+
   const handleQuantityInput = (item: typeof items[0], value: string) => {
     const num = parseInt(value, 10);
     const maxStock = stockData[item.id] ?? 99;
