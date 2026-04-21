@@ -18,6 +18,7 @@ import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
 import { SEOHead } from "@/components/SEOHead";
 import { toast } from "sonner";
 import { useShippingRates } from "@/hooks/useShippingRates";
+import { useFreeShippingConfig } from "@/hooks/useFreeShippingConfig";
 import { formatPrice } from "@/lib/formatPrice";
 
 export default function Cart() {
@@ -27,6 +28,7 @@ export default function Cart() {
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
   const { addItem: addToWishlist } = useWishlist();
   const { rates } = useShippingRates();
+  const { threshold: freeShippingThreshold } = useFreeShippingConfig();
   const [couponCode, setCouponCode] = useState("");
   const [expandedNotes, setExpandedNotes] = useState<Record<string, boolean>>({});
   const [stockData, setStockData] = useState<Record<string, number>>({});
@@ -64,15 +66,16 @@ export default function Cart() {
   
   // Dynamic shipping cost from DB rates, fallback to default
   const shippingCost = (() => {
+    // Free shipping threshold (admin-controlled) overrides any rate
+    if (checkoutSubtotal >= freeShippingThreshold) return 0;
     // Find a matching rate based on order amount
-    const matchingRate = rates.find(r => 
-      r.is_active && 
+    const matchingRate = rates.find(r =>
+      r.is_active &&
       (r.min_order_amount === null || checkoutSubtotal >= r.min_order_amount) &&
       (r.max_order_amount === null || checkoutSubtotal <= r.max_order_amount)
     );
     if (matchingRate) return matchingRate.rate;
-    // Fallback: free shipping over 2000, else 100
-    return checkoutSubtotal >= 2000 ? 0 : 100;
+    return 100;
   })();
   const total = checkoutSubtotal - discount + shippingCost;
 
@@ -201,7 +204,7 @@ export default function Cart() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Free Shipping Progress Bar */}
-        <FreeShippingProgress subtotal={checkoutSubtotal} threshold={2000} className="mb-6" />
+        <FreeShippingProgress subtotal={checkoutSubtotal} className="mb-6" />
 
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}

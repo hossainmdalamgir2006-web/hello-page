@@ -18,6 +18,7 @@ import { useCoupon } from "@/hooks/useCoupon";
 import { useShippingData } from "@/hooks/useShippingData";
 import { useEnabledPaymentMethods } from "@/hooks/useEnabledPaymentMethods";
 import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
+import { useFreeShippingConfig } from "@/hooks/useFreeShippingConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ManualPaymentInstructions } from "@/components/checkout/ManualPaymentInstructions";
@@ -61,6 +62,7 @@ export default function Checkout() {
   const { appliedCoupon, validateCoupon, removeCoupon, incrementCouponUsage, loading: couponLoading } = useCoupon();
   const { zonesWithRates, loading: shippingLoading } = useShippingData();
   const { paymentMethods: enabledPaymentMethods, loading: paymentMethodsLoading } = useEnabledPaymentMethods();
+  const { threshold: freeShippingThreshold } = useFreeShippingConfig();
 
   const [couponCode, setCouponCode] = useState("");
   const couponState = location.state as CouponState | undefined;
@@ -131,10 +133,12 @@ export default function Checkout() {
   const selectedRate = useMemo(() => availableRates.find(r => r.id === selectedRateId), [availableRates, selectedRateId]);
 
   const shippingCost = useMemo(() => {
+    // Admin-controlled free shipping threshold overrides any rate
+    if (subtotal >= freeShippingThreshold) return 0;
     if (!selectedRate) return 0;
     if (selectedRate.max_order_amount && subtotal >= selectedRate.max_order_amount) return 0;
     return selectedRate.rate;
-  }, [selectedRate, subtotal]);
+  }, [selectedRate, subtotal, freeShippingThreshold]);
 
   useEffect(() => {
     if (availableRates.length > 0 && !selectedRateId) {
