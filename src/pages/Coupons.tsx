@@ -55,6 +55,7 @@ import {
 import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCategoriesCache } from "@/hooks/useCategoriesCache";
+import { FreeShippingInfoCard } from "@/components/admin/FreeShippingInfoCard";
 
 // Updated interface to match DB schema
 interface Coupon {
@@ -590,6 +591,9 @@ export default function Coupons() {
             </div>
           }
         />
+
+        {/* Free Shipping Info (managed in Store Settings) */}
+        <FreeShippingInfoCard />
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
