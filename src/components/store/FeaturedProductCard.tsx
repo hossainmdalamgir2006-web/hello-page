@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,7 +22,7 @@ interface FeaturedProductCardProps {
   isNew?: boolean;
 }
 
-export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps) {
+export const FeaturedProductCard = forwardRef<HTMLDivElement, FeaturedProductCardProps>(({ product, isNew }, ref) => {
   const { addItem } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const { t } = useLanguage();
@@ -49,7 +50,7 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
   };
 
   return (
-    <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
+    <Card ref={ref} className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
       <Link to={`/product/${product.slug || product.id}`} className="relative aspect-[3/4] overflow-hidden block">
         <img src={imageUrl} alt={product.name} className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${secondImage ? "group-hover:opacity-0" : ""}`} loading="lazy" />
         {secondImage && (
@@ -87,4 +88,6 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
       </CardContent>
     </Card>
   );
-}
+});
+
+FeaturedProductCard.displayName = "FeaturedProductCard";
