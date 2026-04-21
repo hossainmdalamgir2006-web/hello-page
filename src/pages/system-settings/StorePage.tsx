@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { UploadSettings } from "@/components/settings/UploadSettings";
 import { MaintenanceModeSettings } from "@/components/settings/MaintenanceModeSettings";
+import { FreeShippingSettings } from "@/components/settings/FreeShippingSettings";
 import { useSiteContent, type MergedSection } from "@/hooks/useSiteContent";
 import { siteSettingsRegistry, type PageDef } from "@/config/siteContentRegistry";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Save, Upload, Construction, X, ImageIcon, Trash2, Loader2 } from "lucide-react";
+import { Save, Upload, Construction, X, ImageIcon, Trash2, Loader2, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinkListEditor } from "@/components/admin/content-editors";
 import { useToast } from "@/hooks/use-toast";
@@ -22,10 +23,12 @@ import { useToast } from "@/hooks/use-toast";
 type SidebarItem =
   | { type: "page"; pageDef: PageDef }
   | { type: "upload" }
-  | { type: "maintenance" };
+  | { type: "maintenance" }
+  | { type: "free_shipping" };
 
 const sidebarItems: SidebarItem[] = [
   ...siteSettingsRegistry.map((p) => ({ type: "page" as const, pageDef: p })),
+  { type: "free_shipping" },
   { type: "upload" },
   { type: "maintenance" },
 ];
@@ -227,12 +230,14 @@ export default function StorePage() {
   const getItemIcon = (item: SidebarItem) => {
     if (item.type === "page") return item.pageDef.icon;
     if (item.type === "upload") return Upload;
+    if (item.type === "free_shipping") return Truck;
     return Construction;
   };
 
   const getItemLabel = (item: SidebarItem) => {
     if (item.type === "page") return item.pageDef.label;
     if (item.type === "upload") return "Upload Settings";
+    if (item.type === "free_shipping") return "Free Shipping";
     return "Maintenance Mode";
   };
 
@@ -290,6 +295,11 @@ export default function StorePage() {
             <>
               <h2 className="text-lg font-semibold">Upload Settings</h2>
               <UploadSettings />
+            </>
+          ) : selected.type === "free_shipping" ? (
+            <>
+              <h2 className="text-lg font-semibold">Free Shipping</h2>
+              <FreeShippingSettings />
             </>
           ) : (
             <>
