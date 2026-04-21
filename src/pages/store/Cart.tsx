@@ -206,28 +206,64 @@ export default function Cart() {
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="flex justify-between items-center mb-2 px-1">
-              <div className="flex items-center gap-3">
-                <Checkbox
-                  checked={items.length > 0 && selectedKeys.size === items.length}
-                  onCheckedChange={(checked) => checked ? selectAll() : deselectAll()}
-                />
-                <p className="text-sm text-muted-foreground">
-                  {selectedKeys.size > 0 
-                    ? `${selectedKeys.size} of ${items.length} selected`
-                    : `${items.length} ${items.length === 1 ? 'item' : 'items'} in your cart`
-                  }
-                </p>
+            {/* Selection header / Bulk actions toolbar */}
+            <TooltipProvider delayDuration={200}>
+              <div className="rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm p-3 mb-2">
+                <div className="flex flex-wrap justify-between items-center gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Checkbox
+                      checked={items.length > 0 && selectedCount === items.reduce((s, i) => s + i.quantity, 0) && selectedKeys.size === items.length}
+                      onCheckedChange={(checked) => checked ? selectAll() : deselectAll()}
+                      className="h-5 w-5"
+                      aria-label="Select all items"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        {selectedKeys.size > 0
+                          ? `${selectedKeys.size} of ${items.length} selected`
+                          : `Select items to checkout`}
+                      </p>
+                      <p className="text-xs text-muted-foreground hidden sm:flex items-center gap-1">
+                        Unticked items stay in your cart for later
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="inline-flex"><HelpCircle className="h-3 w-3" /></button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs">
+                            Only the items you tick will be charged at checkout. Unticked items remain saved in your cart.
+                          </TooltipContent>
+                        </Tooltip>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 flex-wrap">
+                    {selectedKeys.size > 0 ? (
+                      <>
+                        <Button variant="ghost" size="sm" onClick={handleBulkSaveForLater} className="h-8 text-xs">
+                          <Bookmark className="h-3.5 w-3.5 mr-1" /> Save
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={handleBulkMoveToWishlist} className="h-8 text-xs">
+                          <Heart className="h-3.5 w-3.5 mr-1" /> Wishlist
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={handleBulkRemove} className="h-8 text-xs text-muted-foreground hover:text-destructive">
+                          <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button variant="ghost" size="sm" onClick={handleShareCart} className="h-8 text-xs text-muted-foreground hover:text-foreground">
+                          <Share2 className="h-3.5 w-3.5 mr-1" /> {t('store.share')}
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={clearCart} className="h-8 text-xs text-muted-foreground hover:text-destructive">
+                          {t('store.clearCart')}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-1">
-                <Button variant="ghost" size="sm" onClick={handleShareCart} className="text-muted-foreground hover:text-foreground">
-                  <Share2 className="h-4 w-4 mr-1" /> {t('store.share')}
-                </Button>
-                <Button variant="ghost" size="sm" onClick={clearCart} className="text-muted-foreground hover:text-destructive">
-                  {t('store.clearCart')}
-                </Button>
-              </div>
-            </div>
+            </TooltipProvider>
+
 
             {items.map((item) => {
               const key = getItemKey(item);
