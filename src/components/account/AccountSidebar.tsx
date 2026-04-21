@@ -55,10 +55,10 @@ export function AccountSidebar({ collapsed = false, onToggleCollapse, onCloseMob
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     overview: true,
-    orders: true,
-    shopping: true,
-    account: true,
-    help: true,
+    orders: false,
+    shopping: false,
+    account: false,
+    help: false,
   });
 
   const toggleGroup = (key: string) => {
