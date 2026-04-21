@@ -2,7 +2,7 @@ import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
-import { checkDndKitDeps, PINNED_DND_KIT } from "./scripts/check-dnd-kit-deps.mjs";
+import { checkDndKitDeps, PINNED_DND_KIT } from "./scripts/check-dnd-kit-deps";
 
 // Vite plugin: warn on startup AND fail the build if required dnd-kit deps
 // are missing or don't match the pinned versions.

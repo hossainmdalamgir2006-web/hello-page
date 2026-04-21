@@ -1,19 +1,19 @@
 // Pinned version expectations for @dnd-kit/* packages.
 // If any required package is missing OR installed at a version that doesn't
-// satisfy the pinned spec, we print a loud warning. Run from Vite plugin
-// (startup + build) and as a standalone script.
+// match the pinned spec, we print a loud warning. Used by the Vite plugin
+// (startup + build) and runnable as a standalone script.
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 
 // Single source of truth for the pinned set.
-export const PINNED_DND_KIT = {
+export const PINNED_DND_KIT: Record<string, string> = {
   "@dnd-kit/core": "6.3.1",
   "@dnd-kit/sortable": "10.0.0",
   "@dnd-kit/utilities": "3.2.2",
 };
 
-function readInstalledVersion(pkg) {
+function readInstalledVersion(pkg: string): string | null {
   try {
     const pj = require(`${pkg}/package.json`);
     return pj.version ?? null;
@@ -22,9 +22,17 @@ function readInstalledVersion(pkg) {
   }
 }
 
-export function checkDndKitDeps({ silent = false } = {}) {
-  const missing = [];
-  const mismatched = [];
+export interface DepCheckResult {
+  ok: boolean;
+  missing: string[];
+  mismatched: { pkg: string; expected: string; installed: string }[];
+}
+
+export function checkDndKitDeps(
+  { silent = false }: { silent?: boolean } = {},
+): DepCheckResult {
+  const missing: string[] = [];
+  const mismatched: DepCheckResult["mismatched"] = [];
 
   for (const [pkg, expected] of Object.entries(PINNED_DND_KIT)) {
     const installed = readInstalledVersion(pkg);
@@ -38,8 +46,8 @@ export function checkDndKitDeps({ silent = false } = {}) {
   const ok = missing.length === 0 && mismatched.length === 0;
 
   if (!ok && !silent) {
-    const yellow = (s) => `\x1b[33m${s}\x1b[0m`;
-    const red = (s) => `\x1b[31m${s}\x1b[0m`;
+    const yellow = (s: string) => `\x1b[33m${s}\x1b[0m`;
+    const red = (s: string) => `\x1b[31m${s}\x1b[0m`;
     console.warn(
       yellow("\n[dnd-kit] Dependency check failed — please review:"),
     );
@@ -62,11 +70,4 @@ export function checkDndKitDeps({ silent = false } = {}) {
   }
 
   return { ok, missing, mismatched };
-}
-
-// Standalone CLI: `node scripts/check-dnd-kit-deps.mjs`
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const { ok } = checkDndKitDeps();
-  if (!ok) process.exitCode = 1;
-  else console.log("[dnd-kit] All required packages present at pinned versions.");
 }
