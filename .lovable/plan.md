@@ -1,44 +1,59 @@
 
-## Cart Selection Mismatch Bug — Fix Plan
 
-### Root Cause
-দুই জায়গায় **আলাদা key format** ব্যবহার হচ্ছে:
+## Free Shipping — Admin Controlled System
 
-| File | Key formula | Example output |
-|---|---|---|
-| `src/contexts/CartContext.tsx` | `${id}-${size \|\| ''}-${color \|\| ''}` | `"abc--"` |
-| `src/pages/store/Cart.tsx` (local) | `${id}-${size}-${color}` | `"abc-undefined-undefined"` |
-| `src/components/store/CartDrawer.tsx` | `${id}-${size \|\| ''}-${color \|\| ''}` | `"abc--"` ✅ |
+### Goal
+Hardcoded `2000 BDT` threshold-কে admin-managed dynamic system বানাব, যাতে admin **Store Settings** থেকে threshold change, banner toggle, এবং checkout-এর actual shipping calculation একসাথে control করতে পারে।
 
-ফলে Cart page-এ checkbox check করলে context-এ wrong key save হয়, আর reverse direction-এ context-এর সঠিক keys cart page UI-তে match করে না। তাই:
+### Implementation
 
-- Header count ঠিক ("2 of 2 selected") কারণ `selectedKeys.size` directly read হয়
-- কিন্তু item-এর `selectedKeys.has(localKey)` সবসময় `false` → checkbox empty + "Not in checkout" badge + order summary "2 items not selected"
+#### 1. Database — `store_settings` table-এ 2 keys add
+- `free_shipping_threshold` → numeric value (default `2000`)
+- `free_shipping_enabled` → `"true"` / `"false"` (default `"true"`)
 
-### Fix
+(কোনো schema migration লাগবে না — `store_settings` table আগেই key/value structure-এ আছে।)
 
-**`src/pages/store/Cart.tsx`** — line 119:
-```tsx
-const getItemKey = (item: { id: string; size?: string; color?: string }) =>
-  `${item.id}-${item.size || ''}-${item.color || ''}`;
-```
-এই এক line fix করলে সব mismatch resolve হয়ে যাবে — Context, Drawer, এবং Cart page সবাই same key format use করবে।
+#### 2. New hook — `src/hooks/useFreeShippingConfig.ts`
+- React Query দিয়ে `store_settings` থেকে দুটি key fetch করব (10 min cache)
+- Return: `{ threshold: number, enabled: boolean, loading: boolean }`
+- Default fallback: `{ threshold: 2000, enabled: true }` যদি settings missing হয়
 
-### Additional Hardening
-1. Single source of truth — একটা shared utility export করব `CartContext.tsx` থেকে: `export const getCartItemKey = (item) => ...`, যাতে future-এ আবার এই bug না হয়।
-2. Cart.tsx এবং CartDrawer.tsx উভয়েই এই shared utility import করবে।
+#### 3. Admin UI — Store Settings-এ নতুন section
+**File:** নতুন `src/components/settings/FreeShippingSettings.tsx`
+- Card with:
+  - Toggle switch — *"Show free shipping progress banner"*
+  - Number input — *"Free shipping threshold (BDT)"*
+  - Helper text — *"Customers with cart subtotal ≥ this value get free shipping"*
+  - Save button → use `useStoreSettings.updateMultipleSettings`
+- Register in `src/pages/system-settings/StorePage.tsx` sidebar (নতুন `{ type: "free_shipping" }` entry)
 
-### Files to Edit
+#### 4. Storefront — dynamic consumption
+- **`src/components/store/FreeShippingProgress.tsx`** → threshold prop optional হবে; hook থেকে value pull করবে। `enabled === false` হলে component `null` return করবে।
+- **`src/pages/store/Cart.tsx`** → hardcoded `threshold={2000}` remove
+- **`src/components/store/CartDrawer.tsx`** → same
+
+#### 5. Checkout sync — actual shipping calculation
+- **`src/pages/store/Checkout.tsx`** (এবং shipping calc utility যদি থাকে) → hook থেকে threshold pull করব; subtotal ≥ threshold হলে shipping cost `0` set করব (existing logic যদি hardcoded থাকে, replace করব)
+- Same threshold display হবে checkout summary-এ: *"Free shipping unlocked!"* badge
+
+### Files to Edit/Create
+
 | File | Change |
 |---|---|
-| `src/contexts/CartContext.tsx` | Export `getCartItemKey` helper publicly |
-| `src/pages/store/Cart.tsx` | Remove local `getItemKey`, import shared one |
-| `src/components/store/CartDrawer.tsx` | Replace local `getKey` with shared import |
+| `src/hooks/useFreeShippingConfig.ts` | **NEW** — fetch threshold + enabled from store_settings |
+| `src/components/settings/FreeShippingSettings.tsx` | **NEW** — admin UI card |
+| `src/pages/system-settings/StorePage.tsx` | Register new sidebar item |
+| `src/components/store/FreeShippingProgress.tsx` | Use hook, respect `enabled` flag |
+| `src/pages/store/Cart.tsx` | Remove hardcoded threshold |
+| `src/components/store/CartDrawer.tsx` | Remove hardcoded threshold |
+| `src/pages/store/Checkout.tsx` | Sync shipping calc with dynamic threshold |
+| Migration | Insert default rows for 2 new setting keys |
 
 ### Expected Result
-- Click checkbox → checkbox fills ✅
-- "Not in checkout" badge disappears for ticked items ✅
-- Order Summary correctly shows "Subtotal (2 of 2 items) BDT 4,950" without "items not selected" line ✅
-- Drawer ↔ Cart Page ↔ Checkout সবাই consistent state দেখাবে ✅
+- Admin **Store Settings → Free Shipping** tab-এ গিয়ে threshold change করতে পারবে (e.g., 2000 → 3000)
+- Toggle off করলে cart/drawer-এ banner hide হয়ে যাবে
+- Checkout-এর shipping cost calculation same threshold follow করবে — banner আর actual charge mismatch হবে না
+- React Query cache-এর জন্য change instant reflect হবে (10 min stale)
 
-Approve করলে default mode-এ গিয়ে এই 3 file fix করে দেব।
+Approve করলে default mode-এ implement করব।
+
