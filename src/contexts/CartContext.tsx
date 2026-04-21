@@ -138,7 +138,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeItem = (id: string, size?: string, color?: string) => {
+    const k = getItemKey({ id, size, color });
     setItems(current => current.filter(item => !(item.id === id && item.size === size && item.color === color)));
+    setSelectedKeys(prev => {
+      if (!prev.has(k)) return prev;
+      const next = new Set(prev);
+      next.delete(k);
+      return next;
+    });
   };
 
   const updateQuantity = (id: string, quantity: number, size?: string, color?: string) => {
@@ -158,7 +165,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const clearCart = () => { setItems([]); clearCartSession(); };
+  const clearCart = () => { setItems([]); setSelectedKeys(new Set()); clearCartSession(); };
 
   const markCartRecovered = async (orderId?: string) => { await markAsRecovered(orderId); };
 
