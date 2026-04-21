@@ -228,8 +228,8 @@ export default function Cart() {
                         />
                       </div>
                       <Link to={`/product/${item.id}`} className="flex-shrink-0">
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden bg-muted">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-muted ring-1 ring-border/50">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                         </div>
                       </Link>
                       <div className="flex-1 min-w-0">
