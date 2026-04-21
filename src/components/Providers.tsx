@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HelmetProvider } from "react-helmet-async";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -32,8 +31,7 @@ const queryClient = new QueryClient({
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <AppInitializer>
-      <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
           <SiteThemeProvider>
             <ThemeProvider>
               <LanguageProvider>
@@ -55,9 +53,8 @@ export function Providers({ children }: { children: ReactNode }) {
                 </AuthProvider>
               </LanguageProvider>
             </ThemeProvider>
-          </SiteThemeProvider>
-        </QueryClientProvider>
-      </HelmetProvider>
+        </SiteThemeProvider>
+      </QueryClientProvider>
     </AppInitializer>
   );
 }
