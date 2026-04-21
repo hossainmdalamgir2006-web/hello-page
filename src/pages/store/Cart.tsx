@@ -266,8 +266,8 @@ export default function Cart() {
                         </div>
 
                         <div className="flex items-center justify-between mt-4">
-                          <div className="flex items-center gap-1 border rounded-lg">
-                            <Button variant="ghost" size="icon" className="h-8 w-8"
+                          <div className="flex items-center gap-1 border border-border/70 rounded-full bg-background">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full"
                               onClick={() => updateQuantity(item.id, item.quantity - 1, item.size, item.color)}
                             >
                               <Minus className="h-3 w-3" />
@@ -278,9 +278,9 @@ export default function Cart() {
                               max={99}
                               value={item.quantity}
                               onChange={(e) => handleQuantityInput(item, e.target.value)}
-                              className="w-12 h-8 text-center border-0 p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              className="w-10 h-8 text-center border-0 p-0 text-sm font-medium bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
-                            <Button variant="ghost" size="icon" className="h-8 w-8"
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full"
                               onClick={() => {
                                 const maxStock = stockData[item.id] ?? 99;
                                 if (item.quantity >= maxStock) {
@@ -295,9 +295,9 @@ export default function Cart() {
                             </Button>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-foreground">{formatPrice(item.price * item.quantity)}</p>
+                            <p className="font-bold text-foreground text-lg leading-tight">{formatPrice(item.price * item.quantity)}</p>
                             {item.comparePrice && (
-                              <p className="text-sm text-muted-foreground line-through">{formatPrice(item.comparePrice * item.quantity)}</p>
+                              <p className="text-xs text-muted-foreground line-through">{formatPrice(item.comparePrice * item.quantity)}</p>
                             )}
                           </div>
                         </div>
