@@ -47,7 +47,8 @@ const CART_STORAGE_KEY = 'store-cart';
 const SAVED_STORAGE_KEY = 'store-saved';
 const SELECTION_STORAGE_KEY = 'store-cart-selection';
 
-const getItemKey = (item: { id: string; size?: string; color?: string }) => `${item.id}-${item.size || ''}-${item.color || ''}`;
+export const getCartItemKey = (item: { id: string; size?: string; color?: string }) => `${item.id}-${item.size || ''}-${item.color || ''}`;
+const getItemKey = getCartItemKey;
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);

@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { useCart } from "@/contexts/CartContext";
+import { useCart, getCartItemKey } from "@/contexts/CartContext";
 import { useCoupon } from "@/hooks/useCoupon";
 import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
 import { useWishlist } from "@/contexts/WishlistContext";
@@ -116,7 +116,7 @@ export default function Cart() {
     removeItem(item.id, item.size, item.color);
   };
 
-  const getItemKey = (item: { id: string; size?: string; color?: string }) => `${item.id}-${item.size}-${item.color}`;
+  const getItemKey = getCartItemKey;
 
   const unselectedItems = items.filter(i => !selectedKeys.has(getItemKey(i)));
   const unselectedSubtotal = unselectedItems.reduce((s, i) => s + i.price * i.quantity, 0);
