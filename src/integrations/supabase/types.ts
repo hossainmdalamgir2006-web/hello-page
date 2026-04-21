@@ -3882,18 +3882,15 @@ export type Database = {
         Args: never
         Returns: {
           code: string
-          created_at: string
           description: string
           id: string
           instructions: string
           is_active: boolean
           logo_url: string
-          method_id: string
           name: string
           name_bn: string
           sort_order: number
           supports_verification: boolean
-          updated_at: string
         }[]
       }
       get_safe_user_sessions: {
