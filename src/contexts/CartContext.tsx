@@ -87,7 +87,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
     if (stored) {
-      try { setItems(JSON.parse(stored)); } catch (e) { console.error('Failed to parse cart'); }
+      try {
+        const parsed: CartItem[] = JSON.parse(stored);
+        setItems(parsed);
+        // Initial select all on first load
+        setSelectedKeys(new Set(parsed.map(getItemKey)));
+      } catch (e) { console.error('Failed to parse cart'); }
     }
     const savedStored = localStorage.getItem(SAVED_STORAGE_KEY);
     if (savedStored) {
@@ -163,12 +168,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setSavedItems(current => current.filter(i => !(i.id === id && i.size === size && i.color === color)));
   };
 
-  // Auto-select all items on initial load
-  useEffect(() => {
-    if (items.length > 0 && selectedKeys.size === 0) {
-      setSelectedKeys(new Set(items.map(getItemKey)));
-    }
-  }, [items.length]);
 
   return (
     <CartContext.Provider value={{
