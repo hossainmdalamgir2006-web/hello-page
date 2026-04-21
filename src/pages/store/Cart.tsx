@@ -547,6 +547,27 @@ export default function Cart() {
           </div>
         </div>
       </div>
+
+      {/* Sticky bottom selection bar — mobile quick checkout */}
+      {selectedCount > 0 && items.length > 0 && (
+        <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur-md shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.08)]">
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">
+                {selectedCount} {selectedCount === 1 ? 'item' : 'items'} selected
+              </p>
+              <p className="font-bold text-base text-store-primary truncate">{formatPrice(total)}</p>
+            </div>
+            <Button
+              size="default"
+              className="bg-store-primary hover:bg-store-primary/90 rounded-full px-6 font-semibold flex-shrink-0"
+              onClick={handleProceedToCheckout}
+            >
+              {t('store.checkout')}
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
