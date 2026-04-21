@@ -592,6 +592,9 @@ export default function Coupons() {
           }
         />
 
+        {/* Free Shipping Info (managed in Store Settings) */}
+        <FreeShippingInfoCard />
+
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {[
