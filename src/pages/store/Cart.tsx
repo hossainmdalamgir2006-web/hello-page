@@ -139,15 +139,15 @@ export default function Cart() {
   if (items.length === 0 && savedItems.length === 0) {
     return (
       <>
-        <div className="container mx-auto px-4 py-16 text-center">
-          <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-store-muted flex items-center justify-center">
-            <ShoppingBag className="w-16 h-16 text-muted-foreground" />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-store-primary/10 to-store-secondary/10 flex items-center justify-center ring-1 ring-border/50">
+            <ShoppingBag className="w-16 h-16 text-store-primary/70" />
           </div>
-          <h1 className="font-display text-2xl font-bold mb-3">{t('store.cartEmpty')}</h1>
+          <h1 className="font-display text-3xl font-bold mb-3 tracking-tight">{t('store.cartEmpty')}</h1>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
             {t('store.cartEmptyDesc')}
           </p>
-          <Button size="lg" className="bg-store-primary hover:bg-store-primary/90" asChild>
+          <Button size="lg" className="bg-store-primary hover:bg-store-primary/90 rounded-full px-8" asChild>
             <Link to="/products">{t('store.startShopping')}</Link>
           </Button>
         </div>
@@ -158,21 +158,28 @@ export default function Cart() {
   return (
     <>
       <SEOHead title={t('store.shoppingCart')} description="Review your shopping cart items and proceed to checkout." canonicalPath="/cart" noIndex />
-      {/* Page Header */}
-      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-10 overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <ShoppingBag className="h-5 w-5 text-store-primary-foreground" />
+      {/* Refined Page Header */}
+      <section className="relative bg-gradient-to-b from-muted/40 to-background border-b border-border/50 py-10">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-store-primary/10 flex items-center justify-center ring-1 ring-store-primary/20">
+                <ShoppingBag className="h-6 w-6 text-store-primary" />
+              </div>
+              <div>
+                <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                  {t('store.shoppingCart')}
+                </h1>
+                <p className="text-muted-foreground text-sm mt-0.5">
+                  {items.length} {items.length === 1 ? 'item' : 'items'} in your bag
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">
-                {t('store.shoppingCart')}
-              </h1>
-              <p className="text-store-primary-foreground/70 text-sm">{items.length} {items.length === 1 ? 'item' : 'items'} in your bag</p>
-            </div>
+            <Button variant="outline" size="sm" className="rounded-full" asChild>
+              <Link to="/products">
+                <ArrowLeft className="h-4 w-4 mr-2" /> {t('store.continueShopping')}
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -181,27 +188,27 @@ export default function Cart() {
         {/* Free Shipping Progress Bar */}
         <FreeShippingProgress subtotal={checkoutSubtotal} threshold={2000} className="mb-6" />
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex justify-between items-center mb-4">
+          <div className="lg:col-span-2 space-y-3">
+            <div className="flex justify-between items-center mb-2 px-1">
               <div className="flex items-center gap-3">
                 <Checkbox
                   checked={items.length > 0 && selectedKeys.size === items.length}
                   onCheckedChange={(checked) => checked ? selectAll() : deselectAll()}
                 />
-                <p className="text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {selectedKeys.size > 0 
                     ? `${selectedKeys.size} of ${items.length} selected`
                     : `${items.length} ${items.length === 1 ? 'item' : 'items'} in your cart`
                   }
                 </p>
               </div>
-              <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={handleShareCart}>
+              <div className="flex gap-1">
+                <Button variant="ghost" size="sm" onClick={handleShareCart} className="text-muted-foreground hover:text-foreground">
                   <Share2 className="h-4 w-4 mr-1" /> {t('store.share')}
                 </Button>
-                <Button variant="ghost" size="sm" onClick={clearCart}>
+                <Button variant="ghost" size="sm" onClick={clearCart} className="text-muted-foreground hover:text-destructive">
                   {t('store.clearCart')}
                 </Button>
               </div>
@@ -211,8 +218,8 @@ export default function Cart() {
               const key = getItemKey(item);
               const isSelected = selectedKeys.has(key);
               return (
-                <Card key={key} className={`transition-colors ${isSelected ? 'ring-2 ring-store-primary/30' : 'opacity-70'}`}>
-                  <CardContent className="p-4">
+                <Card key={key} className={`group rounded-2xl border transition-all duration-200 hover:shadow-md ${isSelected ? 'border-store-primary/40 bg-card shadow-sm' : 'border-border/60 bg-card/50 opacity-80'}`}>
+                  <CardContent className="p-4 sm:p-5">
                     <div className="flex gap-4">
                       <div className="flex items-start pt-1">
                         <Checkbox
