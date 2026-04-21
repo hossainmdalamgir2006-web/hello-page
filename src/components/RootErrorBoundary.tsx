@@ -7,21 +7,46 @@ interface Props {
 interface State {
   error: Error | null;
   componentStack: string;
+  recoveryKey: number;
 }
 
 /**
  * Root-level error boundary so a render-time crash never shows a blank screen.
- * Prints the failing component stack so we can pinpoint which subtree caused it
- * even in production builds.
+ *
+ * Special handling for the well-known React 18 + Radix Portal `removeChild`
+ * race condition: when third-party scripts (GA4/GTM/Pixel) or portals get
+ * detached out-of-order during route transitions, React throws
+ * `NotFoundError: Failed to execute 'removeChild' on 'Node'`. The DOM is
+ * already in the desired state — we simply force a re-mount with a fresh key
+ * so the user never sees the error screen.
  */
 export class RootErrorBoundary extends Component<Props, State> {
-  state: State = { error: null, componentStack: "" };
+  state: State = { error: null, componentStack: "", recoveryKey: 0 };
 
   static getDerivedStateFromError(error: Error): Partial<State> {
+    // Auto-recover from benign DOM reconciliation races.
+    const isRemoveChildRace =
+      error.name === "NotFoundError" &&
+      /removeChild/i.test(error.message ?? "");
+    if (isRemoveChildRace) {
+      return { error: null };
+    }
     return { error };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
+    const isRemoveChildRace =
+      error.name === "NotFoundError" &&
+      /removeChild/i.test(error.message ?? "");
+
+    if (isRemoveChildRace) {
+      // Silent recovery — bump key to force a clean re-mount of the subtree.
+      // eslint-disable-next-line no-console
+      console.warn("[RootErrorBoundary] Recovered from removeChild race.");
+      this.setState((s) => ({ error: null, recoveryKey: s.recoveryKey + 1 }));
+      return;
+    }
+
     this.setState({ componentStack: info.componentStack || "" });
     // eslint-disable-next-line no-console
     console.error("[RootErrorBoundary] Caught:", error, info.componentStack);
@@ -54,6 +79,6 @@ export class RootErrorBoundary extends Component<Props, State> {
         </div>
       );
     }
-    return this.props.children;
+    return <div key={this.state.recoveryKey} className="contents">{this.props.children}</div>;
   }
 }
