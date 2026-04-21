@@ -45,6 +45,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = 'store-cart';
 const SAVED_STORAGE_KEY = 'store-saved';
+const SELECTION_STORAGE_KEY = 'store-cart-selection';
 
 const getItemKey = (item: { id: string; size?: string; color?: string }) => `${item.id}-${item.size || ''}-${item.color || ''}`;
 
@@ -93,11 +94,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (savedStored) {
       try { setSavedItems(JSON.parse(savedStored)); } catch (e) { console.error('Failed to parse saved items'); }
     }
+    const selStored = localStorage.getItem(SELECTION_STORAGE_KEY);
+    if (selStored) {
+      try { setSelectedKeys(new Set(JSON.parse(selStored))); } catch (e) { console.error('Failed to parse selection'); }
+    }
   }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items)); }, [items]);
   useEffect(() => { localStorage.setItem(SAVED_STORAGE_KEY, JSON.stringify(savedItems)); }, [savedItems]);
+  useEffect(() => { localStorage.setItem(SELECTION_STORAGE_KEY, JSON.stringify([...selectedKeys])); }, [selectedKeys]);
+
+  // Cleanup orphan selection keys when items change (removed items, etc.)
+  useEffect(() => {
+    const validKeys = new Set(items.map(getItemKey));
+    setSelectedKeys(prev => {
+      let changed = false;
+      const next = new Set<string>();
+      prev.forEach(k => {
+        if (validKeys.has(k)) next.add(k);
+        else changed = true;
+      });
+      return changed ? next : prev;
+    });
+  }, [items]);
 
   const addItem = (newItem: Omit<CartItem, 'quantity'>, quantity = 1) => {
     const key = getItemKey(newItem);
@@ -118,7 +138,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeItem = (id: string, size?: string, color?: string) => {
+    const k = getItemKey({ id, size, color });
     setItems(current => current.filter(item => !(item.id === id && item.size === size && item.color === color)));
+    setSelectedKeys(prev => {
+      if (!prev.has(k)) return prev;
+      const next = new Set(prev);
+      next.delete(k);
+      return next;
+    });
   };
 
   const updateQuantity = (id: string, quantity: number, size?: string, color?: string) => {
@@ -138,7 +165,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const clearCart = () => { setItems([]); clearCartSession(); };
+  const clearCart = () => { setItems([]); setSelectedKeys(new Set()); clearCartSession(); };
 
   const markCartRecovered = async (orderId?: string) => { await markAsRecovered(orderId); };
 

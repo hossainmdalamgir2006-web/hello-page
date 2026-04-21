@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle, ShieldCheck, Lock } from "lucide-react";
+import { Minus, Plus, X, ShoppingBag, ArrowLeft, Truck, Tag, Loader2, Sparkles, Heart, Bookmark, Share2, MessageSquare, PackageCheck, CheckSquare, Square, AlertTriangle, ShieldCheck, Lock, HelpCircle, Trash2 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +21,7 @@ import { useShippingRates } from "@/hooks/useShippingRates";
 import { formatPrice } from "@/lib/formatPrice";
 
 export default function Cart() {
-  const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount } = useCart();
+  const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount, removeSelectedItems } = useCart();
   const { t } = useLanguage();
   const { appliedCoupon, loading: couponLoading, validateCoupon, removeCoupon } = useCoupon();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
@@ -116,6 +118,29 @@ export default function Cart() {
 
   const getItemKey = (item: { id: string; size?: string; color?: string }) => `${item.id}-${item.size}-${item.color}`;
 
+  const unselectedItems = items.filter(i => !selectedKeys.has(getItemKey(i)));
+  const unselectedSubtotal = unselectedItems.reduce((s, i) => s + i.price * i.quantity, 0);
+  const unselectedCount = unselectedItems.reduce((s, i) => s + i.quantity, 0);
+
+  const handleBulkRemove = () => {
+    if (selectedCount === 0) return;
+    removeSelectedItems();
+    toast.success(`${selectedCount} ${selectedCount === 1 ? 'item' : 'items'} removed`);
+  };
+
+  const handleBulkSaveForLater = () => {
+    selectedItems.forEach(it => saveForLater(it.id, it.size, it.color));
+    toast.success(`${selectedItems.length} ${selectedItems.length === 1 ? 'item' : 'items'} saved for later`);
+  };
+
+  const handleBulkMoveToWishlist = () => {
+    selectedItems.forEach(it => {
+      addToWishlist(it.id);
+      removeItem(it.id, it.size, it.color);
+    });
+    toast.success(`${selectedItems.length} ${selectedItems.length === 1 ? 'item' : 'items'} moved to wishlist`);
+  };
+
   const handleQuantityInput = (item: typeof items[0], value: string) => {
     const num = parseInt(value, 10);
     const maxStock = stockData[item.id] ?? 99;
@@ -181,40 +206,96 @@ export default function Cart() {
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="flex justify-between items-center mb-2 px-1">
-              <div className="flex items-center gap-3">
-                <Checkbox
-                  checked={items.length > 0 && selectedKeys.size === items.length}
-                  onCheckedChange={(checked) => checked ? selectAll() : deselectAll()}
-                />
-                <p className="text-sm text-muted-foreground">
-                  {selectedKeys.size > 0 
-                    ? `${selectedKeys.size} of ${items.length} selected`
-                    : `${items.length} ${items.length === 1 ? 'item' : 'items'} in your cart`
-                  }
-                </p>
+            {/* Selection header / Bulk actions toolbar */}
+            <TooltipProvider delayDuration={200}>
+              <div className="rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm p-3 mb-2">
+                <div className="flex flex-wrap justify-between items-center gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Checkbox
+                      checked={items.length > 0 && selectedCount === items.reduce((s, i) => s + i.quantity, 0) && selectedKeys.size === items.length}
+                      onCheckedChange={(checked) => checked ? selectAll() : deselectAll()}
+                      className="h-5 w-5"
+                      aria-label="Select all items"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground">
+                        {selectedKeys.size > 0
+                          ? `${selectedKeys.size} of ${items.length} selected`
+                          : `Select items to checkout`}
+                      </p>
+                      <p className="text-xs text-muted-foreground hidden sm:flex items-center gap-1">
+                        Unticked items stay in your cart for later
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button type="button" className="inline-flex"><HelpCircle className="h-3 w-3" /></button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs">
+                            Only the items you tick will be charged at checkout. Unticked items remain saved in your cart.
+                          </TooltipContent>
+                        </Tooltip>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 flex-wrap">
+                    {selectedKeys.size > 0 ? (
+                      <>
+                        <Button variant="ghost" size="sm" onClick={handleBulkSaveForLater} className="h-8 text-xs">
+                          <Bookmark className="h-3.5 w-3.5 mr-1" /> Save
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={handleBulkMoveToWishlist} className="h-8 text-xs">
+                          <Heart className="h-3.5 w-3.5 mr-1" /> Wishlist
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={handleBulkRemove} className="h-8 text-xs text-muted-foreground hover:text-destructive">
+                          <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button variant="ghost" size="sm" onClick={handleShareCart} className="h-8 text-xs text-muted-foreground hover:text-foreground">
+                          <Share2 className="h-3.5 w-3.5 mr-1" /> {t('store.share')}
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={clearCart} className="h-8 text-xs text-muted-foreground hover:text-destructive">
+                          {t('store.clearCart')}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-1">
-                <Button variant="ghost" size="sm" onClick={handleShareCart} className="text-muted-foreground hover:text-foreground">
-                  <Share2 className="h-4 w-4 mr-1" /> {t('store.share')}
-                </Button>
-                <Button variant="ghost" size="sm" onClick={clearCart} className="text-muted-foreground hover:text-destructive">
-                  {t('store.clearCart')}
-                </Button>
-              </div>
-            </div>
+            </TooltipProvider>
+
 
             {items.map((item) => {
               const key = getItemKey(item);
               const isSelected = selectedKeys.has(key);
               return (
-                <Card key={key} className={`group rounded-2xl border transition-all duration-200 hover:shadow-md ${isSelected ? 'border-store-primary/40 bg-card shadow-sm' : 'border-border/60 bg-card/50 opacity-80'}`}>
+                <Card
+                  key={key}
+                  className={`group relative rounded-2xl transition-all duration-200 hover:shadow-md cursor-pointer ${
+                    isSelected
+                      ? 'border border-store-primary/40 bg-card shadow-sm'
+                      : 'border border-dashed border-border bg-muted/20'
+                  }`}
+                  onClick={(e) => {
+                    // Toggle selection when clicking the card body (but not on links/buttons/inputs)
+                    const target = e.target as HTMLElement;
+                    if (target.closest('a, button, input, [role="button"]')) return;
+                    toggleSelected(key);
+                  }}
+                >
+                  {!isSelected && (
+                    <Badge variant="secondary" className="absolute top-3 right-12 text-[10px] font-medium bg-muted text-muted-foreground border border-border">
+                      Not in checkout
+                    </Badge>
+                  )}
                   <CardContent className="p-4 sm:p-5">
                     <div className="flex gap-4">
                       <div className="flex items-start pt-1">
                         <Checkbox
                           checked={isSelected}
                           onCheckedChange={() => toggleSelected(key)}
+                          className="h-5 w-5"
+                          aria-label={`Select ${item.name}`}
                         />
                       </div>
                       <Link to={`/product/${item.id}`} className="flex-shrink-0">
@@ -414,9 +495,16 @@ export default function Cart() {
                 {/* Totals */}
                 <div className="space-y-2.5 pt-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('store.subtotal')} ({selectedCount} {t('store.items')})</span>
+                    <span className="text-muted-foreground">
+                      {t('store.subtotal')} <span className="text-xs">({selectedCount} of {items.reduce((s, i) => s + i.quantity, 0)} {t('store.items')})</span>
+                    </span>
                     <span className="font-medium">{formatPrice(checkoutSubtotal)}</span>
                   </div>
+                  {unselectedCount > 0 && (
+                    <p className="text-xs text-muted-foreground -mt-1">
+                      {unselectedCount} {unselectedCount === 1 ? 'item' : 'items'} not selected — {formatPrice(unselectedSubtotal)}
+                    </p>
+                  )}
                   {discount > 0 && (
                     <div className="flex justify-between text-sm text-store-accent">
                       <span className="flex items-center gap-1">
@@ -459,6 +547,27 @@ export default function Cart() {
           </div>
         </div>
       </div>
+
+      {/* Sticky bottom selection bar — mobile quick checkout */}
+      {selectedCount > 0 && items.length > 0 && (
+        <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur-md shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.08)]">
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">
+                {selectedCount} {selectedCount === 1 ? 'item' : 'items'} selected
+              </p>
+              <p className="font-bold text-base text-store-primary truncate">{formatPrice(total)}</p>
+            </div>
+            <Button
+              size="default"
+              className="bg-store-primary hover:bg-store-primary/90 rounded-full px-6 font-semibold flex-shrink-0"
+              onClick={handleProceedToCheckout}
+            >
+              {t('store.checkout')}
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
