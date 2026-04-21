@@ -62,19 +62,10 @@ export function GA4Provider({ children }: { children: React.ReactNode }) {
         })(window,document,'script','dataLayer','${gtmContainerId}');
       `;
       document.head.appendChild(gtmScript);
-
-      // noscript iframe — APPEND to body end (NOT before React root) to avoid
-      // breaking React's DOM child-index tracking which causes removeChild crashes.
-      const noscript = document.createElement('noscript');
-      noscript.id = 'gtm-dynamic-noscript';
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://www.googletagmanager.com/ns.html?id=${gtmContainerId}`;
-      iframe.height = '0';
-      iframe.width = '0';
-      iframe.style.display = 'none';
-      iframe.style.visibility = 'hidden';
-      noscript.appendChild(iframe);
-      document.body.appendChild(noscript);
+      // NOTE: GTM <noscript> iframe is intentionally omitted. It only matters
+      // for JS-disabled visitors (irrelevant for an SPA) and appending it to
+      // <body> corrupts React's child-index tracking → removeChild crashes
+      // during route transitions.
     }
 
     // --- Meta Pixel ---
