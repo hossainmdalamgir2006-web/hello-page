@@ -62,7 +62,8 @@ export default function Checkout() {
   const { appliedCoupon, validateCoupon, removeCoupon, incrementCouponUsage, loading: couponLoading } = useCoupon();
   const { zonesWithRates, loading: shippingLoading } = useShippingData();
   const { paymentMethods: enabledPaymentMethods, loading: paymentMethodsLoading } = useEnabledPaymentMethods();
-  const { threshold: freeShippingThreshold } = useFreeShippingConfig();
+  const { threshold: freeShippingThreshold, enabled: freeShippingEnabled } = useFreeShippingConfig();
+  const itemCount = items.reduce((sum, it) => sum + it.quantity, 0);
 
   const [couponCode, setCouponCode] = useState("");
   const couponState = location.state as CouponState | undefined;
