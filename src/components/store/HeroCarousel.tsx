@@ -4,6 +4,10 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { transformImage, buildSrcSet } from "@/lib/imageTransform";
+
+const HERO_WIDTHS = [640, 960, 1280, 1600, 1920];
+const HERO_SIZES = "100vw";
 
 interface CarouselSlide {
   id: string;
@@ -123,8 +127,12 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
       <section className="relative w-full overflow-hidden" style={{ height: "80vh", minHeight: "500px" }}>
         <div className="absolute inset-0">
           <img
-            src={fallbackSlide.image_url!}
+            src={transformImage(fallbackSlide.image_url!, { width: 1280, quality: 70 })}
+            srcSet={buildSrcSet(fallbackSlide.image_url!, HERO_WIDTHS, { quality: 70 })}
+            sizes={HERO_SIZES}
             alt={fallbackSlide.title || ""}
+            width={1920}
+            height={1080}
             className="w-full h-full object-cover"
             fetchPriority="high"
             loading="eager"
@@ -186,11 +194,16 @@ export function HeroCarousel({ autoplay = true, autoplayDelay = 5000, showArrows
         ) : (
           <img
             key={slide.id}
-            src={slide.image_url || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop"}
+            src={transformImage(slide.image_url || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop", { width: 1280, quality: 70 })}
+            srcSet={buildSrcSet(slide.image_url || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&h=1080&fit=crop", HERO_WIDTHS, { quality: 70 })}
+            sizes={HERO_SIZES}
             alt={slide.title || ""}
+            width={1920}
+            height={1080}
             className="w-full h-full object-cover"
             fetchPriority={current === 0 ? "high" : undefined}
             loading={current === 0 ? "eager" : "lazy"}
+            decoding={current === 0 ? "sync" : "async"}
           />
         )}
         {/* Overlay */}

@@ -7,6 +7,10 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPrice } from "@/lib/formatPrice";
+import { transformImage, buildSrcSet } from "@/lib/imageTransform";
+
+const FEATURED_WIDTHS = [200, 320, 480, 640];
+const FEATURED_SIZES = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw";
 
 interface FeaturedProductCardProps {
   product: {
@@ -51,9 +55,9 @@ export function FeaturedProductCard({ product, isNew }: FeaturedProductCardProps
   return (
     <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
       <Link to={`/product/${product.slug || product.id}`} className="relative aspect-[3/4] overflow-hidden block">
-        <img src={imageUrl} alt={product.name} width={600} height={800} className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${secondImage ? "group-hover:opacity-0" : ""}`} loading="lazy" decoding="async" />
+        <img src={transformImage(imageUrl, { width: 480 })} srcSet={buildSrcSet(imageUrl, FEATURED_WIDTHS)} sizes={FEATURED_SIZES} alt={product.name} width={600} height={800} className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${secondImage ? "group-hover:opacity-0" : ""}`} loading="lazy" decoding="async" />
         {secondImage && (
-          <img src={secondImage} alt={product.name} width={600} height={800} className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
+          <img src={transformImage(secondImage, { width: 480 })} srcSet={buildSrcSet(secondImage, FEATURED_WIDTHS)} sizes={FEATURED_SIZES} alt={product.name} width={600} height={800} className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
         )}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {isNew && <Badge className="bg-store-highlight text-store-primary-foreground">{t('store.new')}</Badge>}
