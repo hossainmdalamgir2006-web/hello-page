@@ -7,6 +7,10 @@ import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPrice } from "@/lib/formatPrice";
+import { transformImage, buildSrcSet } from "@/lib/imageTransform";
+
+const FEATURED_WIDTHS = [200, 320, 480, 640];
+const FEATURED_SIZES = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw";
 
 interface FeaturedProductCardProps {
   product: {
