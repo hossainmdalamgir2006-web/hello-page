@@ -71,6 +71,20 @@ const translations: Record<string, string> = {
   'store.signUpNow': 'Sign Up Now',
   'store.copied': 'Copied!',
   'store.copyOrderId': 'Copy order ID',
+
+  // Store info pages — titles & subtitles (CMS fallbacks)
+  'store.contactTitle': 'Contact Us',
+  'store.contactSubtitle': "Have a question or need help? We'd love to hear from you.",
+  'store.sendUsMessage': 'Send us a Message',
+  'store.faqTitle': 'Frequently Asked Questions',
+  'store.faqSubtitle': 'Find answers to the most common questions about our products, shipping, payments, and more.',
+  'store.shippingInfoTitle': 'Shipping Information',
+  'store.shippingInfoSubtitle': 'Everything you need to know about our delivery process',
+  'store.returnsTitle': 'Returns & Exchange Policy',
+  'store.returnsSubtitle': 'Easy returns and exchanges within 7 days. Your satisfaction is our priority.',
+  'store.sizeGuideTitle': 'Size Guide',
+  'store.sizeGuideSubtitle': 'Find your perfect fit with our comprehensive size charts and measurement guide.',
+  'store.myWishlist': 'My Wishlist',
 };
 
 // Convert translation key to readable text fallback
