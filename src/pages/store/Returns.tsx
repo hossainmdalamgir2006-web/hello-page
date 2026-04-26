@@ -70,7 +70,7 @@ const policyHighlights = [
 
 export default function Returns() {
   const { data, loading } = usePageContent("returns");
-  const { t } = useLanguage();
+  useLanguage(); // keep hook mounted for consistency
   const { user } = useAuth();
   const [helpfulFaq, setHelpfulFaq] = useState<Record<number, boolean | null>>({});
 
