@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CheckCircle, XCircle, RefreshCw, Package, Clock, Shield, ArrowRightLeft, MessageCircle, ThumbsUp, ThumbsDown, ChevronRight, Phone, Mail } from "lucide-react";
 import { usePageContent } from "@/hooks/useSiteContent";
-import { useLanguage } from "@/contexts/LanguageContext";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
@@ -70,7 +70,7 @@ const policyHighlights = [
 
 export default function Returns() {
   const { data, loading } = usePageContent("returns");
-  useLanguage(); // keep hook mounted for consistency
+  
   const { user } = useAuth();
   const [helpfulFaq, setHelpfulFaq] = useState<Record<number, boolean | null>>({});
 
