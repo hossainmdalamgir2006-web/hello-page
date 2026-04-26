@@ -79,7 +79,7 @@ export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCar
       <Card className="overflow-hidden">
         <div className="flex">
           <Link to={productUrl} className="relative w-32 sm:w-48 flex-shrink-0">
-            <img src={product.image_url || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover aspect-square" loading="lazy" />
+            <img src={product.image_url || "/placeholder.svg"} alt={product.name} width={400} height={400} className="w-full h-full object-cover aspect-square" loading="lazy" decoding="async" />
             {discount > 0 && (
               <Badge className="absolute top-2 left-2 bg-store-secondary text-store-primary-foreground">{discount}% OFF</Badge>
             )}
@@ -143,7 +143,7 @@ export function StoreProductCard({ product, viewMode = "grid" }: StoreProductCar
     <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
       <Link to={productUrl}>
         <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-          <img src={product.image_url || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+          <img src={product.image_url || "/placeholder.svg"} alt={product.name} width={600} height={800} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" />
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
             {discount > 0 && (
               <Badge className="bg-store-secondary text-store-primary-foreground">{discount}% OFF</Badge>
