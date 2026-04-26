@@ -74,8 +74,8 @@ export default function Returns() {
   const { user } = useAuth();
   const [helpfulFaq, setHelpfulFaq] = useState<Record<number, boolean | null>>({});
 
-  const title = data?.title || t('store.returnsTitle') !== 'store.returnsTitle' ? (data?.title || t('store.returnsTitle')) : "Returns & Exchange Policy";
-  const subtitle = data?.subtitle || t('store.returnsSubtitle') !== 'store.returnsSubtitle' ? (data?.subtitle || t('store.returnsSubtitle')) : "Easy returns and exchanges within 7 days. Your satisfaction is our priority.";
+  const title = data?.title || "Returns & Exchange Policy";
+  const subtitle = data?.subtitle || "Easy returns and exchanges within 7 days. Your satisfaction is our priority.";
   const c = (data?.content || {}) as any;
 
   const eligible = c.eligible || [];
@@ -90,7 +90,7 @@ export default function Returns() {
 
   return (
     <>
-      <SEOHead title="Returns & Exchange" description="Learn about our return and exchange policy. Easy returns within 7 days." canonicalPath="/returns" />
+      <SEOHead title={title} description={subtitle} canonicalPath="/returns" />
 
       {/* Hero Banner */}
       <section className="relative bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 overflow-hidden">
