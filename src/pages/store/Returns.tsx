@@ -231,7 +231,7 @@ export default function Returns() {
                     <p className="text-sm text-muted-foreground">View and track your existing return requests in your account.</p>
                   </div>
                   <Button asChild>
-                    <Link to="/account/returns">View My Returns <ChevronRight className="h-4 w-4 ml-1" /></Link>
+                    <Link to="/myaccount/returns">View My Returns <ChevronRight className="h-4 w-4 ml-1" /></Link>
                   </Button>
                 </CardContent>
               </Card>

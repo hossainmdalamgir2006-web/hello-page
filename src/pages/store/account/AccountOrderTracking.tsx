@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SEOHead } from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Package, CheckCircle2, Truck, MapPin, Clock, Search } from "lucide-react";
+import { Loader2, Package, CheckCircle2, Truck, MapPin, Clock, Search, FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -108,11 +110,17 @@ export default function AccountOrderTracking() {
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <CardTitle className="text-base font-semibold">#{order.order_number}</CardTitle>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         {order.tracking_number && (
                           <Badge variant="outline" className="text-xs">{t('account.tracking')}: {order.tracking_number}</Badge>
                         )}
                         <Badge variant={isCancelled ? "destructive" : stepIdx >= 3 ? "default" : "secondary"}>{order.status}</Badge>
+                        <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                          <Link to={`/myaccount/orders/${order.id}/invoice`}>
+                            <FileText className="h-3.5 w-3.5 mr-1" />
+                            Invoice
+                          </Link>
+                        </Button>
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground">{t('account.placed')} {format(new Date(order.created_at), "MMM dd, yyyy")}</p>
