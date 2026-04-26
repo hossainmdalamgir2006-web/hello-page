@@ -5,7 +5,7 @@ import {
   ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Star,
   ChevronDown, HardDrive, Plug, Shield, ClipboardList, Mail, Bell,
   Store, CreditCard, Lock, ShieldCheck, KeyRound, Smartphone, Monitor, History,
-  Activity,
+  Activity, MessageCircleQuestion,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
