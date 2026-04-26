@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { transformImage, buildSrcSet } from "@/lib/imageTransform";
+
+const PROMO_WIDTHS = [400, 640, 800, 1024];
+const PROMO_SIZES = "(max-width: 768px) 100vw, 50vw";
 
 interface PromoBanner {
   badge?: string;
@@ -38,7 +42,7 @@ export function PromoBannerSection({ banners: propBanners }: PromoBannerSectionP
         <div className="grid md:grid-cols-2 gap-5">
           {items.slice(0, 2).map((banner: PromoBanner, i: number) => (
             <Link key={i} to={banner.cta_link || "/products"} className="group relative overflow-hidden rounded-2xl block" style={{ aspectRatio: "16/9" }}>
-              <img src={banner.image} alt={banner.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+              <img src={transformImage(banner.image, { width: 800 })} srcSet={buildSrcSet(banner.image, PROMO_WIDTHS)} sizes={PROMO_SIZES} alt={banner.title} width={800} height={450} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" decoding="async" />
               <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-90" style={{ background: banner.overlay || "rgba(0,0,0,0.4)" }} />
               <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 text-white">
                 {banner.badge && (

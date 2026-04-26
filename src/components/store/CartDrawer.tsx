@@ -9,6 +9,7 @@ import { useAutoDiscountRules } from "@/hooks/useAutoDiscountRules";
 import { FreeShippingProgress } from "@/components/store/FreeShippingProgress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { formatPrice } from "@/lib/formatPrice";
+import { transformImage } from "@/lib/imageTransform";
 
 const getKey = getCartItemKey;
 
@@ -83,7 +84,7 @@ export function CartDrawer() {
                       />
                     </div>
                     <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <img src={transformImage(item.image, { width: 128 })} alt={item.name} width={64} height={64} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm truncate">{item.name}</h4>
