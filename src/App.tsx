@@ -198,6 +198,7 @@ const App = () => (
             <Route path="/admin/page-content" element={<Navigate to="/admin/content" replace />} />
             <Route path="/admin/appearance" element={L(AppearanceManager)} />
             <Route path="/admin/reviews" element={L(ReviewsManager)} />
+            <Route path="/admin/product-questions" element={L(ProductQAManager)} />
             <Route path="/admin/trash" element={L(GlobalTrash)} />
             <Route path="/admin/account-deletion-requests" element={L(AccountDeletionRequests)} />
             <Route path="/admin/system-settings/edge-functions" element={L(EdgeFunctionHealth)} />
