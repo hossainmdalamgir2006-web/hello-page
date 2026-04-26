@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -15,13 +15,15 @@ import {
 } from "@/components/ui/select";
 import {
   MessageCircleQuestion, Search, Trash2, Send, Package, Clock, CheckCircle2,
+  History, UserCircle2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { logAuditAction } from "@/lib/auditLog";
 import { useAuth } from "@/contexts/AuthContext";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
 
 type QARow = {
   id: string;
@@ -34,6 +36,7 @@ type QARow = {
   answered_at: string | null;
   answered_by: string | null;
   created_at: string;
+  updated_at?: string | null;
   products?: { name: string; slug: string } | null;
 };
 
@@ -53,6 +56,7 @@ export default function ProductQAManager() {
   const [answerDrafts, setAnswerDrafts] = useState<Record<string, string>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [historyOpenId, setHistoryOpenId] = useState<string | null>(null);
 
   const { data: questions = [], isLoading } = useQuery({
     queryKey: ["admin-product-questions"],
@@ -65,6 +69,50 @@ export default function ProductQAManager() {
       return (data as any[]) as QARow[];
     },
   });
+
+  // Collect unique answerer ids → fetch profiles for audit panel
+  const answererIds = useMemo(
+    () => Array.from(new Set(questions.map((q) => q.answered_by).filter(Boolean) as string[])),
+    [questions]
+  );
+
+  const { data: answererProfiles = {} } = useQuery({
+    queryKey: ["product-questions-answerers", answererIds],
+    enabled: answererIds.length > 0,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("user_id, full_name, email")
+        .in("user_id", answererIds);
+      const map: Record<string, { full_name: string | null; email: string | null }> = {};
+      (data || []).forEach((p: any) => {
+        map[p.user_id] = { full_name: p.full_name, email: p.email };
+      });
+      return map;
+    },
+  });
+
+  // Realtime subscription — refresh list when questions change
+  useEffect(() => {
+    const channel = supabase
+      .channel("product-questions-admin")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "product_questions" },
+        (payload) => {
+          queryClient.invalidateQueries({ queryKey: ["admin-product-questions"] });
+          if (payload.eventType === "INSERT") {
+            toast.info("New customer question received", {
+              description: (payload.new as any)?.question?.slice(0, 80),
+            });
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const filtered = useMemo(() => {
     return questions.filter((q) => {
@@ -152,53 +200,61 @@ export default function ProductQAManager() {
     setAnswerDrafts((d) => ({ ...d, [q.id]: q.answer || "" }));
   };
 
+  const getAnswererLabel = (uid: string | null) => {
+    if (!uid) return "Staff";
+    const p = answererProfiles[uid];
+    return p?.full_name || p?.email || "Staff member";
+  };
+
+  const statCards = [
+    { label: "Total Questions", value: counts.total, icon: MessageCircleQuestion, color: "primary" },
+    { label: "Awaiting Answer", value: counts.pending, icon: Clock, color: "yellow" },
+    { label: "Answered", value: counts.answered, icon: CheckCircle2, color: "success" },
+  ];
+
+  const borderMap: Record<string, string> = { primary: "border-l-primary", yellow: "border-l-yellow-500", success: "border-l-success" };
+  const bgMap: Record<string, string> = { primary: "bg-primary/10", yellow: "bg-yellow-500/10", success: "bg-success/10" };
+  const textMap: Record<string, string> = { primary: "text-primary", yellow: "text-yellow-500", success: "text-success" };
+  const cardBgMap: Record<string, string> = { primary: "bg-primary/5 dark:bg-primary/10", yellow: "bg-yellow-500/5 dark:bg-yellow-500/10", success: "bg-success/5 dark:bg-success/10" };
+
   return (
     <>
       <SEOHead title="Product Q&A" noIndex />
       <div className="space-y-6">
         <AdminPageHeader
           title="Product Q&A"
-          description="Answer customer questions about your products"
+          description="Answer customer questions about your products in real time"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                <MessageCircleQuestion className="h-5 w-5" />
+        {/* Stat Cards — Reviews-page style */}
+        <div className="grid gap-4 sm:grid-cols-3">
+          {statCards.map((card) => {
+            const IconComp = card.icon;
+            return (
+              <div
+                key={card.label}
+                className={cn(
+                  "group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300",
+                  "hover:shadow-md hover:border-border hover:-translate-y-0.5 border-l-[3px]",
+                  borderMap[card.color], cardBgMap[card.color], "animate-fade-in"
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{card.label}</p>
+                    <p className="text-lg sm:text-xl font-bold tracking-tight mt-1">{card.value}</p>
+                  </div>
+                  <div className={cn("rounded-lg p-2", bgMap[card.color])}>
+                    <IconComp className={cn("h-5 w-5", textMap[card.color])} />
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold">{counts.total}</p>
-                <p className="text-xs text-muted-foreground">Total Questions</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
-                <Clock className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{counts.pending}</p>
-                <p className="text-xs text-muted-foreground">Awaiting Answer</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{counts.answered}</p>
-                <p className="text-xs text-muted-foreground">Answered</p>
-              </div>
-            </CardContent>
-          </Card>
+            );
+          })}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search question, answer, customer, product..."
@@ -211,7 +267,7 @@ export default function ProductQAManager() {
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover">
               <SelectItem value="all">All Questions</SelectItem>
               <SelectItem value="pending">Awaiting Answer</SelectItem>
               <SelectItem value="answered">Answered</SelectItem>
@@ -231,7 +287,7 @@ export default function ProductQAManager() {
               <MessageCircleQuestion className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
               <p className="text-muted-foreground">
                 {questions.length === 0
-                  ? "No questions yet. Customers' product questions will appear here."
+                  ? "No questions yet. Customers' product questions will appear here in real time."
                   : "No questions match your filters."}
               </p>
             </CardContent>
@@ -242,20 +298,34 @@ export default function ProductQAManager() {
               const draft = answerDrafts[q.id];
               const isEditing = draft !== undefined;
               const hasAnswer = !!q.answer;
+              const accent = hasAnswer ? "success" : "yellow";
+              const showHistory = historyOpenId === q.id;
+
               return (
-                <Card key={q.id} className="overflow-hidden">
-                  <CardContent className="p-5 space-y-4">
+                <div
+                  key={q.id}
+                  className={cn(
+                    "group relative rounded-xl border border-border/50 p-4 sm:p-5 transition-all duration-300",
+                    "hover:shadow-md hover:border-border border-l-[3px]",
+                    borderMap[accent], cardBgMap[accent], "animate-fade-in"
+                  )}
+                >
+                  <div className="space-y-4">
+                    {/* Header row */}
                     <div className="flex items-start justify-between gap-3 flex-wrap">
                       <div className="flex items-start gap-3 min-w-0 flex-1">
-                        <span className="shrink-0 mt-0.5 h-7 w-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">
-                          Q
-                        </span>
+                        <div className={cn("shrink-0 rounded-lg p-2", bgMap[accent])}>
+                          <MessageCircleQuestion className={cn("h-5 w-5", textMap[accent])} />
+                        </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-foreground break-words">
+                          <p className="text-sm font-medium text-foreground break-words leading-relaxed">
                             {q.question}
                           </p>
                           <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground flex-wrap">
-                            <span>{q.asked_by_name}</span>
+                            <span className="inline-flex items-center gap-1">
+                              <UserCircle2 className="h-3 w-3" />
+                              {q.asked_by_name}
+                            </span>
                             <span>·</span>
                             <span>{formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}</span>
                             {q.products && (
@@ -276,13 +346,24 @@ export default function ProductQAManager() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {hasAnswer ? (
-                          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400">
+                          <Badge variant="outline" className="bg-success/10 text-success border-success/30">
                             Answered
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400">
+                          <Badge variant="outline" className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/30">
                             Pending
                           </Badge>
+                        )}
+                        {hasAnswer && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            onClick={() => setHistoryOpenId(showHistory ? null : q.id)}
+                            title="View history"
+                          >
+                            <History className="h-4 w-4" />
+                          </Button>
                         )}
                         <Button
                           variant="ghost"
@@ -295,10 +376,11 @@ export default function ProductQAManager() {
                       </div>
                     </div>
 
+                    {/* Existing answer (read-only) */}
                     {hasAnswer && !isEditing && (
-                      <div className="pl-10">
-                        <div className="flex items-start gap-3 rounded-lg bg-muted/40 p-3">
-                          <span className="shrink-0 mt-0.5 h-6 w-6 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-xs font-bold">
+                      <div className="pl-11">
+                        <div className="flex items-start gap-3 rounded-lg bg-background/60 dark:bg-background/40 border border-border/50 p-3">
+                          <span className="shrink-0 mt-0.5 h-6 w-6 rounded-full bg-success/15 text-success flex items-center justify-center text-xs font-bold">
                             A
                           </span>
                           <div className="flex-1 min-w-0">
@@ -307,8 +389,7 @@ export default function ProductQAManager() {
                             </p>
                             {q.answered_at && (
                               <p className="text-xs text-muted-foreground mt-1.5">
-                                Answered {formatDistanceToNow(new Date(q.answered_at), { addSuffix: true })}
-                                {(q.helpful_count || 0) > 0 && ` · ${q.helpful_count} found helpful`}
+                                {(q.helpful_count || 0) > 0 && `${q.helpful_count} found helpful`}
                               </p>
                             )}
                           </div>
@@ -319,8 +400,51 @@ export default function ProductQAManager() {
                       </div>
                     )}
 
+                    {/* Audit history panel */}
+                    {hasAnswer && showHistory && (
+                      <div className="pl-11 animate-fade-in">
+                        <div className="rounded-lg border border-border/60 bg-muted/30 p-3 space-y-2">
+                          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                            <History className="h-3.5 w-3.5" />
+                            Audit History
+                          </p>
+                          <div className="space-y-1.5 text-xs">
+                            <div className="flex items-start gap-2">
+                              <span className="text-muted-foreground shrink-0">•</span>
+                              <div>
+                                <span className="font-medium text-foreground">Question asked</span>
+                                <span className="text-muted-foreground"> by {q.asked_by_name}</span>
+                                <span className="text-muted-foreground"> — {format(new Date(q.created_at), "MMM d, yyyy 'at' h:mm a")}</span>
+                              </div>
+                            </div>
+                            {q.answered_at && (
+                              <div className="flex items-start gap-2">
+                                <span className="text-muted-foreground shrink-0">•</span>
+                                <div>
+                                  <span className="font-medium text-foreground">Answered</span>
+                                  <span className="text-muted-foreground"> by </span>
+                                  <span className="font-medium text-primary">{getAnswererLabel(q.answered_by)}</span>
+                                  <span className="text-muted-foreground"> — {format(new Date(q.answered_at), "MMM d, yyyy 'at' h:mm a")}</span>
+                                </div>
+                              </div>
+                            )}
+                            {q.updated_at && q.answered_at && new Date(q.updated_at).getTime() - new Date(q.answered_at).getTime() > 5000 && (
+                              <div className="flex items-start gap-2">
+                                <span className="text-muted-foreground shrink-0">•</span>
+                                <div>
+                                  <span className="font-medium text-foreground">Last edited</span>
+                                  <span className="text-muted-foreground"> — {format(new Date(q.updated_at), "MMM d, yyyy 'at' h:mm a")}</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Answer composer */}
                     {(!hasAnswer || isEditing) && (
-                      <div className="pl-10 space-y-2">
+                      <div className="pl-11 space-y-2">
                         <Textarea
                           placeholder="Write a helpful answer..."
                           rows={3}
@@ -328,7 +452,7 @@ export default function ProductQAManager() {
                           onChange={(e) =>
                             setAnswerDrafts((d) => ({ ...d, [q.id]: e.target.value }))
                           }
-                          className="resize-none"
+                          className="resize-none bg-background"
                         />
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs text-muted-foreground">
@@ -365,8 +489,8 @@ export default function ProductQAManager() {
                         </div>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               );
             })}
           </div>
