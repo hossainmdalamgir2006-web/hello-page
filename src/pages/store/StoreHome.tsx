@@ -80,12 +80,15 @@ export default function StoreHome() {
   };
 
   const baseUrl = window.location.origin;
+  const headerCont = section("main_content")?.content as any;
+  const orgLogo = headerCont?.store_logo;
 
-  const orgJsonLd = {
+  const orgJsonLd: Record<string, any> = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: storeName,
     url: baseUrl,
+    ...(orgLogo ? { logo: orgLogo } : {}),
   };
 
   const websiteJsonLd = {
