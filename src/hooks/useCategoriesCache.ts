@@ -23,10 +23,7 @@ async function fetchCategories(): Promise<CategoryRow[]> {
     console.error("Error fetching categories:", error);
     return [];
   }
-  return ((data as any[]) || []).map(cat => ({
-    ...cat,
-    image_url: cat.image_url && typeof cat.image_url === 'string' && cat.image_url.startsWith('data:') ? null : cat.image_url,
-  }));
+  return (data as any[]) || [];
 }
 
 export function useCategoriesCache() {
