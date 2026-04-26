@@ -2,6 +2,11 @@ import { useState, useRef, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Package, Play, ZoomIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { transformImage, buildSrcSet } from '@/lib/imageTransform';
+
+const PDP_WIDTHS = [480, 768, 1024, 1280];
+const PDP_SIZES = '(max-width: 768px) 100vw, 50vw';
+const THUMB_WIDTHS = [64, 128];
 
 interface GalleryItem {
   type: 'image' | 'video' | 'youtube';
@@ -62,8 +67,14 @@ export function ProductImageGallery({
           />
         ) : (
           <img
-            src={currentImage}
+            src={transformImage(currentImage, { width: 1024 })}
+            srcSet={buildSrcSet(currentImage, PDP_WIDTHS)}
+            sizes={PDP_SIZES}
             alt={productName}
+            width={800}
+            height={800}
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-200"
             style={isZooming && !isMobile ? { transform: 'scale(2)', transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` } : undefined}
           />
@@ -92,7 +103,7 @@ export function ProductImageGallery({
               )}
             >
               {item.type === 'image' ? (
-                <img src={item.src} alt={`${productName} ${idx + 1}`} className="w-full h-full object-cover" />
+                <img src={transformImage(item.src, { width: 128 })} srcSet={buildSrcSet(item.src, THUMB_WIDTHS)} sizes="64px" alt={`${productName} ${idx + 1}`} width={64} height={64} loading="lazy" decoding="async" className="w-full h-full object-cover" />
               ) : item.type === 'video' ? (
                 <div className="w-full h-full bg-muted flex items-center justify-center"><Play className="h-5 w-5 text-store-primary" /></div>
               ) : (

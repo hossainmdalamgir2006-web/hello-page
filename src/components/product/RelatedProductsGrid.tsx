@@ -3,6 +3,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { formatPrice } from "@/lib/formatPrice";
+import { transformImage, buildSrcSet } from "@/lib/imageTransform";
+
+const RP_WIDTHS = [200, 320, 480];
+const RP_SIZES = "(max-width: 768px) 50vw, 25vw";
 
 interface RelatedProduct {
   id: string;
@@ -31,7 +35,7 @@ export function RelatedProductsGrid({ products }: RelatedProductsGridProps) {
             <Link key={rp.id} to={`/product/${rp.id}`} className="group">
               <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-all">
                 <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                  <img src={rp.images?.[0] || '/placeholder.svg'} alt={rp.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <img src={transformImage(rp.images?.[0] || '/placeholder.svg', { width: 480 })} srcSet={buildSrcSet(rp.images?.[0] || '', RP_WIDTHS)} sizes={RP_SIZES} alt={rp.name} width={400} height={533} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   {rpDiscount > 0 && <Badge className="absolute top-3 left-3 bg-store-secondary text-store-primary-foreground">{rpDiscount}% OFF</Badge>}
                 </div>
                 <CardContent className="p-4">
