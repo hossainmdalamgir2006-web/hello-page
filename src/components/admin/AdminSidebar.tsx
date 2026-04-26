@@ -5,7 +5,7 @@ import {
   ShoppingBasket, ChevronsLeft, ChevronsRight, Trash2, Paintbrush, Star,
   ChevronDown, HardDrive, Plug, Shield, ClipboardList, Mail, Bell,
   Store, CreditCard, Lock, ShieldCheck, KeyRound, Smartphone, Monitor, History,
-  Activity,
+  Activity, MessageCircleQuestion,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
@@ -107,6 +107,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
         { title: "Content Manager", url: "/admin/content", icon: FileText, roles: ['admin'] },
         { title: "Appearance", url: "/admin/appearance", icon: Paintbrush, roles: ['admin'] },
         { title: "Reviews", url: "/admin/reviews", icon: Star, roles: ['admin'] },
+        { title: "Product Q&A", url: "/admin/product-questions", icon: MessageCircleQuestion, roles: ['admin'] },
       ],
     },
     {

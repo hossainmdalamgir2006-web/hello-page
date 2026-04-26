@@ -100,6 +100,7 @@ const GlobalTrash = lazyWithRetry(() => import("./pages/GlobalTrash"));
 const ContentManager = lazyWithRetry(() => import("./pages/admin/ContentManager"));
 const AppearanceManager = lazyWithRetry(() => import("./pages/admin/AppearanceManager"));
 const ReviewsManager = lazyWithRetry(() => import("./pages/admin/ReviewsManager"));
+const ProductQAManager = lazyWithRetry(() => import("./pages/admin/ProductQAManager"));
 const AccountDeletionRequests = lazyWithRetry(() => import("./pages/admin/AccountDeletionRequests"));
 const EdgeFunctionHealth = lazyWithRetry(() => import("./pages/admin/EdgeFunctionHealth"));
 const SupportSettings = lazyWithRetry(() => import("./pages/SupportSettings"));
@@ -197,6 +198,7 @@ const App = () => (
             <Route path="/admin/page-content" element={<Navigate to="/admin/content" replace />} />
             <Route path="/admin/appearance" element={L(AppearanceManager)} />
             <Route path="/admin/reviews" element={L(ReviewsManager)} />
+            <Route path="/admin/product-questions" element={L(ProductQAManager)} />
             <Route path="/admin/trash" element={L(GlobalTrash)} />
             <Route path="/admin/account-deletion-requests" element={L(AccountDeletionRequests)} />
             <Route path="/admin/system-settings/edge-functions" element={L(EdgeFunctionHealth)} />
