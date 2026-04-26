@@ -218,6 +218,7 @@ const App = () => (
             <Route path="/manager/reports" element={L(Reports)} />
             <Route path="/manager/trash" element={L(GlobalTrash)} />
             <Route path="/manager/settings" element={L(ManagerSettings)} />
+            <Route path="/manager/product-questions" element={L(ProductQAManager)} />
             <Route path="/manager/messages" element={L(Messages)} />
             <Route path="/manager/account-settings" element={L(ProfileLayout)}>
               <Route index element={L(ProfilePersonal)} />
@@ -235,6 +236,7 @@ const App = () => (
             <Route path="/support/customers" element={L(Customers)} />
             <Route path="/support/messages" element={L(Messages)} />
             <Route path="/support/settings" element={L(SupportSettings)} />
+            <Route path="/support/product-questions" element={L(ProductQAManager)} />
             <Route path="/support/account-settings" element={L(ProfileLayout)}>
               <Route index element={L(ProfilePersonal)} />
               <Route path="personal-info" element={L(ProfilePersonal)} />
