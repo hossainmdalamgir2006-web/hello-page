@@ -68,7 +68,7 @@ export default function SizeGuide() {
 
   return (
     <>
-      <SEOHead title="Size Guide" description="Find your perfect fit with our size chart for men and women. Measurement guide included." canonicalPath="/size-guide" />
+      <SEOHead title={title} description={subtitle} canonicalPath="/size-guide" />
 
       {/* Hero Banner */}
       <section className="relative bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 overflow-hidden">

@@ -1,140 +1,80 @@
-## Order Confirmation Page — UI/UX Improvement Plan
+## Page Title (Browser Tab) — Bug Fix + Dynamic CMS Sync
 
-Screenshot দেখে বুঝলাম page **functional but basic**। Checkout page-এ যে modern aesthetic, trust signals আর polish add করেছি — এই page-এ সেগুলো নেই। Improvements দরকার।
+### সমস্যা যা পেলাম
 
-### Current Issues
+আপনি ঠিকই ধরেছেন — Contact page এর browser tab title-এ **"Contact Title | demo"** literally দেখাচ্ছে। কারণ:
 
-1. **Translation keys raw render হচ্ছে** — "Thank You Order", "Order Placed Success", "Estimated Delivery Label", "Whats Next", "Track In Dashboard" — সবগুলো translation key literally show করছে, proper text resolve হচ্ছে না
-2. **Hero header খুব plain** — Checkout page-এর gradient banner-এর সাথে inconsistent
-3. **No celebration moment** — confetti/success animation minimal, "purchase joy" missing
-4. **No trust signals** — Checkout-এ trust strip আছে, এখানে নেই (post-purchase reassurance)
-5. **No action urgency for manual payments** — bKash/Nagad-এ "TrxID submit করুন" critical step subtle
-6. **Order number copy-friendly নয়** — small button, easy to miss
-  &nbsp;
-7. **No estimated delivery date** — "1-3 business days" এর বদলে actual date "Apr 24-26" আরো trustworthy
-8. **No support contact card** — কোনো issue হলে কোথায় যাবে clear না
-9. **Mobile responsive but not optimized** — buttons stack ঠিকই, কিন্তু hierarchy weak
-
-### Proposed Improvements
-
-#### 1. Hero Header Redesign (Checkout-consistent)
-
-- Gradient banner (store-primary tint) with decorative blur
-- Larger animated success checkmark with **subtle confetti burst** (one-time, 2s)
-- "Order Confirmed!" big bold heading instead of "Thank You Order"
-- Order number prominently displayed in a **pill-shaped badge** with one-click copy
-- Sub-text: "We've sent a confirmation to [your@email.com](mailto:your@email.com)"
-
-#### 2. Translation Fixes
-
-সব missing keys যোগ করব `LanguageContext`-এ:
-
-- `store.thankYouOrder` → "Thank You for Your Order!"
-- `store.orderPlacedSuccess` → "Your order has been placed successfully"
-- `store.estimatedDeliveryLabel` → "Estimated Delivery"
-- `store.whatsNext` → "What's Next?"
-- `store.trackInDashboard` → "Track your order in your account dashboard"
-- ইত্যাদি
-
-#### 3. Estimated Delivery — Actual Date
-
-"1-3 business days" → calculate করব: `Apr 24 - Apr 26, 2026` format
-Calendar icon সহ prominent card-এ (visual hierarchy boost)
-
-#### 4. Manual Payment Action Card (bKash/Nagad/Rocket)
-
-Current message subtle। Replace করব একটা **highlighted action card**:
-
-```
-⚠ Action Required
-Send BDT 2,050 to: 01407258741 (Personal)
-Then your order will be verified within 30 minutes.
-[Copy Number]  [How to Pay]
+```tsx
+// src/pages/store/Contact.tsx (line 149)
+<SEOHead title={t('store.contactTitle')} ... />
 ```
 
-Yellow/amber tint background — eye-catching but not alarming।
+`store.contactTitle` translation key-টি `LanguageContext.tsx`-এ **define করা নেই**, তাই `t()` function key-এর string-টাই (literally "Contact Title") fallback হিসেবে return করছে। এটাই tab-এ চলে আসছে।
 
-#### 5. Trust & Reassurance Strip
+### বাকি page গুলোর state (sob page review korlam)
 
-Order summary-এর নিচে compact strip:
+| Page | বর্তমান tab title | CMS data fetch করে? | Dynamic title use করে? |
+|---|---|---|---|
+| **Contact** | ❌ "Contact Title \| demo" (broken key) | ✅ হ্যাঁ | ❌ broken translation key |
+| **FAQ** | "FAQ \| demo" | ✅ হ্যাঁ | ❌ hardcoded `"FAQ"` |
+| **Shipping Info** | "Shipping Information \| demo" | ✅ হ্যাঁ | ❌ hardcoded |
+| **Returns** | "Returns & Exchange \| demo" | ✅ হ্যাঁ | ❌ hardcoded |
+| **Size Guide** | "Size Guide \| demo" | ✅ হ্যাঁ | ❌ hardcoded |
+| **Track Order** | "Track Order \| demo" | ❌ নাই | ❌ hardcoded |
+| Privacy / Terms | works | ✅ হ্যাঁ | check করতে হবে |
 
-```
-🔒 Secure Order   📧 Email Sent   📞 24/7 Support   🔄 Easy Returns
-```
+### Important observation
 
-#### 6. Support Contact Card (new)
+প্রতিটি page-এই hero section-এ admin-editable dynamic title (`data?.title`) use হচ্ছে — কিন্তু সেই same dynamic title browser tab-এ pass হচ্ছে না। ফলে admin Content Manager থেকে FAQ-এর title "Frequently Asked Questions" করলে hero-তে দেখা গেলেও tab-এ পুরোনো hardcoded "FAQ" থেকে যায়। **Inconsistent UX।**
 
-"Need Help?" card with:
+### সমাধান
 
-- WhatsApp/Phone direct link
-- Email support
-- FAQ link
-Issue হলে user immediately যোগাযোগ করতে পারবে।
+সব store info pages-এ একই pattern apply করব:
 
-#### 7. Social Share / Referral Hook (optional, low-key)
-
-"Tell friends about us" — Facebook/WhatsApp share buttons (small, non-intrusive)
-Referral code থাকলে "Share & earn 50 BDT" type CTA
-
-#### 8. Better "What's Next" Timeline
-
-Bullet list-এর বদলে **visual timeline**:
-
-```
-●─── Order Placed (✓ now)
-│
-○─── Payment Verified (within 30 min)
-│
-○─── Order Packed (within 24 hrs)
-│
-○─── Out for Delivery (Apr 24)
-│
-○─── Delivered (Apr 26)
+```tsx
+const title = data?.title || "Fallback Title";
+// ...
+<SEOHead title={title} ... />  // hero এর same dynamic title pass করব
 ```
 
-Visually engaging, sets clear expectations।
+### কী কী change হবে
 
-#### 9. Mobile Optimizations
+1. **`src/pages/store/Contact.tsx`** — `<SEOHead title={t('store.contactTitle')}>` → `<SEOHead title={title}>` (already-computed `title` variable use করব, broken translation key bypass)
 
-- Sticky bottom bar (mobile only): "Track Order" button always visible
-- Order summary collapsible accordion on mobile
-- Larger touch targets
+2. **`src/pages/store/FAQ.tsx`** — `<SEOHead title="FAQ">` → `<SEOHead title={title}>`
 
-#### 10. Print/Download Receipt
+3. **`src/pages/store/ShippingInfo.tsx`** — `<SEOHead title="Shipping Information">` → `<SEOHead title={title}>`
 
-Top-right corner: **"Download Receipt"** button (jsPDF) — already invoice generation infrastructure আছে project-এ
+4. **`src/pages/store/Returns.tsx`** — `<SEOHead title="Returns & Exchange">` → `<SEOHead title={title}>` + Returns-এর confusing nested-ternary fallback logic (line 77-78) clean করব:
+   ```tsx
+   const title = data?.title || "Returns & Exchange Policy";
+   const subtitle = data?.subtitle || "Easy returns and exchanges within 7 days...";
+   ```
 
-#### 11. Items Display Polish
+5. **`src/pages/store/SizeGuide.tsx`** — `<SEOHead title="Size Guide">` → `<SEOHead title={title}>`
 
-- Product image bigger (16x16 instead of 14x14)
-- Variant info show করব properly (size/color)
-- Quantity badge overlay on image
+6. **`src/pages/store/TrackOrder.tsx`** — Track Order CMS data fetch করে না, তাই **hardcoded রাখা ঠিকই আছে** ("Track Order" appropriate title, no dynamic content needed)। তবে চাইলে এটাও CMS-driven করতে পারি — by default করছি না scope সংক্ষেপ রাখতে।
 
-#### 12. Account Creation Nudge (guest checkouts)
+7. **`src/contexts/LanguageContext.tsx`** — `store.contactTitle` এবং `store.contactSubtitle` translation keys add করব (defensive — যাতে CMS data না থাকলে fallback proper text দেখায়, key না)। সাথে অন্য missing keys check করব: `store.faqTitle`, `store.shippingInfoTitle`, `store.returnsTitle` ইত্যাদি।
 
-User logged-in না হলে:
+### Result (after fix)
 
-```
-💡 Create an account to track this order easily
-[Create Account] [Skip]
-```
+| Page | Tab title (with CMS data) | Tab title (no CMS data, fallback) |
+|---|---|---|
+| Contact | "Contact Us \| demo" (admin যা দিবে) | "Contact Us \| demo" |
+| FAQ | "Frequently Asked Questions \| demo" | "FAQ \| demo" |
+| Shipping Info | "Shipping Information \| demo" | "Shipping Information \| demo" |
+| Returns | "Returns & Exchange Policy \| demo" | "Returns & Exchange Policy \| demo" |
+| Size Guide | "Size Guide \| demo" | "Size Guide \| demo" |
+| Track Order | "Track Order \| demo" | "Track Order \| demo" |
 
-### Files to Edit/Create
+এখন admin Content Manager থেকে title edit করলে browser tab-এও সাথে সাথে reflect হবে। Bug-fix + consistency দুটোই।
 
+### Files Edited
 
-| File                                                    | Changes                                                            |
-| ------------------------------------------------------- | ------------------------------------------------------------------ |
-| `src/pages/store/OrderConfirmation.tsx`                 | Full redesign — hero, sections reorder, new components integration |
-| `src/contexts/LanguageContext.tsx`                      | Add missing translation keys                                       |
-| New: `src/components/order/OrderTimeline.tsx`           | Visual timeline component                                          |
-| New: `src/components/order/ManualPaymentActionCard.tsx` | Highlighted action card for bKash/Nagad                            |
-| New: `src/components/order/OrderSupportCard.tsx`        | Help/contact card                                                  |
-| New: `src/components/order/ConfettiBurst.tsx`           | One-time confetti animation (canvas-confetti or framer)            |
-
-
-### Implementation Scope — Which to Build?
-
-
-| Priority | Feature | Impact |
-| -------- | ------- | ------ |
-| **P0**   | Transl  | &nbsp; |
+- `src/pages/store/Contact.tsx`
+- `src/pages/store/FAQ.tsx`
+- `src/pages/store/ShippingInfo.tsx`
+- `src/pages/store/Returns.tsx`
+- `src/pages/store/SizeGuide.tsx`
+- `src/contexts/LanguageContext.tsx` (add missing translation keys)

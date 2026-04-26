@@ -57,7 +57,7 @@ export default function ShippingInfo() {
 
   return (
     <>
-      <SEOHead title="Shipping Information" description="Learn about our shipping options, delivery times and costs across Bangladesh." canonicalPath="/shipping-info" />
+      <SEOHead title={title} description={subtitle} canonicalPath="/shipping-info" />
       
       {/* Hero Banner */}
       <div className="relative bg-gradient-to-br from-store-primary/10 via-background to-store-primary/5 overflow-hidden">

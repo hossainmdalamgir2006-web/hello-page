@@ -146,7 +146,7 @@ export default function Contact() {
   return (
     <>
       <SEOHead
-        title={t('store.contactTitle')}
+        title={title}
         description={subtitle}
         canonicalPath="/contact"
         jsonLd={{
