@@ -107,9 +107,21 @@ export function AutoPageTitle() {
     if (!title) {
       if (path.startsWith("/product/")) {
         title = "Product Details";
-      } else if (path.startsWith("/track/")) {
+      } else if (path.startsWith("/track/") || path.startsWith("/order-tracking/")) {
         title = "Order Tracking";
+      } else if (path.startsWith("/myaccount/orders/") && path.endsWith("/invoice")) {
+        title = "Invoice";
+      } else if (path.startsWith("/myaccount/orders/")) {
+        title = "Order Details";
       }
+    }
+
+    // Fallback: longest matching prefix from the map (for unmapped sub-routes)
+    if (!title) {
+      const match = Object.keys(pageTitles)
+        .filter((p) => p !== "/" && path.startsWith(p + "/"))
+        .sort((a, b) => b.length - a.length)[0];
+      if (match) title = pageTitles[match];
     }
 
     if (title) {
