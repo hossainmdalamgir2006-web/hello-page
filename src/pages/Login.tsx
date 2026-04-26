@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { ForgotPasswordView } from '@/components/auth/ForgotPasswordView';
 import { ResetPasswordView } from '@/components/auth/ResetPasswordView';
 import { LoginSignupView } from '@/components/auth/LoginSignupView';
+import { SEOHead } from '@/components/SEOHead';
 
 type AuthMode = 'login' | 'signup' | 'forgot' | 'reset';
 
@@ -96,6 +97,7 @@ export default function Auth() {
 
   return (
     <>
+      <SEOHead title="Sign In" description="Sign in or create an account to manage your orders and wishlist." noIndex />
       {verificationState.isBlocked && verificationState.verificationToken && (
         <LoginVerificationModal
           isOpen={verificationState.isBlocked}
