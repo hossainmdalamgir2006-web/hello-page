@@ -8,6 +8,9 @@ const pathLabels: Record<string, string> = {
   checkout: "Checkout",
   "order-confirmation": "Order Confirmed",
   "track-order": "Track Order",
+  "order-tracking": "Order Tracking",
+  "payment-processing": "Processing Payment",
+  payment: "Payment",
   track: "Tracking",
   wishlist: "Wishlist",
   contact: "Contact",
@@ -19,10 +22,6 @@ const pathLabels: Record<string, string> = {
   terms: "Terms",
   myaccount: "My Account",
   login: "Login",
-  "track-order": "Track Order",
-  "order-tracking": "Order Tracking",
-  "payment-processing": "Processing Payment",
-  payment: "Payment",
 };
 
 export function StoreBreadcrumb() {
