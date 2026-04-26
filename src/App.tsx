@@ -100,6 +100,7 @@ const GlobalTrash = lazyWithRetry(() => import("./pages/GlobalTrash"));
 const ContentManager = lazyWithRetry(() => import("./pages/admin/ContentManager"));
 const AppearanceManager = lazyWithRetry(() => import("./pages/admin/AppearanceManager"));
 const ReviewsManager = lazyWithRetry(() => import("./pages/admin/ReviewsManager"));
+const ProductQAManager = lazyWithRetry(() => import("./pages/admin/ProductQAManager"));
 const AccountDeletionRequests = lazyWithRetry(() => import("./pages/admin/AccountDeletionRequests"));
 const EdgeFunctionHealth = lazyWithRetry(() => import("./pages/admin/EdgeFunctionHealth"));
 const SupportSettings = lazyWithRetry(() => import("./pages/SupportSettings"));
