@@ -40,6 +40,8 @@ const pageTitles: Record<string, string> = {
   "/admin/appearance": "Appearance",
   "/admin/reviews": "Reviews",
   "/admin/product-questions": "Product Q&A",
+  "/manager/product-questions": "Product Q&A",
+  "/support/product-questions": "Product Q&A",
   "/admin/trash": "Trash",
   "/admin/account-deletion-requests": "Deletion Requests",
   "/admin/support-settings": "Support Settings",

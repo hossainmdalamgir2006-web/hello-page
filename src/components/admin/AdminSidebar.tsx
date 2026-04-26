@@ -107,7 +107,7 @@ export function AdminSidebar({ collapsed = false, onToggleCollapse, onCloseMobil
         { title: "Content Manager", url: "/admin/content", icon: FileText, roles: ['admin'] },
         { title: "Appearance", url: "/admin/appearance", icon: Paintbrush, roles: ['admin'] },
         { title: "Reviews", url: "/admin/reviews", icon: Star, roles: ['admin'] },
-        { title: "Product Q&A", url: "/admin/product-questions", icon: MessageCircleQuestion, roles: ['admin'] },
+        { title: "Product Q&A", url: `${basePath}/product-questions`, icon: MessageCircleQuestion, roles: ['admin', 'manager', 'support'] },
       ],
     },
     {
