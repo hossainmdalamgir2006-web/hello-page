@@ -552,18 +552,21 @@ export default function StoreProducts() {
         }}
       />
 
-      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-12 overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-store-primary-foreground mb-2">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-store-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-store-primary/8 rounded-full blur-2xl" />
+        </div>
+        <div className="container mx-auto px-4 py-12 md:py-16 text-center relative z-10">
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
             {showSale ? t('storeProducts.saleItems') : showNew ? t('storeProducts.newArrivals') : t('storeProducts.allProducts')}
           </h1>
-          <p className="text-store-primary-foreground/80">
+          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
             {filteredProducts.length} {t('storeProducts.productsAvailable')}
           </p>
         </div>
-      </section>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-8">

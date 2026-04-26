@@ -76,22 +76,24 @@ export default function Wishlist() {
     <>
       <SEOHead title={t('store.myWishlist')} description="Your saved favorite products." canonicalPath="/wishlist" noIndex />
 
-      {/* Hero */}
-      <section className="relative bg-gradient-to-r from-store-primary to-store-secondary py-10 overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-store-accent/10 rounded-full blur-3xl" />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <Heart className="h-5 w-5 text-store-primary-foreground" />
-              </div>
-              <h1 className="font-display text-2xl md:text-3xl font-bold text-store-primary-foreground">My Wishlist</h1>
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-store-primary/10 via-store-primary/5 to-transparent">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-store-primary/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-store-primary/8 rounded-full blur-2xl" />
+        </div>
+        <div className="container mx-auto px-4 py-12 md:py-16 text-center relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="inline-flex flex-col items-center">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-store-primary/20 to-store-primary/10 flex items-center justify-center mb-3">
+              <Heart className="h-6 w-6 text-store-primary" />
             </div>
-            <p className="text-store-primary-foreground/80 mt-1">{items.length} {items.length === 1 ? t('store.itemSaved') : t('store.itemsSaved')}</p>
+            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-3">My Wishlist</h1>
+            <p className="text-muted-foreground text-base md:text-lg">
+              {items.length} {items.length === 1 ? t('store.itemSaved') : t('store.itemsSaved')}
+            </p>
           </motion.div>
         </div>
-      </section>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
