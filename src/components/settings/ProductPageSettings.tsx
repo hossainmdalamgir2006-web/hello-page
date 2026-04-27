@@ -125,7 +125,7 @@ export function ProductPageSettings() {
                 <Shield className="h-5 w-5 text-accent" />
                 Trust Badges
               </CardTitle>
-              <CardDescription>প্রোডাক্ট পেজে দেখানো ট্রাস্ট ব্যাজগুলো কাস্টমাইজ করুন</CardDescription>
+              <CardDescription>Customize trust badges shown on product pages</CardDescription>
             </div>
             <Button onClick={handleSave} disabled={localSaving || saving} size="sm" className="gap-2">
               {localSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -170,7 +170,7 @@ export function ProductPageSettings() {
             <Plus className="h-4 w-4" /> Add Badge
           </Button>
           <div className="mt-2">
-            <p className="text-xs text-muted-foreground">প্রিভিউ:</p>
+            <p className="text-xs text-muted-foreground">Preview:</p>
             <div className="grid grid-cols-4 gap-3 p-4 bg-muted rounded-lg mt-2">
               {trustBadges.filter(b => b.enabled).map((badge, i) => {
                 const Icon = getIconComponent(badge.icon);
@@ -195,7 +195,7 @@ export function ProductPageSettings() {
                 <Ruler className="h-5 w-5 text-accent" />
                 Size Guide
               </CardTitle>
-              <CardDescription>প্রোডাক্ট পেজে দেখানো সাইজ গাইড কাস্টমাইজ করুন</CardDescription>
+              <CardDescription>Customize the size guide shown on product pages</CardDescription>
             </div>
             <Switch checked={sizeGuideEnabled} onCheckedChange={setSizeGuideEnabled} />
           </div>
