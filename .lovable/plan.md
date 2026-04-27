@@ -1,175 +1,90 @@
+# বাংলা টেক্সট অডিট — পুরো সাইট
 
-# Full Website Review & Cleanup Plan
-
-আপনার পুরো website-টা scan করেছি। নিচে পেলাম: **ডুপ্লিকেট/অরফান ফাইল**, **incomplete features**, **UX issues**, **SEO**, এবং **performance** এর পূর্ণ রিপোর্ট — শেষে কী কী fix/cleanup করব সেটা।
-
----
-
-## ১. Duplicate / Orphan Files (Dead Code)
-
-### 🔴 Orphan Pages (কোনো route এ ব্যবহার হয় না)
-| File | লাইন | Status |
-|---|---|---|
-| `src/pages/store/Account.tsx` | 924+ | পুরোনো mega account page। App.tsx এ আর route করা নেই। বর্তমানে `CustomerAccountLayout` + আলাদা page ব্যবহৃত |
-| `src/pages/store/account/AccountPaymentMethods.tsx` | — | App.tsx এ commented out, কোথাও ব্যবহার হয় না |
-
-### 🔴 Orphan Components (০ usage)
-সবগুলো `src/components/account/` থেকে — শুধু legacy `Account.tsx` ব্যবহার করত:
-- `AccountHeader.tsx`
-- `AccountOverview.tsx`
-- `AccountPageHeader.tsx`  *(`CustomerAccountLayout` এ ব্যবহার আছে — রাখব)*
-- `AccountSidebar.tsx`  *(`CustomerAccountLayout` এ ব্যবহার আছে — রাখব)*
-- `OrdersTab.tsx`
-- `ProfileCompletion.tsx`
-- `RecentlyViewedTab.tsx` *(কিন্তু `AccountRecentlyViewed` সরাসরি hook ব্যবহার করে)*
-- `SecurityTab.tsx` *(`AccountSecurity` থেকে ব্যবহৃত — রাখব)*
-- `ShoppingTab.tsx` *(`AccountShopping` থেকে ব্যবহৃত — রাখব)*
-- `WishlistTab.tsx` *(`AccountWishlist` থেকে ব্যবহৃত — রাখব)*
-
-> Real orphans: `AccountHeader`, `AccountOverview`, `OrdersTab`, `ProfileCompletion`, `RecentlyViewedTab`।
-
-### 🟡 Functional Duplicates (দুটি একই কাজ করে)
-| Pair | কারণ | সিদ্ধান্ত |
-|---|---|---|
-| `/track-order` (TrackOrder.tsx) vs `/order-tracking/:orderId` (OrderTracking.tsx) | প্রথমটা গেস্টদের লুকআপ ফর্ম, দ্বিতীয়টা ডিটেইল পেজ | **দুটোই দরকার** — কিন্তু overlap কমাব |
-| `AccountSettings.tsx` (310 line) vs `profile/PersonalInfoPage.tsx` (334 line) | একটা কাস্টমার, একটা স্টাফ — schema আলাদা | **আলাদা রাখব** কিন্তু একই pattern বানাব |
-| `AccountNotifications.tsx` vs `AccountNotificationPreferences.tsx` | প্রথমটা notification list, দ্বিতীয়টা settings | **আলাদা ঠিক আছে** |
-| `Index.tsx` (admin dashboard) vs `RoleDashboard.tsx` (manager/support) | আলাদা role, আলাদা widget | **ঠিক আছে** |
-| `ManagerSettings.tsx` vs `SupportSettings.tsx` vs admin system-settings | অনেকটা overlap | পরবর্তী ধাপে review |
-
-### 🟡 Stale Redirect Link
-- `src/pages/store/Returns.tsx:234` — link `/account/returns` → ভুল, হওয়া উচিত `/myaccount/returns`
+`/admin/appearance` পেজ সহ পুরো কোডবেজে `[\u0980-\u09FF]` রেঞ্জে স্ক্যান চালিয়ে **২৮টি ফাইলে ১৯৯টি বাংলা match** পাওয়া গেছে। নিচে ক্যাটাগরি অনুযায়ী সব লোকেশন।
 
 ---
 
-## ২. Incomplete / Non-functional Features
+## 🎯 ১. Admin Panel — Mixed Bangla/English (clean up করা দরকার)
 
-| Feature | Status | কী করব |
-|---|---|---|
-| **Payment Methods** (`AccountPaymentMethods.tsx`) | route disabled, sidebar এ নেই | ফাইল delete করব (saved cards সিস্টেম নেই) |
-| **AccountInvoice (PDF)** | কাজ করে কিন্তু sidebar/actions থেকে পৌঁছানো কঠিন | `AccountOrderTracking` এ "Download Invoice" button যোগ করব |
-| **Returns from /returns page** | লিংক ভাঙা (`/account/returns`) | ঠিক করব |
-| **Live Chat Widget** | UI আছে, backend আছে — verify করব | জ্যা |
-| **Newsletter signup** | homepage এ আছে — backend hook নেই কিনা চেক করব | review only |
+### `src/pages/admin/AppearanceManager.tsx` (আপনি বর্তমানে এই পেজে আছেন)
 
----
 
-## ৩. UX Audit (User Experience)
+| Line | বাংলা টেক্সট                                            |
+| ---- | ------------------------------------------------------- |
+| 198  | `সাইটের Light theme এর সব রঙ নিয়ন্ত্রণ করুন`           |
+| 240  | `বাটনের রঙ, radius ও shadow কাস্টমাইজ করুন`             |
+| 245  | `বাটনে shadow দেখাবে`                                   |
+| 271  | `ফন্ট, সাইজ ও স্পেসিং নিয়ন্ত্রণ করুন`                  |
+| 313  | `Admin, Manager, Support, Customer সব panel-এর sidebar` |
+| 333  | `সব panel-এর header কাস্টমাইজ করুন`                     |
+| 540  | `Chart color palette কাস্টমাইজ করুন`                    |
+| 586  | `Advanced users-এর জন্য raw CSS inject করুন`            |
 
-### ✅ ভালো দিক
-- Sticky header + mobile bottom nav + search suggestions আছে
-- Breadcrumb, BackToTop, OfflineIndicator integrated
-- Real-time notifications, cart drawer, wishlist counter
-- Maintenance mode, dark/light theme toggle
-- Customer account এ glassmorphic sidebar (mobile responsive)
 
-### ⚠️ সমস্যা
-1. **Breadcrumb labels missing**: `track-order`, `order-tracking`, `payment` — `pathLabels` map এ নেই → raw segment দেখায়
-2. **404 page**: layout এ wrap করা আছে কিন্তু header e search এ গেলে redirect logic broken
-3. **Search bar mobile**: focus suggestion close করা যায় না
-4. **Mobile bottom nav vs CartDrawer overlap**: কিছু পেজে z-index conflict
-5. **Returns page link broken** (উপরে উল্লেখিত)
-6. **Account sidebar items**: "Personal Info" আর "Settings" route confusion (multiple redirects)
+### Other admin components
 
----
-
-## ৪. SEO Score (Per Page)
-
-| Page | SEO Status | Issue |
-|---|---|---|
-| `/` Homepage | ✅ Good | SEOHead + JSON-LD আছে |
-| `/products` | ✅ Good | canonical + description |
-| `/product/:slug` | ✅ Excellent | Product JSON-LD, og:image, og:type |
-| `/contact`, `/faq`, `/shipping-info`, `/returns`, `/size-guide`, `/privacy`, `/terms` | ✅ canonical সহ ঠিক আছে |
-| `/track-order` | ✅ canonical আছে |
-| `/cart`, `/checkout`, `/wishlist`, `/order-confirmation`, `/order-tracking`, `/payment-*` | ✅ noIndex ঠিকঠাক |
-| `/login` | ⚠️ noIndex নেই |
-| `/admin/*`, `/manager/*`, `/support/*`, `/myaccount/*` | ✅ robots.txt এ Disallow করা |
-
-**Sitemap**: `generate-sitemap` edge function deployed আছে। URL: `/sitemap.xml`  
-**robots.txt**: ✅ ভালোভাবে configured
-
-### Missing for higher score:
-- Homepage এ Organization JSON-LD (logo, sameAs)
-- Login page এ noIndex
-- LCP image preload (hero carousel first image)
+- `src/components/admin/CarouselSlidesManager.tsx` — L152, 292, 312, 325, 345 (`আপলোড ব্যর্থ`, `আপলোড`, `অথবা নিচে আপলোড করুন`)
+- `src/components/admin/ChatTransferDialog.tsx`
+- `src/components/admin/QuickReplyPicker.tsx` — L47, 57, 70 (`কুইক রিপ্লাই`, `কুইক রিপ্লাই খুঁজুন...`)
+- `src/components/admin/MobileMessageList.tsx` — L171, 188, 193, 238, 257, 262, 277, 290 (`জরুরি/উচ্চ/কম`, `উত্তর দিন`, `অপঠিত/পঠিত`, `আর্কাইভ`, `মুছে ফেলুন`)
+- `src/components/admin/InternalNoteInput.tsx` — L13, 27, 30, 61 (`টিম নোট লিখুন...`, `ইন্টারনাল নোট`, `শুধু টিম দেখবে`, `Ctrl+Enter দিয়েও পাঠাতে পারেন`)
+- `src/components/admin/GoalTracker.tsx` — L61, 150 (`unit: "৳"`)
+- `src/components/admin/content-editors/ShippingRateListEditor.tsx` — L32 (`Cost (৳)`)
+- `src/components/settings/ProductPageSettings.tsx` — L128, 173, 198 (`প্রোডাক্ট পেজে দেখানো ট্রাস্ট ব্যাজ...`, `প্রিভিউ:`, `সাইজ গাইড কাস্টমাইজ করুন`)
+- `src/components/settings/EmailTemplatesTab.tsx` — L97, 100 (`৳2,500`, `৳500`)
+- `src/components/settings/DocumentTemplateEditor.tsx` — L157 (`৳` placeholder)
 
 ---
 
-## ৫. Performance / Page Speed (Estimated)
+## 💬 ২. Chat / Messaging — Toast & UI বাংলায় (intentional হতে পারে)
 
-বাস্তব Lighthouse run করতে browser tool লাগবে (এক্সপেনসিভ)। কোড থেকে estimate:
-
-| Page | Estimated Score | কারণ |
-|---|---|---|
-| `/` Home | 80–88 | Hero carousel + multiple sections, কিন্তু lazy-loaded |
-| `/products` | 75–85 | অনেক product card, OptimizedImage ব্যবহৃত ✅ |
-| `/product/:slug` | 75–82 | Gallery + Reviews + Related + QA — সব lazy |
-| `/cart`, `/checkout` | 90+ | লাইট পেজ |
-| Account pages | 85–92 | lazyWithRetry + skeletons ✅ |
-
-### ✅ ইতিমধ্যে আছে
-- Route-level code splitting (`lazyWithRetry`)
-- React Query caching (5 min stale, 15 min gc)
-- OptimizedImage component
-- Font preconnect + preload
-- Supabase preconnect
-- DelayedLoader (300ms threshold)
-- TopProgressBar
-
-### ⚠️ Improvement potential
-1. Hero image **no `fetchpriority="high"`** — LCP বুস্ট করা যায়
-2. Total source: ~96k লাইন — কিছু component split করা যায়
-3. ProductReviews (498 line) — pagination/virtualization যোগ করা যায়
-4. Some images missing explicit width/height → CLS risk
+- `src/hooks/useLiveChat.ts` — L140–467 (১৬টি toast: `নতুন কথোপকথন তৈরি হয়েছে`, `স্ট্যাটাস আপডেট হয়েছে`, `এজেন্ট অ্যাসাইন হয়েছে`, ইত্যাদি, plus `name: "এজেন্ট"`)
+- `src/hooks/useCustomerChat.ts` — L352 (`ফাইল আপলোড করতে সমস্যা হয়েছে`)
+- `src/components/store/LiveChatWidget.tsx` — L501, 510 (`ইমোজি খুঁজুন...`, `মেসেজ লিখুন...`)
+- `src/pages/store/account/AccountChat.tsx` — L151, 161, 275 (`চ্যাট বন্ধ করা হয়েছে`, `নতুন চ্যাট শুরু করতে...`)
 
 ---
 
-## ৬. কী কী Fix করব (Action Items)
+## 💰 ৩. Currency Symbol (৳) — Mixed everywhere (acceptable, BDT symbol)
 
-### Phase A — Cleanup (Dead Code Removal)
-1. Delete: `src/pages/store/Account.tsx` (legacy mega page)
-2. Delete: `src/pages/store/account/AccountPaymentMethods.tsx` + commented import
-3. Delete unused components: `AccountHeader.tsx`, `AccountOverview.tsx`, `OrdersTab.tsx`, `ProfileCompletion.tsx`, `RecentlyViewedTab.tsx`
+`৳` symbol অনেক জায়গায় আছে — এটা টেক্সট না, currency:
 
-### Phase B — Bug Fixes
-4. `Returns.tsx`: `/account/returns` → `/myaccount/returns`
-5. `StoreBreadcrumb.tsx`: `track-order`, `order-tracking`, `payment-processing`, `payment` labels যোগ
-6. `Login.tsx`: `<SEOHead noIndex />` যোগ
-7. `AccountOrderTracking`: "Download Invoice" button যোগ → `/myaccount/orders/:id/invoice`
-
-### Phase C — UX Polish
-8. `AccountSettings` + `PersonalInfoPage` কে একটি common pattern এ নামানো (optional, future)
-9. Mobile search suggestion এ outside-click close
-
-### Phase D — SEO Boost
-10. Homepage এ Organization JSON-LD (store name + logo + URL)
-11. HeroCarousel first slide এ `fetchpriority="high"` + `loading="eager"`
-
-### Phase E — Performance
-12. Hero image LCP optimization
-13. Add explicit width/height to product card images (CLS fix)
+- `src/hooks/useCoupon.ts` — L74, 75, 100
+- `src/hooks/useApprovalQueue.ts` — L37, 88
+- `src/config/siteContentRegistry.ts` — L178, 432, 443
+- `src/pages/Shipping.tsx` — L581, 640
+- `src/pages/Analytics.tsx` — L339
+- `src/components/products/ProductVariantsManager.tsx` — L251, 262, 452, 456
+- `src/components/products/ProductModal.tsx` — L561, 583, 611, 630
+- `src/components/orders/SendToCourierModal.tsx` — L472
+- `src/components/orders/RefundProcessingModal.tsx` — L111
 
 ---
 
-## ৭. Summary Report
+## 💳 ৪. Payment Methods — Bilingual (intentional design)
 
-```text
-TOTAL PAGES        : 60+ (Store 19, Account 18, Admin 30+)
-ORPHAN FILES       : 7 (5 components + 2 pages)
-BROKEN LINKS       : 1 (Returns → /account/returns)
-SEO COVERAGE       : 95% (1 page missing noIndex)
-PERFORMANCE        : Good baseline, 3 quick wins available
-INCOMPLETE FEATURES: Payment Methods (saved cards) — recommend remove
-DUPLICATES         : 0 functional, 5 dead-code groups
-```
-
-### Cleanup এর সুবিধা
-- ~1500+ line dead code কমবে
-- Bundle size কমবে (~50KB)
-- Sidebar/Routes পরিষ্কার হবে
-- নতুন developer/AI confusion এড়াবে
+`src/data/paymentMethodDefinitions.ts` — **৮৭টি match**: প্রতিটি payment method এ `name_bn`, `description_bn`, `instructions_bn`, `label_bn` field আছে (bKash, Nagad, Rocket, Upay, SSLCommerz, ShurjoPay, aamarPay, Stripe, PayPal, 2Checkout, Payoneer, Bank Transfer, Cheque)। এগুলো ইচ্ছাকৃত bilingual data structure।
 
 ---
 
-**Approve করলে Phase A–D একসাথে implement করব** (Phase E আলাদা message এ — কারণ image asset adjustment সহ)। কিছু বাদ দিতে চাইলে বলুন (যেমন: শুধু Phase A + B)।
+## 🗺️ ৫. Hardcoded Bengali Place Names (intentional — geo matching)
+
+- `src/pages/store/OrderTracking.tsx` — L78, 84, 90 (ঢাকা, মিরপুর, গুলশান, চট্টগ্রাম, সিলেট, ইত্যাদি keyword matching এর জন্য)
+- `src/pages/store/Checkout.tsx` — L206, 212 ( `সিটি`, `সারাদেশ` zone matching)
+- `src/pages/store/Checkout.tsx` — L952 (`লগআউট`/`লগ ইন` — language switcher logic)
+
+---
+
+## ⚠️ ৬. Misc
+
+- `src/hooks/useAgentMetrics.ts` — L102 (`~৫ মিনিট` — placeholder comment)
+- `src/hooks/useLiveChat.ts` — L390, 411, 431 (`name: "এজেন্ট"` — fallback agent name)
+
+---
+
+## প্রস্তাবিত পরবর্তী ধাপ
+
+আপনি কোনটা চান:
+
+1. **Full English conversion**  
+2.  payment method এ `name_bn` field remove
