@@ -99,7 +99,7 @@ export function useAgentMetrics() {
         totalAssigned: openChats.length + openTickets.length,
         isOnline,
         resolvedToday: resolvedChatsToday + resolvedTicketsToday,
-        avgResponseTime: "~৫ মিনিট", // Placeholder - would need first_response_at column
+        avgResponseTime: "~5 min", // Placeholder - would need first_response_at column
       };
     });
   }, [agents, chatConversations, tickets, presenceData]);
