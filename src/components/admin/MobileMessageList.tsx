@@ -168,7 +168,7 @@ export function MobileMessageList({
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
                     {item.priority && item.priority !== "medium" && (
                       <Badge variant="secondary" className={cn("text-xs", priorityColors[item.priority])}>
-                        {item.priority === "urgent" ? "জরুরি" : item.priority === "high" ? "উচ্চ" : "কম"}
+                        {item.priority === "urgent" ? "Urgent" : item.priority === "high" ? "High" : "Low"}
                       </Badge>
                     )}
 
@@ -185,12 +185,12 @@ export function MobileMessageList({
                         {item.isReplied ? (
                           <>
                             <CheckCircle2 className="h-3 w-3 mr-1" />
-                            উত্তর দেওয়া হয়েছে
+                            Replied
                           </>
                         ) : (
                           <>
                             <Clock className="h-3 w-3 mr-1" />
-                            উত্তর দেওয়া হয়নি
+                            Pending Reply
                           </>
                         )}
                       </Badge>
@@ -235,7 +235,7 @@ export function MobileMessageList({
                 }}
               >
                 <Reply className="h-6 w-6" />
-                <span className="text-xs">উত্তর দিন</span>
+                <span className="text-xs">Reply</span>
               </Button>
             )}
             {onMarkAsRead && onMarkAsUnread && (
@@ -254,12 +254,12 @@ export function MobileMessageList({
                 {selectedItem?.isRead ? (
                   <>
                     <Mail className="h-6 w-6" />
-                    <span className="text-xs">অপঠিত</span>
+                    <span className="text-xs">Unread</span>
                   </>
                 ) : (
                   <>
                     <MailOpen className="h-6 w-6" />
-                    <span className="text-xs">পঠিত</span>
+                    <span className="text-xs">Read</span>
                   </>
                 )}
               </Button>
@@ -274,7 +274,7 @@ export function MobileMessageList({
                 }}
               >
                 <Archive className="h-6 w-6" />
-                <span className="text-xs">আর্কাইভ</span>
+                <span className="text-xs">Archive</span>
               </Button>
             )}
             {onDelete && (
@@ -287,7 +287,7 @@ export function MobileMessageList({
                 }}
               >
                 <Trash2 className="h-6 w-6" />
-                <span className="text-xs">মুছে ফেলুন</span>
+                <span className="text-xs">Delete</span>
               </Button>
             )}
           </div>

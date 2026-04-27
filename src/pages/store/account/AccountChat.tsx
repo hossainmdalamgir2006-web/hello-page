@@ -148,7 +148,7 @@ export default function AccountChat() {
       await sendMessage(`📎 ${file.name}`, [{ url: publicUrl, name: file.name, type: file.type, size: file.size }]);
     } catch (err) {
       console.error("Upload error:", err);
-      toast.error("ফাইল আপলোড করতে সমস্যা হয়েছে");
+      toast.error("Failed to upload file");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -158,7 +158,7 @@ export default function AccountChat() {
   const closeConversation = async () => {
     if (!activeConv) return;
     const { error } = await supabase.from("live_chat_conversations").update({ status: "closed" }).eq("id", activeConv);
-    if (!error) { toast.success("চ্যাট বন্ধ করা হয়েছে"); fetchConversations(); }
+    if (!error) { toast.success("Chat closed"); fetchConversations(); }
   };
 
   const onEmojiClick = (emojiData: any) => {
@@ -272,7 +272,7 @@ export default function AccountChat() {
             </ScrollArea>
             {isClosed ? (
               <div className="border-t border-border p-3 text-center text-xs text-muted-foreground">
-                এই চ্যাট বন্ধ করা হয়েছে। নতুন চ্যাট শুরু করতে + বাটনে ক্লিক করুন।
+                This chat has been closed. Click the + button to start a new chat.
               </div>
             ) : (
               <div className="border-t border-border p-3 flex gap-2">

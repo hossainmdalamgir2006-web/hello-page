@@ -10,7 +10,7 @@ interface InternalNoteInputProps {
   placeholder?: string;
 }
 
-export function InternalNoteInput({ onSubmit, isSubmitting, placeholder = "টিম নোট লিখুন..." }: InternalNoteInputProps) {
+export function InternalNoteInput({ onSubmit, isSubmitting, placeholder = "Write a team note..." }: InternalNoteInputProps) {
   const [note, setNote] = useState("");
 
   const handleSubmit = () => {
@@ -24,10 +24,10 @@ export function InternalNoteInput({ onSubmit, isSubmitting, placeholder = "ট�
       <div className="flex items-center gap-2">
         <StickyNote className="h-4 w-4 text-amber-600" />
         <span className="text-xs font-medium text-amber-700 dark:text-amber-400">
-          ইন্টারনাল নোট
+          Internal Note
         </span>
         <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-amber-300 text-amber-600">
-          শুধু টিম দেখবে
+          Team only
         </Badge>
       </div>
       <div className="flex gap-2">
@@ -58,7 +58,7 @@ export function InternalNoteInput({ onSubmit, isSubmitting, placeholder = "ট�
         </Button>
       </div>
       <p className="text-[10px] text-muted-foreground">
-        Ctrl+Enter দিয়েও পাঠাতে পারেন
+        You can also press Ctrl+Enter to send
       </p>
     </div>
   );

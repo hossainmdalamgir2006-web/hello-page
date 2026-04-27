@@ -44,7 +44,7 @@ export function QuickReplyPicker({ onSelect }: QuickReplyPickerProps) {
           variant="ghost" 
           size="icon" 
           className="h-9 w-9"
-          title="কুইক রিপ্লাই"
+          title="Quick Reply"
         >
           <Zap className="h-4 w-4" />
         </Button>
@@ -54,7 +54,7 @@ export function QuickReplyPicker({ onSelect }: QuickReplyPickerProps) {
           <div className="flex items-center gap-2 mb-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="কুইক রিপ্লাই খুঁজুন..."
+              placeholder="Search quick replies..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="h-8 text-sm"
@@ -67,7 +67,7 @@ export function QuickReplyPicker({ onSelect }: QuickReplyPickerProps) {
                 className="cursor-pointer text-xs"
                 onClick={() => setSelectedCategory(null)}
               >
-                সব
+                All
               </Badge>
               {categories.map((cat) => (
                 <Badge
@@ -85,11 +85,11 @@ export function QuickReplyPicker({ onSelect }: QuickReplyPickerProps) {
         <ScrollArea className="h-64">
           {isLoading ? (
             <div className="text-center py-8 text-muted-foreground text-sm">
-              লোড হচ্ছে...
+              Loading...
             </div>
           ) : filteredResponses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground text-sm">
-              {search ? "কোনো রেজাল্ট পাওয়া যায়নি" : "কোনো কুইক রিপ্লাই নেই"}
+              {search ? "No results found" : "No quick replies"}
             </div>
           ) : (
             <div className="p-1">
