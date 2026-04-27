@@ -643,12 +643,12 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
     description_bn: "Pay via cheque deposit or bank transfer",
     type: "manual",
     instructions: "Write a cheque payable to the account shown and deposit to the branch",
-    instructions_bn: "প্রদর্শিত একাউন্টে চেক লিখুন এবং শাখায় জমা দিন",
+    instructions_bn: "Write the cheque to the displayed account and deposit at the branch",
     configFields: [
       {
         key: "payable_to",
         label: "Payable To (Name on Cheque)",
-        label_bn: "পেয়েবল টু (চেকে নাম)",
+        label_bn: "Payable To (Name on Cheque)",
         type: "text",
         placeholder: "Company or Person Name",
         required: true,
@@ -656,19 +656,19 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "bank_accounts",
         label: "Bank Accounts (Payee Accounts)",
-        label_bn: "ব্যাংক একাউন্ট (পেয়ি একাউন্ট)",
+        label_bn: "Bank Account (Payee Account)",
         type: "bank_accounts",
       },
       {
         key: "auto_processing_enabled",
         label: "Enable Auto Processing (Future Gateway Integration)",
-        label_bn: "অটো প্রসেসিং সক্রিয় করুন (ভবিষ্যৎ গেটওয়ে)",
+        label_bn: "Enable Auto Processing (Future Gateway)",
         type: "switch",
       },
       {
         key: "instructions",
         label: "Custom Instructions for Customer",
-        label_bn: "কাস্টমারের জন্য নির্দেশনা",
+        label_bn: "Instructions for Customer",
         type: "textarea",
         placeholder: "Write cheque payable to [Name]. Deposit at any branch of [Bank]...",
       },
@@ -683,25 +683,25 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "cod",
     name: "Cash on Delivery",
-    name_bn: "ক্যাশ অন ডেলিভারি",
+    name_bn: "Cash on Delivery",
     icon: "💵",
     default_logo: "/logos/cod.png?v=2",
     description: "Pay when you receive your order",
-    description_bn: "অর্ডার গ্রহণের সময় টাকা দিন",
+    description_bn: "Pay when receiving the order",
     type: "manual",
     instructions: "Pay the delivery person when you receive your order",
-    instructions_bn: "ডেলিভারি পাওয়ার সময় ডেলিভারি ব্যক্তিকে টাকা দিন",
+    instructions_bn: "Pay the delivery person upon receiving the delivery",
     configFields: [
       {
         key: "cod_charge_enabled",
         label: "Enable COD Charge",
-        label_bn: "COD চার্জ সক্রিয় করুন",
+        label_bn: "COD Enable Charge",
         type: "switch",
       },
       {
         key: "cod_charge_type",
         label: "Charge Type",
-        label_bn: "চার্জের ধরন",
+        label_bn: "Charge Type",
         type: "select",
         options: [
           { value: "fixed", label: "Fixed Amount (BDT)" },
@@ -712,7 +712,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "cod_charge_value",
         label: "Charge Amount",
-        label_bn: "চার্জের পরিমাণ",
+        label_bn: "Charge Amount",
         type: "number",
         placeholder: "0",
         dependsOn: "cod_charge_enabled",
