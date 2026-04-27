@@ -498,7 +498,7 @@ export function LiveChatWidget() {
                         theme={Theme.AUTO}
                         width={320}
                         height={350}
-                        searchPlaceholder="ইমোজি খুঁজুন..."
+                        searchPlaceholder="Search emoji..."
                         previewConfig={{ showPreview: false }}
                       />
                     </PopoverContent>
@@ -507,7 +507,7 @@ export function LiveChatWidget() {
                     value={newMessage}
                     onChange={(e) => handleInputChange(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-                    placeholder="মেসেজ লিখুন..."
+                    placeholder="Type a message..."
                     className="flex-1"
                     disabled={isSending}
                   />

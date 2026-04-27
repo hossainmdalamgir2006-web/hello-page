@@ -137,11 +137,11 @@ export function useLiveChat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["live-chat-conversations"] });
-      toast.success("নতুন কথোপকথন তৈরি হয়েছে");
+      toast.success("New conversation created");
     },
     onError: (error) => {
       console.error("Error creating conversation:", error);
-      toast.error("কথোপকথন তৈরি করতে সমস্যা হয়েছে");
+      toast.error("Failed to create conversation");
     },
   });
 
@@ -163,11 +163,11 @@ export function useLiveChat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["live-chat-conversations"] });
-      toast.success("স্ট্যাটাস আপডেট হয়েছে");
+      toast.success("Status updated");
     },
     onError: (error) => {
       console.error("Error updating status:", error);
-      toast.error("স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে");
+      toast.error("Failed to update status");
     },
   });
 
@@ -207,11 +207,11 @@ export function useLiveChat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["live-chat-conversations"] });
-      toast.success("কথোপকথন মুছে ফেলা হয়েছে");
+      toast.success("Conversation deleted");
     },
     onError: (error) => {
       console.error("Error deleting conversation:", error);
-      toast.error("কথোপকথন মুছতে সমস্যা হয়েছে");
+      toast.error("Failed to delete conversation");
     },
   });
 
@@ -227,11 +227,11 @@ export function useLiveChat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["live-chat-conversations"] });
-      toast.success("ট্যাগ আপডেট হয়েছে");
+      toast.success("Tags updated");
     },
     onError: (error) => {
       console.error("Error updating tags:", error);
-      toast.error("ট্যাগ আপডেট করতে সমস্যা হয়েছে");
+      toast.error("Failed to update tags");
     },
   });
 
@@ -247,11 +247,11 @@ export function useLiveChat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["live-chat-conversations"] });
-      toast.success("নোট আপডেট হয়েছে");
+      toast.success("Notes updated");
     },
     onError: (error) => {
       console.error("Error updating notes:", error);
-      toast.error("নোট আপডেট করতে সমস্যা হয়েছে");
+      toast.error("Failed to update notes");
     },
   });
 
@@ -267,11 +267,11 @@ export function useLiveChat() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["live-chat-conversations"] });
-      toast.success("এজেন্ট অ্যাসাইন হয়েছে");
+      toast.success("Agent assigned");
     },
     onError: (error) => {
       console.error("Error assigning agent:", error);
-      toast.error("এজেন্ট অ্যাসাইন করতে সমস্যা হয়েছে");
+      toast.error("Failed to assign agent");
     },
   });
 
@@ -387,7 +387,7 @@ export function useLiveChatMessages(conversationId: string | null, customerName?
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           await typingChannel.track({
-            name: "এজেন্ট",
+            name: "Agent",
             isTyping: false,
             sender: "agent"
           });
@@ -408,7 +408,7 @@ export function useLiveChatMessages(conversationId: string | null, customerName?
     
     setIsTyping(true);
     await channelRef.current.track({
-      name: "এজেন্ট",
+      name: "Agent",
       isTyping: true,
       sender: "agent"
     });
@@ -428,7 +428,7 @@ export function useLiveChatMessages(conversationId: string | null, customerName?
     
     setIsTyping(false);
     await channelRef.current.track({
-      name: "এজেন্ট",
+      name: "Agent",
       isTyping: false,
       sender: "agent"
     });
@@ -464,7 +464,7 @@ export function useLiveChatMessages(conversationId: string | null, customerName?
       };
     } catch (error) {
       console.error("Error uploading file:", error);
-      toast.error("ফাইল আপলোড করতে সমস্যা হয়েছে");
+      toast.error("Failed to upload file");
       return null;
     }
   };

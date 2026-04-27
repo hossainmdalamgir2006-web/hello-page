@@ -349,7 +349,7 @@ export function useCustomerChat() {
       };
     } catch (error) {
       console.error("Error uploading file:", error);
-      toast.error("ফাইল আপলোড করতে সমস্যা হয়েছে");
+      toast.error("Failed to upload file");
       return null;
     }
   };
