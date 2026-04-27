@@ -289,7 +289,7 @@ export function useCustomerChat() {
     },
     onSuccess: async ({ conv, shouldAutoReply }) => {
       setConversationId(conv.id);
-      toast.success("চ্যাট শুরু হয়েছে!");
+      toast.success("Chat started!");
 
       // Send auto-reply if admin is offline
       if (shouldAutoReply && autoReplySettings.message) {
@@ -320,7 +320,7 @@ export function useCustomerChat() {
     },
     onError: (error) => {
       console.error("Error starting conversation:", error);
-      toast.error("চ্যাট শুরু করতে সমস্যা হয়েছে");
+      toast.error("Failed to start chat");
     },
   });
 
