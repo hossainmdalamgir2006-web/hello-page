@@ -195,7 +195,7 @@ export default function AppearanceManager() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Light Mode Colors</CardTitle>
-                  <CardDescription>সাইটের Light theme এর সব রঙ নিয়ন্ত্রণ করুন</CardDescription>
+                  <CardDescription>Control all colors of the site's Light theme</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {renderColorField("Primary Color", "primary_color", "Main brand color")}
@@ -212,7 +212,7 @@ export default function AppearanceManager() {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Status & Dark Mode</CardTitle>
-                  <CardDescription>Status colors ও Dark mode settings</CardDescription>
+                  <CardDescription>Status colors and Dark mode settings</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {renderColorField("Success Color", "success_color")}
@@ -237,12 +237,12 @@ export default function AppearanceManager() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Button Styling</CardTitle>
-                <CardDescription>বাটনের রঙ, radius ও shadow কাস্টমাইজ করুন</CardDescription>
+                <CardDescription>Customize button colors, radius and shadow</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
                   <TextField label="Button Border Radius" settingKey="button_radius" description="e.g. 0.5rem, 8px, 9999px" />
-                  <SwitchField label="Button Shadow" settingKey="button_shadow" description="বাটনে shadow দেখাবে" />
+                  <SwitchField label="Button Shadow" settingKey="button_shadow" description="Show shadow on buttons" />
                   {renderColorField("Primary Button BG", "button_primary_bg")}
                   {renderColorField("Primary Button Text", "button_primary_text")}
                   {renderColorField("Secondary Button BG", "button_secondary_bg")}
@@ -268,7 +268,7 @@ export default function AppearanceManager() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Typography</CardTitle>
-                <CardDescription>ফন্ট, সাইজ ও স্পেসিং নিয়ন্ত্রণ করুন</CardDescription>
+                <CardDescription>Control fonts, sizes and spacing</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
@@ -310,7 +310,7 @@ export default function AppearanceManager() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Sidebar Styling</CardTitle>
-                <CardDescription>Admin, Manager, Support, Customer সব panel-এর sidebar</CardDescription>
+                <CardDescription>Sidebar for Admin, Manager, Support and Customer panels</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
@@ -330,7 +330,7 @@ export default function AppearanceManager() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Header / Navbar</CardTitle>
-                <CardDescription>সব panel-এর header কাস্টমাইজ করুন</CardDescription>
+                <CardDescription>Customize header for all panels</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
@@ -397,7 +397,7 @@ export default function AppearanceManager() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Store Frontend</CardTitle>
-                <CardDescription>Customer-facing store-এর design control</CardDescription>
+                <CardDescription>Design control for customer-facing store</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
@@ -537,7 +537,7 @@ export default function AppearanceManager() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Charts & Analytics</CardTitle>
-                <CardDescription>Chart color palette কাস্টমাইজ করুন</CardDescription>
+                <CardDescription>Customize chart color palette</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6 md:grid-cols-2">
@@ -583,7 +583,7 @@ export default function AppearanceManager() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Custom CSS Override</CardTitle>
-                <CardDescription>Advanced users-এর জন্য raw CSS inject করুন</CardDescription>
+                <CardDescription>Inject raw CSS for advanced users</CardDescription>
               </CardHeader>
               <CardContent>
                 <Textarea
