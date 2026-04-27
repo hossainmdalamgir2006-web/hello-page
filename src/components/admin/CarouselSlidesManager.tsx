@@ -147,9 +147,9 @@ export function CarouselSlidesManager() {
         setEditForm(p => ({ ...p, video_url: url }));
       }
 
-      toast({ title: "আপলোড সফল", description: `${type === "image" ? "ইমেজ" : "ভিডিও"} আপলোড হয়েছে` });
+      toast({ title: "Upload successful", description: `${type === "image" ? "Image" : "Video"} uploaded` });
     } catch (err: any) {
-      toast({ title: "আপলোড ব্যর্থ", description: err.message || "File upload failed", variant: "destructive" });
+      toast({ title: "Upload failed", description: err.message || "File upload failed", variant: "destructive" });
     }
     setUploading(false);
   };
@@ -289,7 +289,7 @@ function SlideEditForm({
         <div className="space-y-3">
           <Label>Image</Label>
           <div className="flex gap-2">
-            <Input value={editForm.image_url || ""} onChange={(e) => setEditForm(p => ({ ...p, image_url: e.target.value }))} placeholder="Image URL অথবা নিচে আপলোড করুন" className="flex-1" />
+            <Input value={editForm.image_url || ""} onChange={(e) => setEditForm(p => ({ ...p, image_url: e.target.value }))} placeholder="Image URL or upload below" className="flex-1" />
             <input
               ref={imageInputRef as any}
               type="file"
@@ -309,7 +309,7 @@ function SlideEditForm({
               className="shrink-0"
             >
               {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Upload className="h-4 w-4 mr-1" />}
-              আপলোড
+              Upload
             </Button>
           </div>
           {editForm.image_url && (
@@ -322,7 +322,7 @@ function SlideEditForm({
         <div className="space-y-3">
           <Label>Video</Label>
           <div className="flex gap-2">
-            <Input value={editForm.video_url || ""} onChange={(e) => setEditForm(p => ({ ...p, video_url: e.target.value }))} placeholder="Video URL অথবা নিচে আপলোড করুন" className="flex-1" />
+            <Input value={editForm.video_url || ""} onChange={(e) => setEditForm(p => ({ ...p, video_url: e.target.value }))} placeholder="Video URL or upload below" className="flex-1" />
             <input
               ref={videoInputRef as any}
               type="file"
@@ -342,7 +342,7 @@ function SlideEditForm({
               className="shrink-0"
             >
               {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Upload className="h-4 w-4 mr-1" />}
-              আপলোড
+              Upload
             </Button>
           </div>
           {editForm.video_url && (

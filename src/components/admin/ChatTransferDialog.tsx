@@ -57,18 +57,18 @@ export function ChatTransferDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ArrowRightLeft className="h-5 w-5 text-primary" />
-            চ্যাট ট্রান্সফার
+            Chat Transfer
           </DialogTitle>
           <DialogDescription>
-            {customerName} এর চ্যাট অন্য এজেন্টে ট্রান্সফার করুন
+            Transfer {customerName}'s chat to another agent
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>এজেন্ট সিলেক্ট করুন *</Label>
+            <Label>Select Agent *</Label>
             <Select value={toAgentId} onValueChange={setToAgentId}>
               <SelectTrigger>
-                <SelectValue placeholder="এজেন্ট বেছে নিন" />
+                <SelectValue placeholder="Choose an agent" />
               </SelectTrigger>
               <SelectContent>
                 {availableAgents.map(agent => (
@@ -105,18 +105,18 @@ export function ChatTransferDialog({
           )}
 
           <div className="space-y-2">
-            <Label>ট্রান্সফার নোট (ঐচ্ছিক)</Label>
+            <Label>Transfer Note (optional)</Label>
             <Textarea
               value={transferNote}
               onChange={(e) => setTransferNote(e.target.value)}
-              placeholder="এজেন্টের জন্য কোনো নোট বা কনটেক্সট লিখুন..."
+              placeholder="Write a note or context for the agent..."
               rows={3}
             />
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            বাতিল
+            Cancel
           </Button>
           <Button onClick={handleTransfer} disabled={!toAgentId || isTransferring}>
             {isTransferring ? (
@@ -124,7 +124,7 @@ export function ChatTransferDialog({
             ) : (
               <ArrowRightLeft className="h-4 w-4 mr-2" />
             )}
-            ট্রান্সফার করুন
+            Transfer
           </Button>
         </DialogFooter>
       </DialogContent>
