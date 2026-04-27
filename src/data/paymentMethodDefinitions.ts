@@ -42,19 +42,19 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "bkash",
     name: "bKash",
-    name_bn: "বিকাশ",
+    name_bn: "bKash",
     icon: "📱",
     default_logo: "/logos/bkash.png?v=2",
     description: "Pay with bKash mobile wallet",
-    description_bn: "বিকাশ মোবাইল ওয়ালেটে পেমেন্ট করুন",
+    description_bn: "Pay with bKash mobile wallet",
     type: "mobile",
     instructions: "Send payment to the bKash number shown and enter transaction ID",
-    instructions_bn: "প্রদর্শিত বিকাশ নম্বরে পেমেন্ট করুন এবং ট্রানজেকশন আইডি দিন",
+    instructions_bn: "Pay to the displayed bKash number and provide the transaction ID",
     configFields: [
       {
         key: "payment_mode",
         label: "Payment Mode",
-        label_bn: "পেমেন্ট মোড",
+        label_bn: "Payment Mode",
         type: "select",
         options: [
           { value: "manual", label: "Manual (Customer submits Transaction ID)" },
@@ -66,7 +66,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "account_number",
         label: "bKash Account Number",
-        label_bn: "বিকাশ একাউন্ট নম্বর",
+        label_bn: "bKash Account Number",
         type: "text",
         placeholder: "01XXXXXXXXX",
         required: true,
@@ -76,7 +76,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "account_type",
         label: "Account Type",
-        label_bn: "একাউন্ট টাইপ",
+        label_bn: "Account Type",
         type: "select",
         options: [
           { value: "personal", label: "Personal" },
@@ -89,7 +89,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "qr_code_url",
         label: "Payment QR Code",
-        label_bn: "পেমেন্ট QR কোড",
+        label_bn: "Payment QR Code",
         type: "image",
         dependsOn: "payment_mode",
         dependsOnValue: "manual",
@@ -98,7 +98,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "app_key",
         label: "App Key",
-        label_bn: "অ্যাপ কী",
+        label_bn: "App Key",
         type: "text",
         placeholder: "bKash App Key",
         required: true,
@@ -108,7 +108,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "app_secret",
         label: "App Secret",
-        label_bn: "অ্যাপ সিক্রেট",
+        label_bn: "App Secret",
         type: "password",
         required: true,
         dependsOn: "payment_mode",
@@ -117,7 +117,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "api_username",
         label: "API Username",
-        label_bn: "API ইউজারনেম",
+        label_bn: "API Username",
         type: "text",
         required: true,
         dependsOn: "payment_mode",
@@ -126,7 +126,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "api_password",
         label: "API Password",
-        label_bn: "API পাসওয়ার্ড",
+        label_bn: "API Password",
         type: "password",
         required: true,
         dependsOn: "payment_mode",
@@ -135,7 +135,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "test_mode",
         label: "Environment",
-        label_bn: "এনভায়রনমেন্ট",
+        label_bn: "Environment",
         type: "select",
         options: [
           { value: "sandbox", label: "Sandbox (Test)" },
@@ -147,7 +147,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -155,19 +155,19 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "nagad",
     name: "Nagad",
-    name_bn: "নগদ",
+    name_bn: "Nagad",
     icon: "📱",
     default_logo: "/logos/nagad.png?v=2",
     description: "Pay with Nagad mobile wallet",
-    description_bn: "নগদ মোবাইল ওয়ালেটে পেমেন্ট করুন",
+    description_bn: "Pay with Nagad mobile wallet",
     type: "mobile",
     instructions: "Send payment to the Nagad number shown and enter transaction ID",
-    instructions_bn: "প্রদর্শিত নগদ নম্বরে পেমেন্ট করুন এবং ট্রানজেকশন আইডি দিন",
+    instructions_bn: "Pay to the displayed Nagad number and provide the transaction ID",
     configFields: [
       {
         key: "account_number",
         label: "Account Number",
-        label_bn: "একাউন্ট নম্বর",
+        label_bn: "Account Number",
         type: "text",
         placeholder: "01XXXXXXXXX",
         required: true,
@@ -175,7 +175,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "account_type",
         label: "Account Type",
-        label_bn: "একাউন্ট টাইপ",
+        label_bn: "Account Type",
         type: "select",
         options: [
           { value: "personal", label: "Personal" },
@@ -187,13 +187,13 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "qr_code_url",
         label: "Payment QR Code",
-        label_bn: "পেমেন্ট QR কোড",
+        label_bn: "Payment QR Code",
         type: "image",
       },
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -201,19 +201,19 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "rocket",
     name: "Rocket",
-    name_bn: "রকেট",
+    name_bn: "Rocket",
     icon: "🚀",
     default_logo: "/logos/rocket.png?v=2",
     description: "Pay with Rocket (DBBL) mobile wallet",
-    description_bn: "রকেট (ডাচ-বাংলা) মোবাইল ওয়ালেটে পেমেন্ট করুন",
+    description_bn: "Pay with Rocket (Dutch-Bangla) mobile wallet",
     type: "mobile",
     instructions: "Send payment to the Rocket number shown and enter transaction ID",
-    instructions_bn: "প্রদর্শিত রকেট নম্বরে পেমেন্ট করুন এবং ট্রানজেকশন আইডি দিন",
+    instructions_bn: "Pay to the displayed Rocket number and provide the transaction ID",
     configFields: [
       {
         key: "account_number",
         label: "Account Number",
-        label_bn: "একাউন্ট নম্বর",
+        label_bn: "Account Number",
         type: "text",
         placeholder: "01XXXXXXXXX",
         required: true,
@@ -221,7 +221,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "account_type",
         label: "Account Type",
-        label_bn: "একাউন্ট টাইপ",
+        label_bn: "Account Type",
         type: "select",
         options: [
           { value: "personal", label: "Personal" },
@@ -233,13 +233,13 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "qr_code_url",
         label: "Payment QR Code",
-        label_bn: "পেমেন্ট QR কোড",
+        label_bn: "Payment QR Code",
         type: "image",
       },
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -247,19 +247,19 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "upay",
     name: "Upay",
-    name_bn: "উপায়",
+    name_bn: "Upay",
     icon: "💸",
     default_logo: "/logos/upay.png?v=2",
     description: "Pay with Upay mobile wallet",
-    description_bn: "উপায় মোবাইল ওয়ালেটে পেমেন্ট করুন",
+    description_bn: "Pay with Upay mobile wallet",
     type: "mobile",
     instructions: "Send payment to the Upay number shown and enter transaction ID",
-    instructions_bn: "প্রদর্শিত উপায় নম্বরে পেমেন্ট করুন এবং ট্রানজেকশন আইডি দিন",
+    instructions_bn: "Pay to the displayed Upay number and provide the transaction ID",
     configFields: [
       {
         key: "account_number",
         label: "Account Number",
-        label_bn: "একাউন্ট নম্বর",
+        label_bn: "Account Number",
         type: "text",
         placeholder: "01XXXXXXXXX",
         required: true,
@@ -267,7 +267,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "account_type",
         label: "Account Type",
-        label_bn: "একাউন্ট টাইপ",
+        label_bn: "Account Type",
         type: "select",
         options: [
           { value: "personal", label: "Personal" },
@@ -279,13 +279,13 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "qr_code_url",
         label: "Payment QR Code",
-        label_bn: "পেমেন্ট QR কোড",
+        label_bn: "Payment QR Code",
         type: "image",
       },
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -295,17 +295,17 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "sslcommerz",
     name: "SSLCommerz",
-    name_bn: "এসএসএল কমার্জ",
+    name_bn: "SSLCommerz",
     icon: "💳",
     default_logo: "/logos/sslcommerz.png?v=2",
     description: "Pay with credit/debit card via SSLCommerz",
-    description_bn: "SSLCommerz এর মাধ্যমে ক্রেডিট/ডেবিট কার্ডে পেমেন্ট করুন",
+    description_bn: "Pay with credit/debit card via SSLCommerz",
     type: "gateway",
     configFields: [
       {
         key: "merchant_id",
         label: "Store ID / Merchant ID",
-        label_bn: "স্টোর আইডি / মার্চেন্ট আইডি",
+        label_bn: "Store ID / Merchant ID",
         type: "text",
         placeholder: "your_store_id",
         required: true,
@@ -313,21 +313,21 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "api_key",
         label: "Store Password / API Key",
-        label_bn: "স্টোর পাসওয়ার্ড / API কী",
+        label_bn: "Store Password / API Key",
         type: "password",
         required: true,
       },
       {
         key: "secret_key",
         label: "Secret Key",
-        label_bn: "সিক্রেট কী",
+        label_bn: "Secret Key",
         type: "password",
         required: true,
       },
       {
         key: "test_mode",
         label: "Environment",
-        label_bn: "এনভায়রনমেন্ট",
+        label_bn: "Environment",
         type: "select",
         options: [
           { value: "sandbox", label: "Sandbox (Test)" },
@@ -337,7 +337,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -345,17 +345,17 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "shurjopay",
     name: "ShurjoPay",
-    name_bn: "শুরজোপে",
+    name_bn: "ShurjoPay",
     icon: "💳",
     default_logo: "/logos/shurjopay.png?v=2",
     description: "Pay via ShurjoPay payment gateway",
-    description_bn: "ShurjoPay পেমেন্ট গেটওয়ে দিয়ে পেমেন্ট করুন",
+    description_bn: "Pay via ShurjoPay payment gateway",
     type: "gateway",
     configFields: [
       {
         key: "merchant_id",
         label: "Merchant Username",
-        label_bn: "মার্চেন্ট ইউজারনেম",
+        label_bn: "Merchant Username",
         type: "text",
         placeholder: "your_merchant_username",
         required: true,
@@ -363,14 +363,14 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "api_key",
         label: "Merchant Key / Password",
-        label_bn: "মার্চেন্ট কী / পাসওয়ার্ড",
+        label_bn: "Merchant Key / Password",
         type: "password",
         required: true,
       },
       {
         key: "test_mode",
         label: "Environment",
-        label_bn: "এনভায়রনমেন্ট",
+        label_bn: "Environment",
         type: "select",
         options: [
           { value: "sandbox", label: "Sandbox (Test)" },
@@ -380,7 +380,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -388,17 +388,17 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "aamarpay",
     name: "aamarPay",
-    name_bn: "আমার পে",
+    name_bn: "aamarPay",
     icon: "💳",
     default_logo: "/logos/aamarpay.png?v=2",
     description: "Pay with aamarPay payment gateway",
-    description_bn: "aamarPay পেমেন্ট গেটওয়ে দিয়ে পেমেন্ট করুন",
+    description_bn: "Pay via aamarPay payment gateway",
     type: "gateway",
     configFields: [
       {
         key: "merchant_id",
         label: "Store ID",
-        label_bn: "স্টোর আইডি",
+        label_bn: "Store ID",
         type: "text",
         placeholder: "your_store_id",
         required: true,
@@ -406,14 +406,14 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "api_key",
         label: "Signature Key",
-        label_bn: "সিগনেচার কী",
+        label_bn: "Signature Key",
         type: "password",
         required: true,
       },
       {
         key: "test_mode",
         label: "Environment",
-        label_bn: "এনভায়রনমেন্ট",
+        label_bn: "Environment",
         type: "select",
         options: [
           { value: "sandbox", label: "Sandbox (Test)" },
@@ -423,7 +423,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -431,17 +431,17 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "stripe",
     name: "Stripe",
-    name_bn: "স্ট্রাইপ",
+    name_bn: "Stripe",
     icon: "💳",
     default_logo: "/logos/stripe.png?v=2",
     description: "Pay with credit/debit card via Stripe",
-    description_bn: "Stripe এর মাধ্যমে ক্রেডিট/ডেবিট কার্ডে পেমেন্ট করুন",
+    description_bn: "Pay with credit/debit card via Stripe",
     type: "gateway",
     configFields: [
       {
         key: "merchant_id",
         label: "Publishable Key",
-        label_bn: "পাবলিশেবল কী",
+        label_bn: "Publishable Key",
         type: "text",
         placeholder: "pk_live_...",
         required: true,
@@ -449,7 +449,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "secret_key",
         label: "Secret Key",
-        label_bn: "সিক্রেট কী",
+        label_bn: "Secret Key",
         type: "password",
         placeholder: "sk_live_...",
         required: true,
@@ -457,14 +457,14 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "api_key",
         label: "Webhook Secret",
-        label_bn: "ওয়েবহুক সিক্রেট",
+        label_bn: "Webhook Secret",
         type: "password",
         placeholder: "whsec_...",
       },
       {
         key: "test_mode",
         label: "Environment",
-        label_bn: "এনভায়রনমেন্ট",
+        label_bn: "Environment",
         type: "select",
         options: [
           { value: "test", label: "Test Mode" },
@@ -474,7 +474,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -482,17 +482,17 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "paypal",
     name: "PayPal",
-    name_bn: "পেপাল",
+    name_bn: "PayPal",
     icon: "🅿️",
     default_logo: "/logos/paypal.png?v=2",
     description: "Pay with PayPal",
-    description_bn: "পেপাল দিয়ে পেমেন্ট করুন",
+    description_bn: "Pay with PayPal",
     type: "gateway",
     configFields: [
       {
         key: "merchant_id",
         label: "Client ID",
-        label_bn: "ক্লায়েন্ট আইডি",
+        label_bn: "Client ID",
         type: "text",
         placeholder: "your_client_id",
         required: true,
@@ -500,14 +500,14 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "secret_key",
         label: "Client Secret",
-        label_bn: "ক্লায়েন্ট সিক্রেট",
+        label_bn: "Client Secret",
         type: "password",
         required: true,
       },
       {
         key: "test_mode",
         label: "Environment",
-        label_bn: "এনভায়রনমেন্ট",
+        label_bn: "Environment",
         type: "select",
         options: [
           { value: "sandbox", label: "Sandbox (Test)" },
@@ -517,7 +517,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -525,17 +525,17 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "2checkout",
     name: "2Checkout",
-    name_bn: "২চেকআউট",
+    name_bn: "2Checkout",
     icon: "💳",
     default_logo: "/logos/2checkout.png?v=2",
     description: "Pay via 2Checkout payment gateway",
-    description_bn: "2Checkout পেমেন্ট গেটওয়ে দিয়ে পেমেন্ট করুন",
+    description_bn: "Pay via 2Checkout payment gateway",
     type: "gateway",
     configFields: [
       {
         key: "merchant_id",
         label: "Account Number / Seller ID",
-        label_bn: "একাউন্ট নম্বর / সেলার আইডি",
+        label_bn: "Account Number / Seller ID",
         type: "text",
         placeholder: "your_account_number",
         required: true,
@@ -543,14 +543,14 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "secret_key",
         label: "Secret Key",
-        label_bn: "সিক্রেট কী",
+        label_bn: "Secret Key",
         type: "password",
         required: true,
       },
       {
         key: "test_mode",
         label: "Environment",
-        label_bn: "এনভায়রনমেন্ট",
+        label_bn: "Environment",
         type: "select",
         options: [
           { value: "sandbox", label: "Sandbox (Test)" },
@@ -560,7 +560,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -568,17 +568,17 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "payoneer",
     name: "Payoneer",
-    name_bn: "পেওনিয়ার",
+    name_bn: "Payoneer",
     icon: "💳",
     default_logo: "/logos/payoneer.svg?v=2",
     description: "Pay with Payoneer card",
-    description_bn: "পেওনিয়ার কার্ড দিয়ে পেমেন্ট করুন",
+    description_bn: "Pay with Payoneer card",
     type: "gateway",
     configFields: [
       {
         key: "merchant_id",
         label: "Partner ID",
-        label_bn: "পার্টনার আইডি",
+        label_bn: "Partner ID",
         type: "text",
         placeholder: "your_partner_id",
         required: true,
@@ -586,21 +586,21 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "api_key",
         label: "API Username",
-        label_bn: "API ইউজারনেম",
+        label_bn: "API Username",
         type: "text",
         required: true,
       },
       {
         key: "secret_key",
         label: "API Password",
-        label_bn: "API পাসওয়ার্ড",
+        label_bn: "API Password",
         type: "password",
         required: true,
       },
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -610,25 +610,25 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "bank_transfer",
     name: "Bank Transfer",
-    name_bn: "ব্যাংক ট্রান্সফার",
+    name_bn: "Bank Transfer",
     icon: "🏦",
     default_logo: "/logos/bank-transfer.png?v=2",
     description: "Pay via bank transfer (manual)",
-    description_bn: "ব্যাংক ট্রান্সফারের মাধ্যমে পেমেন্ট করুন",
+    description_bn: "Pay via bank transfer",
     type: "manual",
     instructions: "Transfer to our bank account and enter transaction reference",
-    instructions_bn: "আমাদের ব্যাংক একাউন্টে ট্রান্সফার করুন এবং ট্রানজেকশন রেফারেন্স দিন",
+    instructions_bn: "Transfer to our bank account and provide the transaction reference",
     configFields: [
       {
         key: "bank_accounts",
         label: "Bank Accounts",
-        label_bn: "ব্যাংক একাউন্ট সমূহ",
+        label_bn: "Bank Accounts",
         type: "bank_accounts",
       },
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
@@ -636,11 +636,11 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
   {
     method_id: "cheque",
     name: "Cheque Payment",
-    name_bn: "চেক পেমেন্ট",
+    name_bn: "Cheque Payment",
     icon: "🧾",
     default_logo: "/logos/cheque.png?v=2",
     description: "Pay by cheque deposit or transfer",
-    description_bn: "চেক জমা বা ব্যাংক ট্রান্সফারের মাধ্যমে পেমেন্ট করুন",
+    description_bn: "Pay via cheque deposit or bank transfer",
     type: "manual",
     instructions: "Write a cheque payable to the account shown and deposit to the branch",
     instructions_bn: "প্রদর্শিত একাউন্টে চেক লিখুন এবং শাখায় জমা দিন",
@@ -675,7 +675,7 @@ export const PAYMENT_METHOD_DEFINITIONS: PaymentMethodDefinition[] = [
       {
         key: "logo_url",
         label: "Custom Logo",
-        label_bn: "কাস্টম লোগো",
+        label_bn: "Custom Logo",
         type: "image",
       },
     ],
