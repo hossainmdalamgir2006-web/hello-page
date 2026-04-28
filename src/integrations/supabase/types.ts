@@ -3958,6 +3958,7 @@ export type Database = {
           constraint_type: string
           foreign_column_name: string
           foreign_table_name: string
+          foreign_table_schema: string
           table_name: string
         }[]
       }

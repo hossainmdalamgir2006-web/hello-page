@@ -1,90 +1,103 @@
-# বাংলা টেক্সট অডিট — পুরো সাইট
+# Fix Schema Export SQL Errors
 
-`/admin/appearance` পেজ সহ পুরো কোডবেজে `[\u0980-\u09FF]` রেঞ্জে স্ক্যান চালিয়ে **২৮টি ফাইলে ১৯৯টি বাংলা match** পাওয়া গেছে। নিচে ক্যাটাগরি অনুযায়ী সব লোকেশন।
+## Problem
 
----
+The exported `schema.sql` from **Settings → Backup → Export Full / Export Schema** contains invalid SQL that fails when run on a fresh project:
 
-## 🎯 ১. Admin Panel — Mixed Bangla/English (clean up করা দরকার)
+```sql
+ALTER TABLE public.auto_assign_rules
+  ADD CONSTRAINT auto_assign_rules_assign_to_fkey
+  FOREIGN KEY (assign_to) REFERENCES public.null();
+--                                  ^^^^^^^^^^^^^ syntax error
+```
 
-### `src/pages/admin/AppearanceManager.tsx` (আপনি বর্তমানে এই পেজে আছেন)
+## Root Cause
 
+In `supabase/functions/database-schema-export/index.ts`, the foreign key generator assumes every FK references a table in `public`. But two FKs in this DB reference `auth.users`:
 
-| Line | বাংলা টেক্সট                                            |
-| ---- | ------------------------------------------------------- |
-| 198  | `সাইটের Light theme এর সব রঙ নিয়ন্ত্রণ করুন`           |
-| 240  | `বাটনের রঙ, radius ও shadow কাস্টমাইজ করুন`             |
-| 245  | `বাটনে shadow দেখাবে`                                   |
-| 271  | `ফন্ট, সাইজ ও স্পেসিং নিয়ন্ত্রণ করুন`                  |
-| 313  | `Admin, Manager, Support, Customer সব panel-এর sidebar` |
-| 333  | `সব panel-এর header কাস্টমাইজ করুন`                     |
-| 540  | `Chart color palette কাস্টমাইজ করুন`                    |
-| 586  | `Advanced users-এর জন্য raw CSS inject করুন`            |
+| Constraint | Table | References |
+|---|---|---|
+| `auto_assign_rules_assign_to_fkey` | `public.auto_assign_rules` | `auth.users(id)` |
+| `trash_log_performed_by_fkey` | `public.trash_log` | `auth.users(id)` |
 
+The helper `get_table_constraints()` joins `information_schema.constraint_column_usage` without exposing the foreign **schema**, and for cross-schema FKs `foreign_table_name` comes back `NULL`. The export then writes `REFERENCES public.${null}()` → `public.null()`.
 
-### Other admin components
+Two additional latent bugs in the same function:
 
-- `src/components/admin/CarouselSlidesManager.tsx` — L152, 292, 312, 325, 345 (`আপলোড ব্যর্থ`, `আপলোড`, `অথবা নিচে আপলোড করুন`)
-- `src/components/admin/ChatTransferDialog.tsx`
-- `src/components/admin/QuickReplyPicker.tsx` — L47, 57, 70 (`কুইক রিপ্লাই`, `কুইক রিপ্লাই খুঁজুন...`)
-- `src/components/admin/MobileMessageList.tsx` — L171, 188, 193, 238, 257, 262, 277, 290 (`জরুরি/উচ্চ/কম`, `উত্তর দিন`, `অপঠিত/পঠিত`, `আর্কাইভ`, `মুছে ফেলুন`)
-- `src/components/admin/InternalNoteInput.tsx` — L13, 27, 30, 61 (`টিম নোট লিখুন...`, `ইন্টারনাল নোট`, `শুধু টিম দেখবে`, `Ctrl+Enter দিয়েও পাঠাতে পারেন`)
-- `src/components/admin/GoalTracker.tsx` — L61, 150 (`unit: "৳"`)
-- `src/components/admin/content-editors/ShippingRateListEditor.tsx` — L32 (`Cost (৳)`)
-- `src/components/settings/ProductPageSettings.tsx` — L128, 173, 198 (`প্রোডাক্ট পেজে দেখানো ট্রাস্ট ব্যাজ...`, `প্রিভিউ:`, `সাইজ গাইড কাস্টমাইজ করুন`)
-- `src/components/settings/EmailTemplatesTab.tsx` — L97, 100 (`৳2,500`, `৳500`)
-- `src/components/settings/DocumentTemplateEditor.tsx` — L157 (`৳` placeholder)
+1. **Triggers** — generated as `CREATE TRIGGER … BEFORE UPDATE ON tbl EXECUTE FUNCTION …` with no `FOR EACH ROW` clause (Postgres requires it).
+2. **Realtime publication** — `ALTER PUBLICATION supabase_realtime ADD TABLE …` errors if the table is already a publication member. Should be guarded.
 
----
+## Fix Plan
 
-## 💬 ২. Chat / Messaging — Toast & UI বাংলায় (intentional হতে পারে)
+### 1. Update RPC `get_table_constraints` to return the foreign schema
 
-- `src/hooks/useLiveChat.ts` — L140–467 (১৬টি toast: `নতুন কথোপকথন তৈরি হয়েছে`, `স্ট্যাটাস আপডেট হয়েছে`, `এজেন্ট অ্যাসাইন হয়েছে`, ইত্যাদি, plus `name: "এজেন্ট"`)
-- `src/hooks/useCustomerChat.ts` — L352 (`ফাইল আপলোড করতে সমস্যা হয়েছে`)
-- `src/components/store/LiveChatWidget.tsx` — L501, 510 (`ইমোজি খুঁজুন...`, `মেসেজ লিখুন...`)
-- `src/pages/store/account/AccountChat.tsx` — L151, 161, 275 (`চ্যাট বন্ধ করা হয়েছে`, `নতুন চ্যাট শুরু করতে...`)
+Migration: add `foreign_table_schema text` to the return signature so the export knows when an FK points outside `public`.
 
----
+```sql
+CREATE OR REPLACE FUNCTION public.get_table_constraints()
+RETURNS TABLE(
+  constraint_name text, table_name text, column_name text,
+  constraint_type text,
+  foreign_table_schema text,
+  foreign_table_name text, foreign_column_name text
+) ...
+  SELECT tc.constraint_name, tc.table_name, kcu.column_name,
+         tc.constraint_type,
+         ccu.table_schema,        -- NEW
+         ccu.table_name, ccu.column_name
+  FROM information_schema.table_constraints tc
+  JOIN information_schema.key_column_usage kcu ...
+  LEFT JOIN information_schema.constraint_column_usage ccu ...
+```
 
-## 💰 ৩. Currency Symbol (৳) — Mixed everywhere (acceptable, BDT symbol)
+### 2. Patch `database-schema-export/index.ts`
 
-`৳` symbol অনেক জায়গায় আছে — এটা টেক্সট না, currency:
+**FK section** — use `foreign_table_schema` (default `public`) and skip FKs to system schemas like `auth` (those tables don't exist on a fresh project; the auth schema is managed by Supabase, and we can't restore them). Emit a comment instead so the user knows.
 
-- `src/hooks/useCoupon.ts` — L74, 75, 100
-- `src/hooks/useApprovalQueue.ts` — L37, 88
-- `src/config/siteContentRegistry.ts` — L178, 432, 443
-- `src/pages/Shipping.tsx` — L581, 640
-- `src/pages/Analytics.tsx` — L339
-- `src/components/products/ProductVariantsManager.tsx` — L251, 262, 452, 456
-- `src/components/products/ProductModal.tsx` — L561, 583, 611, 630
-- `src/components/orders/SendToCourierModal.tsx` — L472
-- `src/components/orders/RefundProcessingModal.tsx` — L111
+```ts
+const refSchema = c.foreign_table_schema || 'public';
+if (!c.foreign_table_name) continue;        // skip malformed
+if (refSchema !== 'public') {
+  sql += `-- Skipped FK ${name}: references ${refSchema}.${c.foreign_table_name}\n\n`;
+  continue;
+}
+sql += `... REFERENCES ${refSchema}.${info.refTable}(${info.refColumns.join(', ')});\n`;
+```
 
----
+**Triggers** — add `FOR EACH ROW` (the only orientation we use) and guard with `DO $$`:
 
-## 💳 ৪. Payment Methods — Bilingual (intentional design)
+```ts
+sql += `CREATE TRIGGER ${t.trigger_name} ${t.action_timing} ${t.event_manipulation} `
+     + `ON public.${t.event_object_table} FOR EACH ROW ${t.action_statement};\n`;
+```
 
-`src/data/paymentMethodDefinitions.ts` — **৮৭টি match**: প্রতিটি payment method এ `name_bn`, `description_bn`, `instructions_bn`, `label_bn` field আছে (bKash, Nagad, Rocket, Upay, SSLCommerz, ShurjoPay, aamarPay, Stripe, PayPal, 2Checkout, Payoneer, Bank Transfer, Cheque)। এগুলো ইচ্ছাকৃত bilingual data structure।
+**Realtime publication** — wrap each ADD TABLE in a guard:
 
----
+```sql
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname='supabase_realtime' AND schemaname='public' AND tablename='live_chat_conversations'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.live_chat_conversations;
+  END IF;
+END $$;
+```
 
-## 🗺️ ৫. Hardcoded Bengali Place Names (intentional — geo matching)
+### 3. Verification
 
-- `src/pages/store/OrderTracking.tsx` — L78, 84, 90 (ঢাকা, মিরপুর, গুলশান, চট্টগ্রাম, সিলেট, ইত্যাদি keyword matching এর জন্য)
-- `src/pages/store/Checkout.tsx` — L206, 212 ( `সিটি`, `সারাদেশ` zone matching)
-- `src/pages/store/Checkout.tsx` — L952 (`লগআউট`/`লগ ইন` — language switcher logic)
+After redeploying the edge function and re-exporting:
 
----
+- Search the new file: `grep -n "public\.null\|public\.()" schema.sql` → must be empty.
+- The two `auth.users` FKs should appear as `-- Skipped FK …` comments instead.
+- Run the file against a fresh Postgres database — should complete with no syntax errors.
 
-## ⚠️ ৬. Misc
+## Files Touched
 
-- `src/hooks/useAgentMetrics.ts` — L102 (`~৫ মিনিট` — placeholder comment)
-- `src/hooks/useLiveChat.ts` — L390, 411, 431 (`name: "এজেন্ট"` — fallback agent name)
+- `supabase/migrations/<new>.sql` — update `get_table_constraints()` signature
+- `supabase/functions/database-schema-export/index.ts` — FK / trigger / publication generation
 
----
+## Notes
 
-## প্রস্তাবিত পরবর্তী ধাপ
-
-আপনি কোনটা চান:
-
-1. **Full English conversion**  
-2.  payment method এ `name_bn` field remove
+- The `auth.users` FKs are intentionally not recreated by the schema export — `auth` schema is owned and managed by Supabase. After restore on a new project, those FK constraints can be added manually if desired (Supabase's `auth.users` table will exist after Lovable Cloud is enabled).
+- No data migration involved; only edge-function code + one RPC signature change.
