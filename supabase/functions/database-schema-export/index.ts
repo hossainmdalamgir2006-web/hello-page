@@ -278,27 +278,39 @@ Deno.serve(async (req) => {
         sql += "-- ============================================\n";
         sql += "-- Foreign Key Constraints\n";
         sql += "-- ============================================\n";
-        const fkMap: Record<string, { table: string; columns: string[]; refTable: string; refColumns: string[] }> = {};
+        const fkMap: Record<string, { table: string; columns: string[]; refSchema: string; refTable: string | null; refColumns: string[] }> = {};
         for (const c of fkConstraints) {
           if (!fkMap[c.constraint_name]) {
             fkMap[c.constraint_name] = {
               table: c.table_name,
               columns: [],
-              refTable: c.foreign_table_name,
+              refSchema: c.foreign_table_schema || "public",
+              refTable: c.foreign_table_name || null,
               refColumns: [],
             };
           }
-          if (!fkMap[c.constraint_name].columns.includes(c.column_name)) {
+          if (c.column_name && !fkMap[c.constraint_name].columns.includes(c.column_name)) {
             fkMap[c.constraint_name].columns.push(c.column_name);
           }
-          if (!fkMap[c.constraint_name].refColumns.includes(c.foreign_column_name)) {
+          if (c.foreign_column_name && !fkMap[c.constraint_name].refColumns.includes(c.foreign_column_name)) {
             fkMap[c.constraint_name].refColumns.push(c.foreign_column_name);
           }
         }
         for (const [name, info] of Object.entries(fkMap)) {
+          // Skip malformed entries (no resolvable target table)
+          if (!info.refTable || info.refColumns.length === 0) {
+            sql += `-- Skipped FK ${name} on public.${info.table}: target table could not be resolved (likely cross-schema reference such as auth.users).\n\n`;
+            continue;
+          }
+          // Skip cross-schema FKs (e.g., auth.users) — those schemas are managed by Supabase
+          // and the target tables won't exist when this script first runs on a fresh project.
+          if (info.refSchema !== "public") {
+            sql += `-- Skipped FK ${name} on public.${info.table}: references ${info.refSchema}.${info.refTable} (managed schema). Recreate manually after restore if needed.\n\n`;
+            continue;
+          }
           sql += `DO $$ BEGIN\n`;
           sql += `  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '${name}') THEN\n`;
-          sql += `    ALTER TABLE public.${info.table} ADD CONSTRAINT ${name} FOREIGN KEY (${info.columns.join(", ")}) REFERENCES public.${info.refTable}(${info.refColumns.join(", ")});\n`;
+          sql += `    ALTER TABLE public.${info.table} ADD CONSTRAINT ${name} FOREIGN KEY (${info.columns.join(", ")}) REFERENCES ${info.refSchema}.${info.refTable}(${info.refColumns.join(", ")});\n`;
           sql += `  END IF;\n`;
           sql += `END $$;\n\n`;
         }
@@ -401,9 +413,14 @@ Deno.serve(async (req) => {
       sql += "-- ============================================\n";
       sql += "-- Triggers\n";
       sql += "-- ============================================\n";
+      // information_schema.triggers returns one row per event; de-duplicate by (name,table)
+      const seen = new Set<string>();
       for (const t of triggers) {
+        const key = `${t.trigger_name}::${t.event_object_table}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
         sql += `DROP TRIGGER IF EXISTS ${t.trigger_name} ON public.${t.event_object_table};\n`;
-        sql += `CREATE TRIGGER ${t.trigger_name} ${t.action_timing} ${t.event_manipulation} ON public.${t.event_object_table} ${t.action_statement};\n\n`;
+        sql += `CREATE TRIGGER ${t.trigger_name} ${t.action_timing} ${t.event_manipulation} ON public.${t.event_object_table} FOR EACH ROW ${t.action_statement};\n\n`;
       }
     }
 
@@ -425,9 +442,12 @@ Deno.serve(async (req) => {
       sql += "-- Realtime Publication\n";
       sql += "-- ============================================\n";
       for (const t of realtimeTables) {
-        sql += `ALTER PUBLICATION supabase_realtime ADD TABLE public.${t};\n`;
+        sql += `DO $$ BEGIN\n`;
+        sql += `  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = '${t}') THEN\n`;
+        sql += `    ALTER PUBLICATION supabase_realtime ADD TABLE public.${t};\n`;
+        sql += `  END IF;\n`;
+        sql += `END $$;\n\n`;
       }
-      sql += "\n";
     }
     const stats = {
       tables: tableNames.length,
