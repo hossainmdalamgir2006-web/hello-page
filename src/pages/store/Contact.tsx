@@ -149,12 +149,35 @@ export default function Contact() {
         title={title}
         description={subtitle}
         canonicalPath="/contact"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "ContactPage",
-          name: title,
-          description: subtitle,
-        }}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            name: title,
+            description: subtitle,
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: "ShopBD",
+            image: `${window.location.origin}/placeholder.svg`,
+            url: `${window.location.origin}/contact`,
+            telephone: "+880 1XXX-XXXXXX",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Dhaka",
+              addressCountry: "BD",
+            },
+            openingHoursSpecification: [
+              {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+                opens: "10:00",
+                closes: "20:00",
+              },
+            ],
+          },
+        ]}
       />
 
 
