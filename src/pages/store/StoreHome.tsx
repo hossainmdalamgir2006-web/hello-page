@@ -325,7 +325,7 @@ export default function StoreHome() {
                       {newsletterLoading ? "..." : newsletter?.content?.button_text || t('store.subscribe')}
                     </Button>
                   </form>
-                  <p className="text-white/30 text-[11px] mt-2.5 text-center md:text-left pl-1">Join 5,000+ subscribers · No spam · Unsubscribe anytime</p>
+                  <p className="text-white/80 text-[11px] mt-2.5 text-center md:text-left pl-1">Join 5,000+ subscribers · No spam · Unsubscribe anytime</p>
                 </div>
               </div>
             </div>
