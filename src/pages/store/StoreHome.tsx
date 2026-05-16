@@ -302,7 +302,7 @@ export default function StoreHome() {
                   <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-2">
                     {newsletter?.title || "Subscribe Newsletter"}
                   </h2>
-                  <p className="text-white/55 text-sm">Get exclusive deals, new arrivals & style tips delivered weekly.</p>
+                  <p className="text-white/90 text-sm">Get exclusive deals, new arrivals & style tips delivered weekly.</p>
                 </div>
                 <div className="w-full md:w-auto md:min-w-[340px]">
                   <form
