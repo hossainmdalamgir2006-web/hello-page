@@ -109,11 +109,11 @@ export function FlashSaleSection({
             <div className="flex items-center gap-2 md:gap-3">
               <span className="text-white/60 text-sm font-medium mr-1 hidden md:block">Ends in</span>
               <TimerBlock value={timeLeft.days} label={t('flashSale.days')} />
-              <span className="text-white/40 text-2xl font-bold mb-4">:</span>
+              <span className="text-white/80 text-2xl font-bold mb-4">:</span>
               <TimerBlock value={timeLeft.hours} label={t('flashSale.hours')} />
-              <span className="text-white/40 text-2xl font-bold mb-4">:</span>
+              <span className="text-white/80 text-2xl font-bold mb-4">:</span>
               <TimerBlock value={timeLeft.minutes} label={t('flashSale.mins')} />
-              <span className="text-white/40 text-2xl font-bold mb-4">:</span>
+              <span className="text-white/80 text-2xl font-bold mb-4">:</span>
               <TimerBlock value={timeLeft.seconds} label={t('flashSale.secs')} />
             </div>
           )}
@@ -164,7 +164,7 @@ export function FlashSaleSection({
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-store-accent">{formatPrice(product.price)}</span>
                       {hasDiscount && (
-                        <span className="text-xs text-white/50 line-through">{formatPrice(product.compare_at_price!)}</span>
+                        <span className="text-xs text-white/75 line-through">{formatPrice(product.compare_at_price!)}</span>
                       )}
                     </div>
                   </div>
