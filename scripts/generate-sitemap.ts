@@ -47,5 +47,24 @@ function generateSitemap(entries: SitemapEntry[]) {
   ].join("\n");
 }
 
-writeFileSync(resolve("public/sitemap.xml"), generateSitemap(entries));
-console.log(`sitemap.xml written (${entries.length} entries)`);
+async function main() {
+  try {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { data, error } = await supabase
+      .from("products")
+      .select("slug")
+      .eq("is_active", true)
+      .is("deleted_at", null);
+    if (error) throw error;
+    for (const p of data ?? []) {
+      if (p.slug) entries.push({ path: `/product/${p.slug}`, changefreq: "weekly", priority: "0.7" });
+    }
+  } catch (e) {
+    console.warn("sitemap: failed to fetch products, continuing with static entries", e);
+  }
+
+  writeFileSync(resolve("public/sitemap.xml"), generateSitemap(entries));
+  console.log(`sitemap.xml written (${entries.length} entries)`);
+}
+
+main();
