@@ -55,4 +55,24 @@
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
+  <url>
+    <loc>https://hello-there-splas.lovable.app/product/fgrdgrt-1771861442912</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hello-there-splas.lovable.app/product/magenta-printed-cotton-saree-1772890996926</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hello-there-splas.lovable.app/product/dusty-purple-printed-and-embroidered-cotton-saree-1772890865571</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hello-there-splas.lovable.app/product/gearup-kxk-686-work-light</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
