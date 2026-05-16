@@ -312,7 +312,7 @@ export default function StoreHome() {
                     <Input
                       type="email"
                       placeholder={newsletter?.content?.placeholder || t('store.enterYourEmail')}
-                      className="flex-1 h-10 border-0 bg-transparent text-white placeholder:text-white/40 focus-visible:ring-0 focus-visible:ring-offset-0 pl-3 text-sm"
+                      className="flex-1 h-10 border-0 bg-transparent text-white placeholder:text-white/75 focus-visible:ring-0 focus-visible:ring-offset-0 pl-3 text-sm"
                       value={newsletterEmail}
                       onChange={(e) => setNewsletterEmail(e.target.value)}
                       disabled={newsletterLoading}
