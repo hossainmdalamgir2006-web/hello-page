@@ -1,0 +1,23 @@
+# ShopBD
+
+> Online fashion, clothing and accessories store serving Bangladesh, with cash on delivery, nationwide courier shipping (Steadfast, Pathao, RedX, Paperfly), and bKash/Nagad payments.
+
+ShopBD is an e-commerce storefront focused on the Bangladesh market. Prices are in BDT and times are in Asia/Dhaka. Customers can browse products, track orders, manage their account, and contact support.
+
+## Pages
+
+- [Home](/): Featured products, new arrivals, flash sales, and categories.
+- [Products](/products): Full product catalog with filters, sorting, and search.
+- [Track Order](/track-order): Look up order status by order ID.
+- [Wishlist](/wishlist): Saved products for later purchase.
+- [Contact](/contact): Contact form, store address in Dhaka, phone, and business hours (Sun–Thu 10:00–20:00).
+- [FAQ](/faq): Answers about orders, shipping, returns, and accounts.
+- [Shipping Info](/shipping-info): Delivery zones, costs, and timelines across Bangladesh.
+- [Returns](/returns): Return and refund policy with eligibility and process.
+- [Size Guide](/size-guide): Size charts and fit recommendations.
+- [Privacy Policy](/privacy): How customer data is collected and used.
+- [Terms](/terms): Terms and conditions for using the store.
+
+## Optional
+
+- [Sign In or Sign Up](/login): Customer account access.
