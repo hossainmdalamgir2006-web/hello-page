@@ -1,8 +1,13 @@
 // Runs before `vite dev` and `vite build` (predev/prebuild hooks); writes public/sitemap.xml.
 import { writeFileSync } from "fs";
 import { resolve } from "path";
+import { createClient } from "@supabase/supabase-js";
 
 const BASE_URL = "https://hello-there-splas.lovable.app";
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://rxuiclgaixjunpisvhjr.supabase.co";
+const SUPABASE_ANON_KEY =
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4dWljbGdhaXhqdW5waXN2aGpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3MjA4MDQsImV4cCI6MjA4OTI5NjgwNH0.DM_1YmrZl3_MEM9Zk4WC184wcblQ-R53k70ilX-uHoc";
 
 interface SitemapEntry {
   path: string;
