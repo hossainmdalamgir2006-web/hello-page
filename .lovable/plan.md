@@ -1,103 +1,177 @@
-# Fix Schema Export SQL Errors
 
-## Problem
+# Documentation Video Plan — "demo" E-commerce Platform
 
-The exported `schema.sql` from **Settings → Backup → Export Full / Export Schema** contains invalid SQL that fails when run on a fresh project:
+Apnar website ekta full-stack, BD-localized e-commerce + business automation platform. Niche ami video-er jonno (1) full feature inventory, (2) "100% business automation" narrative/flow, ar (3) screenshot list dilam.
 
-```sql
-ALTER TABLE public.auto_assign_rules
-  ADD CONSTRAINT auto_assign_rules_assign_to_fkey
-  FOREIGN KEY (assign_to) REFERENCES public.null();
---                                  ^^^^^^^^^^^^^ syntax error
-```
+Build mode-e switch korle ami sob screenshot `/mnt/documents/` e save kore debo (admin dashboard ar storefront home ami already capture korechi — preview-te dekha jacche).
 
-## Root Cause
+---
 
-In `supabase/functions/database-schema-export/index.ts`, the foreign key generator assumes every FK references a table in `public`. But two FKs in this DB reference `auth.users`:
+## 1. Full Feature Inventory
 
-| Constraint | Table | References |
-|---|---|---|
-| `auto_assign_rules_assign_to_fkey` | `public.auto_assign_rules` | `auth.users(id)` |
-| `trash_log_performed_by_fkey` | `public.trash_log` | `auth.users(id)` |
+### A. Customer-facing Storefront (`/`)
+- **Homepage**: Hero carousel, category grid, New Arrivals, Trending Now, Best Sellers, Flash Sale (live countdown), Customer Reviews, Newsletter, SVG-divided sections
+- **Product Catalog** (`/products`): Sticky filter sidebar (category, brand, price, color, size, rating), sort, 3-col grid, hover image swap, Quick Add, wishlist toggle
+- **Product Detail** (`/product/:slug`): Image zoom, sticky Add-to-Cart, real-time "X viewers now", Reviews + media, Q&A, related products, sharing
+- **Cart & Checkout**: Cart drawer + page, coupon validation, free-shipping threshold banner, address selection, multiple payment methods (bKash, Nagad, Visa, MasterCard, COD, SSLCommerz)
+- **Order Tracking** (`/track-order`): Public tracking + auto-fill via `?order=ID`
+- **Wishlist, Recently Viewed, Compare**
+- **Help/Policy Pages**: FAQ (searchable), Shipping Info (with calculator), Size Guide (with recommender), Returns, Privacy, Terms, Contact (with LocalBusiness schema)
+- **SEO**: JSON-LD, sitemap (dynamic product URLs), `llms.txt`, OG/meta tags
 
-The helper `get_table_constraints()` joins `information_schema.constraint_column_usage` without exposing the foreign **schema**, and for cross-schema FKs `foreign_table_name` comes back `NULL`. The export then writes `REFERENCES public.${null}()` → `public.null()`.
+### B. Customer Account (`/myaccount`)
+- Personalized dashboard with stat cards
+- Orders + per-order tracking + invoice PDF (jsPDF)
+- Returns/refund requests
+- Addresses (multiple)
+- Wishlist, Recently Viewed
+- Reviews submitted
+- Real-time **Chat with Support** (presence, typing, file attachments)
+- Notifications + preferences
+- Security: password, 2FA, recovery codes
+- Personal info, change email
+- Account deletion request (admin-approved workflow)
 
-Two additional latent bugs in the same function:
+### C. Admin Panel (`/admin`) — Operations
+- **Dashboard**: 18 KPI cards (sales, orders, AOV, conversion, abandoned carts, returns, low stock, newsletter subs…), Period Comparison, Sales Chart, Top Products, Goal Tracker, Activity Feed, Return/Refund queue, Recent Orders
+- **Products**: CRUD, variants, images (Supabase Storage with WebP transforms), bulk actions, duplicate, sync pagination
+- **Categories / Brands** management
+- **Orders**: full lifecycle, status changes auto-logged, payment status, courier dispatch modal (Steadfast, Pathao, RedX, Paperfly)
+- **Customers**: profiles, order history, LTV, 3-column status grid
+- **Abandoned Carts**: list + one-click recovery + scheduled reminder emails
+- **Coupons**: code/%/flat, min order, max discount, first-order-only, schedule
+- **Shipping**: zones, free-shipping threshold + banner toggle
+- **Reports**: CSV generation, pg_cron scheduled email delivery
+- **Analytics**: traffic, conversions, product performance
+- **Global Trash**: soft-delete recovery for 10 entities, auto-purge
+- **Messages / Live Chat inbox** with quick replies & tags
 
-1. **Triggers** — generated as `CREATE TRIGGER … BEFORE UPDATE ON tbl EXECUTE FUNCTION …` with no `FOR EACH ROW` clause (Postgres requires it).
-2. **Realtime publication** — `ALTER PUBLICATION supabase_realtime ADD TABLE …` errors if the table is already a publication member. Should be guarded.
+### D. Admin — Content
+- **Appearance Manager**: themes, banners, hero carousel
+- **Content Manager (CMS)**: config-driven registry, FAQ, policy pages, homepage sections
+- **Reviews Manager**: moderate, reply
+- **Product Q&A Manager**
 
-## Fix Plan
+### E. Admin — System Settings
+- **Store** (name, logo, contact, free-shipping)
+- **Payments** (enable methods, manual mobile-banking account details, gateway keys)
+- **Integrations** (couriers, SMS, email, analytics)
+- **Emails**: 40 transactional templates with dynamic variables + QR codes
+- **Notifications**: SLA alerts, scheduled reports
+- **Security**: login alerts, lockout alerts, audit log
+- **Audit Log**: Old vs New JSON diff, CSV export
+- **Backup & Restore**: SQL schema + storage; scheduled DB backups
+- **Document Templates**: dynamic jsPDF invoice/receipt/return labels
+- **Edge Function Health**: live status of 28+ functions
+- **Account Deletion Requests** queue
+- **Role Management**: admin / manager / user via secure `user_roles` table
 
-### 1. Update RPC `get_table_constraints` to return the foreign schema
+### F. Backend Automation (Supabase Edge Functions — 28 total)
+- `process-abandoned-carts` + `send-abandoned-cart-reminder` — auto-recovery
+- `send-order-confirmation` — instant email on order
+- `send-scheduled-report` — pg_cron CSV reports
+- `send-login-alert` / `send-lockout-alert` / `send-unlock-alert` — security mail
+- `verify-login`, `send-contact-reply`
+- `auto-clean-chat` (>6h purge), `auto-clean-trash`, `auto-purge-deletion-requests`
+- `steadfast-courier`, `pathao-courier`, `redx-courier`, `paperfly-courier` — auto-dispatch
+- `track-order` — public tracking API
+- `sslcommerz-init` / `sslcommerz-ipn`, `payment-gateway-init` / `payment-gateway-ipn`
+- `database-backup`, `database-restore`, `database-schema-export`
+- `generate-sitemap` — dynamic SEO
+- `delete-user-account`, `migrate-product-images`, `create-demo-users`
 
-Migration: add `foreign_table_schema text` to the return signature so the export knows when an FK points outside `public`.
+---
 
-```sql
-CREATE OR REPLACE FUNCTION public.get_table_constraints()
-RETURNS TABLE(
-  constraint_name text, table_name text, column_name text,
-  constraint_type text,
-  foreign_table_schema text,
-  foreign_table_name text, foreign_column_name text
-) ...
-  SELECT tc.constraint_name, tc.table_name, kcu.column_name,
-         tc.constraint_type,
-         ccu.table_schema,        -- NEW
-         ccu.table_name, ccu.column_name
-  FROM information_schema.table_constraints tc
-  JOIN information_schema.key_column_usage kcu ...
-  LEFT JOIN information_schema.constraint_column_usage ccu ...
-```
+## 2. Video Narrative — "How this 100% Automates a Business"
 
-### 2. Patch `database-schema-export/index.ts`
+Suggested 8-12 min documentation video, divided into 6 chapters:
 
-**FK section** — use `foreign_table_schema` (default `public`) and skip FKs to system schemas like `auth` (those tables don't exist on a fresh project; the auth schema is managed by Supabase, and we can't restore them). Emit a comment instead so the user knows.
+**Chapter 1 — Storefront (Customer Experience)** [~90s]
+Show: Homepage → category browse → product detail → add to cart → checkout with bKash. *Voice-over*: "Customer order kora theke shuru kore… kono manual kaj nai."
 
-```ts
-const refSchema = c.foreign_table_schema || 'public';
-if (!c.foreign_table_name) continue;        // skip malformed
-if (refSchema !== 'public') {
-  sql += `-- Skipped FK ${name}: references ${refSchema}.${c.foreign_table_name}\n\n`;
-  continue;
-}
-sql += `... REFERENCES ${refSchema}.${info.refTable}(${info.refColumns.join(', ')});\n`;
-```
+**Chapter 2 — Automatic Order Pipeline** [~2 min]
+Order place hole automatic:
+1. Order confirmation email (edge function)
+2. Invoice PDF generate
+3. Admin dashboard-e instant notification + KPI update
+4. Payment IPN verify (SSLCommerz/bKash)
+5. Audit log entry
+Show: Admin Orders page → ek click e Steadfast/Pathao/RedX/Paperfly dispatch modal → courier API call → tracking number auto-save.
 
-**Triggers** — add `FOR EACH ROW` (the only orientation we use) and guard with `DO $$`:
+**Chapter 3 — Customer Retention Automation** [~90s]
+- Abandoned cart detection (cron) → reminder email auto-pathay
+- Scheduled CSV reports email-e
+- Newsletter, review request, return workflow
+- Real-time chat (presence, typing, attachments) → 6h inactive hole auto-purge
 
-```ts
-sql += `CREATE TRIGGER ${t.trigger_name} ${t.action_timing} ${t.event_manipulation} `
-     + `ON public.${t.event_object_table} FOR EACH ROW ${t.action_statement};\n`;
-```
+**Chapter 4 — Inventory & Catalog Automation** [~90s]
+- Product CRUD + variant + image WebP auto-transform
+- Low-stock KPI + alerts
+- Soft-delete + auto-purge trash
+- Sitemap auto-generation from active products
 
-**Realtime publication** — wrap each ADD TABLE in a guard:
+**Chapter 5 — Admin Intelligence** [~2 min]
+- Dashboard: 18 KPIs, Period Comparison, Goal Tracker, Activity Feed
+- Analytics page
+- Reports (scheduled)
+- Audit Log (Old vs New diff)
+- Edge Function Health monitor
+- Backup/Restore (scheduled)
 
-```sql
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_publication_tables
-    WHERE pubname='supabase_realtime' AND schemaname='public' AND tablename='live_chat_conversations'
-  ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.live_chat_conversations;
-  END IF;
-END $$;
-```
+**Chapter 6 — Security, Roles & CMS Control** [~90s]
+- Role table (admin/manager/user), RLS
+- 2FA, recovery codes, login/lockout email alerts
+- CMS: FAQ, policies, homepage sections edit korle live update
+- Appearance Manager: theme/banner ek click e change
+- Store settings: free-shipping threshold, payment methods, courier keys
 
-### 3. Verification
+**Outro** [~30s]
+"Ekta dokan owner ke shudhu product upload korle baki sob — order, payment, courier, email, report, security — system nije handle kore."
 
-After redeploying the edge function and re-exporting:
+---
 
-- Search the new file: `grep -n "public\.null\|public\.()" schema.sql` → must be empty.
-- The two `auth.users` FKs should appear as `-- Skipped FK …` comments instead.
-- Run the file against a fresh Postgres database — should complete with no syntax errors.
+## 3. Screenshot Package (deliverable)
 
-## Files Touched
+Build mode-e switch korle ami eigulor full-page PNG `/mnt/documents/screenshots/` e save kore debo, file-naming `NN-name.png`:
 
-- `supabase/migrations/<new>.sql` — update `get_table_constraints()` signature
-- `supabase/functions/database-schema-export/index.ts` — FK / trigger / publication generation
+1. `01-storefront-home.png` — Homepage (already captured)
+2. `02-product-listing.png` — `/products` filter sidebar
+3. `03-product-detail.png` — `/product/:slug`
+4. `04-cart-checkout.png` — Cart + Checkout
+5. `05-order-tracking.png` — `/track-order`
+6. `06-account-dashboard.png` — `/myaccount`
+7. `07-account-orders-invoice.png`
+8. `08-account-chat.png` — live chat
+9. `09-admin-dashboard.png` — KPI grid (already captured)
+10. `10-admin-products.png`
+11. `11-admin-orders.png` + courier dispatch modal
+12. `12-admin-abandoned-carts.png`
+13. `13-admin-coupons.png`
+14. `14-admin-analytics.png`
+15. `15-admin-reports.png`
+16. `16-admin-customers.png`
+17. `17-admin-messages-chat.png`
+18. `18-cms-content-manager.png`
+19. `19-cms-appearance.png`
+20. `20-system-emails.png`
+21. `21-system-payments.png`
+22. `22-system-integrations-couriers.png`
+23. `23-system-audit-log.png`
+24. `24-system-backup.png`
+25. `25-system-edge-function-health.png`
+26. `26-role-management.png`
+27. `27-trash-recovery.png`
+28. `28-mobile-storefront.png` (375px viewport)
+29. `29-mobile-admin.png` (375px viewport)
 
-## Notes
+Optional bonus: ekta architecture diagram (Mermaid) jeta dekhabe Customer → Storefront → Supabase RLS → Edge Functions → 3rd-party (couriers, payment, email) — video-te overlay korar jonno.
 
-- The `auth.users` FKs are intentionally not recreated by the schema export — `auth` schema is owned and managed by Supabase. After restore on a new project, those FK constraints can be added manually if desired (Supabase's `auth.users` table will exist after Lovable Cloud is enabled).
-- No data migration involved; only edge-function code + one RPC signature change.
+---
+
+## Next step
+
+Switch to **build mode** bolun — ami:
+1. Upor er sob route browser-e visit kore screenshot tulbo
+2. `/mnt/documents/screenshots/` folder e save kore artifact link debo
+3. Chaile ekta `BUSINESS_AUTOMATION.md` o likhe debo (video script + feature list, copy-paste ready)
+4. Mermaid architecture diagram artifact o include korte pari
