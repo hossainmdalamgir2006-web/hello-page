@@ -156,7 +156,10 @@ export default function Coupons() {
     minimum_order_amount: 0,
     maximum_discount: 0,
     max_uses: 100,
+    user_limit: 0,
   });
+
+  const [selectedCouponIds, setSelectedCouponIds] = useState<string[]>([]);
 
   const [newRule, setNewRule] = useState({
     name: "",
