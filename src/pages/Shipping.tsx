@@ -1004,6 +1004,25 @@ export default function Shipping() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Zone Confirmation */}
+      <DeleteConfirmModal
+        open={!!deleteZoneItem}
+        onOpenChange={(o) => { if (!o) setDeleteZoneItem(null); }}
+        onConfirm={async () => { if (deleteZoneItem) { await deleteZone(deleteZoneItem.id); setDeleteZoneItem(null); } }}
+        title="Delete Shipping Zone"
+        itemName={deleteZoneItem?.name}
+        description={deleteZoneItem ? `Deleting "${deleteZoneItem.name}" will also remove all rates configured under this zone. This action cannot be undone.` : undefined}
+      />
+
+      {/* Delete Rate Confirmation */}
+      <DeleteConfirmModal
+        open={!!deleteRateItem}
+        onOpenChange={(o) => { if (!o) setDeleteRateItem(null); }}
+        onConfirm={async () => { if (deleteRateItem) { await deleteRate(deleteRateItem.id); setDeleteRateItem(null); } }}
+        title="Delete Shipping Rate"
+        itemName={deleteRateItem?.name}
+      />
     </>
   );
 }
