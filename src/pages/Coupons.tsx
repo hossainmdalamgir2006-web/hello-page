@@ -1361,10 +1361,10 @@ export default function Coupons() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setRuleDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleCreateRule} disabled={createRuleMutation.isPending}>
-                {createRuleMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Create
+              <Button variant="outline" onClick={() => { setRuleDialogOpen(false); resetRuleForm(); }}>Cancel</Button>
+              <Button onClick={handleCreateRule} disabled={createRuleMutation.isPending || updateRuleMutation.isPending}>
+                {(createRuleMutation.isPending || updateRuleMutation.isPending) ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {editingRuleId ? "Save Changes" : "Create"}
               </Button>
             </DialogFooter>
           </DialogContent>
