@@ -862,12 +862,40 @@ export default function Coupons() {
               </Select>
             </div>
 
+            {/* Bulk action toolbar */}
+            {selectedCouponIds.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-muted/40 px-3 py-2 animate-fade-in">
+                <p className="text-sm font-medium">{selectedCouponIds.length} selected</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" onClick={() => bulkUpdateCouponsMutation.mutate({ ids: selectedCouponIds, payload: { is_active: true } })} disabled={bulkUpdateCouponsMutation.isPending}>
+                    <CheckCircle className="h-4 w-4 mr-1" /> Enable
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => bulkUpdateCouponsMutation.mutate({ ids: selectedCouponIds, payload: { is_active: false } })} disabled={bulkUpdateCouponsMutation.isPending}>
+                    <XCircle className="h-4 w-4 mr-1" /> Disable
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => bulkUpdateCouponsMutation.mutate({ ids: selectedCouponIds, payload: { deleted_at: new Date().toISOString() } })} disabled={bulkUpdateCouponsMutation.isPending}>
+                    <Trash2 className="h-4 w-4 mr-1" /> Move to Trash
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => setSelectedCouponIds([])}>Clear</Button>
+                </div>
+              </div>
+            )}
+
             {/* Coupons Table */}
             <Card>
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-10">
+                        <Checkbox
+                          checked={filteredCoupons.length > 0 && selectedCouponIds.length === filteredCoupons.length}
+                          onCheckedChange={(checked) => {
+                            setSelectedCouponIds(checked ? filteredCoupons.map(c => c.id) : []);
+                          }}
+                          aria-label="Select all"
+                        />
+                      </TableHead>
                       <TableHead>Coupon Code</TableHead>
                       <TableHead>Discount</TableHead>
                       <TableHead>Usage</TableHead>
