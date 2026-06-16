@@ -738,17 +738,21 @@ export default function Shipping() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Rate Type</Label>
-              <Select defaultValue="flat">
+              <Label>Shipping Method</Label>
+              <Select
+                value={newRate.shipping_method}
+                onValueChange={(v) => setNewRate({ ...newRate, shipping_method: v })}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select rate type" />
+                  <SelectValue placeholder="Select method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="flat">Flat Rate</SelectItem>
-                  <SelectItem value="weight">Weight Based</SelectItem>
-                  <SelectItem value="order_amount">Order Amount Based</SelectItem>
+                  {(zonesWithRates.find(z => z.id === selectedZone?.id)?.shipping_methods || ["Standard","Express","Cash on Delivery"]).map((m) => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">Must match a method enabled on this zone for it to show at checkout.</p>
             </div>
             <div className="space-y-2">
               <Label>Base Rate (৳)</Label>
