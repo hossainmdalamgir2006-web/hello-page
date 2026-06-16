@@ -38,6 +38,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { formatPrice } from "@/lib/formatPrice";
+import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
