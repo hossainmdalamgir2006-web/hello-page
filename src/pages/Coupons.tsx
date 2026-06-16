@@ -585,6 +585,7 @@ export default function Coupons() {
       minimum_order_amount: newCoupon.minimum_order_amount || null,
       maximum_discount: newCoupon.maximum_discount || null,
       max_uses: newCoupon.max_uses || null,
+      user_limit: newCoupon.user_limit || null,
       starts_at: startDate ? startDate.toISOString() : null,
       expires_at: endDate ? endDate.toISOString() : null,
     };
