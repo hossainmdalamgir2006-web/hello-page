@@ -325,7 +325,7 @@ export default function Coupons() {
       setNewCoupon({
         code: "", title: "", description: "",
         discount_type: "percentage", discount_value: 0,
-        minimum_order_amount: 0, maximum_discount: 0, max_uses: 100,
+        minimum_order_amount: 0, maximum_discount: 0, max_uses: 100, user_limit: 0,
       });
       setStartDate(undefined);
       setEndDate(undefined);
