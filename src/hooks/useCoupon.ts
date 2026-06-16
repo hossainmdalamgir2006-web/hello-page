@@ -176,13 +176,3 @@ export function useCoupon() {
     incrementCouponUsage,
   };
 }
-
-  return {
-    appliedCoupon,
-    loading,
-    error,
-    validateCoupon,
-    removeCoupon,
-    incrementCouponUsage,
-  };
-}
