@@ -1193,12 +1193,12 @@ export default function Coupons() {
         </Dialog>
 
         {/* Create Auto Rule Dialog */}
-        <Dialog open={ruleDialogOpen} onOpenChange={setRuleDialogOpen}>
+        <Dialog open={ruleDialogOpen} onOpenChange={(open) => { setRuleDialogOpen(open); if (!open) resetRuleForm(); }}>
           <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>New Auto Rule</DialogTitle>
+              <DialogTitle>{editingRuleId ? "Edit Auto Rule" : "New Auto Rule"}</DialogTitle>
               <DialogDescription>
-                Create an automatic discount rule
+                {editingRuleId ? "Update this automatic discount rule" : "Create an automatic discount rule"}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
