@@ -257,7 +257,7 @@ export default function ProductQAManager() {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search question, answer, customer, product..."
+              placeholder="Search question, answer, product..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
