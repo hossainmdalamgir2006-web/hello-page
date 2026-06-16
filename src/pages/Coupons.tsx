@@ -838,6 +838,10 @@ export default function Coupons() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => openEditCoupon(coupon)}>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit
+                                  </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => toggleCoupon(coupon)}>
                                     {coupon.is_active ? 'Disable' : 'Enable'}
                                   </DropdownMenuItem>
