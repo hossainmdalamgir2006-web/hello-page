@@ -288,6 +288,7 @@ export default function Shipping() {
             
             <TabsTrigger value="zones">Shipping Zones</TabsTrigger>
             <TabsTrigger value="rates">Rate Config</TabsTrigger>
+            <TabsTrigger value="calculator">Calculator</TabsTrigger>
             <TabsTrigger value="tracking">Tracking</TabsTrigger>
           </TabsList>
 
