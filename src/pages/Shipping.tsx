@@ -38,6 +38,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { formatPrice } from "@/lib/formatPrice";
+import { DeleteConfirmModal } from "@/components/ui/DeleteConfirmModal";
 
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
@@ -94,6 +95,8 @@ export default function Shipping() {
   const [calcRegion, setCalcRegion] = useState<string>("");
   const [calcWeight, setCalcWeight] = useState<string>("");
   const [calcOrderAmount, setCalcOrderAmount] = useState<string>("");
+  const [deleteZoneItem, setDeleteZoneItem] = useState<{ id: string; name: string } | null>(null);
+  const [deleteRateItem, setDeleteRateItem] = useState<{ id: string; name: string } | null>(null);
 
   const { orders } = useOrdersData();
 
@@ -404,7 +407,7 @@ export default function Shipping() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => deleteZone(zone.id)}
+                          onClick={() => setDeleteZoneItem({ id: zone.id, name: zone.name })}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -480,7 +483,7 @@ export default function Shipping() {
                               <Button variant="ghost" size="icon" onClick={() => openEditRateDialog(rate)}>
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => deleteRate(rate.id)}>
+                              <Button variant="ghost" size="icon" onClick={() => setDeleteRateItem({ id: rate.id, name: rate.name })}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
                             </TableCell>
@@ -1001,6 +1004,25 @@ export default function Shipping() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Zone Confirmation */}
+      <DeleteConfirmModal
+        open={!!deleteZoneItem}
+        onOpenChange={(o) => { if (!o) setDeleteZoneItem(null); }}
+        onConfirm={async () => { if (deleteZoneItem) { await deleteZone(deleteZoneItem.id); setDeleteZoneItem(null); } }}
+        title="Delete Shipping Zone"
+        itemName={deleteZoneItem?.name}
+        description={deleteZoneItem ? `Deleting "${deleteZoneItem.name}" will also remove all rates configured under this zone. This action cannot be undone.` : undefined}
+      />
+
+      {/* Delete Rate Confirmation */}
+      <DeleteConfirmModal
+        open={!!deleteRateItem}
+        onOpenChange={(o) => { if (!o) setDeleteRateItem(null); }}
+        onConfirm={async () => { if (deleteRateItem) { await deleteRate(deleteRateItem.id); setDeleteRateItem(null); } }}
+        title="Delete Shipping Rate"
+        itemName={deleteRateItem?.name}
+      />
     </>
   );
 }
