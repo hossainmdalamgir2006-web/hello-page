@@ -3,12 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { logAuditAction } from "@/lib/auditLog";
 
+export const DEFAULT_SHIPPING_METHODS = ["Standard", "Express", "Cash on Delivery"] as const;
+
 export interface ShippingZone {
   id: string;
   name: string;
   name_bn?: string | null;
   countries?: string[];
   regions: string[];
+  shipping_methods: string[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -19,6 +22,7 @@ export interface ShippingRate {
   id: string;
   zone_id: string | null;
   name: string;
+  shipping_method: string | null;
   rate: number;
   min_weight: number | null;
   max_weight: number | null;
