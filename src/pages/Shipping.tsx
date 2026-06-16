@@ -122,16 +122,30 @@ export default function Shipping() {
     }
   };
 
+  const validateRate = (r: { rate: number; min_weight: number | null; max_weight: number | null; min_days: number; max_days: number; min_order_amount: number | null; max_order_amount: number | null; }): string | null => {
+    if (r.rate < 0) return "Base rate must be 0 or greater";
+    if (r.min_weight != null && r.min_weight < 0) return "Min weight cannot be negative";
+    if (r.max_weight != null && r.max_weight < 0) return "Max weight cannot be negative";
+    if (r.min_weight != null && r.max_weight != null && r.min_weight > r.max_weight) return "Min weight must be ≤ max weight";
+    if (r.min_days < 0 || r.max_days < 0) return "Delivery days cannot be negative";
+    if (r.min_days > r.max_days) return "Min days must be ≤ max days";
+    if (r.min_order_amount != null && r.max_order_amount != null && r.min_order_amount > r.max_order_amount) return "Min order amount must be ≤ max order amount";
+    return null;
+  };
+
   const handleAddRate = async () => {
     if (!selectedZone || !newRate.name || !newRate.rate) {
       toast.error("Please fill in all required fields");
       return;
     }
+    const err = validateRate(newRate);
+    if (err) { toast.error(err); return; }
 
     try {
       await addRate({
         zone_id: selectedZone.id,
         name: newRate.name,
+        shipping_method: newRate.shipping_method || null,
         rate: newRate.rate,
         min_weight: newRate.min_weight,
         max_weight: newRate.max_weight,
@@ -141,7 +155,7 @@ export default function Shipping() {
         max_days: newRate.max_days,
         is_active: true
       });
-      setNewRate({ name: "", rate: 0, min_weight: null, max_weight: null, min_order_amount: null, max_order_amount: null, min_days: 1, max_days: 3 });
+      setNewRate({ name: "", shipping_method: "Standard", rate: 0, min_weight: null, max_weight: null, min_order_amount: null, max_order_amount: null, min_days: 1, max_days: 3 });
       setRateDialogOpen(false);
     } catch (error) {
       // Error handled in hook
@@ -150,10 +164,12 @@ export default function Shipping() {
 
   const handleEditRate = async () => {
     if (!editingRate) return;
-    
+    const err = validateRate(editingRate);
+    if (err) { toast.error(err); return; }
     try {
       await updateRate(editingRate.id, {
         name: editingRate.name,
+        shipping_method: editingRate.shipping_method,
         rate: editingRate.rate,
         min_weight: editingRate.min_weight,
         max_weight: editingRate.max_weight,
@@ -173,6 +189,7 @@ export default function Shipping() {
     setEditingRate({
       id: rate.id,
       name: rate.name,
+      shipping_method: rate.shipping_method ?? null,
       rate: rate.rate,
       min_weight: rate.min_weight,
       max_weight: rate.max_weight,
@@ -184,6 +201,38 @@ export default function Shipping() {
     });
     setEditRateDialogOpen(true);
   };
+
+  const saveZoneMethods = async () => {
+    if (!zoneMethodsDialog) return;
+    try {
+      await shippingData.updateZone(zoneMethodsDialog.id, { shipping_methods: zoneMethodsDialog.methods } as any);
+      setZoneMethodsDialog(null);
+      setMethodInput("");
+    } catch (error) {
+      // handled in hook
+    }
+  };
+
+  // Calculator: match zone by region OR explicit selection
+  const calcZone = zonesWithRates.find(z => {
+    if (calcZoneId) return z.id === calcZoneId;
+    if (!calcRegion.trim()) return false;
+    return z.regions?.some(r => r.toLowerCase().includes(calcRegion.trim().toLowerCase()));
+  });
+  const calcWeightNum = calcWeight ? Number(calcWeight) : null;
+  const calcOrderNum = calcOrderAmount ? Number(calcOrderAmount) : 0;
+  const calcMatchingRates = (calcZone?.rates || []).filter(r => {
+    if (!r.is_active) return false;
+    if (r.shipping_method && calcZone?.shipping_methods && !calcZone.shipping_methods.includes(r.shipping_method)) return false;
+    if (calcWeightNum != null) {
+      if (r.min_weight != null && calcWeightNum < r.min_weight) return false;
+      if (r.max_weight != null && calcWeightNum > r.max_weight) return false;
+    }
+    if (r.min_order_amount != null && calcOrderNum < r.min_order_amount) return false;
+    return true;
+  });
+
+
 
 
   const filteredShipments = shipments.filter(s => 
