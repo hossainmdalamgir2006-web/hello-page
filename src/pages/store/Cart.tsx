@@ -26,6 +26,7 @@ export default function Cart() {
   const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount, removeSelectedItems } = useCart();
   const { t } = useLanguage();
   const { appliedCoupon, loading: couponLoading, validateCoupon, removeCoupon } = useCoupon();
+  const { user } = useAuth();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
   const { addItem: addToWishlist } = useWishlist();
   const { rates } = useShippingRates();
