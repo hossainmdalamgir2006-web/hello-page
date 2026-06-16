@@ -80,7 +80,7 @@ export default function Checkout() {
 
   useEffect(() => {
     if (couponState?.couponCode && !appliedCoupon) {
-      validateCoupon(couponState.couponCode, subtotal);
+      validateCoupon(couponState.couponCode, subtotal, user?.id || null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
