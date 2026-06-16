@@ -144,6 +144,7 @@ export default function Coupons() {
   const [deleteCouponItem, setDeleteCouponItem] = useState<Coupon | null>(null);
   const [deleteRuleItem, setDeleteRuleItem] = useState<AutoRule | null>(null);
   const [editingCouponId, setEditingCouponId] = useState<string | null>(null);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
 
   const [newCoupon, setNewCoupon] = useState({
     code: "",
