@@ -95,6 +95,8 @@ export default function Shipping() {
   const [calcRegion, setCalcRegion] = useState<string>("");
   const [calcWeight, setCalcWeight] = useState<string>("");
   const [calcOrderAmount, setCalcOrderAmount] = useState<string>("");
+  const [deleteZoneItem, setDeleteZoneItem] = useState<{ id: string; name: string } | null>(null);
+  const [deleteRateItem, setDeleteRateItem] = useState<{ id: string; name: string } | null>(null);
 
   const { orders } = useOrdersData();
 
