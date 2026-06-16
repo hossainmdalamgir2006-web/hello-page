@@ -136,7 +136,10 @@ export function useCoupon() {
     toast.info('Coupon removed');
   };
 
-  const incrementCouponUsage = async (couponId: string) => {
+  const incrementCouponUsage = async (
+    couponId: string,
+    opts?: { userId?: string | null; orderId?: string | null; discountApplied?: number | null }
+  ) => {
     try {
       const { data: current } = await supabase
         .from('coupons')
@@ -150,10 +153,29 @@ export function useCoupon() {
           .update({ used_count: (current.used_count || 0) + 1 })
           .eq('id', couponId);
       }
+
+      if (opts?.userId) {
+        await supabase.from('coupon_usage').insert({
+          coupon_id: couponId,
+          user_id: opts.userId,
+          order_id: opts.orderId ?? null,
+          discount_applied: opts.discountApplied ?? null,
+        } as any);
+      }
     } catch (error) {
       console.error('Error incrementing coupon usage:', error);
     }
   };
+
+  return {
+    appliedCoupon,
+    loading,
+    error,
+    validateCoupon,
+    removeCoupon,
+    incrementCouponUsage,
+  };
+}
 
   return {
     appliedCoupon,
