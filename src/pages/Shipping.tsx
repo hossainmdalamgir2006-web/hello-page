@@ -486,6 +486,105 @@ export default function Shipping() {
             )}
           </TabsContent>
 
+          {/* Calculator Tab */}
+          <TabsContent value="calculator" className="space-y-4">
+            <div>
+              <h2 className="text-xl font-semibold">Shipping Cost Calculator</h2>
+              <p className="text-sm text-muted-foreground">Preview the matching zone, methods, and rates for a test address.</p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Test Address</CardTitle>
+                  <CardDescription>Pick a zone or type a region name; add weight & order amount.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Shipping Zone (optional)</Label>
+                    <Select value={calcZoneId || "auto"} onValueChange={(v) => setCalcZoneId(v === "auto" ? "" : v)}>
+                      <SelectTrigger><SelectValue placeholder="Auto-detect from region" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="auto">Auto-detect from region</SelectItem>
+                        {zonesWithRates.map(z => (
+                          <SelectItem key={z.id} value={z.id}>{z.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Region / City</Label>
+                    <Input
+                      placeholder="e.g. Dhaka, Chattogram"
+                      value={calcRegion}
+                      onChange={(e) => setCalcRegion(e.target.value)}
+                      disabled={!!calcZoneId}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label>Package Weight (kg)</Label>
+                      <Input type="number" min="0" step="0.1" placeholder="e.g. 1.5" value={calcWeight} onChange={(e) => setCalcWeight(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Order Amount (৳)</Label>
+                      <Input type="number" min="0" placeholder="e.g. 2500" value={calcOrderAmount} onChange={(e) => setCalcOrderAmount(e.target.value)} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Matched Zone & Rates</CardTitle>
+                  <CardDescription>Live preview based on test input.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {!calcZone ? (
+                    <p className="text-sm text-muted-foreground">Enter a region or pick a zone to preview.</p>
+                  ) : (
+                    <>
+                      <div className="rounded-lg border p-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium">{calcZone.name}</p>
+                          <Badge variant={calcZone.is_active ? "default" : "secondary"}>{calcZone.is_active ? "Active" : "Inactive"}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Regions: {calcZone.regions.join(", ") || "—"}</p>
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {(calcZone.shipping_methods || []).map((m) => <Badge key={m} variant="outline" className="text-xs">{m}</Badge>)}
+                        </div>
+                      </div>
+
+                      {calcMatchingRates.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No matching rates for the given input.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {calcMatchingRates.map((rate) => {
+                            const isFree = rate.max_order_amount && calcOrderNum >= rate.max_order_amount;
+                            return (
+                              <div key={rate.id} className="flex items-center justify-between rounded-lg border p-3">
+                                <div>
+                                  <p className="font-medium text-sm">{rate.name}{rate.shipping_method ? ` · ${rate.shipping_method}` : ""}</p>
+                                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <Clock className="h-3 w-3" /> {rate.min_days ?? 1}-{rate.max_days ?? 3} days
+                                    {rate.min_weight != null || rate.max_weight != null ? ` • ${rate.min_weight ?? 0}-${rate.max_weight ?? "∞"}kg` : ""}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  {isFree ? <span className="text-green-600 font-medium text-sm">FREE</span> : <span className="font-semibold">{formatPrice(rate.rate)}</span>}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+
           {/* All Shipments Tracking Tab */}
           <TabsContent value="tracking" className="space-y-4">
             <div className="flex justify-between items-center">
