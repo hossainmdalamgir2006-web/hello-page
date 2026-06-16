@@ -562,6 +562,7 @@ export default function Shipping() {
                       </ul>
                     </div>
                   )}
+                  {!calcZone ? (
                     <p className="text-sm text-muted-foreground">Enter a region or pick a zone to preview.</p>
                   ) : (
                     <>
