@@ -85,7 +85,6 @@ export default function ReviewsManager() {
     if (!searchQuery) return reviews;
     const q = searchQuery.toLowerCase();
     return reviews.filter(r =>
-      (r.customer_name || "").toLowerCase().includes(q) ||
       (r.title || "").toLowerCase().includes(q) ||
       (r.content || r.review_text || "").toLowerCase().includes(q) ||
       ((r.products as any)?.name || "").toLowerCase().includes(q)
