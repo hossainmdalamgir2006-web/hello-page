@@ -409,7 +409,12 @@ export default function Checkout() {
 
       if (appliedCoupon?.coupon.id || couponState?.couponId) {
         const couponId = appliedCoupon?.coupon.id || couponState?.couponId;
-        if (couponId) await incrementCouponUsage(couponId);
+        const discountApplied = appliedCoupon?.discountAmount ?? couponState?.discountAmount ?? null;
+        if (couponId) await incrementCouponUsage(couponId, {
+          userId: user?.id || null,
+          orderId: order.id,
+          discountApplied,
+        });
       }
 
       try {
