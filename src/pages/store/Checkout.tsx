@@ -80,7 +80,7 @@ export default function Checkout() {
 
   useEffect(() => {
     if (couponState?.couponCode && !appliedCoupon) {
-      validateCoupon(couponState.couponCode, subtotal);
+      validateCoupon(couponState.couponCode, subtotal, user?.id || null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -409,7 +409,12 @@ export default function Checkout() {
 
       if (appliedCoupon?.coupon.id || couponState?.couponId) {
         const couponId = appliedCoupon?.coupon.id || couponState?.couponId;
-        if (couponId) await incrementCouponUsage(couponId);
+        const discountApplied = appliedCoupon?.discountAmount ?? couponState?.discountAmount ?? null;
+        if (couponId) await incrementCouponUsage(couponId, {
+          userId: user?.id || null,
+          orderId: order.id,
+          discountApplied,
+        });
       }
 
       try {
@@ -1185,7 +1190,7 @@ export default function Checkout() {
               couponCode={couponCode}
               onCouponCodeChange={setCouponCode}
               appliedCouponCode={appliedCoupon?.coupon.code || (location.state as any)?.couponCode}
-              onApplyCoupon={() => validateCoupon(couponCode, subtotal)}
+              onApplyCoupon={() => validateCoupon(couponCode, subtotal, user?.id || null)}
               onRemoveCoupon={removeCoupon}
               couponLoading={couponLoading}
               processing={processing}

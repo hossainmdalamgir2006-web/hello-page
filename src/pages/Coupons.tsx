@@ -68,6 +68,7 @@ interface Coupon {
   minimum_order_amount: number | null;
   maximum_discount: number | null;
   max_uses: number | null;
+  user_limit: number | null;
   used_count: number | null;
   starts_at: string | null;
   expires_at: string | null;
@@ -155,7 +156,10 @@ export default function Coupons() {
     minimum_order_amount: 0,
     maximum_discount: 0,
     max_uses: 100,
+    user_limit: 0,
   });
+
+  const [selectedCouponIds, setSelectedCouponIds] = useState<string[]>([]);
 
   const [newRule, setNewRule] = useState({
     name: "",
@@ -250,6 +254,7 @@ export default function Coupons() {
       minimum_order_amount: number | null;
       maximum_discount: number | null;
       max_uses: number | null;
+      user_limit: number | null;
       starts_at: string | null;
       expires_at: string | null;
     }) => {
@@ -275,6 +280,7 @@ export default function Coupons() {
         minimum_order_amount: 0,
         maximum_discount: 0,
         max_uses: 100,
+        user_limit: 0,
       });
       setStartDate(undefined);
       setEndDate(undefined);
@@ -300,6 +306,7 @@ export default function Coupons() {
       minimum_order_amount: number | null;
       maximum_discount: number | null;
       max_uses: number | null;
+      user_limit: number | null;
       starts_at: string | null;
       expires_at: string | null;
     } }) => {
@@ -320,7 +327,7 @@ export default function Coupons() {
       setNewCoupon({
         code: "", title: "", description: "",
         discount_type: "percentage", discount_value: 0,
-        minimum_order_amount: 0, maximum_discount: 0, max_uses: 100,
+        minimum_order_amount: 0, maximum_discount: 0, max_uses: 100, user_limit: 0,
       });
       setStartDate(undefined);
       setEndDate(undefined);
@@ -453,6 +460,30 @@ export default function Coupons() {
     }
   });
 
+  // Bulk update coupons status
+  const bulkUpdateCouponsMutation = useMutation({
+    mutationFn: async ({ ids, payload }: { ids: string[]; payload: { is_active?: boolean; deleted_at?: string | null } }) => {
+      const { error } = await supabase
+        .from('coupons')
+        .update(payload as any)
+        .in('id', ids);
+      if (error) throw error;
+      return { ids, payload };
+    },
+    onSuccess: ({ ids, payload }) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
+      setSelectedCouponIds([]);
+      const verb = payload.deleted_at !== undefined
+        ? 'moved to trash'
+        : payload.is_active ? 'enabled' : 'disabled';
+      logAuditAction({ action: "update", resource_type: "coupon", resource_id: `bulk:${ids.length}`, description: `${ids.length} coupons ${verb}`, new_value: payload });
+      toast.success(`${ids.length} coupon(s) ${verb}`);
+    },
+    onError: () => {
+      toast.error("Bulk action failed");
+    }
+  });
+
   // Toggle rule status mutation
   const toggleRuleMutation = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
@@ -578,6 +609,7 @@ export default function Coupons() {
       minimum_order_amount: newCoupon.minimum_order_amount || null,
       maximum_discount: newCoupon.maximum_discount || null,
       max_uses: newCoupon.max_uses || null,
+      user_limit: newCoupon.user_limit || null,
       starts_at: startDate ? startDate.toISOString() : null,
       expires_at: endDate ? endDate.toISOString() : null,
     };
@@ -600,6 +632,7 @@ export default function Coupons() {
       minimum_order_amount: Number(coupon.minimum_order_amount) || 0,
       maximum_discount: Number(coupon.maximum_discount) || 0,
       max_uses: coupon.max_uses ?? 100,
+      user_limit: coupon.user_limit ?? 0,
     });
     setStartDate(coupon.starts_at ? new Date(coupon.starts_at) : undefined);
     setEndDate(coupon.expires_at ? new Date(coupon.expires_at) : undefined);
@@ -611,7 +644,7 @@ export default function Coupons() {
     setNewCoupon({
       code: "", title: "", description: "",
       discount_type: "percentage", discount_value: 0,
-      minimum_order_amount: 0, maximum_discount: 0, max_uses: 100,
+      minimum_order_amount: 0, maximum_discount: 0, max_uses: 100, user_limit: 0,
     });
     setStartDate(undefined);
     setEndDate(undefined);
@@ -829,12 +862,40 @@ export default function Coupons() {
               </Select>
             </div>
 
+            {/* Bulk action toolbar */}
+            {selectedCouponIds.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-muted/40 px-3 py-2 animate-fade-in">
+                <p className="text-sm font-medium">{selectedCouponIds.length} selected</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" onClick={() => bulkUpdateCouponsMutation.mutate({ ids: selectedCouponIds, payload: { is_active: true } })} disabled={bulkUpdateCouponsMutation.isPending}>
+                    <CheckCircle className="h-4 w-4 mr-1" /> Enable
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => bulkUpdateCouponsMutation.mutate({ ids: selectedCouponIds, payload: { is_active: false } })} disabled={bulkUpdateCouponsMutation.isPending}>
+                    <XCircle className="h-4 w-4 mr-1" /> Disable
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => bulkUpdateCouponsMutation.mutate({ ids: selectedCouponIds, payload: { deleted_at: new Date().toISOString() } })} disabled={bulkUpdateCouponsMutation.isPending}>
+                    <Trash2 className="h-4 w-4 mr-1" /> Move to Trash
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => setSelectedCouponIds([])}>Clear</Button>
+                </div>
+              </div>
+            )}
+
             {/* Coupons Table */}
             <Card>
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-10">
+                        <Checkbox
+                          checked={filteredCoupons.length > 0 && selectedCouponIds.length === filteredCoupons.length}
+                          onCheckedChange={(checked) => {
+                            setSelectedCouponIds(checked ? filteredCoupons.map(c => c.id) : []);
+                          }}
+                          aria-label="Select all"
+                        />
+                      </TableHead>
                       <TableHead>Coupon Code</TableHead>
                       <TableHead>Discount</TableHead>
                       <TableHead>Usage</TableHead>
@@ -846,7 +907,7 @@ export default function Coupons() {
                   <TableBody>
                     {filteredCoupons.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8">
+                        <TableCell colSpan={7} className="text-center py-8">
                           <Ticket className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                           <p className="text-muted-foreground">No coupons found</p>
                         </TableCell>
@@ -858,7 +919,16 @@ export default function Coupons() {
                         const DiscountIcon = discountTypeConfig[coupon.discount_type]?.icon || Percent;
 
                         return (
-                          <TableRow key={coupon.id}>
+                          <TableRow key={coupon.id} data-state={selectedCouponIds.includes(coupon.id) ? "selected" : undefined}>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedCouponIds.includes(coupon.id)}
+                                onCheckedChange={(checked) => {
+                                  setSelectedCouponIds(prev => checked ? [...prev, coupon.id] : prev.filter(id => id !== coupon.id));
+                                }}
+                                aria-label={`Select ${coupon.code}`}
+                              />
+                            </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <code className="font-mono font-bold text-primary bg-primary/10 px-2 py-1 rounded">
@@ -1150,6 +1220,16 @@ export default function Coupons() {
                     onChange={(e) => setNewCoupon({ ...newCoupon, max_uses: Number(e.target.value) })}
                   />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Per-User Usage Limit <span className="text-muted-foreground text-xs">(0 = unlimited, requires sign-in)</span></Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={newCoupon.user_limit}
+                  onChange={(e) => setNewCoupon({ ...newCoupon, user_limit: Math.max(0, Number(e.target.value)) })}
+                  placeholder="e.g. 1 = once per customer"
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

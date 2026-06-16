@@ -12,6 +12,7 @@ export interface Coupon {
   minimum_order_amount: number | null;
   maximum_discount: number | null;
   max_uses: number | null;
+  user_limit: number | null;
   used_count: number | null;
   starts_at: string | null;
   expires_at: string | null;
@@ -28,7 +29,7 @@ export function useCoupon() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const validateCoupon = async (code: string, subtotal: number): Promise<AppliedCoupon | null> => {
+  const validateCoupon = async (code: string, subtotal: number, userId?: string | null): Promise<AppliedCoupon | null> => {
     setLoading(true);
     setError(null);
 
@@ -62,11 +63,31 @@ export function useCoupon() {
         return null;
       }
 
-      // Check usage limit
+      // Check global usage limit
       if (coupon.max_uses && (coupon.used_count || 0) >= coupon.max_uses) {
         setError('This coupon has reached its usage limit');
         toast.error('This coupon has reached its usage limit');
         return null;
+      }
+
+      // Check per-user usage limit
+      const perUserLimit = (coupon as any).user_limit as number | null;
+      if (perUserLimit && perUserLimit > 0) {
+        if (!userId) {
+          setError('Please sign in to use this coupon');
+          toast.error('Please sign in to use this coupon');
+          return null;
+        }
+        const { count: userUses } = await supabase
+          .from('coupon_usage')
+          .select('id', { count: 'exact', head: true })
+          .eq('coupon_id', coupon.id)
+          .eq('user_id', userId);
+        if ((userUses || 0) >= perUserLimit) {
+          setError(`You have already used this coupon ${perUserLimit} time(s)`);
+          toast.error(`You have already used this coupon ${perUserLimit} time(s)`);
+          return null;
+        }
       }
 
       // Check minimum order amount
@@ -115,7 +136,10 @@ export function useCoupon() {
     toast.info('Coupon removed');
   };
 
-  const incrementCouponUsage = async (couponId: string) => {
+  const incrementCouponUsage = async (
+    couponId: string,
+    opts?: { userId?: string | null; orderId?: string | null; discountApplied?: number | null }
+  ) => {
     try {
       const { data: current } = await supabase
         .from('coupons')
@@ -128,6 +152,15 @@ export function useCoupon() {
           .from('coupons')
           .update({ used_count: (current.used_count || 0) + 1 })
           .eq('id', couponId);
+      }
+
+      if (opts?.userId) {
+        await supabase.from('coupon_usage').insert({
+          coupon_id: couponId,
+          user_id: opts.userId,
+          order_id: opts.orderId ?? null,
+          discount_applied: opts.discountApplied ?? null,
+        } as any);
       }
     } catch (error) {
       console.error('Error incrementing coupon usage:', error);

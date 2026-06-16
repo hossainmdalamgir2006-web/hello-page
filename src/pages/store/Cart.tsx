@@ -20,11 +20,13 @@ import { toast } from "sonner";
 import { useShippingRates } from "@/hooks/useShippingRates";
 import { useFreeShippingConfig } from "@/hooks/useFreeShippingConfig";
 import { formatPrice } from "@/lib/formatPrice";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount, removeSelectedItems } = useCart();
   const { t } = useLanguage();
   const { appliedCoupon, loading: couponLoading, validateCoupon, removeCoupon } = useCoupon();
+  const { user } = useAuth();
   const { calculateDiscount: calculateAutoDiscount, getActiveRules } = useAutoDiscountRules();
   const { addItem: addToWishlist } = useWishlist();
   const { rates } = useShippingRates();
@@ -81,7 +83,7 @@ export default function Cart() {
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
-    await validateCoupon(couponCode, checkoutSubtotal);
+    await validateCoupon(couponCode, checkoutSubtotal, user?.id || null);
   };
 
   const handleRemoveCoupon = () => {
