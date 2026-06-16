@@ -30,11 +30,8 @@ type QARow = {
   product_id: string;
   question: string;
   answer: string | null;
-  asked_by_name: string;
-  user_id: string | null;
   helpful_count: number | null;
   answered_at: string | null;
-  answered_by: string | null;
   created_at: string;
   updated_at?: string | null;
   products?: { name: string; slug: string } | null;
@@ -63,34 +60,14 @@ export default function ProductQAManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("product_questions" as any)
-        .select("*, products(name, slug)")
+        .select("id, product_id, question, answer, helpful_count, answered_at, created_at, updated_at, products(name, slug)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data as any[]) as QARow[];
     },
   });
 
-  // Collect unique answerer ids → fetch profiles for audit panel
-  const answererIds = useMemo(
-    () => Array.from(new Set(questions.map((q) => q.answered_by).filter(Boolean) as string[])),
-    [questions]
-  );
-
-  const { data: answererProfiles = {} } = useQuery({
-    queryKey: ["product-questions-answerers", answererIds],
-    enabled: answererIds.length > 0,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, email")
-        .in("user_id", answererIds);
-      const map: Record<string, { full_name: string | null; email: string | null }> = {};
-      (data || []).forEach((p: any) => {
-        map[p.user_id] = { full_name: p.full_name, email: p.email };
-      });
-      return map;
-    },
-  });
+  const answererProfiles: Record<string, { full_name: string | null; email: string | null }> = {};
 
   // Realtime subscription — refresh list when questions change
   useEffect(() => {
