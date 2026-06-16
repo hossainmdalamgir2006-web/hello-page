@@ -221,6 +221,21 @@ export default function Shipping() {
   });
   const calcWeightNum = calcWeight ? Number(calcWeight) : null;
   const calcOrderNum = calcOrderAmount ? Number(calcOrderAmount) : 0;
+
+  // Calculator validation errors
+  const calcErrors: string[] = [];
+  const hasAnyInput = !!(calcZoneId || calcRegion.trim() || calcWeight || calcOrderAmount);
+  if (calcRegion.trim() && calcRegion.trim().length < 2) calcErrors.push("Region must be at least 2 characters.");
+  if (calcWeight !== "" && (isNaN(Number(calcWeight)) || Number(calcWeight) < 0)) calcErrors.push("Package weight must be a positive number.");
+  if (calcOrderAmount !== "" && (isNaN(Number(calcOrderAmount)) || Number(calcOrderAmount) < 0)) calcErrors.push("Order amount must be a positive number.");
+  if (!calcZoneId && calcRegion.trim() && calcRegion.trim().length >= 2 && !calcZone) {
+    calcErrors.push(`No shipping zone covers "${calcRegion.trim()}". Try a different region or pick a zone manually.`);
+  }
+  if (!calcZoneId && !calcRegion.trim() && hasAnyInput) {
+    calcErrors.push("Enter a region/city or pick a shipping zone to match a rate.");
+  }
+  if (calcZone && !calcZone.is_active) calcErrors.push(`Zone "${calcZone.name}" is currently inactive.`);
+
   const calcMatchingRates = (calcZone?.rates || []).filter(r => {
     if (!r.is_active) return false;
     if (r.shipping_method && calcZone?.shipping_methods && !calcZone.shipping_methods.includes(r.shipping_method)) return false;
@@ -539,6 +554,14 @@ export default function Shipping() {
                   <CardDescription>Live preview based on test input.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  {calcErrors.length > 0 && (
+                    <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 space-y-1">
+                      <p className="text-xs font-semibold text-destructive uppercase tracking-wide flex items-center gap-1.5"><XCircle className="h-3.5 w-3.5" /> Validation errors</p>
+                      <ul className="text-xs text-destructive list-disc pl-5 space-y-0.5">
+                        {calcErrors.map((e, i) => <li key={i}>{e}</li>)}
+                      </ul>
+                    </div>
+                  )}
                   {!calcZone ? (
                     <p className="text-sm text-muted-foreground">Enter a region or pick a zone to preview.</p>
                   ) : (

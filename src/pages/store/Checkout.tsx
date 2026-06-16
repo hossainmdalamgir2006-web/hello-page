@@ -834,6 +834,27 @@ export default function Checkout() {
                             </RadioGroup>
                           </div>
                         )}
+                        {selectedZone && selectedRate && (
+                          <div className="rounded-lg border border-store-primary/30 bg-store-primary/5 p-3 mt-2 animate-fade-in">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="space-y-0.5">
+                                <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Matched Shipping Rate</p>
+                                <p className="text-sm font-semibold">{selectedZone.name} · {selectedRate.name}{(selectedRate as any).shipping_method ? ` · ${(selectedRate as any).shipping_method}` : ''}</p>
+                                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                  <Clock className="h-3 w-3" /> {selectedRate.min_days ?? 1}-{selectedRate.max_days ?? 3} {t('checkout.days')}
+                                  {(selectedZone as any).shipping_methods?.length ? ` • methods: ${(selectedZone as any).shipping_methods.join(', ')}` : ''}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                {shippingCost === 0 ? (
+                                  <span className="text-green-600 font-semibold text-sm">{t('checkout.free')}</span>
+                                ) : (
+                                  <span className="font-bold text-sm">{formatPrice(shippingCost)}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         {selectedZone && availableRates.length === 0 && (
                           <div className="rounded-lg border border-dashed p-4 text-center space-y-2">
                             <p className="text-sm text-muted-foreground">No delivery options for this zone.</p>
