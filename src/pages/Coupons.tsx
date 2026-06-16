@@ -605,6 +605,7 @@ export default function Coupons() {
       minimum_order_amount: Number(coupon.minimum_order_amount) || 0,
       maximum_discount: Number(coupon.maximum_discount) || 0,
       max_uses: coupon.max_uses ?? 100,
+      user_limit: coupon.user_limit ?? 0,
     });
     setStartDate(coupon.starts_at ? new Date(coupon.starts_at) : undefined);
     setEndDate(coupon.expires_at ? new Date(coupon.expires_at) : undefined);
