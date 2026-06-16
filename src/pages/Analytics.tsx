@@ -199,7 +199,6 @@ export default function Analytics() {
             metrics={[
               { label: "Revenue", current: stats.totalRevenue, previous: stats.revenueChange !== 0 ? stats.totalRevenue / (1 + stats.revenueChange / 100) : 0, format: "currency" },
               { label: "Orders", current: stats.totalOrders, previous: stats.ordersChange !== 0 ? stats.totalOrders / (1 + stats.ordersChange / 100) : 0, format: "number" },
-              { label: "Customers", current: stats.totalCustomers, previous: stats.customersChange !== 0 ? stats.totalCustomers / (1 + stats.customersChange / 100) : 0, format: "number" },
               { label: "Avg. Order", current: stats.avgOrderValue, previous: stats.avgOrderChange !== 0 ? stats.avgOrderValue / (1 + stats.avgOrderChange / 100) : 0, format: "currency" },
             ]}
           />
