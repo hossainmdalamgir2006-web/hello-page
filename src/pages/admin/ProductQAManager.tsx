@@ -322,11 +322,6 @@ export default function ProductQAManager() {
                             {q.question}
                           </p>
                           <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground flex-wrap">
-                            <span className="inline-flex items-center gap-1">
-                              <UserCircle2 className="h-3 w-3" />
-                              {q.asked_by_name}
-                            </span>
-                            <span>·</span>
                             <span>{formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}</span>
                             {q.products && (
                               <>
