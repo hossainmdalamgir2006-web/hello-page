@@ -36,8 +36,6 @@ import { ReviewAnalyticsCard } from "@/components/admin/reviews/ReviewAnalyticsC
 type ReviewRow = {
   id: string;
   product_id: string;
-  user_id: string;
-  customer_name: string | null;
   title: string | null;
   content: string | null;
   review_text: string | null;
