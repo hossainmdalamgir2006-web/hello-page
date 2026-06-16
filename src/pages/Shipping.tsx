@@ -766,24 +766,45 @@ export default function Shipping() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
+                <Label>Min Weight (kg)</Label>
+                <Input
+                  type="number" min="0" step="0.1"
+                  placeholder="Optional"
+                  value={newRate.min_weight ?? ""}
+                  onChange={(e) => setNewRate({ ...newRate, min_weight: e.target.value ? Number(e.target.value) : null })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Max Weight (kg)</Label>
+                <Input
+                  type="number" min="0" step="0.1"
+                  placeholder="Optional"
+                  value={newRate.max_weight ?? ""}
+                  onChange={(e) => setNewRate({ ...newRate, max_weight: e.target.value ? Number(e.target.value) : null })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label>Min Days</Label>
-                <Input 
-                  type="number"
+                <Input
+                  type="number" min="0"
                   placeholder="1"
                   value={newRate.min_days}
-                  onChange={(e) => setNewRate({ ...newRate, min_days: Number(e.target.value) || 1 })}
+                  onChange={(e) => setNewRate({ ...newRate, min_days: Number(e.target.value) || 0 })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Max Days</Label>
-                <Input 
-                  type="number"
+                <Input
+                  type="number" min="0"
                   placeholder="3"
                   value={newRate.max_days}
-                  onChange={(e) => setNewRate({ ...newRate, max_days: Number(e.target.value) || 3 })}
+                  onChange={(e) => setNewRate({ ...newRate, max_days: Number(e.target.value) || 0 })}
                 />
               </div>
             </div>
+            {(() => { const err = validateRate(newRate); return err ? <p className="text-xs text-destructive">{err}</p> : null; })()}
           </div>
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={() => setRateDialogOpen(false)}>Cancel</Button>
