@@ -63,11 +63,31 @@ export function useCoupon() {
         return null;
       }
 
-      // Check usage limit
+      // Check global usage limit
       if (coupon.max_uses && (coupon.used_count || 0) >= coupon.max_uses) {
         setError('This coupon has reached its usage limit');
         toast.error('This coupon has reached its usage limit');
         return null;
+      }
+
+      // Check per-user usage limit
+      const perUserLimit = (coupon as any).user_limit as number | null;
+      if (perUserLimit && perUserLimit > 0) {
+        if (!userId) {
+          setError('Please sign in to use this coupon');
+          toast.error('Please sign in to use this coupon');
+          return null;
+        }
+        const { count: userUses } = await supabase
+          .from('coupon_usage')
+          .select('id', { count: 'exact', head: true })
+          .eq('coupon_id', coupon.id)
+          .eq('user_id', userId);
+        if ((userUses || 0) >= perUserLimit) {
+          setError(`You have already used this coupon ${perUserLimit} time(s)`);
+          toast.error(`You have already used this coupon ${perUserLimit} time(s)`);
+          return null;
+        }
       }
 
       // Check minimum order amount
