@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { useShippingRates } from "@/hooks/useShippingRates";
 import { useFreeShippingConfig } from "@/hooks/useFreeShippingConfig";
 import { formatPrice } from "@/lib/formatPrice";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, updateItemNote, subtotal, clearCart, savedItems, saveForLater, moveToCart, removeSavedItem, selectedKeys, toggleSelected, selectAll, deselectAll, selectedItems, selectedSubtotal, selectedCount, removeSelectedItems } = useCart();
