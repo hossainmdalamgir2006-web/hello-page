@@ -160,7 +160,7 @@ export default function Analytics() {
         />
 
         {/* Stats Overview */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard
             title="Total Revenue"
             value={formatPrice(stats.totalRevenue)}
@@ -176,15 +176,6 @@ export default function Analytics() {
             change={`${Math.abs(stats.ordersChange)}%`}
             changeType={stats.ordersChange >= 0 ? "positive" : "negative"}
             icon={ShoppingCart}
-            subtitle="vs last period"
-            loading={loading}
-          />
-          <StatCard
-            title="Total Customers"
-            value={stats.totalCustomers.toLocaleString()}
-            change={`${Math.abs(stats.customersChange)}%`}
-            changeType={stats.customersChange >= 0 ? "positive" : "negative"}
-            icon={Users}
             subtitle="vs last period"
             loading={loading}
           />
