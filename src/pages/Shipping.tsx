@@ -554,7 +554,14 @@ export default function Shipping() {
                   <CardDescription>Live preview based on test input.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {!calcZone ? (
+                  {calcErrors.length > 0 && (
+                    <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 space-y-1">
+                      <p className="text-xs font-semibold text-destructive uppercase tracking-wide flex items-center gap-1.5"><XCircle className="h-3.5 w-3.5" /> Validation errors</p>
+                      <ul className="text-xs text-destructive list-disc pl-5 space-y-0.5">
+                        {calcErrors.map((e, i) => <li key={i}>{e}</li>)}
+                      </ul>
+                    </div>
+                  )}
                     <p className="text-sm text-muted-foreground">Enter a region or pick a zone to preview.</p>
                   ) : (
                     <>
