@@ -526,7 +526,7 @@ export default function Coupons() {
       return;
     }
 
-    createCouponMutation.mutate({
+    const payload = {
       code: newCoupon.code.toUpperCase(),
       title: newCoupon.title || null,
       description: newCoupon.description || null,
@@ -537,7 +537,41 @@ export default function Coupons() {
       max_uses: newCoupon.max_uses || null,
       starts_at: startDate ? startDate.toISOString() : null,
       expires_at: endDate ? endDate.toISOString() : null,
+    };
+
+    if (editingCouponId) {
+      updateCouponMutation.mutate({ id: editingCouponId, payload });
+    } else {
+      createCouponMutation.mutate(payload);
+    }
+  };
+
+  const openEditCoupon = (coupon: Coupon) => {
+    setEditingCouponId(coupon.id);
+    setNewCoupon({
+      code: coupon.code,
+      title: coupon.title || "",
+      description: coupon.description || "",
+      discount_type: coupon.discount_type,
+      discount_value: Number(coupon.discount_value) || 0,
+      minimum_order_amount: Number(coupon.minimum_order_amount) || 0,
+      maximum_discount: Number(coupon.maximum_discount) || 0,
+      max_uses: coupon.max_uses ?? 100,
     });
+    setStartDate(coupon.starts_at ? new Date(coupon.starts_at) : undefined);
+    setEndDate(coupon.expires_at ? new Date(coupon.expires_at) : undefined);
+    setCouponDialogOpen(true);
+  };
+
+  const resetCouponForm = () => {
+    setEditingCouponId(null);
+    setNewCoupon({
+      code: "", title: "", description: "",
+      discount_type: "percentage", discount_value: 0,
+      minimum_order_amount: 0, maximum_discount: 0, max_uses: 100,
+    });
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   const handleCreateRule = () => {
