@@ -983,12 +983,12 @@ export default function Coupons() {
         </Tabs>
 
         {/* Create Coupon Dialog */}
-        <Dialog open={couponDialogOpen} onOpenChange={setCouponDialogOpen}>
+        <Dialog open={couponDialogOpen} onOpenChange={(o) => { setCouponDialogOpen(o); if (!o) resetCouponForm(); }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Create New Coupon</DialogTitle>
+              <DialogTitle>{editingCouponId ? "Edit Coupon" : "Create New Coupon"}</DialogTitle>
               <DialogDescription>
-                Create a new discount coupon code
+                {editingCouponId ? "Update this discount coupon" : "Create a new discount coupon code"}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
