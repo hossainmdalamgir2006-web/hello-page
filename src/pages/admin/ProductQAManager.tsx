@@ -408,7 +408,6 @@ export default function ProductQAManager() {
                               <span className="text-muted-foreground shrink-0">•</span>
                               <div>
                                 <span className="font-medium text-foreground">Question asked</span>
-                                <span className="text-muted-foreground"> by {q.asked_by_name}</span>
                                 <span className="text-muted-foreground"> — {format(new Date(q.created_at), "MMM d, yyyy 'at' h:mm a")}</span>
                               </div>
                             </div>
