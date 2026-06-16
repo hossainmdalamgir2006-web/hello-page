@@ -202,6 +202,7 @@ export function useShippingData() {
         .insert({
           zone_id: rateData.zone_id,
           name: rateData.name,
+          shipping_method: rateData.shipping_method,
           rate: rateData.rate,
           min_weight: rateData.min_weight,
           max_weight: rateData.max_weight,
@@ -219,6 +220,7 @@ export function useShippingData() {
         id: data.id,
         zone_id: data.zone_id,
         name: data.name,
+        shipping_method: ((data as any).shipping_method as string | null) ?? null,
         rate: data.rate || 0,
         min_weight: data.min_weight,
         max_weight: data.max_weight,
