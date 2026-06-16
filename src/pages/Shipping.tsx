@@ -65,6 +65,7 @@ export default function Shipping() {
   const [newZone, setNewZone] = useState({ name: "", regions: "" });
   const [newRate, setNewRate] = useState({
     name: "",
+    shipping_method: "Standard" as string,
     rate: 0,
     min_weight: null as number | null,
     max_weight: null as number | null,
@@ -76,6 +77,7 @@ export default function Shipping() {
   const [editingRate, setEditingRate] = useState<{
     id: string;
     name: string;
+    shipping_method: string | null;
     rate: number;
     min_weight: number | null;
     max_weight: number | null;
@@ -85,6 +87,13 @@ export default function Shipping() {
     max_days: number;
     is_active: boolean;
   } | null>(null);
+  const [zoneMethodsDialog, setZoneMethodsDialog] = useState<{ id: string; name: string; methods: string[] } | null>(null);
+  const [methodInput, setMethodInput] = useState("");
+  // Calculator state
+  const [calcZoneId, setCalcZoneId] = useState<string>("");
+  const [calcRegion, setCalcRegion] = useState<string>("");
+  const [calcWeight, setCalcWeight] = useState<string>("");
+  const [calcOrderAmount, setCalcOrderAmount] = useState<string>("");
 
   const { orders } = useOrdersData();
 
