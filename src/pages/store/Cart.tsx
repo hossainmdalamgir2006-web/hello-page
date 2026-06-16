@@ -83,7 +83,7 @@ export default function Cart() {
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
-    await validateCoupon(couponCode, checkoutSubtotal);
+    await validateCoupon(couponCode, checkoutSubtotal, user?.id || null);
   };
 
   const handleRemoveCoupon = () => {
