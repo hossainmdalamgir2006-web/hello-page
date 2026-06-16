@@ -447,16 +447,10 @@ export default function ReviewsManager() {
                 {getStatusBadge(viewReview)}
               </div>
 
-              {/* Customer & Date */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Customer</p>
-                  <p className="text-sm font-medium text-foreground">{viewReview.customer_name || "Anonymous"}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="text-sm text-foreground">{format(new Date(viewReview.created_at), "MMM dd, yyyy hh:mm a")}</p>
-                </div>
+              {/* Date */}
+              <div>
+                <p className="text-sm text-muted-foreground">Date</p>
+                <p className="text-sm text-foreground">{format(new Date(viewReview.created_at), "MMM dd, yyyy hh:mm a")}</p>
               </div>
 
               {/* Rating */}
