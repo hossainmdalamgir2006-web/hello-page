@@ -316,7 +316,7 @@ export default function ReviewsManager() {
                   />
                 </TableHead>
                 <TableHead className="min-w-[180px]">Product</TableHead>
-                <TableHead>Customer</TableHead>
+                
                 <TableHead>Rating</TableHead>
                 <TableHead className="min-w-[200px]">Review</TableHead>
                 <TableHead>Media</TableHead>
