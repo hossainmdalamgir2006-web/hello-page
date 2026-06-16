@@ -1158,6 +1158,7 @@ export default function Coupons() {
                     value={newCoupon.max_uses}
                     onChange={(e) => setNewCoupon({ ...newCoupon, max_uses: Number(e.target.value) })}
                   />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Per-User Usage Limit <span className="text-muted-foreground text-xs">(0 = unlimited, requires sign-in)</span></Label>
