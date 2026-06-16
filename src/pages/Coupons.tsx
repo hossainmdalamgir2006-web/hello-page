@@ -391,6 +391,48 @@ export default function Coupons() {
     }
   });
 
+  // Update auto rule mutation
+  const updateRuleMutation = useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: {
+      name: string;
+      description: string | null;
+      rule_type: string;
+      discount_type: string;
+      discount_value: number;
+      min_purchase: number | null;
+      max_discount: number | null;
+      starts_at: string | null;
+      expires_at: string | null;
+      conditions: any;
+    } }) => {
+      const { data, error } = await supabase
+        .from('auto_discount_rules')
+        .update(payload)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['auto-discount-rules'] });
+      setRuleDialogOpen(false);
+      setEditingRuleId(null);
+      logAuditAction({ action: "update", resource_type: "auto_discount_rule", resource_id: data.id, description: `Auto rule "${data.name}" updated`, new_value: data });
+      setNewRule({
+        name: "", description: "", rule_type: "cart_total", condition: "",
+        discount_type: "percentage", discount_value: 0,
+        min_purchase: 0, max_discount: 0,
+        starts_at: undefined, expires_at: undefined,
+        selectedCategories: [],
+      });
+      toast.success("Auto rule updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update rule");
+    }
+  });
+
   // Toggle coupon status mutation
   const toggleCouponMutation = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
