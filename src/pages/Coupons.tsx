@@ -742,7 +742,7 @@ export default function Coupons() {
           description="Create coupons and set automatic discount rules"
           actions={
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setRuleDialogOpen(true)}>
+              <Button variant="outline" onClick={() => { resetRuleForm(); setRuleDialogOpen(true); }}>
                 <Zap className="mr-2 h-4 w-4" />
                 Auto Rule
               </Button>
