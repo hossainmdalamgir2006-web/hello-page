@@ -345,10 +345,18 @@ export default function Shipping() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <p className="text-sm font-medium">Shipping Rates ({zone.rates?.length || 0})</p>
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">Shipping Methods</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(zone.shipping_methods?.length ? zone.shipping_methods : ["—"]).map((m) => (
+                              <Badge key={m} variant="secondary" className="text-xs">{m}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-sm font-medium pt-2">Shipping Rates ({zone.rates?.length || 0})</p>
                         {zone.rates?.slice(0, 2).map((rate) => (
                           <div key={rate.id} className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{rate.name}</span>
+                            <span className="text-muted-foreground">{rate.name}{rate.shipping_method ? ` · ${rate.shipping_method}` : ""}</span>
                             <span>{formatPrice(rate.rate)}</span>
                           </div>
                         ))}
@@ -359,9 +367,9 @@ export default function Shipping() {
                         )}
                       </div>
                       <div className="flex gap-2 mt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="flex-1"
                           onClick={() => {
                             setSelectedZone({ id: zone.id, name: zone.name });
@@ -371,8 +379,15 @@ export default function Shipping() {
                           <DollarSign className="h-4 w-4 mr-1" />
                           Add Rate
                         </Button>
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setZoneMethodsDialog({ id: zone.id, name: zone.name, methods: [...(zone.shipping_methods || [])] })}
+                        >
+                          <Truck className="h-4 w-4 mr-1" /> Methods
+                        </Button>
+                        <Button
+                          variant="ghost"
                           size="icon"
                           onClick={() => deleteZone(zone.id)}
                         >
