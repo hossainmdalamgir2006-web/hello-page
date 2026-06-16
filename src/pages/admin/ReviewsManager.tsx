@@ -65,7 +65,7 @@ export default function ReviewsManager() {
     queryFn: async () => {
       let query = supabase
         .from("product_reviews")
-        .select("*, products(name)")
+        .select("id, product_id, title, content, review_text, rating, is_approved, is_verified, images, video_url, created_at, products(name)")
         .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
