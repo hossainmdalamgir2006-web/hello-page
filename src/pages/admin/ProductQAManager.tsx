@@ -120,7 +120,7 @@ export default function ProductQAManager() {
       if (statusFilter === "answered" && !q.answer) return false;
       if (search.trim()) {
         const s = search.toLowerCase();
-        const hay = `${q.question} ${q.answer || ""} ${q.asked_by_name} ${q.products?.name || ""}`.toLowerCase();
+        const hay = `${q.question} ${q.answer || ""} ${q.products?.name || ""}`.toLowerCase();
         if (!hay.includes(s)) return false;
       }
       return true;
