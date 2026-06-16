@@ -460,6 +460,30 @@ export default function Coupons() {
     }
   });
 
+  // Bulk update coupons status
+  const bulkUpdateCouponsMutation = useMutation({
+    mutationFn: async ({ ids, payload }: { ids: string[]; payload: { is_active?: boolean; deleted_at?: string | null } }) => {
+      const { error } = await supabase
+        .from('coupons')
+        .update(payload as any)
+        .in('id', ids);
+      if (error) throw error;
+      return { ids, payload };
+    },
+    onSuccess: ({ ids, payload }) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
+      setSelectedCouponIds([]);
+      const verb = payload.deleted_at !== undefined
+        ? 'moved to trash'
+        : payload.is_active ? 'enabled' : 'disabled';
+      logAuditAction({ action: "update", resource_type: "coupon", resource_id: `bulk:${ids.length}`, description: `${ids.length} coupons ${verb}`, new_value: payload });
+      toast.success(`${ids.length} coupon(s) ${verb}`);
+    },
+    onError: () => {
+      toast.error("Bulk action failed");
+    }
+  });
+
   // Toggle rule status mutation
   const toggleRuleMutation = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
