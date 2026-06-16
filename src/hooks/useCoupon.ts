@@ -12,6 +12,7 @@ export interface Coupon {
   minimum_order_amount: number | null;
   maximum_discount: number | null;
   max_uses: number | null;
+  user_limit: number | null;
   used_count: number | null;
   starts_at: string | null;
   expires_at: string | null;
