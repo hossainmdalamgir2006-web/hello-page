@@ -663,7 +663,7 @@ export default function Coupons() {
                 <Zap className="mr-2 h-4 w-4" />
                 Auto Rule
               </Button>
-              <Button onClick={() => setCouponDialogOpen(true)}>
+              <Button onClick={() => { resetCouponForm(); setCouponDialogOpen(true); }}>
                 <Plus className="mr-2 h-4 w-4" />
                 New Coupon
               </Button>
