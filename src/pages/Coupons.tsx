@@ -144,6 +144,7 @@ export default function Coupons() {
   const [deleteCouponItem, setDeleteCouponItem] = useState<Coupon | null>(null);
   const [deleteRuleItem, setDeleteRuleItem] = useState<AutoRule | null>(null);
   const [editingCouponId, setEditingCouponId] = useState<string | null>(null);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
 
   const [newCoupon, setNewCoupon] = useState({
     code: "",
@@ -390,6 +391,48 @@ export default function Coupons() {
     }
   });
 
+  // Update auto rule mutation
+  const updateRuleMutation = useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: {
+      name: string;
+      description: string | null;
+      rule_type: string;
+      discount_type: string;
+      discount_value: number;
+      min_purchase: number | null;
+      max_discount: number | null;
+      starts_at: string | null;
+      expires_at: string | null;
+      conditions: any;
+    } }) => {
+      const { data, error } = await supabase
+        .from('auto_discount_rules')
+        .update(payload)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['auto-discount-rules'] });
+      setRuleDialogOpen(false);
+      setEditingRuleId(null);
+      logAuditAction({ action: "update", resource_type: "auto_discount_rule", resource_id: data.id, description: `Auto rule "${data.name}" updated`, new_value: data });
+      setNewRule({
+        name: "", description: "", rule_type: "cart_total", condition: "",
+        discount_type: "percentage", discount_value: 0,
+        min_purchase: 0, max_discount: 0,
+        starts_at: undefined, expires_at: undefined,
+        selectedCategories: [],
+      });
+      toast.success("Auto rule updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update rule");
+    }
+  });
+
   // Toggle coupon status mutation
   const toggleCouponMutation = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
@@ -588,7 +631,7 @@ export default function Coupons() {
       conditions = { min_quantity: newRule.min_purchase || 0 };
     }
 
-    createRuleMutation.mutate({
+    const payload = {
       name: newRule.name,
       description: newRule.description || null,
       rule_type: newRule.rule_type,
@@ -599,7 +642,47 @@ export default function Coupons() {
       starts_at: newRule.starts_at ? newRule.starts_at.toISOString() : null,
       expires_at: newRule.expires_at ? newRule.expires_at.toISOString() : null,
       conditions,
+    };
+
+    if (editingRuleId) {
+      updateRuleMutation.mutate({ id: editingRuleId, payload });
+    } else {
+      createRuleMutation.mutate(payload);
+    }
+  };
+
+  const resetRuleForm = () => {
+    setEditingRuleId(null);
+    setNewRule({
+      name: "", description: "", rule_type: "cart_total", condition: "",
+      discount_type: "percentage", discount_value: 0,
+      min_purchase: 0, max_discount: 0,
+      starts_at: undefined, expires_at: undefined,
+      selectedCategories: [],
     });
+  };
+
+  const openEditRule = (rule: AutoRule) => {
+    const conds: any = (rule as any).conditions || {};
+    const selectedCategories: string[] = Array.isArray(conds?.categories) ? conds.categories : [];
+    const minFromConds: number = typeof conds?.min_quantity === 'number' ? conds.min_quantity : 0;
+    setEditingRuleId(rule.id);
+    setNewRule({
+      name: rule.name || "",
+      description: rule.description || "",
+      rule_type: rule.rule_type || "cart_total",
+      condition: "",
+      discount_type: rule.discount_type || "percentage",
+      discount_value: Number(rule.discount_value) || 0,
+      min_purchase: rule.rule_type === "cart_total"
+        ? Number((rule as any).min_purchase) || 0
+        : minFromConds,
+      max_discount: Number((rule as any).max_discount) || 0,
+      starts_at: rule.starts_at ? new Date(rule.starts_at) : undefined,
+      expires_at: rule.expires_at ? new Date(rule.expires_at) : undefined,
+      selectedCategories,
+    });
+    setRuleDialogOpen(true);
   };
 
   const toggleCoupon = (coupon: Coupon) => {
@@ -659,7 +742,7 @@ export default function Coupons() {
           description="Create coupons and set automatic discount rules"
           actions={
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setRuleDialogOpen(true)}>
+              <Button variant="outline" onClick={() => { resetRuleForm(); setRuleDialogOpen(true); }}>
                 <Zap className="mr-2 h-4 w-4" />
                 Auto Rule
               </Button>
@@ -913,14 +996,29 @@ export default function Coupons() {
                             />
                           </TableCell>
                           <TableCell>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              className="h-8 w-8 text-destructive"
-                              onClick={() => setDeleteRuleItem(rule)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => openEditRule(rule)}>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toggleRule(rule)}>
+                                  {rule.is_active ? 'Disable' : 'Enable'}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => setDeleteRuleItem(rule)}
+                                  className="text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Move to Trash
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </TableCell>
                         </TableRow>
                       ))
@@ -1095,12 +1193,12 @@ export default function Coupons() {
         </Dialog>
 
         {/* Create Auto Rule Dialog */}
-        <Dialog open={ruleDialogOpen} onOpenChange={setRuleDialogOpen}>
+        <Dialog open={ruleDialogOpen} onOpenChange={(open) => { setRuleDialogOpen(open); if (!open) resetRuleForm(); }}>
           <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>New Auto Rule</DialogTitle>
+              <DialogTitle>{editingRuleId ? "Edit Auto Rule" : "New Auto Rule"}</DialogTitle>
               <DialogDescription>
-                Create an automatic discount rule
+                {editingRuleId ? "Update this automatic discount rule" : "Create an automatic discount rule"}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -1263,10 +1361,10 @@ export default function Coupons() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setRuleDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleCreateRule} disabled={createRuleMutation.isPending}>
-                {createRuleMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Create
+              <Button variant="outline" onClick={() => { setRuleDialogOpen(false); resetRuleForm(); }}>Cancel</Button>
+              <Button onClick={handleCreateRule} disabled={createRuleMutation.isPending || updateRuleMutation.isPending}>
+                {(createRuleMutation.isPending || updateRuleMutation.isPending) ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {editingRuleId ? "Save Changes" : "Create"}
               </Button>
             </DialogFooter>
           </DialogContent>
