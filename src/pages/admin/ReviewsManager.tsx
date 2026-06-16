@@ -85,7 +85,6 @@ export default function ReviewsManager() {
     if (!searchQuery) return reviews;
     const q = searchQuery.toLowerCase();
     return reviews.filter(r =>
-      (r.customer_name || "").toLowerCase().includes(q) ||
       (r.title || "").toLowerCase().includes(q) ||
       (r.content || r.review_text || "").toLowerCase().includes(q) ||
       ((r.products as any)?.name || "").toLowerCase().includes(q)
@@ -316,7 +315,7 @@ export default function ReviewsManager() {
                   />
                 </TableHead>
                 <TableHead className="min-w-[180px]">Product</TableHead>
-                <TableHead>Customer</TableHead>
+                
                 <TableHead>Rating</TableHead>
                 <TableHead className="min-w-[200px]">Review</TableHead>
                 <TableHead>Media</TableHead>
@@ -328,7 +327,7 @@ export default function ReviewsManager() {
             <TableBody>
               {paginatedData.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="h-32 text-center">
+                  <TableCell colSpan={8} className="h-32 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <MessageSquare className="h-8 w-8 text-muted-foreground" />
                       <p className="text-muted-foreground">No reviews found</p>
@@ -348,9 +347,6 @@ export default function ReviewsManager() {
                       <p className="font-medium text-foreground truncate max-w-[180px]">
                         {(review.products as any)?.name || "Unknown"}
                       </p>
-                    </TableCell>
-                    <TableCell>
-                      <p className="text-sm text-foreground">{review.customer_name || "Anonymous"}</p>
                     </TableCell>
                     <TableCell>{renderStars(review.rating)}</TableCell>
                     <TableCell className="max-w-[200px]">
@@ -451,16 +447,10 @@ export default function ReviewsManager() {
                 {getStatusBadge(viewReview)}
               </div>
 
-              {/* Customer & Date */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Customer</p>
-                  <p className="text-sm font-medium text-foreground">{viewReview.customer_name || "Anonymous"}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="text-sm text-foreground">{format(new Date(viewReview.created_at), "MMM dd, yyyy hh:mm a")}</p>
-                </div>
+              {/* Date */}
+              <div>
+                <p className="text-sm text-muted-foreground">Date</p>
+                <p className="text-sm text-foreground">{format(new Date(viewReview.created_at), "MMM dd, yyyy hh:mm a")}</p>
               </div>
 
               {/* Rating */}

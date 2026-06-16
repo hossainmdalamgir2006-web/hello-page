@@ -120,7 +120,7 @@ export default function ProductQAManager() {
       if (statusFilter === "answered" && !q.answer) return false;
       if (search.trim()) {
         const s = search.toLowerCase();
-        const hay = `${q.question} ${q.answer || ""} ${q.asked_by_name} ${q.products?.name || ""}`.toLowerCase();
+        const hay = `${q.question} ${q.answer || ""} ${q.products?.name || ""}`.toLowerCase();
         if (!hay.includes(s)) return false;
       }
       return true;
@@ -257,7 +257,7 @@ export default function ProductQAManager() {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search question, answer, customer, product..."
+              placeholder="Search question, answer, product..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -322,11 +322,6 @@ export default function ProductQAManager() {
                             {q.question}
                           </p>
                           <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground flex-wrap">
-                            <span className="inline-flex items-center gap-1">
-                              <UserCircle2 className="h-3 w-3" />
-                              {q.asked_by_name}
-                            </span>
-                            <span>·</span>
                             <span>{formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}</span>
                             {q.products && (
                               <>
@@ -413,7 +408,6 @@ export default function ProductQAManager() {
                               <span className="text-muted-foreground shrink-0">•</span>
                               <div>
                                 <span className="font-medium text-foreground">Question asked</span>
-                                <span className="text-muted-foreground"> by {q.asked_by_name}</span>
                                 <span className="text-muted-foreground"> — {format(new Date(q.created_at), "MMM d, yyyy 'at' h:mm a")}</span>
                               </div>
                             </div>
@@ -422,8 +416,6 @@ export default function ProductQAManager() {
                                 <span className="text-muted-foreground shrink-0">•</span>
                                 <div>
                                   <span className="font-medium text-foreground">Answered</span>
-                                  <span className="text-muted-foreground"> by </span>
-                                  <span className="font-medium text-primary">{getAnswererLabel(q.answered_by)}</span>
                                   <span className="text-muted-foreground"> — {format(new Date(q.answered_at), "MMM d, yyyy 'at' h:mm a")}</span>
                                 </div>
                               </div>

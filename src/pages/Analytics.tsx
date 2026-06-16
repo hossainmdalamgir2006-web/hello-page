@@ -160,7 +160,7 @@ export default function Analytics() {
         />
 
         {/* Stats Overview */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard
             title="Total Revenue"
             value={formatPrice(stats.totalRevenue)}
@@ -176,15 +176,6 @@ export default function Analytics() {
             change={`${Math.abs(stats.ordersChange)}%`}
             changeType={stats.ordersChange >= 0 ? "positive" : "negative"}
             icon={ShoppingCart}
-            subtitle="vs last period"
-            loading={loading}
-          />
-          <StatCard
-            title="Total Customers"
-            value={stats.totalCustomers.toLocaleString()}
-            change={`${Math.abs(stats.customersChange)}%`}
-            changeType={stats.customersChange >= 0 ? "positive" : "negative"}
-            icon={Users}
             subtitle="vs last period"
             loading={loading}
           />
@@ -208,7 +199,6 @@ export default function Analytics() {
             metrics={[
               { label: "Revenue", current: stats.totalRevenue, previous: stats.revenueChange !== 0 ? stats.totalRevenue / (1 + stats.revenueChange / 100) : 0, format: "currency" },
               { label: "Orders", current: stats.totalOrders, previous: stats.ordersChange !== 0 ? stats.totalOrders / (1 + stats.ordersChange / 100) : 0, format: "number" },
-              { label: "Customers", current: stats.totalCustomers, previous: stats.customersChange !== 0 ? stats.totalCustomers / (1 + stats.customersChange / 100) : 0, format: "number" },
               { label: "Avg. Order", current: stats.avgOrderValue, previous: stats.avgOrderChange !== 0 ? stats.avgOrderValue / (1 + stats.avgOrderChange / 100) : 0, format: "currency" },
             ]}
           />
@@ -473,103 +463,7 @@ export default function Analytics() {
           </Card>
         </div>
 
-        {/* Customer Insights */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* New vs Returning */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-accent" />
-                Customer Types
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex flex-col items-center">
-                  <Skeleton className="h-40 w-40 rounded-full" />
-                  <div className="mt-4 flex gap-6">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-4 w-24" />
-                  </div>
-                </div>
-              ) : customerInsights.newVsReturning.length === 0 ? (
-                <div className="h-40 flex items-center justify-center text-muted-foreground">
-                  No customer data available yet
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-center justify-center">
-                    <div className="h-40 w-40">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={customerInsights.newVsReturning}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={40}
-                            outerRadius={65}
-                            paddingAngle={2}
-                            dataKey="value"
-                          >
-                            {customerInsights.newVsReturning.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex justify-center gap-6">
-                    {customerInsights.newVsReturning.map((item) => (
-                      <div key={item.name} className="flex items-center gap-2">
-                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
-                        <span className="text-sm">{item.name}: {item.value}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Top Cities */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-accent" />
-                Top Cities
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <Skeleton key={i} className="h-8 w-full" />
-                  ))}
-                </div>
-              ) : customerInsights.topCities.length === 0 || customerInsights.topCities[0].city === 'No Data' ? (
-                <div className="h-40 flex items-center justify-center text-muted-foreground">
-                  No city data available yet
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {customerInsights.topCities.map((city) => (
-                    <div key={city.city} className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium">{city.city}</span>
-                          <span className="text-xs text-muted-foreground">{city.customers.toLocaleString()}</span>
-                        </div>
-                        <Progress value={city.percentage} className="h-1.5" />
-                      </div>
-                      <Badge variant="outline" className="text-xs">{city.percentage}%</Badge>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        {/* Customer Insights section removed */}
 
         {/* Traffic Sources */}
         <Card>
