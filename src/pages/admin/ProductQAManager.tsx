@@ -416,8 +416,6 @@ export default function ProductQAManager() {
                                 <span className="text-muted-foreground shrink-0">•</span>
                                 <div>
                                   <span className="font-medium text-foreground">Answered</span>
-                                  <span className="text-muted-foreground"> by </span>
-                                  <span className="font-medium text-primary">{getAnswererLabel(q.answered_by)}</span>
                                   <span className="text-muted-foreground"> — {format(new Date(q.answered_at), "MMM d, yyyy 'at' h:mm a")}</span>
                                 </div>
                               </div>
