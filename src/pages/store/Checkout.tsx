@@ -1190,7 +1190,7 @@ export default function Checkout() {
               couponCode={couponCode}
               onCouponCodeChange={setCouponCode}
               appliedCouponCode={appliedCoupon?.coupon.code || (location.state as any)?.couponCode}
-              onApplyCoupon={() => validateCoupon(couponCode, subtotal)}
+              onApplyCoupon={() => validateCoupon(couponCode, subtotal, user?.id || null)}
               onRemoveCoupon={removeCoupon}
               couponLoading={couponLoading}
               processing={processing}
