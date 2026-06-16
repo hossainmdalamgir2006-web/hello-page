@@ -349,9 +349,6 @@ export default function ReviewsManager() {
                         {(review.products as any)?.name || "Unknown"}
                       </p>
                     </TableCell>
-                    <TableCell>
-                      <p className="text-sm text-foreground">{review.customer_name || "Anonymous"}</p>
-                    </TableCell>
                     <TableCell>{renderStars(review.rating)}</TableCell>
                     <TableCell className="max-w-[200px]">
                       {review.title && <p className="font-medium text-sm truncate text-foreground">{review.title}</p>}
