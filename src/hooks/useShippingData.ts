@@ -54,6 +54,7 @@ export function useShippingData() {
         name_bn: (item as any).name_bn ?? null,
         countries: item.countries,
         regions: item.regions || [],
+        shipping_methods: ((item as any).shipping_methods as string[] | null) ?? [...DEFAULT_SHIPPING_METHODS],
         is_active: item.is_active ?? true,
         created_at: item.created_at,
         updated_at: item.updated_at,
