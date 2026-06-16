@@ -288,6 +288,50 @@ export default function Coupons() {
     }
   });
 
+  // Update coupon mutation
+  const updateCouponMutation = useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: {
+      code: string;
+      title: string | null;
+      description: string | null;
+      discount_type: string;
+      discount_value: number;
+      minimum_order_amount: number | null;
+      maximum_discount: number | null;
+      max_uses: number | null;
+      starts_at: string | null;
+      expires_at: string | null;
+    } }) => {
+      const { data, error } = await supabase
+        .from('coupons')
+        .update(payload)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-coupons'] });
+      setCouponDialogOpen(false);
+      setEditingCouponId(null);
+      logAuditAction({ action: "update", resource_type: "coupon", resource_id: data.code, description: `Coupon "${data.code}" updated`, new_value: data });
+      setNewCoupon({
+        code: "", title: "", description: "",
+        discount_type: "percentage", discount_value: 0,
+        minimum_order_amount: 0, maximum_discount: 0, max_uses: 100,
+      });
+      setStartDate(undefined);
+      setEndDate(undefined);
+      toast.success("Coupon updated successfully");
+    },
+    onError: (error: any) => {
+      if (error.code === '23505') toast.error("This code already exists");
+      else toast.error("Failed to update coupon");
+    }
+  });
+
+
   // Create auto rule mutation
   const createRuleMutation = useMutation({
     mutationFn: async (ruleData: {
