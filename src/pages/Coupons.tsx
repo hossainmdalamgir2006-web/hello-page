@@ -631,7 +631,7 @@ export default function Coupons() {
       conditions = { min_quantity: newRule.min_purchase || 0 };
     }
 
-    createRuleMutation.mutate({
+    const payload = {
       name: newRule.name,
       description: newRule.description || null,
       rule_type: newRule.rule_type,
@@ -642,7 +642,47 @@ export default function Coupons() {
       starts_at: newRule.starts_at ? newRule.starts_at.toISOString() : null,
       expires_at: newRule.expires_at ? newRule.expires_at.toISOString() : null,
       conditions,
+    };
+
+    if (editingRuleId) {
+      updateRuleMutation.mutate({ id: editingRuleId, payload });
+    } else {
+      createRuleMutation.mutate(payload);
+    }
+  };
+
+  const resetRuleForm = () => {
+    setEditingRuleId(null);
+    setNewRule({
+      name: "", description: "", rule_type: "cart_total", condition: "",
+      discount_type: "percentage", discount_value: 0,
+      min_purchase: 0, max_discount: 0,
+      starts_at: undefined, expires_at: undefined,
+      selectedCategories: [],
     });
+  };
+
+  const openEditRule = (rule: AutoRule) => {
+    const conds: any = (rule as any).conditions || {};
+    const selectedCategories: string[] = Array.isArray(conds?.categories) ? conds.categories : [];
+    const minFromConds: number = typeof conds?.min_quantity === 'number' ? conds.min_quantity : 0;
+    setEditingRuleId(rule.id);
+    setNewRule({
+      name: rule.name || "",
+      description: rule.description || "",
+      rule_type: rule.rule_type || "cart_total",
+      condition: "",
+      discount_type: rule.discount_type || "percentage",
+      discount_value: Number(rule.discount_value) || 0,
+      min_purchase: rule.rule_type === "cart_total"
+        ? Number((rule as any).min_purchase) || 0
+        : minFromConds,
+      max_discount: Number((rule as any).max_discount) || 0,
+      starts_at: rule.starts_at ? new Date(rule.starts_at) : undefined,
+      expires_at: rule.expires_at ? new Date(rule.expires_at) : undefined,
+      selectedCategories,
+    });
+    setRuleDialogOpen(true);
   };
 
   const toggleCoupon = (coupon: Coupon) => {
