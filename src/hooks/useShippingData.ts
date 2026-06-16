@@ -78,6 +78,7 @@ export function useShippingData() {
         id: item.id,
         zone_id: item.zone_id,
         name: item.name,
+        shipping_method: ((item as any).shipping_method as string | null) ?? null,
         rate: item.rate || 0,
         min_weight: item.min_weight,
         max_weight: item.max_weight,
