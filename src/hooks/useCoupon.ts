@@ -29,7 +29,7 @@ export function useCoupon() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const validateCoupon = async (code: string, subtotal: number): Promise<AppliedCoupon | null> => {
+  const validateCoupon = async (code: string, subtotal: number, userId?: string | null): Promise<AppliedCoupon | null> => {
     setLoading(true);
     setError(null);
 
