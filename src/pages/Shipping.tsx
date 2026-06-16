@@ -483,7 +483,7 @@ export default function Shipping() {
                               <Button variant="ghost" size="icon" onClick={() => openEditRateDialog(rate)}>
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => deleteRate(rate.id)}>
+                              <Button variant="ghost" size="icon" onClick={() => setDeleteRateItem({ id: rate.id, name: rate.name })}>
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
                             </TableCell>
