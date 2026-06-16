@@ -171,7 +171,16 @@ export default function Checkout() {
   }, [contactComplete, shippingComplete, paymentComplete]);
 
   const selectedZone = useMemo(() => zonesWithRates.find(z => z.id === selectedZoneId), [zonesWithRates, selectedZoneId]);
-  const availableRates = useMemo(() => selectedZone?.rates?.filter(r => r.is_active) || [], [selectedZone]);
+  const availableRates = useMemo(() => {
+    const all = selectedZone?.rates?.filter(r => r.is_active) || [];
+    const enabledMethods = (selectedZone as any)?.shipping_methods as string[] | undefined;
+    if (!enabledMethods || enabledMethods.length === 0) return all;
+    return all.filter(r => {
+      const method = (r as any).shipping_method as string | null | undefined;
+      // Untagged rates are always allowed for backward compatibility
+      return !method || enabledMethods.includes(method);
+    });
+  }, [selectedZone]);
   const selectedRate = useMemo(() => availableRates.find(r => r.id === selectedRateId), [availableRates, selectedRateId]);
 
   const shippingCost = useMemo(() => {

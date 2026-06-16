@@ -65,6 +65,7 @@ export default function Shipping() {
   const [newZone, setNewZone] = useState({ name: "", regions: "" });
   const [newRate, setNewRate] = useState({
     name: "",
+    shipping_method: "Standard" as string,
     rate: 0,
     min_weight: null as number | null,
     max_weight: null as number | null,
@@ -76,6 +77,7 @@ export default function Shipping() {
   const [editingRate, setEditingRate] = useState<{
     id: string;
     name: string;
+    shipping_method: string | null;
     rate: number;
     min_weight: number | null;
     max_weight: number | null;
@@ -85,6 +87,13 @@ export default function Shipping() {
     max_days: number;
     is_active: boolean;
   } | null>(null);
+  const [zoneMethodsDialog, setZoneMethodsDialog] = useState<{ id: string; name: string; methods: string[] } | null>(null);
+  const [methodInput, setMethodInput] = useState("");
+  // Calculator state
+  const [calcZoneId, setCalcZoneId] = useState<string>("");
+  const [calcRegion, setCalcRegion] = useState<string>("");
+  const [calcWeight, setCalcWeight] = useState<string>("");
+  const [calcOrderAmount, setCalcOrderAmount] = useState<string>("");
 
   const { orders } = useOrdersData();
 
@@ -113,16 +122,30 @@ export default function Shipping() {
     }
   };
 
+  const validateRate = (r: { rate: number; min_weight: number | null; max_weight: number | null; min_days: number; max_days: number; min_order_amount: number | null; max_order_amount: number | null; }): string | null => {
+    if (r.rate < 0) return "Base rate must be 0 or greater";
+    if (r.min_weight != null && r.min_weight < 0) return "Min weight cannot be negative";
+    if (r.max_weight != null && r.max_weight < 0) return "Max weight cannot be negative";
+    if (r.min_weight != null && r.max_weight != null && r.min_weight > r.max_weight) return "Min weight must be ≤ max weight";
+    if (r.min_days < 0 || r.max_days < 0) return "Delivery days cannot be negative";
+    if (r.min_days > r.max_days) return "Min days must be ≤ max days";
+    if (r.min_order_amount != null && r.max_order_amount != null && r.min_order_amount > r.max_order_amount) return "Min order amount must be ≤ max order amount";
+    return null;
+  };
+
   const handleAddRate = async () => {
     if (!selectedZone || !newRate.name || !newRate.rate) {
       toast.error("Please fill in all required fields");
       return;
     }
+    const err = validateRate(newRate);
+    if (err) { toast.error(err); return; }
 
     try {
       await addRate({
         zone_id: selectedZone.id,
         name: newRate.name,
+        shipping_method: newRate.shipping_method || null,
         rate: newRate.rate,
         min_weight: newRate.min_weight,
         max_weight: newRate.max_weight,
@@ -132,7 +155,7 @@ export default function Shipping() {
         max_days: newRate.max_days,
         is_active: true
       });
-      setNewRate({ name: "", rate: 0, min_weight: null, max_weight: null, min_order_amount: null, max_order_amount: null, min_days: 1, max_days: 3 });
+      setNewRate({ name: "", shipping_method: "Standard", rate: 0, min_weight: null, max_weight: null, min_order_amount: null, max_order_amount: null, min_days: 1, max_days: 3 });
       setRateDialogOpen(false);
     } catch (error) {
       // Error handled in hook
@@ -141,10 +164,12 @@ export default function Shipping() {
 
   const handleEditRate = async () => {
     if (!editingRate) return;
-    
+    const err = validateRate(editingRate);
+    if (err) { toast.error(err); return; }
     try {
       await updateRate(editingRate.id, {
         name: editingRate.name,
+        shipping_method: editingRate.shipping_method,
         rate: editingRate.rate,
         min_weight: editingRate.min_weight,
         max_weight: editingRate.max_weight,
@@ -164,6 +189,7 @@ export default function Shipping() {
     setEditingRate({
       id: rate.id,
       name: rate.name,
+      shipping_method: rate.shipping_method ?? null,
       rate: rate.rate,
       min_weight: rate.min_weight,
       max_weight: rate.max_weight,
@@ -175,6 +201,38 @@ export default function Shipping() {
     });
     setEditRateDialogOpen(true);
   };
+
+  const saveZoneMethods = async () => {
+    if (!zoneMethodsDialog) return;
+    try {
+      await shippingData.updateZone(zoneMethodsDialog.id, { shipping_methods: zoneMethodsDialog.methods } as any);
+      setZoneMethodsDialog(null);
+      setMethodInput("");
+    } catch (error) {
+      // handled in hook
+    }
+  };
+
+  // Calculator: match zone by region OR explicit selection
+  const calcZone = zonesWithRates.find(z => {
+    if (calcZoneId) return z.id === calcZoneId;
+    if (!calcRegion.trim()) return false;
+    return z.regions?.some(r => r.toLowerCase().includes(calcRegion.trim().toLowerCase()));
+  });
+  const calcWeightNum = calcWeight ? Number(calcWeight) : null;
+  const calcOrderNum = calcOrderAmount ? Number(calcOrderAmount) : 0;
+  const calcMatchingRates = (calcZone?.rates || []).filter(r => {
+    if (!r.is_active) return false;
+    if (r.shipping_method && calcZone?.shipping_methods && !calcZone.shipping_methods.includes(r.shipping_method)) return false;
+    if (calcWeightNum != null) {
+      if (r.min_weight != null && calcWeightNum < r.min_weight) return false;
+      if (r.max_weight != null && calcWeightNum > r.max_weight) return false;
+    }
+    if (r.min_order_amount != null && calcOrderNum < r.min_order_amount) return false;
+    return true;
+  });
+
+
 
 
   const filteredShipments = shipments.filter(s => 
@@ -230,6 +288,7 @@ export default function Shipping() {
             
             <TabsTrigger value="zones">Shipping Zones</TabsTrigger>
             <TabsTrigger value="rates">Rate Config</TabsTrigger>
+            <TabsTrigger value="calculator">Calculator</TabsTrigger>
             <TabsTrigger value="tracking">Tracking</TabsTrigger>
           </TabsList>
 
@@ -286,10 +345,18 @@ export default function Shipping() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <p className="text-sm font-medium">Shipping Rates ({zone.rates?.length || 0})</p>
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">Shipping Methods</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(zone.shipping_methods?.length ? zone.shipping_methods : ["—"]).map((m) => (
+                              <Badge key={m} variant="secondary" className="text-xs">{m}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-sm font-medium pt-2">Shipping Rates ({zone.rates?.length || 0})</p>
                         {zone.rates?.slice(0, 2).map((rate) => (
                           <div key={rate.id} className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{rate.name}</span>
+                            <span className="text-muted-foreground">{rate.name}{rate.shipping_method ? ` · ${rate.shipping_method}` : ""}</span>
                             <span>{formatPrice(rate.rate)}</span>
                           </div>
                         ))}
@@ -300,9 +367,9 @@ export default function Shipping() {
                         )}
                       </div>
                       <div className="flex gap-2 mt-4">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="flex-1"
                           onClick={() => {
                             setSelectedZone({ id: zone.id, name: zone.name });
@@ -312,8 +379,15 @@ export default function Shipping() {
                           <DollarSign className="h-4 w-4 mr-1" />
                           Add Rate
                         </Button>
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setZoneMethodsDialog({ id: zone.id, name: zone.name, methods: [...(zone.shipping_methods || [])] })}
+                        >
+                          <Truck className="h-4 w-4 mr-1" /> Methods
+                        </Button>
+                        <Button
+                          variant="ghost"
                           size="icon"
                           onClick={() => deleteZone(zone.id)}
                         >
@@ -411,6 +485,105 @@ export default function Shipping() {
               ))
             )}
           </TabsContent>
+
+          {/* Calculator Tab */}
+          <TabsContent value="calculator" className="space-y-4">
+            <div>
+              <h2 className="text-xl font-semibold">Shipping Cost Calculator</h2>
+              <p className="text-sm text-muted-foreground">Preview the matching zone, methods, and rates for a test address.</p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Test Address</CardTitle>
+                  <CardDescription>Pick a zone or type a region name; add weight & order amount.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Shipping Zone (optional)</Label>
+                    <Select value={calcZoneId || "auto"} onValueChange={(v) => setCalcZoneId(v === "auto" ? "" : v)}>
+                      <SelectTrigger><SelectValue placeholder="Auto-detect from region" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="auto">Auto-detect from region</SelectItem>
+                        {zonesWithRates.map(z => (
+                          <SelectItem key={z.id} value={z.id}>{z.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Region / City</Label>
+                    <Input
+                      placeholder="e.g. Dhaka, Chattogram"
+                      value={calcRegion}
+                      onChange={(e) => setCalcRegion(e.target.value)}
+                      disabled={!!calcZoneId}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label>Package Weight (kg)</Label>
+                      <Input type="number" min="0" step="0.1" placeholder="e.g. 1.5" value={calcWeight} onChange={(e) => setCalcWeight(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Order Amount (৳)</Label>
+                      <Input type="number" min="0" placeholder="e.g. 2500" value={calcOrderAmount} onChange={(e) => setCalcOrderAmount(e.target.value)} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Matched Zone & Rates</CardTitle>
+                  <CardDescription>Live preview based on test input.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {!calcZone ? (
+                    <p className="text-sm text-muted-foreground">Enter a region or pick a zone to preview.</p>
+                  ) : (
+                    <>
+                      <div className="rounded-lg border p-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium">{calcZone.name}</p>
+                          <Badge variant={calcZone.is_active ? "default" : "secondary"}>{calcZone.is_active ? "Active" : "Inactive"}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Regions: {calcZone.regions.join(", ") || "—"}</p>
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {(calcZone.shipping_methods || []).map((m) => <Badge key={m} variant="outline" className="text-xs">{m}</Badge>)}
+                        </div>
+                      </div>
+
+                      {calcMatchingRates.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">No matching rates for the given input.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {calcMatchingRates.map((rate) => {
+                            const isFree = rate.max_order_amount && calcOrderNum >= rate.max_order_amount;
+                            return (
+                              <div key={rate.id} className="flex items-center justify-between rounded-lg border p-3">
+                                <div>
+                                  <p className="font-medium text-sm">{rate.name}{rate.shipping_method ? ` · ${rate.shipping_method}` : ""}</p>
+                                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <Clock className="h-3 w-3" /> {rate.min_days ?? 1}-{rate.max_days ?? 3} days
+                                    {rate.min_weight != null || rate.max_weight != null ? ` • ${rate.min_weight ?? 0}-${rate.max_weight ?? "∞"}kg` : ""}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  {isFree ? <span className="text-green-600 font-medium text-sm">FREE</span> : <span className="font-semibold">{formatPrice(rate.rate)}</span>}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
 
           {/* All Shipments Tracking Tab */}
           <TabsContent value="tracking" className="space-y-4">
@@ -565,17 +738,21 @@ export default function Shipping() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Rate Type</Label>
-              <Select defaultValue="flat">
+              <Label>Shipping Method</Label>
+              <Select
+                value={newRate.shipping_method}
+                onValueChange={(v) => setNewRate({ ...newRate, shipping_method: v })}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select rate type" />
+                  <SelectValue placeholder="Select method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="flat">Flat Rate</SelectItem>
-                  <SelectItem value="weight">Weight Based</SelectItem>
-                  <SelectItem value="order_amount">Order Amount Based</SelectItem>
+                  {(zonesWithRates.find(z => z.id === selectedZone?.id)?.shipping_methods || ["Standard","Express","Cash on Delivery"]).map((m) => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-muted-foreground">Must match a method enabled on this zone for it to show at checkout.</p>
             </div>
             <div className="space-y-2">
               <Label>Base Rate (৳)</Label>
@@ -589,24 +766,45 @@ export default function Shipping() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
+                <Label>Min Weight (kg)</Label>
+                <Input
+                  type="number" min="0" step="0.1"
+                  placeholder="Optional"
+                  value={newRate.min_weight ?? ""}
+                  onChange={(e) => setNewRate({ ...newRate, min_weight: e.target.value ? Number(e.target.value) : null })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Max Weight (kg)</Label>
+                <Input
+                  type="number" min="0" step="0.1"
+                  placeholder="Optional"
+                  value={newRate.max_weight ?? ""}
+                  onChange={(e) => setNewRate({ ...newRate, max_weight: e.target.value ? Number(e.target.value) : null })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label>Min Days</Label>
-                <Input 
-                  type="number"
+                <Input
+                  type="number" min="0"
                   placeholder="1"
                   value={newRate.min_days}
-                  onChange={(e) => setNewRate({ ...newRate, min_days: Number(e.target.value) || 1 })}
+                  onChange={(e) => setNewRate({ ...newRate, min_days: Number(e.target.value) || 0 })}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Max Days</Label>
-                <Input 
-                  type="number"
+                <Input
+                  type="number" min="0"
                   placeholder="3"
                   value={newRate.max_days}
-                  onChange={(e) => setNewRate({ ...newRate, max_days: Number(e.target.value) || 3 })}
+                  onChange={(e) => setNewRate({ ...newRate, max_days: Number(e.target.value) || 0 })}
                 />
               </div>
             </div>
+            {(() => { const err = validateRate(newRate); return err ? <p className="text-xs text-destructive">{err}</p> : null; })()}
           </div>
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={() => setRateDialogOpen(false)}>Cancel</Button>
@@ -637,9 +835,23 @@ export default function Shipping() {
                 />
               </div>
               <div className="space-y-2">
+                <Label>Shipping Method</Label>
+                <Select
+                  value={editingRate.shipping_method ?? ""}
+                  onValueChange={(v) => setEditingRate({ ...editingRate, shipping_method: v })}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select method" /></SelectTrigger>
+                  <SelectContent>
+                    {(zonesWithRates.find(z => z.rates?.some(r => r.id === editingRate.id))?.shipping_methods || ["Standard","Express","Cash on Delivery"]).map((m) => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <Label>Base Rate (৳)</Label>
-                <Input 
-                  type="number"
+                <Input
+                  type="number" min="0"
                   placeholder="0"
                   className="w-32"
                   value={editingRate.rate || ""}
@@ -649,8 +861,8 @@ export default function Shipping() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Min Weight (kg)</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0" step="0.1"
                     placeholder="Optional"
                     value={editingRate.min_weight ?? ""}
                     onChange={(e) => setEditingRate({ ...editingRate, min_weight: e.target.value ? Number(e.target.value) : null })}
@@ -658,8 +870,8 @@ export default function Shipping() {
                 </div>
                 <div className="space-y-2">
                   <Label>Max Weight (kg)</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0" step="0.1"
                     placeholder="Optional"
                     value={editingRate.max_weight ?? ""}
                     onChange={(e) => setEditingRate({ ...editingRate, max_weight: e.target.value ? Number(e.target.value) : null })}
@@ -669,23 +881,24 @@ export default function Shipping() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Min Days</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0"
                     placeholder="1"
                     value={editingRate.min_days}
-                    onChange={(e) => setEditingRate({ ...editingRate, min_days: Number(e.target.value) || 1 })}
+                    onChange={(e) => setEditingRate({ ...editingRate, min_days: Number(e.target.value) || 0 })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Max Days</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0"
                     placeholder="3"
                     value={editingRate.max_days}
-                    onChange={(e) => setEditingRate({ ...editingRate, max_days: Number(e.target.value) || 3 })}
+                    onChange={(e) => setEditingRate({ ...editingRate, max_days: Number(e.target.value) || 0 })}
                   />
                 </div>
               </div>
+              {(() => { const err = validateRate(editingRate); return err ? <p className="text-xs text-destructive">{err}</p> : null; })()}
             </div>
           )}
           <div className="flex justify-end gap-2 pt-4">
@@ -693,6 +906,75 @@ export default function Shipping() {
             <Button onClick={handleEditRate} disabled={!editingRate?.name || !editingRate?.rate}>
               Save Changes
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Zone Shipping Methods Dialog */}
+      <Dialog open={!!zoneMethodsDialog} onOpenChange={(o) => { if (!o) { setZoneMethodsDialog(null); setMethodInput(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Shipping Methods · {zoneMethodsDialog?.name}</DialogTitle>
+            <DialogDescription>
+              Choose which methods are offered in this zone. Only rates tagged with an enabled method will appear at checkout.
+            </DialogDescription>
+          </DialogHeader>
+          {zoneMethodsDialog && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Enabled Methods</Label>
+                <div className="flex flex-wrap gap-1.5 min-h-[2rem]">
+                  {zoneMethodsDialog.methods.length === 0 && (
+                    <p className="text-xs text-muted-foreground">No methods enabled.</p>
+                  )}
+                  {zoneMethodsDialog.methods.map((m) => (
+                    <Badge key={m} variant="secondary" className="gap-1">
+                      {m}
+                      <button
+                        type="button"
+                        className="ml-1 text-muted-foreground hover:text-destructive"
+                        onClick={() => setZoneMethodsDialog({ ...zoneMethodsDialog, methods: zoneMethodsDialog.methods.filter(x => x !== m) })}
+                        aria-label={`Remove ${m}`}
+                      >×</button>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Quick Add</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {["Standard","Express","Cash on Delivery","Same-Day","Pickup"].filter(p => !zoneMethodsDialog.methods.includes(p)).map(p => (
+                    <Button key={p} variant="outline" size="sm" onClick={() => setZoneMethodsDialog({ ...zoneMethodsDialog, methods: [...zoneMethodsDialog.methods, p] })}>
+                      + {p}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Custom Method</Label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="e.g. Drone Delivery"
+                    value={methodInput}
+                    onChange={(e) => setMethodInput(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const v = methodInput.trim();
+                      if (!v) return;
+                      if (zoneMethodsDialog.methods.includes(v)) { toast.error("Already added"); return; }
+                      setZoneMethodsDialog({ ...zoneMethodsDialog, methods: [...zoneMethodsDialog.methods, v] });
+                      setMethodInput("");
+                    }}
+                  >Add</Button>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={() => { setZoneMethodsDialog(null); setMethodInput(""); }}>Cancel</Button>
+            <Button onClick={saveZoneMethods}>Save</Button>
           </div>
         </DialogContent>
       </Dialog>

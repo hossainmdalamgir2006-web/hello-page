@@ -3200,6 +3200,7 @@ export type Database = {
           name: string
           rate: number
           rate_type: string | null
+          shipping_method: string | null
           updated_at: string
           zone_id: string
         }
@@ -3216,6 +3217,7 @@ export type Database = {
           name: string
           rate: number
           rate_type?: string | null
+          shipping_method?: string | null
           updated_at?: string
           zone_id: string
         }
@@ -3232,6 +3234,7 @@ export type Database = {
           name?: string
           rate?: number
           rate_type?: string | null
+          shipping_method?: string | null
           updated_at?: string
           zone_id?: string
         }
@@ -3253,6 +3256,7 @@ export type Database = {
           is_active: boolean | null
           name: string
           regions: string[] | null
+          shipping_methods: string[]
           updated_at: string
         }
         Insert: {
@@ -3262,6 +3266,7 @@ export type Database = {
           is_active?: boolean | null
           name: string
           regions?: string[] | null
+          shipping_methods?: string[]
           updated_at?: string
         }
         Update: {
@@ -3271,6 +3276,7 @@ export type Database = {
           is_active?: boolean | null
           name?: string
           regions?: string[] | null
+          shipping_methods?: string[]
           updated_at?: string
         }
         Relationships: []

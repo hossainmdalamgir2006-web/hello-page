@@ -3,12 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { logAuditAction } from "@/lib/auditLog";
 
+export const DEFAULT_SHIPPING_METHODS = ["Standard", "Express", "Cash on Delivery"] as const;
+
 export interface ShippingZone {
   id: string;
   name: string;
   name_bn?: string | null;
   countries?: string[];
   regions: string[];
+  shipping_methods: string[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -19,6 +22,7 @@ export interface ShippingRate {
   id: string;
   zone_id: string | null;
   name: string;
+  shipping_method: string | null;
   rate: number;
   min_weight: number | null;
   max_weight: number | null;
@@ -50,6 +54,7 @@ export function useShippingData() {
         name_bn: (item as any).name_bn ?? null,
         countries: item.countries,
         regions: item.regions || [],
+        shipping_methods: ((item as any).shipping_methods as string[] | null) ?? [...DEFAULT_SHIPPING_METHODS],
         is_active: item.is_active ?? true,
         created_at: item.created_at,
         updated_at: item.updated_at,
@@ -73,6 +78,7 @@ export function useShippingData() {
         id: item.id,
         zone_id: item.zone_id,
         name: item.name,
+        shipping_method: ((item as any).shipping_method as string | null) ?? null,
         rate: item.rate || 0,
         min_weight: item.min_weight,
         max_weight: item.max_weight,
@@ -123,6 +129,7 @@ export function useShippingData() {
         name_bn: (data as any).name_bn ?? null,
         countries: data.countries,
         regions: data.regions || [],
+        shipping_methods: ((data as any).shipping_methods as string[] | null) ?? [...DEFAULT_SHIPPING_METHODS],
         is_active: data.is_active ?? true,
         created_at: data.created_at,
         updated_at: data.updated_at,
@@ -195,6 +202,7 @@ export function useShippingData() {
         .insert({
           zone_id: rateData.zone_id,
           name: rateData.name,
+          shipping_method: rateData.shipping_method,
           rate: rateData.rate,
           min_weight: rateData.min_weight,
           max_weight: rateData.max_weight,
@@ -212,6 +220,7 @@ export function useShippingData() {
         id: data.id,
         zone_id: data.zone_id,
         name: data.name,
+        shipping_method: ((data as any).shipping_method as string | null) ?? null,
         rate: data.rate || 0,
         min_weight: data.min_weight,
         max_weight: data.max_weight,
