@@ -835,9 +835,23 @@ export default function Shipping() {
                 />
               </div>
               <div className="space-y-2">
+                <Label>Shipping Method</Label>
+                <Select
+                  value={editingRate.shipping_method ?? ""}
+                  onValueChange={(v) => setEditingRate({ ...editingRate, shipping_method: v })}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select method" /></SelectTrigger>
+                  <SelectContent>
+                    {(zonesWithRates.find(z => z.rates?.some(r => r.id === editingRate.id))?.shipping_methods || ["Standard","Express","Cash on Delivery"]).map((m) => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <Label>Base Rate (৳)</Label>
-                <Input 
-                  type="number"
+                <Input
+                  type="number" min="0"
                   placeholder="0"
                   className="w-32"
                   value={editingRate.rate || ""}
@@ -847,8 +861,8 @@ export default function Shipping() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Min Weight (kg)</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0" step="0.1"
                     placeholder="Optional"
                     value={editingRate.min_weight ?? ""}
                     onChange={(e) => setEditingRate({ ...editingRate, min_weight: e.target.value ? Number(e.target.value) : null })}
@@ -856,8 +870,8 @@ export default function Shipping() {
                 </div>
                 <div className="space-y-2">
                   <Label>Max Weight (kg)</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0" step="0.1"
                     placeholder="Optional"
                     value={editingRate.max_weight ?? ""}
                     onChange={(e) => setEditingRate({ ...editingRate, max_weight: e.target.value ? Number(e.target.value) : null })}
@@ -867,23 +881,24 @@ export default function Shipping() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Min Days</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0"
                     placeholder="1"
                     value={editingRate.min_days}
-                    onChange={(e) => setEditingRate({ ...editingRate, min_days: Number(e.target.value) || 1 })}
+                    onChange={(e) => setEditingRate({ ...editingRate, min_days: Number(e.target.value) || 0 })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Max Days</Label>
-                  <Input 
-                    type="number"
+                  <Input
+                    type="number" min="0"
                     placeholder="3"
                     value={editingRate.max_days}
-                    onChange={(e) => setEditingRate({ ...editingRate, max_days: Number(e.target.value) || 3 })}
+                    onChange={(e) => setEditingRate({ ...editingRate, max_days: Number(e.target.value) || 0 })}
                   />
                 </div>
               </div>
+              {(() => { const err = validateRate(editingRate); return err ? <p className="text-xs text-destructive">{err}</p> : null; })()}
             </div>
           )}
           <div className="flex justify-end gap-2 pt-4">
@@ -891,6 +906,75 @@ export default function Shipping() {
             <Button onClick={handleEditRate} disabled={!editingRate?.name || !editingRate?.rate}>
               Save Changes
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Zone Shipping Methods Dialog */}
+      <Dialog open={!!zoneMethodsDialog} onOpenChange={(o) => { if (!o) { setZoneMethodsDialog(null); setMethodInput(""); } }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Shipping Methods · {zoneMethodsDialog?.name}</DialogTitle>
+            <DialogDescription>
+              Choose which methods are offered in this zone. Only rates tagged with an enabled method will appear at checkout.
+            </DialogDescription>
+          </DialogHeader>
+          {zoneMethodsDialog && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Enabled Methods</Label>
+                <div className="flex flex-wrap gap-1.5 min-h-[2rem]">
+                  {zoneMethodsDialog.methods.length === 0 && (
+                    <p className="text-xs text-muted-foreground">No methods enabled.</p>
+                  )}
+                  {zoneMethodsDialog.methods.map((m) => (
+                    <Badge key={m} variant="secondary" className="gap-1">
+                      {m}
+                      <button
+                        type="button"
+                        className="ml-1 text-muted-foreground hover:text-destructive"
+                        onClick={() => setZoneMethodsDialog({ ...zoneMethodsDialog, methods: zoneMethodsDialog.methods.filter(x => x !== m) })}
+                        aria-label={`Remove ${m}`}
+                      >×</button>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Quick Add</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {["Standard","Express","Cash on Delivery","Same-Day","Pickup"].filter(p => !zoneMethodsDialog.methods.includes(p)).map(p => (
+                    <Button key={p} variant="outline" size="sm" onClick={() => setZoneMethodsDialog({ ...zoneMethodsDialog, methods: [...zoneMethodsDialog.methods, p] })}>
+                      + {p}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Custom Method</Label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="e.g. Drone Delivery"
+                    value={methodInput}
+                    onChange={(e) => setMethodInput(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const v = methodInput.trim();
+                      if (!v) return;
+                      if (zoneMethodsDialog.methods.includes(v)) { toast.error("Already added"); return; }
+                      setZoneMethodsDialog({ ...zoneMethodsDialog, methods: [...zoneMethodsDialog.methods, v] });
+                      setMethodInput("");
+                    }}
+                  >Add</Button>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={() => { setZoneMethodsDialog(null); setMethodInput(""); }}>Cancel</Button>
+            <Button onClick={saveZoneMethods}>Save</Button>
           </div>
         </DialogContent>
       </Dialog>
