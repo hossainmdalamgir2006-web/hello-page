@@ -1085,10 +1085,10 @@ export default function Coupons() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setCouponDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleCreateCoupon} disabled={createCouponMutation.isPending}>
-                {createCouponMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Create
+              <Button variant="outline" onClick={() => { setCouponDialogOpen(false); resetCouponForm(); }}>Cancel</Button>
+              <Button onClick={handleCreateCoupon} disabled={createCouponMutation.isPending || updateCouponMutation.isPending}>
+                {(createCouponMutation.isPending || updateCouponMutation.isPending) ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {editingCouponId ? "Save Changes" : "Create"}
               </Button>
             </DialogFooter>
           </DialogContent>
