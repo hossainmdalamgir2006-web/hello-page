@@ -907,7 +907,7 @@ export default function Coupons() {
                   <TableBody>
                     {filteredCoupons.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8">
+                        <TableCell colSpan={7} className="text-center py-8">
                           <Ticket className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                           <p className="text-muted-foreground">No coupons found</p>
                         </TableCell>
@@ -919,7 +919,16 @@ export default function Coupons() {
                         const DiscountIcon = discountTypeConfig[coupon.discount_type]?.icon || Percent;
 
                         return (
-                          <TableRow key={coupon.id}>
+                          <TableRow key={coupon.id} data-state={selectedCouponIds.includes(coupon.id) ? "selected" : undefined}>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedCouponIds.includes(coupon.id)}
+                                onCheckedChange={(checked) => {
+                                  setSelectedCouponIds(prev => checked ? [...prev, coupon.id] : prev.filter(id => id !== coupon.id));
+                                }}
+                                aria-label={`Select ${coupon.code}`}
+                              />
+                            </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
                                 <code className="font-mono font-bold text-primary bg-primary/10 px-2 py-1 rounded">
